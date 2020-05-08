@@ -1,0 +1,10 @@
+COMMAND=PREDEX_LIBRARY_TO_DEX_ARCHIVE
+FILE.path=C:\Users\Administrator\.gradle\caches\transforms-1\files-1.1\switch-button-0.0.3.aar\c8cf6698707d78152d9e532d9602e4c5\jars\classes.jar
+FILE.hash=b9f907a26fd177f93cc9a4e7da82d1914ae7fe0c720f9f866393f6a604fc88d4
+DX_VERSION=1.14
+JUMBO_MODE=true
+OPTIMIZE=true
+DEXER_TOOL=D8
+CACHE_KEY_VERSION=4
+MIN_SDK_VERSION=21
+IS_DEBUGGABLE=true

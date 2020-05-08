@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:alpha="0.9"
+    android:background="@color/black"
+    android:paddingBottom="22dp"
+    android:paddingLeft="22dp"
+    android:paddingRight="22dp"
+    android:paddingTop="22dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical"
+        android:paddingBottom="3dp"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:paddingTop="5dp"
+        android:scrollbars="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/dialog_label"
+                android:layout_weight="2"
+                android:text="@string/lab_name" />
+
+            <EditText
+                android:id="@+id/id_name"
+                style="@style/dialog_edit"
+                android:layout_weight="1"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/dialog_label"
+                android:layout_weight="2"
+                android:text="IMSI：" />
+
+            <EditText
+                android:id="@+id/id_imsi"
+                style="@style/dialog_edit"
+                android:layout_weight="1"
+                android:inputType="number"
+                android:maxLength="15"
+                android:singleLine="true"
+                android:text="" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/dialog_label"
+                android:layout_weight="2"
+                android:text="@string/user_remake2" />
+
+            <EditText
+                android:id="@+id/etRemark"
+                style="@style/dialog_edit"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:text=""
+                android:maxLines="1"
+                android:maxLength="20" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button_save"
+                android:textColor="@color/darkorange"
+                android:background="@drawable/comman_button_bkg"
+                android:layout_height="36dp"
+                android:layout_width="88dp"
+                android:text="@string/save" />
+
+            <Button
+                android:id="@+id/button_cancel"
+                android:textColor="@color/darkorange"
+                android:background="@drawable/comman_button_bkg"
+                android:layout_width="88dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="20dp"
+                android:text="@string/cancel" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

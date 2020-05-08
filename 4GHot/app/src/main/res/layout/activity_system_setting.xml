@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.doit.net.View.SystemSetting">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+
+        <com.doit.net.Utils.LSettingItem
+            android:id="@+id/tvOnOffLocation"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            app:isShowLeftIcon="false"
+            app:leftText="是否打开搜寻功能"
+            app:rightStyle="iconSwitch" />
+
+
+        <com.doit.net.Utils.LSettingItem
+            android:id="@+id/tvIfAutoOpenRF"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            app:isShowLeftIcon="false"
+            app:leftText="是否开机自动打开射频"
+            app:rightStyle="iconSwitch" />
+
+        <com.doit.net.Utils.LSettingItem
+            android:id="@+id/tvGeneralAdmin"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            app:isShowLeftIcon="false"
+            app:leftText="生成管理员账号" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="40dp"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:text="重置开机搜网频点"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_weight="0.6"
+                android:background="@null"
+                android:layout_height="match_parent"/>
+
+            <com.beardedhen.androidbootstrap.BootstrapButton
+                android:id="@+id/btResetFreqScanFcn"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="30dp"
+                android:layout_marginEnd="10dp"
+                android:gravity="center"
+                android:text="下发重置"/>
+        </LinearLayout>
+
+        <View
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/darkgrey"
+            />
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:textSize="17sp"
+                    android:gravity="center_vertical"
+                    android:text="风扇设置："/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:layout_height="40dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:textSize="16sp"
+                    android:text="最大风速:"
+                    android:layout_height="wrap_content" />
+
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+                    android:id="@+id/etMaxWindSpeed"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.6"
+                    android:layout_height="30dp"
+                    android:textSize="16sp"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:hint="1 - 99"/>
+
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:textSize="16sp"
+                    android:layout_marginStart="20dp"
+                    android:gravity="center"
+                    android:text="最小风速:"
+                    android:layout_height="wrap_content" />
+
+
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+                    android:id="@+id/etMinWindSpeed"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.6"
+                    android:layout_height="30dp"
+                    android:textSize="16sp"
+                    android:layout_marginStart="8dp"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:hint="1 - 99"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:layout_height="40dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:textSize="16sp"
+                    android:text="温度阈值:"
+                    android:layout_height="wrap_content" />
+
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+                    android:id="@+id/etTempThreshold"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="30dp"
+                    android:textSize="16sp"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:layout_marginStart="8dp" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_weight="0.8"
+                    android:background="@null"
+                    android:layout_height="match_parent"/>
+
+                <com.beardedhen.androidbootstrap.BootstrapButton
+                    android:id="@+id/btSetFan"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="center"
+                    android:text="确 定"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:background="@color/darkgrey"
+            android:layout_height="1dp"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:layout_margin="10dp"
+        android:gravity="center_vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/darkgrey"
+            />
+
+        <com.beardedhen.androidbootstrap.BootstrapButton
+            android:id="@+id/btRefresh"
+            android:layout_width="120dp"
+            android:layout_height="34dp"
+            android:text="刷    新"
+            android:textSize="16sp"
+            android:layout_marginTop="5dp"
+            android:layout_gravity="center"
+            app:bootstrapBrand="primary" />
+    </LinearLayout>
+</LinearLayout>

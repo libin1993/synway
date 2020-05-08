@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical"
+        android:paddingBottom="3dp"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:paddingTop="5dp"
+        android:scrollbars="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/description_label"
+                android:layout_weight="2"
+                android:id="@+id/id_name"
+                android:text="@string/upload_url_lab" />
+
+            <com.beardedhen.androidbootstrap.BootstrapEditText
+                android:id="@+id/id_upload_url"
+                style="@style/description_edit"
+                android:layout_weight="1"
+                android:inputType="textUri"
+                android:singleLine="true"
+                android:text=""
+                app:bootstrapBrand="info"
+                app:bootstrapSize="md" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3px"
+            android:layout_marginBottom="0dp"
+            android:layout_marginTop="10dp"
+            android:background="?android:attr/listDivider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.beardedhen.androidbootstrap.BootstrapButton
+                android:id="@+id/button_save"
+                style="@style/wrapping_button"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:layout_weight="2"
+                android:text="@string/save"
+                app:bootstrapBrand="primary" />
+
+            <com.beardedhen.androidbootstrap.BootstrapButton
+                android:id="@+id/button_cancel"
+                style="@style/wrapping_button"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:layout_weight="3"
+                android:text="@string/cancel"
+                app:bootstrapBrand="regular" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

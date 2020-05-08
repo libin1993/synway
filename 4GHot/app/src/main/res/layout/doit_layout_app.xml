@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="0dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:padding="3dp">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:background="@color/dimgrey"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:background="@color/deepgrey2"
+            android:layout_height="wrap_content">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_marginStart="10dp"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:padding="10dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/login_account_icon" />
+
+            <TextView
+                android:id="@+id/tvLoginAccount"
+                android:layout_width="0dp"
+                android:layout_gravity="center_vertical"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                android:textColor="@color/white"
+                android:textSize="22sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <View
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="0.6dp"
+                android:background="@color/deepgrey2"/>
+            <View
+                android:layout_width="0dp"
+                android:layout_weight="3"
+                android:layout_height="0.6dp"
+                android:background="@color/dimgrey"/>
+        </LinearLayout>
+
+        <com.doit.net.Utils.LSettingItem
+            android:id="@+id/btUserManage"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            app:isShowRightText="false"
+            android:visibility="gone"
+            app:leftIcon="@drawable/account_manage"
+            app:textColor="@color/white"
+            app:leftText="@string/user_manege" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <View
+                android:layout_width="48dp"
+                android:layout_height="0.6dp"
+                android:background="@color/deepgrey2"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="0.6dp"
+                android:background="@color/dimgrey"/>
+        </LinearLayout>
+
+        <com.doit.net.Utils.LSettingItem
+            android:id="@+id/btBlackBox"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            app:isShowRightText="false"
+            app:leftIcon="@drawable/black_box_w"
+            android:visibility="gone"
+            app:leftText="@string/user_black_box" />
+
+        <com.doit.net.Utils.LSettingItem
+            android:id="@+id/btSetWhiteList"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:background="@color/deepgrey2"
+            app:isShowRightText="false"
+            app:leftIcon="@drawable/icon_0000s_0002s_0005_user"
+            app:leftText="@string/white_list_manage" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:background="@color/dimgrey"/>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/dimgrey"/>
+
+        <com.doit.net.Utils.LSettingItem
+            android:id="@+id/btn_history_view"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            app:leftIcon="@drawable/history_data"
+            app:leftText="@string/tab_history_and_export" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <View
+                android:layout_width="48dp"
+                android:layout_height="0.6dp"
+                android:background="@color/deepgrey2"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="0.6dp"
+                android:background="@color/dimgrey"/>
+        </LinearLayout>
+
+        <com.doit.net.Utils.LSettingItem
+            android:id="@+id/btClearUeid"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:visibility="gone"
+            app:leftIcon="@drawable/clear_data"
+            app:leftText="@string/clear_history" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:background="@color/dimgrey"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/dimgrey"/>
+
+        <com.doit.net.Utils.LSettingItem
+            android:id="@+id/btWifiSetting"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            app:leftIcon="@drawable/setting_wifi"
+            app:leftText="@string/wifi_setting" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <View
+                android:layout_width="48dp"
+                android:layout_height="0.6dp"
+                android:background="@color/deepgrey2"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="0.6dp"
+                android:background="@color/dimgrey"/>
+        </LinearLayout>
+
+        <com.doit.net.Utils.LSettingItem
+            android:id="@+id/btDeviceParam"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            app:leftIcon="@drawable/base_station"
+            app:leftText="@string/device_param" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:background="@color/dimgrey"/>
+
+
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/dimgrey"/>
+
+        <com.doit.net.Utils.LSettingItem
+            android:id="@+id/btDeviceInfoAndUpgrade"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            app:isShowLeftIcon="false"
+            app:isShowRightText="false"
+            app:leftText="设备信息及升级" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <View
+                android:layout_width="8dp"
+                android:layout_height="0.6dp"
+                android:background="@color/deepgrey2"/>
+            <View
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="0.6dp"
+                android:background="@color/dimgrey"/>
+
+            <View
+                android:layout_width="8dp"
+                android:layout_height="0.6dp"
+                android:background="@color/deepgrey2"/>
+        </LinearLayout>
+
+        <com.doit.net.Utils.LSettingItem
+            android:id="@+id/btAuthorizeCodeInfo"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            app:isShowLeftIcon="false"
+            app:isShowRightText="false"
+            app:leftText="授权管理" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <View
+                android:layout_width="8dp"
+                android:layout_height="0.6dp"
+                android:background="@color/deepgrey2"/>
+            <View
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="0.6dp"
+                android:background="@color/dimgrey"/>
+
+            <View
+                android:layout_width="8dp"
+                android:layout_height="0.6dp"
+                android:background="@color/deepgrey2"/>
+        </LinearLayout>
+
+        <com.doit.net.Utils.LSettingItem
+            android:id="@+id/tvLocalImsi"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            app:isShowLeftIcon="false"
+            app:isShowRightText="true"
+            app:leftText="本机IMSI"
+            app:rightStyle="iconHide"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <View
+                android:layout_width="8dp"
+                android:layout_height="0.6dp"
+                android:background="@color/deepgrey2"/>
+            <View
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="0.6dp"
+                android:background="@color/dimgrey"/>
+
+            <View
+                android:layout_width="8dp"
+                android:layout_height="0.6dp"
+                android:background="@color/deepgrey2"/>
+        </LinearLayout>
+
+        <com.doit.net.Utils.LSettingItem
+            android:id="@+id/tvVersion"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            app:isShowLeftIcon="false"
+            app:isShowRightText="true"
+            app:rightStyle="iconHide"
+            app:leftText="程序版本"
+            app:rightText="" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:background="@color/dimgrey"/>
+
+
+        <com.doit.net.Utils.LSettingItem
+            android:id="@+id/tvSupportVoice"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:visibility="gone"
+            app:isShowLeftIcon="false"
+            app:isShowRightText="true"
+            app:leftText="语音播报"
+            app:rightStyle="iconHide"
+            />
+
+
+        <com.doit.net.Utils.LSettingItem
+            android:id="@+id/tvSystemSetting"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:visibility="gone"
+            app:isShowLeftIcon="false"
+            app:isShowRightText="false"
+            app:leftText="系统设置" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:background="@color/dimgrey"/>
+
+        <com.doit.net.Utils.LSettingItem
+            android:id="@+id/tvTest"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            app:isShowLeftIcon="false"
+            app:isShowRightText="true"
+            app:rightStyle="iconHide"
+            app:leftText="测试按钮"
+            app:rightText="just4test"
+            android:visibility="gone"
+            app:rightTextColor="@color/colorPrimary" />
+
+    </LinearLayout>
+</ScrollView>

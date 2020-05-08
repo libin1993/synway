@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical"
+        android:paddingBottom="3dp"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
+        android:paddingTop="5dp"
+        android:scrollbars="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center_vertical"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/dimgrey"
+            android:text="号码翻译设置" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/description_label"
+                android:layout_weight="2.4"
+                android:text="@string/server_address" />
+
+            <com.beardedhen.androidbootstrap.BootstrapEditText
+                android:id="@+id/etServerAddress"
+                style="@style/description_edit"
+                android:layout_weight="1"
+                android:digits="@string/account_rule"
+                android:singleLine="true"
+                app:bootstrapBrand="regular"
+                app:bootstrapSize="md" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/description_label"
+                android:layout_weight="1.8"
+                android:text="@string/account2" />
+
+            <com.beardedhen.androidbootstrap.BootstrapEditText
+                android:id="@+id/etAccount"
+                style="@style/description_edit"
+                android:layout_weight="1"
+                android:singleLine="true"
+                app:bootstrapBrand="info"
+                app:bootstrapSize="md" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/description_label"
+                android:layout_weight="1.8"
+                android:text="@string/password" />
+
+            <com.beardedhen.androidbootstrap.BootstrapEditText
+                android:id="@+id/etPassword"
+                style="@style/description_edit"
+                android:layout_weight="1"
+                android:singleLine="true"
+                app:bootstrapBrand="info"
+                app:bootstrapSize="md" />
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/cbRememberAccout"
+            android:layout_width="wrap_content"
+            android:layout_height="29dp"
+            android:scaleX="0.5"
+            android:scaleY="0.5"
+            android:checked="false"
+            android:textSize="24sp"
+            android:text="是否记住账号密码"
+            android:gravity="center_vertical"
+            android:textColor="@color/darkgrey" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/description_label"
+                android:layout_weight="1.8"
+                android:text="@string/rest_convert_times" />
+
+            <TextView
+                android:id="@+id/etRestConvertTimes"
+                style="@style/description_edit"
+                android:layout_weight="1"
+                android:gravity="left|center_vertical"
+                android:text="未获取"
+                android:singleLine="true" />
+        </LinearLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_marginTop="10dp"
+            android:background="?android:attr/listDivider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <com.beardedhen.androidbootstrap.BootstrapButton
+                android:id="@+id/btAuthenticate"
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                android:layout_marginStart="20dp"
+                android:layout_weight="1"
+                android:text="@string/authenticate"
+                app:bootstrapBrand="primary" />
+
+            <com.beardedhen.androidbootstrap.BootstrapButton
+                android:id="@+id/btClose"
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="20dp"
+                android:layout_weight="1"
+                android:text="@string/close"
+                app:bootstrapBrand="regular" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

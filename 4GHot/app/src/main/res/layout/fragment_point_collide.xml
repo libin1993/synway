@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:padding="3dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+
+        <com.beardedhen.androidbootstrap.BootstrapButton
+            android:id="@+id/btAddTimePoint"
+            android:layout_width="82dp"
+            android:layout_height="32dp"
+            app:roundedCorners="true"
+            app:bootstrapBrand="primary"
+            android:text="打 点"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:gravity="center"
+            android:layout_marginStart="30dp"
+            android:text="时间偏差："/>
+
+        <com.beardedhen.androidbootstrap.BootstrapEditText
+            android:id="@+id/etDeviation"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:inputType="number"
+            android:maxLength="3"
+            android:gravity="center_vertical|start"
+            android:hint="分钟"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/dimgrey"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:text="时间点" />
+
+            <View
+                android:background="@color/dark_gray"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_weight="0.9"
+                android:layout_height="match_parent"
+                android:text="备 注" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/dimgrey"/>
+
+        <com.baoyz.swipemenulistview.SwipeMenuListView
+            android:id="@+id/lvCollideTimePoint"
+            android:layout_width="match_parent"
+            android:layout_height="120dp">
+        </com.baoyz.swipemenulistview.SwipeMenuListView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:gravity="center_vertical">
+
+        <com.beardedhen.androidbootstrap.BootstrapButton
+            android:id="@+id/btStartCollide"
+            android:layout_height="32dp"
+            android:layout_width="wrap_content"
+            android:textSize="14sp"
+            app:roundedCorners="true"
+            app:bootstrapBrand="primary"
+            android:text="开始碰撞" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/darkgrey"/>
+
+    <TextView
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:textSize="16sp"
+        android:layout_height="28dp"
+        android:text="碰撞结果:" />
+
+    <LinearLayout
+        android:id="@+id/layoutCollideResult"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="match_parent"
+                android:text="IMSI" />
+
+            <View
+                android:background="@color/dark_gray"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:text="次 数"
+                />
+        </LinearLayout>
+
+        <View
+            android:background="@color/dark_gray"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
+
+        <ListView
+            android:id="@+id/lvAnalysisResult"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+        </ListView>
+    </LinearLayout>
+</LinearLayout>

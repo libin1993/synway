@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:background="@color/black"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/dimgrey"/>
+
+    <ListView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/lvWhitelistInfo"
+        android:background="@drawable/ueid_bkg"
+        android:layout_weight="1"
+        android:scrollbars="vertical"
+        android:scrollbarThumbVertical="@drawable/scrollbar_style"
+        android:divider="@drawable/comman_listview_divider"
+        android:dividerHeight="0.6dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/dark_gray"/>
+
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="88dp"
+        android:layout_gravity="bottom"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btAddWhitelist"
+            android:layout_height="34dp"
+            android:layout_width="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textSize="14sp"
+            android:textColor="@color/darkorange"
+            android:background="@drawable/comman_button_bkg"
+            android:text="@string/add_whitelist" />
+
+        <Button
+            android:id="@+id/btClearWhitelist"
+            android:layout_height="34dp"
+            android:layout_width="wrap_content"
+            android:layout_toEndOf="@id/btAddWhitelist"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textSize="14sp"
+            android:layout_marginStart="40dp"
+            android:textColor="@color/darkorange"
+            android:background="@drawable/comman_button_bkg"
+            android:text="@string/clear_whitelist" />
+
+        <Button
+            android:id="@+id/btImportWhitelist"
+            android:layout_height="34dp"
+            android:layout_width="wrap_content"
+            android:layout_below="@id/btAddWhitelist"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textSize="14sp"
+            android:textColor="@color/darkorange"
+            android:background="@drawable/comman_button_bkg"
+            android:layout_marginTop="8dp"
+            android:text="@string/import_whitelist" />
+
+        <Button
+            android:id="@+id/btExportWhitelist"
+            android:layout_height="34dp"
+            android:layout_width="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_toEndOf="@id/btImportWhitelist"
+            android:layout_below="@id/btClearWhitelist"
+            android:textSize="14sp"
+            android:textColor="@color/darkorange"
+            android:background="@drawable/comman_button_bkg"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="40dp"
+            android:text="@string/export_whitelist" />
+
+    </RelativeLayout>
+
+</LinearLayout>

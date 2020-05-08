@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:background="@color/black"
+    android:scrollbars="vertical"
+    android:id="@+id/device_layout">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/dimgrey"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="80dp"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:text="@string/detect_carrier_operate" />
+
+        <RadioGroup
+            android:id="@+id/rgDetectCarrierOperate"
+            android:layout_width="wrap_content"
+            android:background="@drawable/radio_group_bkg"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
+            android:layout_marginStart="8dp"
+            android:layout_height="28dp"
+            android:orientation="horizontal" >
+
+            <RadioButton
+                android:id="@+id/rbDetectAll"
+                android:layout_width="52dp"
+                android:layout_height="match_parent"
+                android:checked="true"
+                android:textSize="13sp"
+                android:gravity="center"
+                android:button="@null"
+                android:textColor="@color/white"
+                android:background="@drawable/radio_button_selectot"
+                android:text="全部" />
+
+            <RadioButton
+                android:id="@+id/rbCTJ"
+                android:layout_width="52dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:layout_marginStart="4dp"
+                android:textSize="13sp"
+                android:textColor="@color/white"
+                android:button="@null"
+                android:background="@drawable/radio_button_selectot"
+                android:text="移动" />
+
+            <RadioButton
+                android:id="@+id/rbCTU"
+                android:layout_width="52dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="4dp"
+                android:gravity="center"
+                android:textSize="13sp"
+                android:textColor="@color/white"
+                android:button="@null"
+                android:background="@drawable/radio_button_selectot"
+                android:text="联通" />
+
+            <RadioButton
+                android:id="@+id/rbCTC"
+                android:layout_width="52dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="4dp"
+                android:gravity="center"
+                android:textSize="13sp"
+                android:textColor="@color/white"
+                android:button="@null"
+                android:background="@drawable/radio_button_selectot"
+                android:text="电信" />
+        </RadioGroup>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <View
+            android:layout_width="60dp"
+            android:layout_height="0.6dp"
+            android:background="@color/black"/>
+        <View
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="0.6dp"
+            android:background="@color/dimgrey"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="80dp"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:text="@string/power_control" />
+
+        <RadioGroup
+            android:id="@+id/rgPowerLevel"
+            android:layout_width="wrap_content"
+            android:background="@drawable/radio_group_bkg"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
+            android:layout_marginStart="8dp"
+            android:layout_height="28dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rbPowerHigh"
+                android:checked="true"
+                android:layout_width="45dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textSize="13sp"
+                android:textColor="@color/white"
+                android:button="@null"
+                android:background="@drawable/radio_button_selectot"
+                android:text="高" />
+
+            <RadioButton
+                android:id="@+id/rbPowerMedium"
+                android:layout_width="45dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="4dp"
+                android:gravity="center"
+                android:textSize="13sp"
+                android:textColor="@color/white"
+                android:button="@null"
+                android:background="@drawable/radio_button_selectot"
+                android:text="中" />
+
+            <RadioButton
+                android:id="@+id/rbPowerLow"
+                android:layout_width="45dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="4dp"
+                android:gravity="center"
+                android:textSize="13sp"
+                android:textColor="@color/white"
+                android:button="@null"
+                android:background="@drawable/radio_button_selectot"
+                android:text="低" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <View
+            android:layout_width="60dp"
+            android:layout_height="0.6dp"
+            android:background="@color/black"/>
+        <View
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="0.6dp"
+            android:background="@color/dimgrey"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="108dp"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:text="@string/all_rf_switch" />
+
+        <CheckBox
+            android:id="@+id/cbRFSwitch"
+            android:layout_width="54dp"
+            android:layout_height="24dp"
+            android:button="@null"
+            android:background="@drawable/rf_switch_style"
+            android:layout_marginStart="6dp"
+            />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.8dp"
+        android:background="@color/dimgrey"/>
+
+    <TextView
+        android:layout_height="26dp"
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:layout_marginStart="4dp"
+        android:textColor="@color/darkorange"
+        android:textSize="16sp"
+        android:text="@string/rf_channel" />
+
+    <View
+        android:id="@+id/vDivider"
+        android:layout_width="match_parent"
+        android:layout_height="0.4dp"
+        android:background="@color/dimgrey"
+        />
+
+    <LinearLayout
+        android:id="@+id/id_channel_list"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:background="@drawable/ueid_bkg"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/dimgrey"
+        />
+
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_gravity="bottom"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btSetCellParam"
+            android:layout_height="34dp"
+            android:layout_width="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textSize="14sp"
+            android:textColor="@color/darkorange"
+            android:background="@drawable/comman_button_bkg"
+            android:text="@string/lable_set_cell" />
+
+        <Button
+            android:id="@+id/btSetChannelCfg"
+            android:layout_height="34dp"
+            android:layout_width="wrap_content"
+            android:layout_toEndOf="@id/btSetCellParam"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textSize="14sp"
+            android:layout_marginStart="20dp"
+            android:textColor="@color/darkorange"
+            android:background="@drawable/comman_button_bkg"
+            android:text="@string/lable_set_channel" />
+
+        <Button
+            android:id="@+id/btUpdateTac"
+            android:layout_height="34dp"
+            android:layout_width="wrap_content"
+            android:layout_toEndOf="@id/btSetChannelCfg"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textSize="14sp"
+            android:layout_marginStart="20dp"
+            android:textColor="@color/darkorange"
+            android:background="@drawable/comman_button_bkg"
+            android:text="@string/change_tac" />
+
+        <Button
+            android:id="@+id/btRebootDevice"
+            android:layout_height="34dp"
+            android:layout_width="wrap_content"
+            android:layout_below="@id/btSetCellParam"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textSize="14sp"
+            android:textColor="@color/darkorange"
+            android:background="@drawable/comman_button_bkg"
+            android:layout_marginTop="8dp"
+            android:text="@string/lable_reboot" />
+
+        <Button
+            android:id="@+id/btRefreshParam"
+            android:layout_height="34dp"
+            android:layout_width="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_toEndOf="@id/btRebootDevice"
+            android:layout_below="@id/btSetChannelCfg"
+            android:textSize="14sp"
+            android:textColor="@color/darkorange"
+            android:background="@drawable/comman_button_bkg"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="20dp"
+            android:text="@string/lable_refresh_param" />
+    </RelativeLayout>
+</LinearLayout>

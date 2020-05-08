@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="3dp"
+        android:layout_marginEnd="3dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="0.8"
+            android:textSize="14sp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:text="开始时间" />
+
+        <EditText
+            android:id="@+id/etCollideStartTime"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="26dp"
+            android:hint="点击选择"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:background="@drawable/comman_edit_text_bkg"
+            android:focusableInTouchMode="false"
+            android:maxLines = "1"  >
+        </EditText>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:layout_marginEnd="4dp"
+            android:layout_marginStart="6dp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginEnd="3dp"
+        android:background="@color/darkgrey"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
+        android:layout_marginEnd="3dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="0.8"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:text="结束时间" />
+
+        <EditText
+            android:id="@+id/etCollideEndTime"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="26dp"
+            android:hint="点击选择"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:background="@drawable/comman_edit_text_bkg"
+            android:focusableInTouchMode="false"
+            android:maxLines = "1"  >
+        </EditText>
+
+        <Button
+            android:id="@+id/btAddTimePeriod"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="30dp"
+            android:textColor="@color/white"
+            android:background="@drawable/comman_button_bkg"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="4dp"
+            android:text="添加时间"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginEnd="3dp"
+        android:background="@color/darkgrey"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ueid_bkg"
+        android:layout_marginStart="3dp"
+        android:layout_marginEnd="3dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:textSize="14sp"
+                android:layout_width="match_parent"
+                android:gravity="bottom"
+                android:layout_height="30dp"
+                android:layout_marginStart="3dp"
+                android:textColor="@color/darkorange"
+                android:text="进行碰撞的时间段"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.4dp"
+                android:background="@color/darkgrey"/>
+
+            <com.baoyz.swipemenulistview.SwipeMenuListView
+                android:id="@+id/lvCollideTimePeriod"
+                android:scrollbars="vertical"
+                android:layout_width="match_parent"
+                android:divider="@null"
+                android:scrollbarThumbVertical="@drawable/scrollbar_style"
+                android:layout_height="90dp">
+            </com.baoyz.swipemenulistview.SwipeMenuListView>
+        </LinearLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"
+            android:background="@color/darkgrey"/>
+
+        <TextView
+            android:gravity="bottom"
+            android:layout_width="match_parent"
+            android:textSize="14sp"
+            android:layout_height="30dp"
+            android:layout_marginStart="3dp"
+            android:textColor="@color/darkorange"
+            android:text="碰撞结果" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.4dp"
+            android:background="@color/darkgrey"/>
+
+        <LinearLayout
+            android:id="@+id/layoutCollideResult"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="28dp"
+                android:background="@color/deepgrey2"
+                android:alpha="0.9"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:gravity="center"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/white"
+                    android:text="IMSI" />
+
+                <TextView
+                    android:gravity="center"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:textColor="@color/white"
+                    android:layout_height="match_parent"
+                    android:text="次 数"
+                    />
+            </LinearLayout>
+
+            <View
+                android:background="@color/darkgrey"
+                android:layout_width="match_parent"
+                android:layout_height="0.4dp"/>
+
+            <ListView
+                android:id="@+id/lvAnalysisResult"
+                android:layout_width="match_parent"
+                android:scrollbars="vertical"
+                android:divider="@null"
+                android:scrollbarThumbVertical="@drawable/scrollbar_style"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+            </ListView>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1.5dp"
+            android:background="@color/dark_blue"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btStartCollide"
+                android:layout_height="32dp"
+                android:layout_width="wrap_content"
+                android:textSize="14sp"
+                android:textColor="@color/darkorange"
+                android:background="@drawable/comman_button_bkg"
+                android:text="开始碰撞" />
+
+            <Button
+                android:id="@+id/btExportCollideResult"
+                android:layout_height="32dp"
+                android:layout_width="wrap_content"
+                android:textSize="14sp"
+                android:textColor="@color/darkorange"
+                android:background="@drawable/comman_button_bkg"
+                android:layout_marginStart="8dp"
+                android:text="导出结果" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

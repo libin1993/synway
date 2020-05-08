@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:background="@color/black"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="3dp"
+        android:background="@color/dimgrey"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_height="30dp"
+            android:layout_width="0dp"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:textColor="@color/darkorange"
+            android:text="@string/lab_keyword" />
+
+        <EditText
+            android:id="@+id/editText_keyword"
+            style="@style/dialog_edit"
+            android:layout_height="30dp"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:singleLine="true" />
+
+        <Button
+            android:id="@+id/button_search"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="30dp"
+            android:layout_marginStart="8dp"
+            android:textSize="14sp"
+            android:textColor="@color/darkorange"
+            android:background="@drawable/comman_button_bkg"
+            android:text="@string/search" />
+
+        <Button
+            android:id="@+id/button_add"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="30dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="6dp"
+            android:textSize="14sp"
+            android:textColor="@color/darkorange"
+            android:background="@drawable/comman_button_bkg"
+            android:text="@string/add" />
+
+    </LinearLayout>
+
+
+    <ListView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/listview"
+        android:background="@drawable/ueid_bkg"
+        android:layout_weight="1"
+        android:scrollbars="vertical"
+        android:scrollbarThumbVertical="@drawable/scrollbar_style"
+        android:divider="@drawable/comman_listview_divider"
+        android:dividerHeight="0.6dp"
+        android:layout_marginTop="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/dark_gray"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="34dp"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:layout_margin="6dp"
+        android:gravity="center_vertical">
+
+        <Button
+            android:id="@+id/btImportNamelist"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="导入名单"
+            android:textSize="16sp"
+            android:textColor="@color/darkorange"
+            android:background="@drawable/comman_button_bkg"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/btExportNamelist"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="导出名单"
+            android:textColor="@color/darkorange"
+            android:background="@drawable/comman_button_bkg"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btClearNamelist"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="清空名单"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="10dp"
+            android:textColor="@color/darkorange"
+            android:background="@drawable/comman_button_bkg"
+            android:textSize="16sp" />
+    </LinearLayout>
+</LinearLayout>

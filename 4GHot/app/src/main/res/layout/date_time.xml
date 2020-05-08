@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:gravity="center"
+    android:background="@color/deepgrey2"
+    android:layout_height="match_parent" >
+
+    <DatePicker
+        android:id="@+id/dpDatePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:calendarViewShown="false"
+        android:theme="@style/MyTimePicker"
+        android:datePickerMode="spinner"/>
+
+    <TimePicker
+        android:id="@+id/tpTimePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:theme="@style/MyTimePicker"
+        android:timePickerMode="spinner"/>
+
+</LinearLayout>

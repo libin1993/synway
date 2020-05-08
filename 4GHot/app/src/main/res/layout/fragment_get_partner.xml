@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="3dp"
+        android:layout_marginEnd="3dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1.1"
+            android:textSize="14sp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:text="IMSI" />
+
+        <EditText
+            android:id="@+id/etGetPartnerIMSI"
+            android:layout_width="0dp"
+            android:layout_weight="3.5"
+            android:layout_height="26dp"
+            android:hint="伴随目标IMSI"
+            android:paddingStart="5dp"
+            android:textCursorDrawable="@null"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:background="@drawable/comman_edit_text_bkg"
+            android:maxLength="15"
+            android:inputType="number"
+            android:singleLine="true">
+        </EditText>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1.8"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:textColor="@color/white"
+            android:text="时间偏差" />
+
+        <EditText
+            android:id="@+id/etDeviation"
+            android:layout_width="0dp"
+            android:layout_weight="1.2"
+            android:layout_height="30dp"
+            android:hint="分钟"
+            android:textCursorDrawable="@null"
+            android:textSize="14sp"
+            android:layout_marginEnd="3dp"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:background="@drawable/comman_edit_text_bkg"
+            android:inputType="number"
+            android:singleLine="true">
+        </EditText>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="3dp"
+        android:background="@color/darkgrey"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="3dp"
+        android:layout_marginEnd="3dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="0.8"
+            android:textSize="14sp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:text="开始时间" />
+
+        <EditText
+            android:id="@+id/etStartTime"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="26dp"
+            android:hint="点击选择"
+            android:textCursorDrawable="@null"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:background="@drawable/comman_edit_text_bkg"
+            android:focusableInTouchMode="false"
+            android:maxLines = "1"  >
+        </EditText>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:layout_marginEnd="4dp"
+            android:layout_marginStart="6dp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="3dp"
+        android:background="@color/darkgrey"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
+        android:layout_marginEnd="3dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="0.8"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:text="结束时间" />
+
+        <EditText
+            android:id="@+id/etEndTime"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="26dp"
+            android:hint="点击选择"
+            android:textCursorDrawable="@null"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:background="@drawable/comman_edit_text_bkg"
+            android:focusableInTouchMode="false"
+            android:maxLines = "1"  >
+        </EditText>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:layout_marginEnd="4dp"
+            android:layout_marginStart="6dp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.8dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="3dp"
+        android:layout_marginEnd="3dp"
+        android:background="@color/darkgrey"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ueid_bkg"
+        android:layout_marginStart="3dp"
+        android:layout_marginEnd="3dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:gravity="bottom"
+            android:layout_width="match_parent"
+            android:textSize="14sp"
+            android:layout_height="30dp"
+            android:layout_marginStart="3dp"
+            android:textColor="@color/darkorange"
+            android:text="伴随结果" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.4dp"
+            android:background="@color/darkgrey"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="28dp"
+                android:background="@color/deepgrey2"
+                android:alpha="0.9"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:gravity="center"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/white"
+                    android:text="IMSI" />
+
+                <TextView
+                    android:gravity="center"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:textColor="@color/white"
+                    android:layout_height="match_parent"
+                    android:text="次 数"
+                    />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.4dp"
+                android:background="@color/darkgrey"/>
+
+            <LinearLayout
+                android:id="@+id/layoutCollideTarget"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="28dp"
+                android:background="@color/deepgrey2"
+                android:alpha="0.9"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvTargetIMSI"
+                    android:gravity="center"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/tvTargetIMSITimes"
+                    android:gravity="center"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:textColor="@color/white"
+                    android:layout_height="match_parent"
+                    />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.4dp"
+                android:background="@color/darkgrey"/>
+
+            <ListView
+                android:id="@+id/lvAnalysisResult"
+                android:layout_width="match_parent"
+                android:scrollbars="vertical"
+                android:divider="@null"
+                android:scrollbarThumbVertical="@drawable/scrollbar_style"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+            </ListView>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1.5dp"
+            android:background="@color/dark_blue"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btStartGetPartner"
+                android:layout_height="32dp"
+                android:layout_width="wrap_content"
+                android:textSize="14sp"
+                android:textColor="@color/darkorange"
+                android:background="@drawable/comman_button_bkg"
+                android:text="伴随分析" />
+
+            <Button
+                android:id="@+id/btExportGetPartnerRes"
+                android:layout_height="32dp"
+                android:layout_width="wrap_content"
+                android:textSize="14sp"
+                android:textColor="@color/darkorange"
+                android:background="@drawable/comman_button_bkg"
+                android:layout_marginStart="8dp"
+                android:text="导出结果" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

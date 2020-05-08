@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:background="@color/black"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.8dp"
+        android:background="@color/dark_gray"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="28dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1.2"
+            android:textSize="14sp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:text="@string/lab_keyword" />
+
+        <EditText
+            android:id="@+id/editText_keyword"
+            android:layout_width="0dp"
+            android:layout_weight="3"
+            android:layout_height="26dp"
+            android:paddingStart="5dp"
+            android:textCursorDrawable="@null"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:background="@drawable/comman_edit_text_bkg"
+            android:maxLength="15"
+            android:inputType="number"
+            android:singleLine="true"
+            android:hint="IMSI" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginStart="90dp"
+        android:layout_marginEnd="3dp"
+        android:background="@color/darkgrey"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:gravity="center_vertical"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="1dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1.2"
+            android:textSize="14sp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:text="@string/lab_start_time" />
+
+        <EditText
+            android:id="@+id/etStartTime"
+            android:layout_width="0dp"
+            android:layout_weight="3"
+            android:layout_height="26dp"
+            android:hint="点击选择"
+            android:textCursorDrawable="@null"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:background="@drawable/comman_edit_text_bkg"
+            android:focusableInTouchMode="false"
+            android:maxLines = "1" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginStart="90dp"
+        android:layout_marginEnd="3dp"
+        android:background="@color/darkgrey"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="28dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1.2"
+            android:textSize="14sp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:text="@string/lab_end_time" />
+
+        <EditText
+            android:id="@+id/etEndTime"
+            android:layout_width="0dp"
+            android:layout_weight="3"
+            android:layout_height="26dp"
+            android:hint="点击选择"
+            android:textCursorDrawable="@null"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:background="@drawable/comman_edit_text_bkg"
+            android:focusableInTouchMode="false"
+            android:maxLines = "1" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.3dp"
+        android:layout_marginTop="3dp"
+        android:background="@color/dimgrey"
+        />
+
+    <LinearLayout
+        android:id="@+id/layoutSearchResult"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/ueid_bkg"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="26dp"
+            android:textSize="13sp"
+            android:textColor="@color/darkorange"
+            android:text="搜索结果"
+            android:gravity="bottom"
+            android:layout_marginStart="12dp"
+            />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/dimgrey"
+            />
+
+        <ListView
+            android:id="@+id/lvUeidSearchRes"
+            android:layout_weight="1"
+            android:scrollbars="vertical"
+            android:scrollbarThumbVertical="@drawable/scrollbar_style"
+            android:divider="@drawable/comman_listview_divider"
+            android:dividerHeight="0.6dp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+    </LinearLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1.5dp"
+        android:background="@color/dimgrey"
+        />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/button_search"
+            android:layout_height="34dp"
+            android:layout_width="wrap_content"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:textSize="14sp"
+            android:textColor="@color/darkorange"
+            android:background="@drawable/comman_button_bkg"
+            android:text="@string/search" />
+
+        <Button
+            android:id="@+id/btExportSearchResult"
+            android:layout_height="34dp"
+            android:layout_width="wrap_content"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:textSize="14sp"
+            android:textColor="@color/darkorange"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/comman_button_bkg"
+            android:text="@string/export_search_res" />
+    </LinearLayout>
+</LinearLayout>

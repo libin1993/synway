@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/location_bkg"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/darkorange" />
+
+        <TextView
+            android:id="@+id/tvLocatingImsi"
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:background="@drawable/loc_top_lable_style"
+            android:gravity="center"
+            android:text="@string/loc_not_start"
+            android:textColor="@color/white"
+            android:textSize="19sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="vertical">
+
+        <com.doit.net.View.LocateCircle
+            android:id="@+id/vLocateCircle"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_gravity="center_horizontal"
+            android:padding="20dp"
+            app:animTime="800"
+            app:antiAlias="true"
+            app:arcWidth="35dp"
+            app:bgArcColor="@color/white"
+            app:bgArcWidth="1.5dp"
+            app:dottedLineCount="130"
+            app:dottedLineLength="16dp"
+            app:foreEndColor="@color/white"
+            app:foreStartColor="@color/dark_blue"
+            app:lineDistance="26"
+            app:maxValue="100"
+            app:scaleColor="@color/darkgrey"
+            app:scaleSize="12sp"
+            app:startAngle="130"
+            app:sweepAngle="280"
+            app:textOffsetPercentInRadius="0.5"
+            app:unit="实时信号"
+            app:unitColor="@color/darkgrey"
+            app:unitSize="14dp"
+            app:value="0"
+            app:valueBkgColor="@color/dark_blue"
+            app:valueColor="@color/white"
+            app:valueSize="58dp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-24dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/cbGainSwitch"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="25dp"
+                android:background="@drawable/gain_switch_style"
+                android:button="@null"
+                android:checked="true" />
+
+            <CheckBox
+                android:id="@+id/cbLocSwitch"
+                android:layout_width="82dp"
+                android:layout_height="32dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/loc_switch_style"
+                android:button="@null"
+                android:checked="false" />
+
+            <CheckBox
+                android:id="@+id/cbVoiceSwitch"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="25dp"
+                android:background="@drawable/loc_voice_switch_style"
+                android:button="@null"
+                android:checked="true" />
+
+        </RelativeLayout>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/layoutView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="12dp"
+        android:layout_weight="1"
+        android:background="@color/black"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <com.doit.net.View.LocateChart
+            android:id="@+id/vLocateChart"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="15dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="12dp"
+            android:padding="5dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/loc_dist_scale"></ImageView>
+    </LinearLayout>
+</LinearLayout>

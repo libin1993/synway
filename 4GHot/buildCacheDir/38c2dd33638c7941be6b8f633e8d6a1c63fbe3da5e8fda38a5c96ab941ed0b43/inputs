@@ -1,0 +1,10 @@
+COMMAND=PREDEX_LIBRARY_TO_DEX_ARCHIVE
+FILE.path=C:\Users\Administrator\.gradle\caches\modules-2\files-2.1\com.noveogroup.android\android-logger\1.3.5\7dc7b6018c0156966f2418c3047da2c716a0b32f\android-logger-1.3.5.jar
+FILE.hash=6edd1faa48255b3d0144fd92b9f14faa6bccaadf4ad220f9b0af5fff3526f13b
+DX_VERSION=1.14
+JUMBO_MODE=true
+OPTIMIZE=true
+DEXER_TOOL=D8
+CACHE_KEY_VERSION=4
+MIN_SDK_VERSION=18
+IS_DEBUGGABLE=true

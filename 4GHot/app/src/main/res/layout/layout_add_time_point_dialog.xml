@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical"
+        android:paddingBottom="3dp"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:paddingTop="5dp"
+        android:scrollbars="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/description_label"
+                android:layout_weight="2"
+                android:text="@string/time_point" />
+
+            <com.beardedhen.androidbootstrap.BootstrapEditText
+                android:id="@+id/etTimePoint"
+                style="@style/description_edit"
+                android:layout_weight="1"
+                android:digits="@string/account_rule"
+                android:singleLine="true"
+                app:bootstrapBrand="regular"
+                android:focusableInTouchMode="false"
+                app:bootstrapSize="md" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/description_label"
+                android:layout_weight="2"
+                android:text="@string/user_remake" />
+
+            <com.beardedhen.androidbootstrap.BootstrapEditText
+                android:id="@+id/etRemark"
+                style="@style/description_edit"
+                android:layout_weight="1"
+                android:inputType="text"
+                android:singleLine="true"
+                app:bootstrapBrand="info"
+                app:bootstrapSize="md" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_marginTop="10dp"
+            android:background="?android:attr/listDivider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <com.beardedhen.androidbootstrap.BootstrapButton
+                android:id="@+id/btTimePoint"
+                style="@style/wrapping_button"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="@string/add"
+                app:bootstrapBrand="primary" />
+
+            <com.beardedhen.androidbootstrap.BootstrapButton
+                android:id="@+id/btCancel"
+                style="@style/wrapping_button"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginStart="20dp"
+                android:layout_weight="1"
+                android:text="@string/cancel"
+                app:bootstrapBrand="regular" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

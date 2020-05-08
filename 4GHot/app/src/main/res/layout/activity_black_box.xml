@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:background="@color/black"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:gravity="center"
+        android:layout_marginTop="6dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="30dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:textColor="@color/darkorange"
+            android:text="@string/lab_keyword" />
+
+        <EditText
+            android:id="@+id/etKeyword"
+            style="@style/dialog_edit"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:hint="账号 / 操作内容"
+            android:layout_marginStart="8dp"
+            android:singleLine="true" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:gravity="center_vertical"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="30dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:textColor="@color/darkorange"
+            android:text="@string/lab_start_time" />
+
+        <EditText
+            android:id="@+id/etStartTime"
+            style="@style/dialog_edit"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:layout_marginStart="8dp"
+            android:focusableInTouchMode="false" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:gravity="center_vertical"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="30dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:gravity="center_vertical"
+            android:textColor="@color/darkorange"
+            android:text="@string/lab_end_time" />
+
+        <EditText
+            android:id="@+id/etEndTime"
+            style="@style/dialog_edit"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:layout_marginStart="8dp"
+            android:focusableInTouchMode="false" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginStart="20dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btSearch"
+            style="@style/wrapping_button"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="30dp"
+            android:layout_weight="1"
+            android:textColor="@color/darkorange"
+            android:background="@drawable/comman_button_bkg"
+            android:text="@string/search" />
+
+        <Button
+            android:id="@+id/btExportSearchResult"
+            style="@style/wrapping_button"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="30dp"
+            android:layout_weight="1.8"
+            android:text="@string/export_search_res"
+            android:textColor="@color/darkorange"
+            android:background="@drawable/comman_button_bkg" />
+    </LinearLayout>
+
+    <ListView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/lvBlackBox"
+        android:layout_width="match_parent"
+        android:scrollbars="vertical"
+        android:scrollbarThumbVertical="@drawable/scrollbar_style"
+        android:divider="@drawable/comman_listview_divider"
+        android:dividerHeight="0.6dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/comman_button_bkg"/>
+</LinearLayout>

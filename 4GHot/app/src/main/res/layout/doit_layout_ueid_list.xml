@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/example_container"
+    android:focusable="true"
+    android:layout_marginStart="4dp"
+    android:layout_marginEnd="4dp"
+    android:focusableInTouchMode="true">
+
+    <ListView
+        android:id="@+id/listview"
+        android:background="@drawable/ueid_bkg"
+        android:layout_marginBottom="2dp"
+        android:layout_weight="1"
+        android:scrollbars="vertical"
+        android:scrollbarThumbVertical="@drawable/scrollbar_style"
+        android:divider="@drawable/comman_listview_divider"
+        android:dividerHeight="1dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:background="@color/deepgrey2"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:textSize="16sp"
+            android:textColor="@color/darkgrey"
+            android:text="汇总:"/>
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginStart="3dp"
+            android:layout_marginEnd="4dp"
+            android:src="@drawable/ctj_icon"
+            android:scaleType="centerCrop"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/tvCTJCount"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:gravity="start|center_vertical"
+            android:layout_gravity="center"
+            android:textSize="16sp"
+            android:textColor="@color/darkgrey"
+            android:text="0"/>
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="4dp"
+            android:src="@drawable/ctu_icon"
+            android:scaleType="centerCrop"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/tvCTUCount"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:gravity="start|center_vertical"
+            android:layout_gravity="center"
+            android:textSize="16sp"
+            android:textColor="@color/darkgrey"
+            android:text="0"/>
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="4dp"
+            android:src="@drawable/ctc_icon"
+            android:scaleType="centerCrop"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/tvCTCCount"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:gravity="start|center_vertical"
+            android:layout_gravity="center"
+            android:textSize="16sp"
+            android:textColor="@color/darkgrey"
+            android:text="0"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <Button
+            android:id="@+id/button_clear"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="38dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_gravity="center"
+            android:textColor="@color/darkorange"
+            android:background="@drawable/comman_button_bkg"
+            android:text="@string/clear_realtime_ueid" />
+
+
+        <CheckBox
+            android:id="@+id/cbDetectSwitch"
+            android:layout_width="wrap_content"
+            android:checked="true"
+            android:layout_height="38dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginEnd="30dp"
+            android:background="@drawable/detect_switch_style"
+            android:button="@null"
+            />
+    </LinearLayout>
+</LinearLayout>

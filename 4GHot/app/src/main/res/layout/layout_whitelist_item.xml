@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.daimajia.swipe.SwipeLayout
+    xmlns:swipe="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_user_info"
+    android:layout_width="56dp"
+    android:layout_height="wrap_content"
+    android:alpha="0.8"
+    swipe:leftEdgeSwipeOffset="0dp"
+    swipe:rightEdgeSwipeOffset="0dp">
+
+    <LinearLayout
+        android:tag="Bottom2"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/ivModify"
+            android:src="@drawable/ic_cached_black_36dp"
+            android:layout_width="54dp"
+            android:background="#4cd964"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_height="54dp" />
+
+        <ImageView
+            android:id="@+id/ivDelete"
+            android:src="@drawable/icon_delete"
+            android:layout_width="54dp"
+            android:background="@drawable/red"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:layout_height="54dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutWhiteListItemText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:background="@color/black">
+
+        <TextView
+            android:id="@+id/tvIndex"
+            android:layout_width="wrap_content"
+            android:textColor="@color/white"
+            android:text="1."
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/tvWhitelistInfo"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:src="@drawable/ueid_arrowhead"
+            android:layout_width="10dp"
+            android:layout_height="16dp"
+            android:layout_gravity="center_vertical"
+            android:scaleType="centerCrop"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="4dp"
+            />
+    </LinearLayout>
+</com.daimajia.swipe.SwipeLayout>

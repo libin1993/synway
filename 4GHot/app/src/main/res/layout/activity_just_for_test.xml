@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.doit.net.View.JustForTest">
+
+    <LinearLayout
+        android:layout_marginTop="6dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/test1"
+            android:text="更新频点"
+            android:layout_marginStart="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp" />
+
+        <Button
+            android:id="@+id/test2"
+            android:text="显示文件频点"
+            android:layout_marginStart="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp" />
+
+        <Button
+            android:id="@+id/test3"
+            android:text="测试"
+            android:layout_marginStart="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp" />
+
+        <Button
+            android:id="@+id/btGetDeviceLog"
+            android:text="获取设备日志"
+            android:layout_marginStart="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp" />
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/tvTemperature"
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:textColor="@color/dark_background"
+        android:layout_height="40dp"
+        android:textSize="16sp"
+        android:text="温度："/>
+
+    <TextView
+        android:id="@+id/tvArfcns"
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:textColor="@color/dark_background"
+        android:layout_height="wrap_content"
+        android:textSize="16sp" />
+</LinearLayout>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="3dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:layout_height="42dp">
+
+
+        <com.beardedhen.androidbootstrap.BootstrapButton
+            android:id="@+id/btStartStop"
+            android:layout_width="wrap_content"
+            android:layout_height="34dp"
+            app:bootstrapBrand="primary"
+            app:roundedCorners="true"
+            android:text="开始跟踪" />
+
+        <com.beardedhen.androidbootstrap.BootstrapButton
+            android:id="@+id/btRestart"
+            android:layout_marginStart="20dp"
+            android:text="重新开始"
+            app:bootstrapBrand="primary"
+            app:roundedCorners="true"
+            android:layout_width="wrap_content"
+            android:layout_height="34dp" />
+    </LinearLayout>
+
+    <TextView
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:textSize="16sp"
+        android:layout_height="30dp"
+        android:text="实时结果:" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/darkgrey"
+        android:layout_marginTop="5dp" />
+
+    <LinearLayout
+        android:id="@+id/layoutCollideResult"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:visibility="visible"
+        android:layout_height="480dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="match_parent"
+                android:text="IMSI" />
+
+            <View
+                android:background="@color/slategrey"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:text="次 数"
+                />
+        </LinearLayout>
+
+        <View
+            android:background="@color/slategrey"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
+
+        <ListView
+            android:id="@+id/lvAnalysisResult"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+        </ListView>
+    </LinearLayout>
+</LinearLayout>

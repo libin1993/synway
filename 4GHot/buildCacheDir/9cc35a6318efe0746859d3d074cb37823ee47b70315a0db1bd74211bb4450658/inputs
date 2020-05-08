@@ -1,0 +1,10 @@
+COMMAND=PREDEX_LIBRARY_TO_DEX_ARCHIVE
+FILE.path=C:\Users\Administrator\.gradle\caches\transforms-1\files-1.1\recyclerview-animators-1.0.3.aar\127a04cfa9d19ed273d1733dfcdf58ae\jars\classes.jar
+FILE.hash=07f9f39728e53f606c409c28cebb285c45527f6869afab6edf2c2e2ec3272968
+DX_VERSION=1.14
+JUMBO_MODE=true
+OPTIMIZE=true
+DEXER_TOOL=D8
+CACHE_KEY_VERSION=4
+MIN_SDK_VERSION=26
+IS_DEBUGGABLE=true
