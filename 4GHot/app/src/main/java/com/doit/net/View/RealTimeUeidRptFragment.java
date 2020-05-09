@@ -151,6 +151,7 @@ public class RealTimeUeidRptFragment extends BaseFragment implements IHandlerFin
         });
 
         cbDetectSwitch = (CheckBox) rootView.findViewById(R.id.cbDetectSwitch);
+        UtilBaseLog.printLog("状态1"+CacheManager.isDeviceOk());
         cbDetectSwitch.setChecked(CacheManager.isDeviceOk());
         cbDetectSwitch.setOnCheckedChangeListener(rfDetectSwichtListener);
     }
@@ -363,8 +364,10 @@ public class RealTimeUeidRptFragment extends BaseFragment implements IHandlerFin
         }
     }
 
+
     @Override
     public void onResume() {
+        super.onResume();
         boolean rfState = false;
 
         for(LteChannelCfg channel:CacheManager.getChannels()){
@@ -373,8 +376,9 @@ public class RealTimeUeidRptFragment extends BaseFragment implements IHandlerFin
                 break;
             }
         }
+        UtilBaseLog.printLog("状态2"+rfState);
         cbDetectSwitch.setChecked(rfState);
-        super.onResume();
+
     }
 
     @Override

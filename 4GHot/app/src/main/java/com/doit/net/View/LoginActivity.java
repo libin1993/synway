@@ -53,8 +53,8 @@ public class LoginActivity extends Activity {
         view = View.inflate(this, R.layout.activity_login, null);
         setContentView(view);
 
-        checkTimeDatum();
-        checkAuthorize();
+//        checkTimeDatum();
+//        checkAuthorize();
         initView();
         checkLocalDir();
         initLog();
@@ -189,13 +189,13 @@ public class LoginActivity extends Activity {
             @Override
             public void onClick(View v) {
                 boolean tmpCheckRes = checkTimeDatum();
-                if (!tmpCheckRes){
-                    return;
-                }
-                tmpCheckRes = checkAuthorize();
-                if (!tmpCheckRes){
-                    return;
-                }
+//                if (!tmpCheckRes){
+//                    return;
+//                }
+//                tmpCheckRes = checkAuthorize();
+//                if (!tmpCheckRes){
+//                    return;
+//                }
 
                 String userName = etUserName.getText().toString();
                 String password = etPassword.getText().toString();

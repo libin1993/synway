@@ -189,6 +189,7 @@
     <string name="time_point">时间点：</string>
     <string name="start_scan_freq">开始搜网</string>
     <string name="set_selected_fcn">设置开机扫描频点</string>
+    <string name="button_loc_unstart">请从列表中选择要监控的名单</string>
 
     <string name="hw_version">硬件版本：</string>
     <string name="sw_version">软件版本：</string>

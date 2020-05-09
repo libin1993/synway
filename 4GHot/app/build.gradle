@@ -92,9 +92,6 @@ android {
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
-        debug {
-            //buildConfigField "boolean", "LOC_MODEL", "true"
-        }
     }
 
     sourceSets {
@@ -107,26 +104,26 @@ android {
     }
 
     productFlavors {
-        police {
-            minSdkVersion 21
-            applicationId 'com.synway.lte.hotspot'
-            targetSdkVersion 24
-            versionCode android.defaultConfig.versionCode
-            versionName android.defaultConfig.versionName + "P" + releaseTime()
-            //versionName android.defaultConfig.versionName+"P"
-            signingConfig signingConfigs.relealse
-            buildConfigField "boolean", "SPLASH_SCREEN", "true"
-            resValue("string", "app_name", "便携式侦码")
-            resValue("string", "login_lable", "便携式侦码")
-            resValue("string", "login_icon", "@drawable/app_icon")
-            manifestPlaceholders = [app_icon: "@drawable/app_icon"]
-        }
+//        police {
+//            minSdkVersion 21
+//            applicationId 'com.synway.lte.hotspot'
+//            targetSdkVersion 28
+//            versionCode android.defaultConfig.versionCode
+//            versionName android.defaultConfig.versionName + "P" + releaseTime()
+//            //versionName android.defaultConfig.versionName+"P"
+//            signingConfig signingConfigs.relealse
+//            buildConfigField "boolean", "SPLASH_SCREEN", "true"
+//            resValue("string", "app_name", "便携式侦码")
+//            resValue("string", "login_lable", "便携式侦码")
+//            resValue("string", "login_icon", "@drawable/app_icon")
+//            manifestPlaceholders = [app_icon: "@drawable/app_icon"]
+//        }
 
 
         army {
             minSdkVersion 21
             applicationId 'com.synway.lte.hotspot'
-            targetSdkVersion 24
+            targetSdkVersion 28
             versionCode android.defaultConfig.versionCode
             versionName android.defaultConfig.versionName + "A" + releaseTime()
             //versionName android.defaultConfig.versionName+"A"

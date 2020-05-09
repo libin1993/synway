@@ -709,23 +709,23 @@ public class MainActivity extends AppCompatActivity implements IHandlerFinish, T
             ivBatteryLevel.setImageDrawable(getResources().getDrawable(R.drawable.battery_level6));
             //batteryViewAnit.cancel();
             ivBatteryLevel.clearAnimation();
-        }else if (voltage < LEVEL5 && voltage >= LEVEL4){
+        }else if (voltage >= LEVEL4){
             ivBatteryLevel.setImageDrawable(getResources().getDrawable(R.drawable.battery_level5));
             ivBatteryLevel.clearAnimation();
             //batteryViewAnit.cancel();
-        }else if (voltage < LEVEL4 && voltage >= LEVEL3) {
+        }else if (voltage >= LEVEL3) {
             ivBatteryLevel.setImageDrawable(getResources().getDrawable(R.drawable.battery_level4));
             batteryViewAnit.cancel();
             ivBatteryLevel.clearAnimation();
-        }else if (voltage < LEVEL3 && voltage >= LEVEL2){
+        }else if (voltage >= LEVEL2){
             ivBatteryLevel.setImageDrawable(getResources().getDrawable(R.drawable.battery_level3));
             batteryViewAnit.cancel();
             ivBatteryLevel.clearAnimation();
-        }else if (voltage < LEVEL2 && voltage >= LEVEL1){
+        }else if (voltage >= LEVEL1){
             ivBatteryLevel.setImageDrawable(getResources().getDrawable(R.drawable.battery_level2));
             batteryViewAnit.cancel();
             ivBatteryLevel.clearAnimation();
-        }else if (voltage < LEVEL1){
+        }else {
             ivBatteryLevel.setImageDrawable(getResources().getDrawable(R.drawable.battery_level1));
 
             if (!batteryViewAnit.hasStarted() || batteryViewAnit.hasEnded()){

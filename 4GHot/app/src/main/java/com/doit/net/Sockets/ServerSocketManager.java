@@ -143,7 +143,6 @@ public class ServerSocketManager
 	
 	//启动返回的连接接收数据
 	private void StartNewLinkParse(UtilServerSocketSub utilSocket){
-		final String  port = utilSocket.remotePort;
 
 		utilSocket.startAsynReceiveData(new IServerSocketSubChange() {
 			@Override

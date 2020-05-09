@@ -1,5 +1,7 @@
 package com.doit.net.Data;
 
+import android.util.Log;
+
 import com.doit.net.Protocol.LTE_PT_LOGIN;
 import com.doit.net.Protocol.LTE_PT_PARAM;
 import com.doit.net.Protocol.LTE_PT_SYSTEM;
@@ -28,9 +30,7 @@ public class LTEDataParse {
 		int listReceiveCount = listReceiveBuffer.size();
 		
 		//如果缓存长度小于12说明最小包都没有收完整
-		if(listReceiveCount<packageHeadLength) {
-		}
-		else {
+		if(listReceiveCount>=packageHeadLength) {
 			parseData(listReceiveCount);
 		}
 	}
@@ -155,6 +155,7 @@ public class LTEDataParse {
 	//实时回复协议
 	public void realTimeRespose(LTEReceivePackage receivePackage) {
 		switch(receivePackage.getPackageMainType()) {
+
 			case LTE_PT_LOGIN.PT_LOGIN:
 				LTE_PT_LOGIN.parseLoginApply(receivePackage);
 				break;

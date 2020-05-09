@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.doit.net.Protocol.LTE_PT_PARAM;
+import com.doit.net.Utils.FormatUtils;
 import com.doit.net.Utils.MySweetAlertDialog;
 import com.doit.net.Utils.UtilBaseLog;
 import com.doit.net.ucsi.R;
@@ -26,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 
 import com.doit.net.Activity.GameApplication;
 import com.doit.net.Bean.LteChannelCfg;

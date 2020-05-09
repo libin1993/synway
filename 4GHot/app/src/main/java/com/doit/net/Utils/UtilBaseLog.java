@@ -30,7 +30,7 @@ public class UtilBaseLog {
 
     //将日志打印到调试界面
     public static void printLog(String msg) {
-        Log.v("------4GHot-----",msg);
+        Log.v("libin",msg);
         if (BuildConfig.SAVE_LOG){
             saveLog(msg);
         }

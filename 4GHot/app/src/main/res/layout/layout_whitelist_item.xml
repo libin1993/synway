@@ -3,7 +3,7 @@
     xmlns:swipe="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layout_user_info"
-    android:layout_width="56dp"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:alpha="0.8"
     swipe:leftEdgeSwipeOffset="0dp"
@@ -12,31 +12,31 @@
     <LinearLayout
         android:tag="Bottom2"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent">
+        android:layout_height="60dp">
 
         <ImageView
             android:id="@+id/ivModify"
             android:src="@drawable/ic_cached_black_36dp"
-            android:layout_width="54dp"
+            android:layout_width="60dp"
             android:background="#4cd964"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:layout_height="54dp" />
+            android:layout_height="60dp" />
 
         <ImageView
             android:id="@+id/ivDelete"
             android:src="@drawable/icon_delete"
-            android:layout_width="54dp"
+            android:layout_width="60dp"
             android:background="@drawable/red"
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
-            android:layout_height="54dp" />
+            android:layout_height="60dp" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/layoutWhiteListItemText"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="60dp"
         android:gravity="center_vertical"
         android:background="@color/black">
 

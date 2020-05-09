@@ -102,7 +102,7 @@
         <Button
             android:id="@+id/button_clear"
             android:layout_width="0dp"
-            android:layout_weight="2"
+            android:layout_weight="1"
             android:layout_height="38dp"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
@@ -116,7 +116,7 @@
 
         <CheckBox
             android:id="@+id/cbDetectSwitch"
-            android:layout_width="wrap_content"
+            android:layout_width="96.7dp"
             android:checked="true"
             android:layout_height="38dp"
             android:layout_marginTop="4dp"
@@ -124,6 +124,7 @@
             android:layout_marginEnd="30dp"
             android:background="@drawable/detect_switch_style"
             android:button="@null"
-            />
+            android:text=""
+            android:textSize="1sp"/>
     </LinearLayout>
 </LinearLayout>

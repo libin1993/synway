@@ -49,7 +49,7 @@ public class UtilServerSocket
 	public void AsynMonitorLink(final IServerSocketChange iServerSocketChange)
 	{
 		this.iServerSocketChange=iServerSocketChange;
-		if(isThreadLoop == false)
+		if(!isThreadLoop)
 		{
 			//连接成功则创建接收线程
 			monitorThreat=new MonitorThreat();

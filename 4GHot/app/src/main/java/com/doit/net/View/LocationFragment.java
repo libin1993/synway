@@ -477,7 +477,7 @@ public class LocationFragment extends BaseFragment implements View.OnClickListen
                 EventAdapter.call(EventAdapter.ADD_BLACKBOX,BlackBoxManger.STOP_LOCALTE+CacheManager.currentLoction.getImsi());
             }else{
                 if(CacheManager.currentLoction.getImsi().equals("")){
-                    ToastUtils.showMessage(getActivity(),R.string.button_loc_unstart);
+                    ToastUtils.showMessage(getActivity(),getString(R.string.button_loc_unstart));
                 }else{
                     startLoc();
                     //ProtocolManager.openAllRf();

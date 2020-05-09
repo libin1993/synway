@@ -110,6 +110,7 @@ public class UtilServerSocketSub
         	}
         	catch (IOException ex) {
         		iClientSocketChange.onClientReceiveError(remoteIP,remotePort,"UtilSocket Error:"+ex.toString());
+        		UtilBaseLog.printLog("UtilSocket Error:"+ex.toString());
 			}
         	finally
         	{
