@@ -1,25 +1,24 @@
 package com.doit.net.Protocol;
 
 
-import com.doit.net.Activity.GameApplication;
-import com.doit.net.Bean.DeviceState;
-import com.doit.net.Bean.LteCellConfig;
-import com.doit.net.Bean.Namelist;
-import com.doit.net.Bean.UeidBean;
+import com.doit.net.application.MyApplication;
+import com.doit.net.bean.DeviceState;
+import com.doit.net.bean.LteCellConfig;
+import com.doit.net.bean.Namelist;
+import com.doit.net.bean.UeidBean;
 import com.doit.net.Data.LTESendManager;
-import com.doit.net.Bean.BlackNameBean;
-import com.doit.net.Bean.LteChannelCfg;
-import com.doit.net.Bean.LteEquipConfig;
+import com.doit.net.bean.BlackNameBean;
+import com.doit.net.bean.LteChannelCfg;
+import com.doit.net.bean.LteEquipConfig;
 import com.doit.net.Event.EventAdapter;
-import com.doit.net.Event.ProtocolManager;
 import com.doit.net.Event.UIEventManager;
 import com.doit.net.Model.CacheManager;
 import com.doit.net.Model.ImsiMsisdnConvert;
 import com.doit.net.Model.ScanFreqManager;
 import com.doit.net.Model.UCSIDBManager;
-import com.doit.net.Utils.DateUtil;
+import com.doit.net.Utils.DateUtils;
 import com.doit.net.Utils.ToastUtils;
-import com.doit.net.Utils.UtilBaseLog;
+import com.doit.net.Utils.LogUtils;
 import com.doit.net.Utils.UtilDataFormatChange;
 import com.doit.net.Utils.UtilOperator;
 import com.doit.net.ucsi.R;
@@ -27,7 +26,6 @@ import com.doit.net.ucsi.R;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
@@ -41,30 +39,35 @@ import java.util.List;
  */
 public class LTE_PT_PARAM {
 	public static final byte PT_PARAM = 0x05;
+
+
 	public static final byte PARAM_GET_ENB_CONFIG = 0x02;   	//获取设备配置
 	public static final byte PARAM_GET_ENB_CONFIG_ACK = 0x03;
     public static final byte PARAM_GET_NAMELIST = 0x08;   	//获取名单信息
     public static final byte PARAM_GET_NAMELIST_ACK = 0x09;
+    public static final byte PARAM_GET_ACTIVE_MODE = 0x0a; 	//查询工作模式
+    public static final byte PARAM_GET_ACTIVE_MODE_ASK = 0x0b; 	//查询工作模式
+
 	public static final byte PARAM_SET_ENB_CONFIG = 0x11;  	//设置设备配置
 	public static final byte PARAM_SET_ENB_CONFIG_ACK = 0x12;
 	public static final byte PARAM_SET_CHANNEL_CONFIG = 0x13;	//设置通道配置
 	public static final byte PARAM_SET_CHANNEL_CONFIG_ACK = 0x14;
-	public static final byte PARAM_SET_BLACK_NAMELIST = 0x15;     //设置中标名单
+	public static final byte PARAM_SET_BLACK_NAMELIST = 0x15;     //设置黑名单
 	public static final byte PARAM_SET_BLACK_NAMELIST_ACK = 0x16;
+    public static final byte PARAM_SET_FTP_CONFIG = 0x17;	//设置ftp
+    public static final byte PARAM_SET_FTP_CONFIG_ACK = 0x18;
 	public static final byte PARAM_SET_CHANNEL_ON = 0x19;	//设置通道开
 	public static final byte PARAM_SET_CHANNEL_ON_ACK = 0x1a;
     public static final byte PARAM_SET_CHANNEL_OFF = 0x1b;    //设置通道关
     public static final byte PARAM_SET_CHANNEL_OFF_ACK = 0x1c;
     public static final byte PARAM_SET_NAMELIST = 0x1d;    //设置名单
     public static final byte PARAM_SET_NAMELIST_ACK = 0x1e;
-	public static final byte PARAM_SET_FTP_CONFIG = 0x17;	//设置ftp
-	public static final byte PARAM_SET_FTP_CONFIG_ACK = 0x18;
 	public static final byte PARAM_SET_RT_IMSI = 0x21;	//设置是否实时上报黑名单IMSI
 	public static final byte PARAM_SET_RT_IMSI_ACK = 0x22;
-	public static final byte PARAM_SET_SCAN_FREQ = 0x23;
+	public static final byte PARAM_SET_SCAN_FREQ = 0x23; //下发扫频命令
 	public static final byte PARAM_SET_SCAN_FREQ_ACK = 0x24;
 	public static final byte PARAM_RPT_SCAN_FREQ = 0x25;
-	public static final byte PARAM_RPT_UPGRADE_STATUS = 0x26;
+	public static final byte PARAM_RPT_UPGRADE_STATUS = 0x26; //设备升级
     public static final byte RPT_SRSP_GROUP = 0x27; 	//定位上报
     public static final byte PARAM_RPT_HEATBEAT = 0x31; 	//心跳
     public static final byte PARAM_RPT_BLACK_NAME = 0x32; 	//黑名单中标上报
@@ -75,12 +78,11 @@ public class LTE_PT_PARAM {
     public static final byte PARAM_CHANGE_BAND_ACK = 0x37; 	//更换band
     public static final byte PARAM_SET_FAN = 0x38; 	//设置风扇
     public static final byte PARAM_SET_FAN_ACK = 0x39; 	//设置风扇
-    public static final byte PARAM_GET_ACTIVE_MODE = 0x0a; 	//查询工作模式
-    public static final byte PARAM_GET_ACTIVE_MODE_ASK = 0x0b; 	//查询工作模式
     public static final byte PARAM_SET_ACTIVE_MODE = 0x3a; 	//设置工作模式
     public static final byte PARAM_SET_ACTIVE_MODE_ACK = 0x3b; 	//设置工作模式回复
     public static final byte PARAM_SET_LOC_IMSI = 0x3c; 	//设置定位
     public static final byte PPARAM_SET_LOC_IMSI_ACK = 0x3d; 	//设置定位回复
+
 
     private static long lastRptSyncErrorTime = 0; //记录每次上报同步状态异常的时间
 
@@ -116,7 +118,7 @@ public class LTE_PT_PARAM {
         //IDX:12@BAND:3@FCN:1650,1506,1825@ALT_FCN:@PLMN:46000,46001,46011@PA:-7,-7,-7@GA:35@PW:43.0@RLM:-100@AUTO_OPEN:0@MAX:-5
         //IDX:13@BAND:39@FCN:38544,38400,38300@ALT_FCN:@PLMN:46000,46001,46011@PA:-13,-13,-13@GA:40@PW:43.0@RLM:-90@AUTO_OPEN:0@MAX:-10
 		String enbConfigAck = UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(),0);
-		UtilBaseLog.printLog("processEnbConfigQuery:" + enbConfigAck);
+		LogUtils.log("processEnbConfigQuery:" + enbConfigAck);
 		String[] splitStr = enbConfigAck.split("#");
 
         LteEquipConfig lteEquipConfig = praseEquipConfig(splitStr[0]);
@@ -128,7 +130,7 @@ public class LTE_PT_PARAM {
 
         //通道级的配置
 		for (int i = 1; i < splitStr.length; i++){
-            UtilBaseLog.printLog(splitStr[i]);
+            LogUtils.log(splitStr[i]);
             LteChannelCfg lteChannelCfg = praseChannelConfig(splitStr[i]);
             CacheManager.addChannel(lteChannelCfg);
         }
@@ -147,7 +149,7 @@ public class LTE_PT_PARAM {
         // @NAMELIST_RELEASE:460001234512345
         // @NAMELIST_REST_ACTION:block
         String namelistAck = UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(),0);
-        UtilBaseLog.printLog("processNamelistQuery:" + namelistAck);
+        LogUtils.log("processNamelistQuery:" + namelistAck);
         String[] splitStr = namelistAck.split("@");
 
         Namelist namelist = new Namelist();
@@ -196,13 +198,13 @@ public class LTE_PT_PARAM {
         // IDX:60@STATE:0#IDX:61@STATE:0#IDX:72@STATE:0#IP:192.168.0.1@ID:BL001@TM:55:66:77,45:55:65@G1:12.123456@G2:12.123456
         // @DATANUM:30@RPTSTATUS:1@ENBSTATUS:1@FTPERRCNT:10@SYNCSTATUS:0
         String heartbeat = UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(),0);
-        UtilBaseLog.printLog("processRPTHeartbeat:" + heartbeat);
+        LogUtils.log("processRPTHeartbeat:" + heartbeat);
 
         //同步状态
         lastRptSyncErrorTime = System.currentTimeMillis();  //第一次不提示
         if (heartbeat.split("SYNCSTATUS")[1].charAt(1) != '0') {
             if ((int)(System.currentTimeMillis() - lastRptSyncErrorTime) > 5*60*1000){
-                UtilBaseLog.printLog("同步状态异常");
+                LogUtils.log("同步状态异常");
                 lastRptSyncErrorTime = System.currentTimeMillis();
                 //EventAdapter.call(EventAdapter.SYNC_ERROR_RPT);
             }
@@ -242,7 +244,7 @@ public class LTE_PT_PARAM {
             blackName.setLatitude(splitStr[3]);
         }
 
-        UtilBaseLog.printLog("##################  中标："+ blackName.getIMSI() + "  #########################");
+        LogUtils.log("##################  中标："+ blackName.getIMSI() + "  #########################");
         EventAdapter.call(EventAdapter.BLACK_NAME_RPT, blackName);
     }
 
@@ -255,7 +257,7 @@ public class LTE_PT_PARAM {
     //处理Ftp上传的UEID文件
     public static void processUeidRpt(String filePath){
 	    if (filePath.contains("19700101")) {
-	        UtilBaseLog.printLog("上报采集文件时间无效文件——忽略");
+	        LogUtils.log("上报采集文件时间无效文件——忽略");
             deleteFile(filePath);
             return;
         }
@@ -303,18 +305,16 @@ public class LTE_PT_PARAM {
                     if (!CacheManager.removeExistUeidInRealtimeList(splitUeid[0])){
                         //
                         /* 1.如果实时上报界面没打开，就只是存到数据库而不显示
-                         * 2.存入数据库需要去重，去重的依据是否则一经存在实时列表里
+                         * 2.存入数据库需要去重，去重的依据是否则已经存在实时列表里
                          * */
                         UCSIDBManager.saveUeidToDB(tmpImsi, ImsiMsisdnConvert.getMsisdnFromLocal(tmpImsi), tmpTmsi,
-                                DateUtil.convert2long(tmpRptTime, DateUtil.LOCAL_DATE), longitude, latitude);
+                                DateUtils.convert2long(tmpRptTime, DateUtils.LOCAL_DATE), longitude, latitude);
                     }
                 }
                 bufferedReader.close();
                 file.delete();   //处理完删除
 
                 EventAdapter.call(EventAdapter.UEID_RPT, listUeid);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -343,13 +343,13 @@ public class LTE_PT_PARAM {
 
 
         String scanFreqResult = UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(),0);
-        UtilBaseLog.printLog("搜网上报:" + scanFreqResult);
+        LogUtils.log("搜网上报:" + scanFreqResult);
         String tmpFcn = "";
         int tmpBand = 1;
         String[] splitStr = scanFreqResult.split(",");
         for (int i = 0; i < splitStr.length; i++){
             tmpFcn = splitStr[i].split("@")[1].split(":")[1];
-            tmpBand = UtilOperator.getBandByFcn(Integer.valueOf(tmpFcn));
+            tmpBand = UtilOperator.getBandByFcn(Integer.parseInt(tmpFcn));
             switch (tmpBand){
                 case 1:
                     if(!band1FcnList.contains(tmpFcn)){
@@ -386,7 +386,7 @@ public class LTE_PT_PARAM {
             }
         }
 
-        UtilBaseLog.printLog("搜网结果解析："+band1FcnList+"/"+band3FcnList+"/"+band38FcnList+"/"+band39FcnList+"/"+band40FcnList);
+        LogUtils.log("搜网结果解析："+band1FcnList+"/"+band3FcnList+"/"+band38FcnList+"/"+band39FcnList+"/"+band40FcnList);
         ScanFreqManager.saveAndSetScanFreqResult(
                 "".equals(band1FcnList)?"":band1FcnList.substring(0, band1FcnList.length()-1),
                 "".equals(band3FcnList)?"":band3FcnList.substring(0, band3FcnList.length()-1),
@@ -398,11 +398,11 @@ public class LTE_PT_PARAM {
 
     //处理配置回复
     public static void processSetResp(LTEReceivePackage receivePackage) {
-        String respcContent = UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(),0);
+        String respContent = UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(),0);
 	    switch (receivePackage.getPackageSubType()){
             case PARAM_SET_CHANNEL_ON_ACK:
                 //UtilBaseLog.printLog("开");
-                String[] onAsk = respcContent.split("#");
+                String[] onAsk = respContent.split("#");
                 if (onAsk[0].charAt(0) == '0') {
                     for (LteChannelCfg channel : CacheManager.getChannels()) {
                         if (channel.getIdx().equals(onAsk[1])) {
@@ -411,11 +411,12 @@ public class LTE_PT_PARAM {
                     }
                 }
 
+                UIEventManager.call(UIEventManager.KEY_RF_STATUS);
                 UIEventManager.call(UIEventManager.KEY_REFRESH_DEVICE);
                 break;
 
             case PARAM_SET_CHANNEL_OFF_ACK:
-                String[] offAsk = respcContent.split("#");
+                String[] offAsk = respContent.split("#");
                 //UtilBaseLog.printLog("关");
                 if (offAsk[0].charAt(0) == '0') {
                     for (LteChannelCfg channel : CacheManager.getChannels()) {
@@ -424,49 +425,47 @@ public class LTE_PT_PARAM {
                         }
                     }
                 }
-
                 UIEventManager.call(UIEventManager.KEY_REFRESH_DEVICE);
                 break;
 
             case LTE_PT_PARAM.PARAM_SET_NAMELIST_ACK:
-                String setNameListAsk = respcContent;
+                String setNameListAsk = respContent;
                 if (setNameListAsk.charAt(0) == '0') {
-                    UtilBaseLog.printLog("设置管控名单成功");
+                    LogUtils.log("设置管控名单成功");
                 }else if (setNameListAsk.charAt(0) == '1'){
-                    UtilBaseLog.printLog("设置管控名单失败");
+                    LogUtils.log("设置管控名单失败");
                 }
                 break;
 
             case LTE_PT_PARAM.PARAM_CHANGE_TAG_ACK:
-                if (respcContent.charAt(0) == '0') {
-                    UtilBaseLog.printLog("更新TAC成功");
+                if (respContent.charAt(0) == '0') {
+                    LogUtils.log("更新TAC成功");
 
-                    ToastUtils.showMessage(GameApplication.appContext,"更新TAC成功");
-                }else if (respcContent.charAt(0) == 1){
-                    UtilBaseLog.printLog("更新TAC失败");
+                    ToastUtils.showMessage(MyApplication.mContext,"更新TAC成功");
+                }else if (respContent.charAt(0) == 1){
+                    LogUtils.log("更新TAC失败");
                     //ToastUtils.showMessage(GameApplication.appContext,"更新TAC失败");
                 }
                 break;
 
             case LTE_PT_PARAM.PARAM_SET_CHANNEL_CONFIG_ACK:
-                String setChannelAsk = respcContent;
-                if (setChannelAsk.charAt(0) == '0') {
-                    UtilBaseLog.printLog("设置通道成功");
-                }else if (setChannelAsk.charAt(0) == '1'){
-                    UtilBaseLog.printLog("设置通道失败");
+                if (respContent.charAt(0) == '0') {
+                    LogUtils.log("设置通道成功");
+                }else if (respContent.charAt(0) == '1'){
+                    LogUtils.log("设置通道失败");
                 }
                 break;
 
             case LTE_PT_PARAM.PARAM_SET_BLACK_NAMELIST_ACK:
-                if (respcContent.length() != 0){  //如果黑名单为空，那么查回来的respcContent就为空
-                    if (respcContent.contains("#") || respcContent.length() == 15){  //程序里默认查询到就删掉，因为协议的问题，可能会会越积越多
-                        UtilBaseLog.printLog("查询到黑名单:" + respcContent + " ,将其删除。");
-                        ProtocolManager.setBlackList("3", "#"+respcContent);
+                if (respContent.length() != 0){  //如果黑名单为空，那么查回来的respcContent就为空
+                    if (respContent.contains("#") || respContent.length() == 15){  //程序里默认查询到就删掉，因为协议的问题，可能会会越积越多
+                        LogUtils.log("查询到黑名单:" + respContent + " ,将其删除。");
+                        ProtocolManager.setBlackList("3", "#"+respContent);
                     }else{
-                        if (respcContent.charAt(0) == '0') {
-                            UtilBaseLog.printLog("设置黑名单(中标)成功");
-                        }else if (respcContent.charAt(0) == '1'){
-                            UtilBaseLog.printLog("设置黑名单(中标)失败");
+                        if (respContent.charAt(0) == '0') {
+                            LogUtils.log("设置黑名单(中标)成功");
+                        }else if (respContent.charAt(0) == '1'){
+                            LogUtils.log("设置黑名单(中标)失败");
                         }
                     }
                 }
@@ -474,74 +473,74 @@ public class LTE_PT_PARAM {
                 break;
 
             case LTE_PT_PARAM.PARAM_SET_RT_IMSI_ACK:
-                if (respcContent.charAt(0) == '0') {
-                    UtilBaseLog.printLog("设置上报黑名单(中标)开关成功");
-                }else if (respcContent.charAt(0) == '1'){
-                    UtilBaseLog.printLog("设置上报黑名单(中标)开关失败");
+                if (respContent.charAt(0) == '0') {
+                    LogUtils.log("设置上报黑名单(中标)开关成功");
+                }else if (respContent.charAt(0) == '1'){
+                    LogUtils.log("设置上报黑名单(中标)开关失败");
                 }
                 break;
 
             case LTE_PT_PARAM.PARAM_CHANGE_BAND_ACK:
-                if (respcContent.charAt(0) == '0') {
+                if (respContent.charAt(0) == '0') {
                     //ToastUtils.showMessageLong(GameApplication.appContext,"下发切换Band命令成功，请等待设备重启。");
-                }else if (respcContent.charAt(0) == '1'){
-                    UtilBaseLog.printLog("切换band失败");
+                }else if (respContent.charAt(0) == '1'){
+                    LogUtils.log("切换band失败");
                 }
                 break;
 
             case LTE_PT_PARAM.PARAM_SET_ENB_CONFIG_ACK:
-                if (respcContent.charAt(0) == '0') {
-                    ToastUtils.showMessageLong(GameApplication.appContext, R.string.set_cell_reboot);
-                }else if (respcContent.charAt(0) == '1'){
-                    ToastUtils.showMessageLong(GameApplication.appContext, R.string.set_cell_fail);
+                if (respContent.charAt(0) == '0') {
+                    ToastUtils.showMessageLong(MyApplication.mContext, R.string.set_cell_reboot);
+                }else if (respContent.charAt(0) == '1'){
+                    ToastUtils.showMessageLong(MyApplication.mContext, R.string.set_cell_fail);
                 }
                 break;
 
             case LTE_PT_PARAM.PARAM_SET_FTP_CONFIG_ACK:
-                if (respcContent.charAt(0) == '0') {
-                    UtilBaseLog.printLog("设置ftp成功");
-                }else if (respcContent.charAt(0) == '1'){
-                    UtilBaseLog.printLog("设置ftp失败");
+                if (respContent.charAt(0) == '0') {
+                    LogUtils.log("设置ftp成功");
+                }else if (respContent.charAt(0) == '1'){
+                    LogUtils.log("设置ftp失败");
                 }
                 break;
 
             case LTE_PT_PARAM.PARAM_SET_FAN_ACK:
-                if (respcContent.charAt(0) == '0') {
-                    UtilBaseLog.printLog("设置风扇成功");
-                }else if (respcContent.charAt(0) == '1'){
-                    UtilBaseLog.printLog("设置风速失败失败");
+                if (respContent.charAt(0) == '0') {
+                    LogUtils.log("设置风扇成功");
+                }else if (respContent.charAt(0) == '1'){
+                    LogUtils.log("设置风速失败失败");
                 }
                 break;
 
             case LTE_PT_PARAM.PARAM_SET_SCAN_FREQ_ACK:
-                if (respcContent.charAt(0) == '0') {
-                    UtilBaseLog.printLog("下发搜网命令成功，结果稍后上报");
-                }else if (respcContent.charAt(0) == '1'){
-                    UtilBaseLog.printLog("扫频失败");
+                if (respContent.charAt(0) == '0') {
+                    LogUtils.log("下发搜网命令成功，结果稍后上报");
+                }else if (respContent.charAt(0) == '1'){
+                    LogUtils.log("扫频失败");
                 }
                 break;
             case LTE_PT_PARAM.PPARAM_SET_LOC_IMSI_ACK:
-                if (respcContent.charAt(0) == '0') {
-                    UtilBaseLog.printLog("设置定位号码成功");
-                }else if (respcContent.charAt(0) == '1'){
-                    UtilBaseLog.printLog("设置定位号码失败");
+                if (respContent.charAt(0) == '0') {
+                    LogUtils.log("设置定位号码成功");
+                }else if (respContent.charAt(0) == '1'){
+                    LogUtils.log("设置定位号码失败");
                 }
                 break;
             case LTE_PT_PARAM.PARAM_SET_ACTIVE_MODE_ACK:
-                if (respcContent.charAt(0) == '0') {
-                    UtilBaseLog.printLog("设置工作模式成功");
-                }else if (respcContent.charAt(0) == '1'){
-                    UtilBaseLog.printLog("设置工作模式失败");
+                if (respContent.charAt(0) == '0') {
+                    LogUtils.log("设置工作模式成功");
+                }else if (respContent.charAt(0) == '1'){
+                    LogUtils.log("设置工作模式失败");
                 }
                 break;
 
                 case LTE_PT_PARAM.PARAM_RPT_UPGRADE_STATUS:
-                if (respcContent.charAt(0) == '0') {
-                    UtilBaseLog.printLog("加载升级包成功，设备即将重启");
-                    ToastUtils.showMessageLong(GameApplication.appContext, "加载升级包成功，设备即将（约1分钟后）重启");
-                }else if (respcContent.charAt(0) == '1'){
-                    UtilBaseLog.printLog("设备获取升级包失败");
-                    ToastUtils.showMessageLong(GameApplication.appContext, "设备获取升级包失败");
+                if (respContent.charAt(0) == '0') {
+                    LogUtils.log("加载升级包成功，设备即将重启");
+                    ToastUtils.showMessageLong(MyApplication.mContext, "加载升级包成功，设备即将（约1分钟后）重启");
+                }else if (respContent.charAt(0) == '1'){
+                    LogUtils.log("设备获取升级包失败");
+                    ToastUtils.showMessageLong(MyApplication.mContext, "设备获取升级包失败");
                 }
 
                 UIEventManager.call(UIEventManager.RPT_UPGRADE_STATUS);
@@ -682,13 +681,13 @@ public class LTE_PT_PARAM {
            2.管控模式的号码强度也是从这里上报，要加以区分 */
         if(CacheManager.currentWorkMode.equals("0") && !CacheManager.getLocState()){
             String locRpt = UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(),0);
-            UtilBaseLog.printLog("忽略此次srsp上报:" + locRpt);
+            LogUtils.log("忽略此次srsp上报:" + locRpt);
             //CacheManager.stopCurrentLoc();
             return;
         }
 
         String locRpt = UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(),0);
-        UtilBaseLog.printLog("processLocRpt:" + locRpt);
+        LogUtils.log("processLocRpt:" + locRpt);
         if ("".equals(locRpt))
             return;
 
@@ -714,7 +713,7 @@ public class LTE_PT_PARAM {
                         }
 
                         listRpt.add( new UeidBean(tmpImsi, "", "", "",
-                                DateUtil.convert2String(new Date(), DateUtil.LOCAL_DATE), "", ""));
+                                DateUtils.convert2String(new Date(), DateUtils.LOCAL_DATE), "", ""));
 
                         if (!CacheManager.removeExistUeidInRealtimeList(tmpImsi)) {
                             UCSIDBManager.saveUeidToDB(tmpImsi, ImsiMsisdnConvert.getMsisdnFromLocal(tmpImsi), "",
@@ -764,7 +763,7 @@ public class LTE_PT_PARAM {
 
                     EventAdapter.call(EventAdapter.UEID_RPT,
                             Arrays.asList(new UeidBean(imsi, "", "", "",
-                                    DateUtil.convert2String(new Date(), DateUtil.LOCAL_DATE), "", "")));
+                                    DateUtils.convert2String(new Date(), DateUtils.LOCAL_DATE), "", "")));
                 }
             }else if (CacheManager.currentWorkMode.equals("2")){
                 if (CacheManager.getLocState()){

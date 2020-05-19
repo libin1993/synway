@@ -1,16 +1,11 @@
 package com.doit.net.Protocol;
 
 
-import com.doit.net.Activity.GameApplication;
-import com.doit.net.Bean.LteChannelCfg;
+import com.doit.net.application.MyApplication;
 import com.doit.net.Data.LTESendManager;
-import com.doit.net.Event.ProtocolManager;
-import com.doit.net.Event.UIEventManager;
-import com.doit.net.Model.CacheManager;
-import com.doit.net.Utils.UtilBaseLog;
+import com.doit.net.Utils.LogUtils;
 import com.doit.net.Utils.UtilDataFormatChange;
 import com.doit.net.Utils.ToastUtils;
-import com.doit.net.ucsi.R;
 
 /**
  * Created by Zxc on 2018/10/18.
@@ -20,11 +15,11 @@ public class LTE_PT_SYSTEM {
 
     public static final byte SYSTEM_REBOOT = 0x01;    //重启
     public static final byte SYSTEM_REBOOT_ACK = 0x02;
-    public static final byte SYSTEM_UPGRADE = 0x03;
+    public static final byte SYSTEM_UPGRADE = 0x03;  //设备升级
     public static final byte SYSTEM_UPGRADE_ACK = 0x04;
-    public static final byte SYSTEM_GET_LOG = 0x09;
+    public static final byte SYSTEM_GET_LOG = 0x09;  //获取设备日志
     public static final byte SYSTEM_GET_LOG_ACK = 0x0a;
-    public static final byte SYSTEM_SET_DATETIME = 0x0d;
+    public static final byte SYSTEM_SET_DATETIME = 0x0d;  //设置时间
     public static final byte SYSTEM_SET_DATETIME_ASK = 0x0e;
 
     public static boolean commonSystemMsg(byte sysSubType) {
@@ -79,35 +74,35 @@ public class LTE_PT_SYSTEM {
         String respcContent = UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(),0);
         switch (receivePackage.getPackageSubType()){
             case LTE_PT_SYSTEM.SYSTEM_SET_DATETIME_ASK:
-                UtilBaseLog.printLog("设置时间成功");
+                LogUtils.log("设置时间成功");
                 break;
 
             case LTE_PT_SYSTEM.SYSTEM_REBOOT_ACK:
-                UtilBaseLog.printLog("parseSystemReboot:" + respcContent);
+                LogUtils.log("parseSystemReboot:" + respcContent);
                 if (respcContent.charAt(0) == '0'){
-                    ToastUtils.showMessageLong(GameApplication.appContext,"设备正在重启");
+                    ToastUtils.showMessageLong(MyApplication.mContext,"设备正在重启");
                 }else{
-                    ToastUtils.showMessage(GameApplication.appContext,"设备重启失败");
+                    ToastUtils.showMessage(MyApplication.mContext,"设备重启失败");
                 }
                 break;
 
             case SYSTEM_UPGRADE_ACK:
                 if (respcContent.charAt(0) == '0') {
-                    UtilBaseLog.printLog("升级包校验成功");
-                    ToastUtils.showMessageLong(GameApplication.appContext, "升级包校验成功，请等待设备加载升级包（完整加载需要8-10分钟）");
+                    LogUtils.log("升级包校验成功");
+                    ToastUtils.showMessageLong(MyApplication.mContext, "升级包校验成功，请等待设备加载升级包（完整加载需要8-10分钟）");
                 }else if (respcContent.charAt(0) == '1'){
-                    UtilBaseLog.printLog("升级包校验失败");
-                    ToastUtils.showMessageLong(GameApplication.appContext, "升级包校验错误，请检查安装包");
+                    LogUtils.log("升级包校验失败");
+                    ToastUtils.showMessageLong(MyApplication.mContext, "升级包校验错误，请检查安装包");
                 }
                 break;
 
             case SYSTEM_GET_LOG_ACK:
                 if (respcContent.charAt(0) == '0') {
-                    UtilBaseLog.printLog("获取设备日志成功");
-                    ToastUtils.showMessageLong(GameApplication.appContext, "获取设备日志成功，保存在\"手机存储/4GHotspot/log\"目录下");
+                    LogUtils.log("获取设备日志成功");
+                    ToastUtils.showMessageLong(MyApplication.mContext, "获取设备日志成功，保存在\"手机存储/4GHotspot/log\"目录下");
                 }else if (respcContent.charAt(0) == '1'){
-                    UtilBaseLog.printLog("获取设备日志失败");
-                    ToastUtils.showMessageLong(GameApplication.appContext, "获取设备日志失败");
+                    LogUtils.log("获取设备日志失败");
+                    ToastUtils.showMessageLong(MyApplication.mContext, "获取设备日志失败");
                 }
                 break;
 

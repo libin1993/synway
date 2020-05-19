@@ -6,6 +6,7 @@ import android.view.View;
 import com.doit.net.Model.CacheManager;
 import com.doit.net.Model.DBBlackInfo;
 import com.doit.net.Model.UCSIDBManager;
+import com.doit.net.Protocol.ProtocolManager;
 import com.doit.net.ucsi.R;
 import com.doit.net.Utils.ToastUtils;
 

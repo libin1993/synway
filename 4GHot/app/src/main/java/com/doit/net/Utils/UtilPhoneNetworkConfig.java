@@ -10,9 +10,7 @@ import android.net.wifi.WifiManager;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +34,7 @@ public class UtilPhoneNetworkConfig {
         WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         boolean flag = false;
         if (!wifiManager.isWifiEnabled()) {
-            UtilBaseLog.printLog("wifi unable");
+            LogUtils.log("wifi unable");
             return flag;
         }
         // get the current wifi configuration
@@ -54,7 +52,7 @@ public class UtilPhoneNetworkConfig {
 
         if (wifiConfig == null) {
             // wifi is not connected
-            UtilBaseLog.printLog("wifi is not connected");
+            LogUtils.log("wifi is not connected");
             return flag;
         }
 
@@ -88,7 +86,7 @@ public class UtilPhoneNetworkConfig {
                 //return flag;
             } catch (Exception e) {
                 e.printStackTrace();
-                UtilBaseLog.printLog("set static ip exception.");
+                LogUtils.log("set static ip exception.");
                 flag = false;
                 //return flag;
             }
@@ -130,7 +128,7 @@ public class UtilPhoneNetworkConfig {
                     wifiManager.reassociate(); // reconnect with the new static IP
                 flag = true;
             } catch (Exception e) {
-                UtilBaseLog.printLog("set static ip exception.");
+                LogUtils.log("set static ip exception.");
                 e.printStackTrace();
 
             }

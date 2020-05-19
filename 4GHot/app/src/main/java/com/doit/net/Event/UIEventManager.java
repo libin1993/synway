@@ -27,9 +27,10 @@ public class UIEventManager {
     public final static String KEY_UEID_RPT = "KEY_UEID_RPT";
     public final static String KEY_REFRESH_REALTIME_UEID_LIST = "KEY_REFRESH_REALTIME_UEID_LIST";
     public final static String KEY_REFRESH_DEVICE = "KEY_REFRESH_DEVICE";
+    public final static String KEY_RF_STATUS = "KEY_RF_STATUS";  //射频状态监听
     public final static String KEY_SET_LOC_RESP = "KEY_SET_LOC_RESP";
     public final static String KEY_LOC_RPT = "KEY_LOC_RPT";
-    public final static String KEY_HEARTBEAT_RPT = "KEY_HEARTBEAT_RPT";
+    public final static String KEY_HEARTBEAT_RPT = "KEY_HEARTBEAT_RPT"; //心跳
     public final static String KEY_REFRESH_USER_LIST = "KEY_REFRESH_USER_LIST";
     public final static String KEY_RESEARCH_HISTORY_LIST = "KEY_RESEARCH_HISTORY_LIST";
     public final static String KEY_REFRESH_WHITE_LIST = "KEY_REFRESH_WHITE_LIST";
@@ -63,7 +64,6 @@ public class UIEventManager {
 //        G4ServiceManager.addCallBack(G4MessageID.MSG_SET_GPS_OFFSET_ACK,new G4SetCommHandler());
 //        G4ServiceManager.addCallBack(G4MessageID.MSG_SET_PCI_ACK,new G4SetCommHandler());
 
-        CacheManager.deviceInfo.setIp(PrefManage.getString("deviceIp", CacheManager.DEVICE_IP));
         readUserChannels(context);
 
     }

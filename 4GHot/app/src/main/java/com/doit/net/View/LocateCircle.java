@@ -374,20 +374,21 @@ public class LocateCircle extends View {
     private void drawArc(Canvas canvas) {
         // 绘制背景圆弧
         // 从进度圆弧结束的地方开始重新绘制，优化性能
-        canvas.save();
+
 
         //经过测试判断startDegress和endDegress12点钟方向为0度，顺时针递增
         // 360 * Math.PI / 180
         float evenryDegrees = (float) (2.0f * Math.PI / mDottedLineCount);
         //测试发现当实心环宽度加大时，会默认在头部加长，故这里也适当增多虚线
-        float startDegress = (float) ((280-mStartAngle) * Math.PI / 180);
-        float endDegress = (float) ((80+mStartAngle) * Math.PI / 180);
+        float startDegress = (float) ((276-mStartAngle) * Math.PI / 180);
+        float endDegress = (float) ((84+mStartAngle) * Math.PI / 180);
         for (int i = 0; i < mDottedLineCount; i++) {
             float degrees = i * evenryDegrees;
             // 过滤底部90度的弧长
             if (degrees > startDegress && degrees < endDegress) {
                 continue;
             }
+
             float startX = mArcCenterX + (float) Math.sin(degrees) * mInsideDottedLineRadius;
             float startY = mArcCenterX - (float) Math.cos(degrees) * mInsideDottedLineRadius;
 
@@ -397,16 +398,16 @@ public class LocateCircle extends View {
             canvas.drawLine(startX, startY, stopX, stopY, mBgArcPaint);
         }
 
-        canvas.rotate(mStartAngle, mCenterPoint.x, mCenterPoint.y);
+
 
         // 第一个参数 oval 为 RectF 类型，即圆弧显示区域
         // startAngle 和 sweepAngle  均为 float 类型，分别表示圆弧起始角度和圆弧度数
         // 3点钟方向为0度，顺时针递增
         // 如果 startAngle < 0 或者 > 360,则相当于 startAngle % 360
         // useCenter:如果为True时，在绘制圆弧时将圆心包括在内，通常用来绘制扇形
+
         float currentAngle = mSweepAngle * mPercent;
-        canvas.drawArc(mRectF, 0, currentAngle, false, mArcPaint);
-        canvas.restore();
+        canvas.drawArc(mRectF, mStartAngle, currentAngle, false, mArcPaint);
     }
 
     public boolean isAntiAlias() {

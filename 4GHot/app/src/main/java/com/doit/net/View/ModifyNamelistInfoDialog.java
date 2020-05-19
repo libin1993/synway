@@ -8,10 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.beardedhen.androidbootstrap.BootstrapButton;
-import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.doit.net.Event.AddToLocalBlackListener;
-import com.doit.net.Event.ProtocolManager;
+import com.doit.net.Protocol.ProtocolManager;
 import com.doit.net.Model.BlackBoxManger;
 import com.doit.net.Event.EventAdapter;
 import com.doit.net.Model.DBBlackInfo;

@@ -2,12 +2,9 @@ package com.doit.net.Model;
 
 import android.os.Environment;
 
-import com.doit.net.Model.AccountManage;
-import com.doit.net.Model.BlackBoxBean;
-import com.doit.net.Model.FTPManager;
-import com.doit.net.Model.UCSIDBManager;
-import com.doit.net.Utils.DateUtil;
-import com.doit.net.Utils.UtilBaseLog;
+import com.doit.net.Utils.DateUtils;
+import com.doit.net.Utils.FTPManager;
+import com.doit.net.Utils.LogUtils;
 
 import org.apache.commons.net.ftp.FTPFile;
 import org.xutils.ex.DbException;
@@ -88,7 +85,7 @@ public class BlackBoxManger {
         try {
             UCSIDBManager.getDbManager().save(new BlackBoxBean(operation.split(",")[0],
                     operation.split(",")[1],
-                    DateUtil.convert2long(operation.substring(operation.lastIndexOf(",")+1, operation.length()), DateUtil.LOCAL_DATE)));
+                    DateUtils.convert2long(operation.substring(operation.lastIndexOf(",")+1, operation.length()), DateUtils.LOCAL_DATE)));
         } catch (DbException e) {
             e.printStackTrace();
         }
@@ -98,7 +95,7 @@ public class BlackBoxManger {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                UtilBaseLog.printLog("黑匣子上传周期");
+                LogUtils.log("黑匣子上传周期");
                 uploadCurrentBlxFile();
             }
         },5000, 3*60*1000);
@@ -125,7 +122,7 @@ public class BlackBoxManger {
     public static void recordOprToFile(String account, String content){
         try {
             if (!isTheSameDay(new Date(), new SimpleDateFormat("yyyy-MM-dd").parse(currentBlxFileName.split("\\.")[0]))){
-                UtilBaseLog.printLog("重新生成新的黑匣子文件");
+                LogUtils.log("重新生成新的黑匣子文件");
                 uploadCurrentBlxFile();
                 deleteFile(LOCAL_FTP_BLX_PATH, currentBlxFileName);
                 checkBlackBoxFile();
@@ -135,11 +132,11 @@ public class BlackBoxManger {
         }
 
         String saveFileName = LOCAL_FTP_BLX_PATH +currentBlxFileName;
-        UtilBaseLog.printLog("写入黑匣子："+account+":"+content+","+saveFileName);
+        LogUtils.log("写入黑匣子："+account+":"+content+","+saveFileName);
         BufferedWriter bufferedWriter = null;
         try {
             bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(saveFileName,true)));
-            bufferedWriter.write(account+","+content+","+DateUtil.convert2String(new Date().getTime(), DateUtil.LOCAL_DATE)+"\n");
+            bufferedWriter.write(account+","+content+","+ DateUtils.convert2String(new Date().getTime(), DateUtils.LOCAL_DATE)+"\n");
             bufferedWriter.flush();
         } catch (IOException e){
             e.printStackTrace();
@@ -245,13 +242,13 @@ public class BlackBoxManger {
 
     public static void getBlxFromDevice(String startTime, String endTime) {
         if (!CacheManager.isWifiConnected){
-            UtilBaseLog.printLog("wifi not connected, get black box from device error.");
+            LogUtils.log("wifi not connected, get black box from device error.");
             return;
         }
 
         FTPFile[] files = FTPManager.getInstance().listFiles(".");
         if (files == null) {
-            UtilBaseLog.printLog("目录下没文件");
+            LogUtils.log("目录下没文件");
         } else {
             //UtilBaseLog.printLog("所有文件：");
             String tmpFileName = "";
@@ -277,12 +274,12 @@ public class BlackBoxManger {
             }else{
                 for (int i = 0; i < files.length; i++) {
                     tmpFileName = files[i].getName();
-                    UtilBaseLog.printLog(tmpFileName);
+                    LogUtils.log(tmpFileName);
                     if (tmpFileName.endsWith(".blx")) {
-                        if (DateUtil.convert2long(getDateByFileName(tmpFileName), DateUtil.LOCAL_DATE_DAY) >= DateUtil.convert2long(startTime, DateUtil.LOCAL_DATE_DAY) &&
-                                DateUtil.convert2long(getDateByFileName(tmpFileName), DateUtil.LOCAL_DATE_DAY) <= DateUtil.convert2long(endTime, DateUtil.LOCAL_DATE)) {
+                        if (DateUtils.convert2long(getDateByFileName(tmpFileName), DateUtils.LOCAL_DATE_DAY) >= DateUtils.convert2long(startTime, DateUtils.LOCAL_DATE_DAY) &&
+                                DateUtils.convert2long(getDateByFileName(tmpFileName), DateUtils.LOCAL_DATE_DAY) <= DateUtils.convert2long(endTime, DateUtils.LOCAL_DATE)) {
                             try {
-                                UtilBaseLog.printLog("满足条件，下载该文件：" + tmpFileName);
+                                LogUtils.log("满足条件，下载该文件：" + tmpFileName);
                                 FTPManager.getInstance().downloadFile(LOCAL_FTP_BLX_PATH, tmpFileName);
                                 praseBlxFile(tmpFileName);
                                 if (!tmpFileName.equals(currentBlxFileName)){

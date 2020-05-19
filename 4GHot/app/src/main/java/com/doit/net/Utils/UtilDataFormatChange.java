@@ -37,7 +37,7 @@ public class UtilDataFormatChange
 	
 	/**
 	 * byte[] 转short
-	 * @param b
+	 * @param
 	 * @return
 	 */
 	public static short byteToShort(byte[] tempValue) 

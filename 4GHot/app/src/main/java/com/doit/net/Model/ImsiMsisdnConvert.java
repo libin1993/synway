@@ -12,7 +12,7 @@ import android.support.annotation.RequiresApi;
 import com.doit.net.Event.EventAdapter;
 import com.doit.net.Event.UIEventManager;
 import com.doit.net.Utils.ToastUtils;
-import com.doit.net.Utils.UtilBaseLog;
+import com.doit.net.Utils.LogUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -84,7 +84,7 @@ public class ImsiMsisdnConvert {
             Response response = client.newCall(request).execute();
             if (response.isSuccessful()){
                 String body = response.body().string();
-                UtilBaseLog.printLog("response.code()==" + response.code() + ", response.body().string()==" + body);
+                LogUtils.log("response.code()==" + response.code() + ", response.body().string()==" + body);
                 JSONObject jsonRecv = new JSONObject(body);
                 int resultCode = jsonRecv.getInt("code");
                 if (resultCode == 1) {
@@ -92,15 +92,15 @@ public class ImsiMsisdnConvert {
                     currentUsername = username;
                     currentpassword = password;
                     serverAddress = server;
-                    UtilBaseLog.printLog("获取到token:" + token);
+                    LogUtils.log("获取到token:" + token);
                     result = "认证成功，可以进行号码翻译";
                 }else{
-                    UtilBaseLog.printLog("获取token失败:" + jsonRecv.getString("info"));
+                    LogUtils.log("获取token失败:" + jsonRecv.getString("info"));
                     result = "认证失败，原因："+jsonRecv.getString("info");
                 }
             }else{
                 result = "认证失败：网络故障，请确保网络畅通！";
-                UtilBaseLog.printLog("获取数据失败！");
+                LogUtils.log("获取数据失败！");
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -148,7 +148,7 @@ public class ImsiMsisdnConvert {
             Response response = client.newCall(request).execute();
             if (response.isSuccessful()){
                 String body = response.body().string();
-                UtilBaseLog.printLog("response.code()=="+response.code()+", response.body().string()=="+body);
+                LogUtils.log("response.code()=="+response.code()+", response.body().string()=="+body);
                 int restTimes;
                 String expireDate;
                 JSONObject jsonRecv = new JSONObject(body);
@@ -165,18 +165,18 @@ public class ImsiMsisdnConvert {
                         }
                     },3000);
                     restConvertTimes = restTimes;
-                    UtilBaseLog.printLog("剩余次数："+restTimes+"，到期时间："+expireDate);  //将到期时间和次数存入pref
+                    LogUtils.log("剩余次数："+restTimes+"，到期时间："+expireDate);  //将到期时间和次数存入pref
                 } else {
                     if (resultCode == 77){
                         restConvertTimes = 0;
                     }
 
                     result = "请求翻译IMSI失败，原因："+jsonRecv.getString("info");
-                    UtilBaseLog.printLog("请求转换IMSI失败，原因："+jsonRecv.getString("info"));
+                    LogUtils.log("请求转换IMSI失败，原因："+jsonRecv.getString("info"));
                 }
             }else{
                 result = "翻译请求失败：网络故障，请确保网络畅通！";
-                UtilBaseLog.printLog("获取数据失败！");
+                LogUtils.log("获取数据失败！");
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -226,7 +226,7 @@ public class ImsiMsisdnConvert {
                     if (okHttpClient == null){
                         objs[0] = "网络故障，请检查网络!";
                     }else{
-                        UtilBaseLog.printLog("okHttpClient ok");
+                        LogUtils.log("okHttpClient ok");
                         objs[0] = imsiToMsisdn(context, okHttpClient, imsi);
                     }
 
@@ -262,7 +262,7 @@ public class ImsiMsisdnConvert {
             Response response = client.newCall(request).execute();
             if (response.isSuccessful()){
                 String body = response.body().string();
-                UtilBaseLog.printLog("response.code()=="+response.code()+", response.body().string()=="+body);
+                LogUtils.log("response.code()=="+response.code()+", response.body().string()=="+body);
                 int restTimes;
                 String expireDate;
                 JSONObject jsonRecv = new JSONObject(body);
@@ -279,7 +279,7 @@ public class ImsiMsisdnConvert {
                         }
                     },3000);
                     restConvertTimes = restTimes;
-                    UtilBaseLog.printLog("剩余次数："+restTimes+"，到期时间："+expireDate);
+                    LogUtils.log("剩余次数："+restTimes+"，到期时间："+expireDate);
                 } else {
                     if (resultCode == 77){
                         //删掉手机白名单
@@ -287,12 +287,12 @@ public class ImsiMsisdnConvert {
                     }
 
                     result = "请求翻译手机号失败，原因："+jsonRecv.getString("info");
-                    UtilBaseLog.printLog("请求转换手机号失败，原因："+jsonRecv.getString("info"));
+                    LogUtils.log("请求转换手机号失败，原因："+jsonRecv.getString("info"));
                 }
 
             }else{
                 result = "翻译请求失败：网络故障，请确保网络畅通！";
-                UtilBaseLog.printLog("获取数据失败！");
+                LogUtils.log("获取数据失败！");
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -339,7 +339,7 @@ public class ImsiMsisdnConvert {
                     if (okHttpClient == null){
                         objs[0] = "网络故障，请检查网络!";
                     }else{
-                        UtilBaseLog.printLog("okHttpClient ok");
+                        LogUtils.log("okHttpClient ok");
                         objs[0] = msisdnToImsi(context, okHttpClient, msisdn);
                     }
                     ToastUtils.showMessageLong(context, (String)objs[0]);
@@ -373,7 +373,7 @@ public class ImsiMsisdnConvert {
             Response response = client.newCall(request).execute();
             if (response.isSuccessful()){
                 String body = response.body().string();
-                UtilBaseLog.printLog("response.code()=="+response.code()+",response.body().string()=="+body);
+                LogUtils.log("response.code()=="+response.code()+",response.body().string()=="+body);
 
                 String msisdn;
                 String imsi;
@@ -384,16 +384,16 @@ public class ImsiMsisdnConvert {
                     msisdn = resultJsonObject.getString("msisdn");
                     imsi = resultJsonObject.getString("imsi");
                     result = "获取手机号成功："+msisdn+"/"+imsi;
-                    UtilBaseLog.printLog("获取手机号成功："+msisdn+"/"+imsi);
+                    LogUtils.log("获取手机号成功："+msisdn+"/"+imsi);
                     updateMsisdnToDB(imsi, msisdn);
                     UIEventManager.call(UIEventManager.KEY_REFRESH_REALTIME_UEID_LIST);
                     UIEventManager.call(UIEventManager.KEY_RESEARCH_HISTORY_LIST);
                 }else if (resultCode == 404){
-                    UtilBaseLog.printLog("还在转换中，2秒后重试！");
+                    LogUtils.log("还在转换中，2秒后重试！");
                     if (mapConvertTimes.containsKey(convertImsi)){
                         int times = mapConvertTimes.get(convertImsi);
                         if (times >= 30){
-                            UtilBaseLog.printLog("尝试次数已到，终止翻译请求。");
+                            LogUtils.log("尝试次数已到，终止翻译请求。");
                             mapConvertTimes.remove(convertImsi);
                             return "尝试次数已到，终止翻译请求";
                         }
@@ -410,12 +410,12 @@ public class ImsiMsisdnConvert {
                     },2000);
                 } else {
                     result = "请求转换IMSI失败，原因："+jsonObject.getString("info");
-                    UtilBaseLog.printLog("请求转换IMSI失败，原因："+jsonObject.getString("info"));
+                    LogUtils.log("请求转换IMSI失败，原因："+jsonObject.getString("info"));
                 }
 
             }else{
                 result = "网络故障，请确保网络畅通！";
-                UtilBaseLog.printLog("查询转换结果失败！");
+                LogUtils.log("查询转换结果失败！");
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -462,7 +462,7 @@ public class ImsiMsisdnConvert {
                     if (okHttpClient == null){
                         objs[0] = "网络故障，请检查网络!";
                     }else{
-                        UtilBaseLog.printLog("okHttpClient ok");
+                        LogUtils.log("okHttpClient ok");
                         objs[0] = queryImsiConvert(context, okHttpClient, convertImsi);
                     }
                     ToastUtils.showMessageLong(context, (String)objs[0]);
@@ -496,7 +496,7 @@ public class ImsiMsisdnConvert {
             Response response = client.newCall(request).execute();
             if (response.isSuccessful()){
                 String body = response.body().string();
-                UtilBaseLog.printLog("response.code()=="+response.code()+",response.body().string()=="+body);
+                LogUtils.log("response.code()=="+response.code()+",response.body().string()=="+body);
 
                 String msisdn;
                 String imsi;
@@ -507,15 +507,15 @@ public class ImsiMsisdnConvert {
                     msisdn = resultJsonObject.getString("msisdn");
                     imsi = resultJsonObject.getString("imsi");
                     result = "获取IMSI成功："+msisdn+"/"+imsi;
-                    UtilBaseLog.printLog("获取IMSI成功："+msisdn+"/"+imsi);
+                    LogUtils.log("获取IMSI成功："+msisdn+"/"+imsi);
                     updatWhitelistToDB(imsi, msisdn);
                     EventAdapter.call(EventAdapter.UPDATE_WHITELIST);
                 }else if (resultCode == 404){
-                    UtilBaseLog.printLog("还在转换中，2秒后重试！");
+                    LogUtils.log("还在转换中，2秒后重试！");
                     if (mapConvertTimes.containsKey(convertMsisdn)){
                         int times = mapConvertTimes.get(convertMsisdn);
                         if (times >= 30){
-                            UtilBaseLog.printLog("尝试次数已到，终止翻译请求。");
+                            LogUtils.log("尝试次数已到，终止翻译请求。");
                             mapConvertTimes.remove(convertMsisdn);
                             return "尝试次数已到，终止翻译请求";
                         }
@@ -532,12 +532,12 @@ public class ImsiMsisdnConvert {
                     },2000);
                 } else {
                     result = "请求转换IMSI失败，原因："+jsonObject.getString("info");
-                    UtilBaseLog.printLog("请求转换IMSI失败，原因："+jsonObject.getString("info"));
+                    LogUtils.log("请求转换IMSI失败，原因："+jsonObject.getString("info"));
                 }
 
             }else{
                 result = "网络故障，请确保网络畅通！";
-                UtilBaseLog.printLog("查询转换结果失败！");
+                LogUtils.log("查询转换结果失败！");
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -584,7 +584,7 @@ public class ImsiMsisdnConvert {
                     if (okHttpClient == null){
                         objs[0] = "网络故障，请检查网络!";
                     }else{
-                        UtilBaseLog.printLog("okHttpClient ok");
+                        LogUtils.log("okHttpClient ok");
                         objs[0] = queryMsisdnConvert(context, okHttpClient, Msisdn);
                     }
                     if (!((String)objs[0]).equals(""))
@@ -720,10 +720,10 @@ public class ImsiMsisdnConvert {
                             }).build();
 
                     if (okHttpClient == null){
-                        UtilBaseLog.printLog("create okHttpClient error!");
+                        LogUtils.log("create okHttpClient error!");
                         objs[0] = "网络故障，请检查网络!";
                     }else{
-                        UtilBaseLog.printLog("okHttpClient ok");
+                        LogUtils.log("okHttpClient ok");
                         objs[0] = getToken(okHttpClient, server, username,password);
                     }
 

@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:layout_marginStart="5dp"
     android:layout_marginEnd="5dp"
-    tools:context="com.doit.net.View.ScanFreqConfigActivity">
+    tools:context="com.doit.net.activity.ScanFreqConfigActivity">
 
 
     <View

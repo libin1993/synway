@@ -9,11 +9,11 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 
-import com.doit.net.Activity.GameApplication;
-import com.doit.net.Bean.LteChannelCfg;
-import com.doit.net.Event.ProtocolManager;
+import com.doit.net.application.MyApplication;
+import com.doit.net.bean.LteChannelCfg;
+import com.doit.net.Protocol.ProtocolManager;
 import com.doit.net.Utils.ToastUtils;
-import com.doit.net.Utils.UtilBaseLog;
+import com.doit.net.Utils.LogUtils;
 
 import org.xutils.DbManager;
 import org.xutils.ex.DbException;
@@ -57,7 +57,7 @@ public class ScanFreqManager {
             //下发搜网
             startScanFreq();
         }else{
-            UtilBaseLog.printLog("数据库里找到最小距离为" + distance +"， 使用现有搜网频点列表");
+            LogUtils.log("数据库里找到最小距离为" + distance +"， 使用现有搜网频点列表");
             hasSetScanFreqList = true;
             setCurrentScanInfo(currentMinDisScanFreqInfo);
         }
@@ -192,7 +192,7 @@ public class ScanFreqManager {
         }
 
         hasSetScanFreqList = true;
-        ToastUtils.showMessageLong(GameApplication.appContext, "已下发配置开机搜网频点列表并存储对应坐标！");
+        ToastUtils.showMessageLong(MyApplication.mContext, "已下发配置开机搜网频点列表并存储对应坐标！");
     }
 
 
@@ -200,9 +200,9 @@ public class ScanFreqManager {
         if (location != null) {
             double longitude = location.getLongitude();
             double latitude = location.getLatitude();
-            UtilBaseLog.printLog("成功获取到位置信息："+longitude+","+latitude);
+            LogUtils.log("成功获取到位置信息："+longitude+","+latitude);
             //ToastUtils.showMessageLong(GameApplication.appContext, "成功获取到位置信息"+longitude+","+latitude);
-            ScanFreqManager.processLocation(longitude, latitude);
+            processLocation(longitude, latitude);
             //sb.append("定位精度：" + location.getAccuracy() + "\n");
             //sb.append("与临安的距离为：" + getDistance(location.getLongitude(), location.getLatitude(), 119.72, 30.23) + "米\n");
             //sb.append("定位方式：" + location.getProvider());
@@ -230,7 +230,7 @@ public class ScanFreqManager {
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_CODE);
-            UtilBaseLog.printLog("没有定位权限");
+            LogUtils.log("没有定位权限");
         }
 
         locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);

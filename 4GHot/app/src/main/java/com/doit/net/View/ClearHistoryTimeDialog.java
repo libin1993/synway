@@ -10,13 +10,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.beardedhen.androidbootstrap.BootstrapButton;
-import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.doit.net.Model.BlackBoxManger;
 import com.doit.net.Event.EventAdapter;
 import com.doit.net.Model.DBUeidInfo;
 import com.doit.net.Model.UCSIDBManager;
-import com.doit.net.Utils.DateUtil;
+import com.doit.net.Utils.DateUtils;
 import com.doit.net.Utils.MySweetAlertDialog;
 import com.doit.net.Utils.ToastUtils;
 import com.doit.net.ucsi.R;
@@ -24,10 +22,6 @@ import com.doit.net.ucsi.R;
 import org.xutils.db.sqlite.WhereBuilder;
 import org.xutils.ex.DbException;
 import org.xutils.x;
-
-import cn.pedant.SweetAlert.SweetAlertDialog;
-
-import static cn.pedant.SweetAlert.SweetAlertDialog.WARNING_TYPE;
 
 /**
  * Created by Zxc on 2018/12/29.
@@ -108,7 +102,7 @@ public class ClearHistoryTimeDialog extends Dialog {
                         public void onClick(MySweetAlertDialog sweetAlertDialog) {
                             try {
                                 UCSIDBManager.getDbManager().delete(DBUeidInfo.class, WhereBuilder.b("createDate", "BETWEEN",
-                                        new long[]{DateUtil.convert2long(startTime,DateUtil.LOCAL_DATE), DateUtil.convert2long(endTime,DateUtil.LOCAL_DATE)}));
+                                        new long[]{DateUtils.convert2long(startTime, DateUtils.LOCAL_DATE), DateUtils.convert2long(endTime, DateUtils.LOCAL_DATE)}));
                             } catch (DbException e) {
                                 new MySweetAlertDialog(activity, MySweetAlertDialog.ERROR_TYPE)
                                         .setTitleText(activity.getString(R.string.failed))

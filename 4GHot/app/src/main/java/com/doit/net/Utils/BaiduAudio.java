@@ -9,13 +9,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static com.doit.net.Utils.Logger.getLogger;
+
 
 /**
  * Created by wiker on 2016/4/29.
  */
 public class BaiduAudio {
-    private final static Logger log = getLogger(BaiduAudio.class);
 
     private Context mContext;
     public BaiduAudio(Context context){

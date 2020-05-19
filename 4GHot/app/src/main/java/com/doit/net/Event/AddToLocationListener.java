@@ -6,8 +6,8 @@ import android.view.View;
 import com.doit.net.Model.BlackBoxManger;
 import com.doit.net.Model.CacheManager;
 import com.doit.net.Model.DBBlackInfo;
-import com.doit.net.Utils.Logger;
-import com.doit.net.Utils.PrintUtils;
+import com.doit.net.Protocol.ProtocolManager;
+import com.doit.net.Utils.LogUtils;
 import com.doit.net.Utils.ToastUtils;
 import com.doit.net.Utils.UtilOperator;
 
@@ -16,7 +16,7 @@ import com.doit.net.Utils.UtilOperator;
  */
 public class AddToLocationListener implements View.OnClickListener
 {
-    private final static Logger log = Logger.getLogger(AddToLocationListener.class);
+
     private int position;
     private Context mContext;
     private String imsi;
@@ -72,7 +72,7 @@ public class AddToLocationListener implements View.OnClickListener
             EventAdapter.call(EventAdapter.ADD_LOCATION,imsi);
             EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.START_LOCALTE_FROM_NAMELIST+imsi);
         } catch (Exception e) {
-            log.error("开启搜寻失败",e);
+            LogUtils.log("开启搜寻失败"+e);
         }
 
     }

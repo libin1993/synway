@@ -12,7 +12,7 @@ public class LTESendPackage
 	short packageCheckNum;//校验位2字节
 	short packageSequence;//包的序号2字节
 	short packageSessionID;//对话ID2字节
-	byte packageEquipType;//主类型1字节
+	byte packageEquipType;//设备型1字节
 	byte packageReserve;//预留1字节
 	byte packageMainType;//主类型1字节
 	byte packageSubType;//子类型1字节
@@ -102,7 +102,7 @@ public class LTESendPackage
 		byte[] tempByte_SessionID=UtilDataFormatChange.shortToByteArray(this.packageSessionID);
 		byteArray.append(tempByte_SessionID,0,tempByte_SessionID.length);
 		
-		//拷贝主类型
+		//拷贝设备类型
 		byte[] tempByte_EquipType={this.packageEquipType};
 		byteArray.append(tempByte_EquipType,0,tempByte_EquipType.length);
 		
@@ -141,7 +141,7 @@ public class LTESendPackage
 		byte[] tempByte_SessionID=UtilDataFormatChange.shortToByteArray(this.packageSessionID);
 		byteArray.append(tempByte_SessionID,0,tempByte_SessionID.length);
 		
-		//拷贝主类型
+		//拷贝设备类型
 		byte[] tempByte_EquipType={this.packageEquipType};
 		byteArray.append(tempByte_EquipType,0,tempByte_EquipType.length);
 		
@@ -163,10 +163,8 @@ public class LTESendPackage
 		if(this.byteSubContent!=null) {
 			byteArray.append(this.byteSubContent,0,this.byteSubContent.length);
 		}
-		
-		short crcValue=LTE_CRC.xcrc(byteArray.toByteArray());
 
-		return crcValue;
+		return LTE_CRC.xcrc(byteArray.toByteArray());
 	}
 	
 }

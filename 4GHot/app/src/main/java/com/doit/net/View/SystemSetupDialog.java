@@ -12,10 +12,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 
-import com.beardedhen.androidbootstrap.BootstrapButton;
-import com.beardedhen.androidbootstrap.BootstrapEditText;
-import com.doit.net.Bean.LteChannelCfg;
-import com.doit.net.Event.ProtocolManager;
+import com.doit.net.bean.LteChannelCfg;
+import com.doit.net.Protocol.ProtocolManager;
 import com.doit.net.Model.CacheManager;
 import com.doit.net.Utils.MySweetAlertDialog;
 import com.doit.net.ucsi.R;
@@ -26,8 +24,6 @@ import org.xutils.x;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * Created by wiker on 2016/4/29.

@@ -8,28 +8,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.beardedhen.androidbootstrap.BootstrapButton;
-import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.doit.net.Event.AddToWhitelistListner;
 import com.doit.net.Event.UIEventManager;
 import com.doit.net.Model.CacheManager;
-import com.doit.net.Model.DBUeidInfo;
-import com.doit.net.Model.ImsiMsisdnConvert;
 import com.doit.net.Model.UCSIDBManager;
 import com.doit.net.Model.WhiteListInfo;
-import com.doit.net.Utils.DateUtil;
 import com.doit.net.Utils.ToastUtils;
-import com.doit.net.Utils.UtilBaseLog;
 import com.doit.net.ucsi.R;
 
 import org.xutils.DbManager;
-import org.xutils.db.sqlite.WhereBuilder;
 import org.xutils.ex.DbException;
 import org.xutils.x;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-
-import static cn.pedant.SweetAlert.SweetAlertDialog.WARNING_TYPE;
 
 /**
  * Created by Zxc on 2019/5/30.

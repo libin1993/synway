@@ -1,6 +1,6 @@
 package com.doit.net.Utils;
 
-import com.doit.net.Activity.GameApplication;
+import com.doit.net.application.MyApplication;
 
 /**
  * Author：Libin on 2020/5/9 17:47
@@ -30,7 +30,7 @@ public class FormatUtils {
      */
     public int dip2px(int dpValue) {
 
-        float scale = GameApplication.appContext.getResources().getDisplayMetrics().density;
+        float scale = MyApplication.mContext.getResources().getDisplayMetrics().density;
 
         return (int) (dpValue*scale+0.5);
 
@@ -41,7 +41,7 @@ public class FormatUtils {
      */
     public int dip2px(float dpValue) {
 
-        float scale = GameApplication.appContext.getResources().getDisplayMetrics().density;
+        float scale = MyApplication.mContext.getResources().getDisplayMetrics().density;
 
         return (int) (dpValue*scale+0.5);
 
@@ -53,7 +53,7 @@ public class FormatUtils {
 
     public int px2dip(float pxValue) {
 
-        float scale = GameApplication.appContext.getResources().getDisplayMetrics().density;
+        float scale = MyApplication.mContext.getResources().getDisplayMetrics().density;
 
         return (int) (pxValue*scale+0.5);
 
@@ -64,7 +64,7 @@ public class FormatUtils {
 
     public int px2dip(int pxValue) {
 
-        float scale = GameApplication.appContext.getResources().getDisplayMetrics().density;
+        float scale = MyApplication.mContext.getResources().getDisplayMetrics().density;
 
         return (int) (pxValue*scale+0.5);
 

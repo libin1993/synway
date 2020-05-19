@@ -3,7 +3,6 @@ package com.doit.net.View;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,20 +11,17 @@ import android.view.WindowManager;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import com.doit.net.Bean.LteChannelCfg;
-import com.doit.net.Event.ProtocolManager;
+import com.doit.net.adapter.ChannelListViewAdapter;
+import com.doit.net.bean.LteChannelCfg;
 import com.doit.net.Model.CacheManager;
 import com.doit.net.Utils.MySweetAlertDialog;
 import com.doit.net.ucsi.R;
-import com.doit.net.udp.g4.bean.G4MsgChannelCfg;
 import com.doit.net.Utils.ToastUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xutils.view.annotation.Event;
 import org.xutils.x;
-
-import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * Created by wiker on 2016/4/29.
@@ -89,10 +85,7 @@ public class ChannelsDialog extends Dialog {
 //                int pa = StringUtils.toInt(tv_pa.getText().toString());
 //                int ga = StringUtils.toInt(tv_ga.getText().toString());
 //                tv_plmn.setText("22222");
-                Object tmpObj = listAdapter.getItem(i);
-                if(tmpObj == null){
-                    continue;
-                }
+
                 //G4MsgChannelCfg tmpCfg = (G4MsgChannelCfg)tmpObj;
                 //ProtocolManager.setChannelConfig(cfg.getIdx(),null,tmpCfg.getPlmn(),tmpCfg.getPa(),tmpCfg.getGa(),null,null);
             }

@@ -1,12 +1,10 @@
 package com.doit.net.Data;
 
-import android.util.Log;
-
 import com.doit.net.Protocol.LTE_PT_LOGIN;
 import com.doit.net.Protocol.LTE_PT_PARAM;
 import com.doit.net.Protocol.LTE_PT_SYSTEM;
 import com.doit.net.Protocol.LTEReceivePackage;
-import com.doit.net.Utils.UtilBaseLog;
+import com.doit.net.Utils.LogUtils;
 import com.doit.net.Utils.UtilDataFormatChange;
 
 /**
@@ -40,7 +38,7 @@ public class LTEDataParse {
 		//循环读取包
 		for (int i = 0; i < listReceiveCount; i++) {
 			if (listReceiveBuffer.size() <10 ) {
-				UtilBaseLog.printLog("GTW丢包-丢字节");
+				LogUtils.log("GTW丢包-丢字节");
 				break;
 			}
 			//取出长度
@@ -49,7 +47,7 @@ public class LTEDataParse {
 			//UtilBaseLog.printLog("LTE组包的长度:"+packageLength);
 			//判断缓存列表中的数据是否达到一个包的数据
 			if(listReceiveBuffer.size()<packageLength) {
-				UtilBaseLog.printLog("LTE没有达到整包数");
+				LogUtils.log("LTE没有达到整包数");
 				break;
 			}
 			
@@ -71,7 +69,7 @@ public class LTEDataParse {
 			listReceiveCount = listReceiveBuffer.size();
 			//如果有余下的字节数,则说明有余包
 			if (listReceiveCount >=packageHeadLength) {
-				UtilBaseLog.printLog("LTE余下的字节数:"+listReceiveCount);
+				LogUtils.log("LTE余下的字节数:"+listReceiveCount);
 				i=-1;
 			}else {
 				break;
@@ -126,7 +124,7 @@ public class LTEDataParse {
 		//第八步取出主协议类型Type
 		byte packageSubType = tempPackage[11];
 		receivePackage.setPackageSubType(packageSubType);
-		UtilBaseLog.printLog("LTE收到(packageSubType):"+receivePackage.getPackageSubType());
+		LogUtils.log("LTE收到(packageSubType):"+receivePackage.getPackageSubType());
 		
 		//第九部取出内容
 		//1.计算子协议内容包的长度
@@ -140,24 +138,17 @@ public class LTEDataParse {
 		}
 		receivePackage.setByteSubContent(byteSubContent);
 
-		//解析包数据交由上层处理
-		parsePackageEvent(receivePackage);
+		//实时解析协议
+		realTimeResponse(receivePackage);
 	}
 
 	
-		
-	// 解析包数据
-	public void parsePackageEvent(LTEReceivePackage receivePackage) {
-		//实时解析协议
-		realTimeRespose(receivePackage);
-	}
-	
 	//实时回复协议
-	public void realTimeRespose(LTEReceivePackage receivePackage) {
+	public void realTimeResponse(LTEReceivePackage receivePackage) {
 		switch(receivePackage.getPackageMainType()) {
 
 			case LTE_PT_LOGIN.PT_LOGIN:
-				LTE_PT_LOGIN.parseLoginApply(receivePackage);
+				LTE_PT_LOGIN.loginResp(receivePackage);
 				break;
 
 			case LTE_PT_SYSTEM.PT_SYSTEM:
@@ -188,7 +179,7 @@ public class LTEDataParse {
                     case LTE_PT_PARAM.PPARAM_SET_LOC_IMSI_ACK:
                     case LTE_PT_PARAM.PARAM_SET_ACTIVE_MODE_ACK:
                     case LTE_PT_PARAM.PARAM_RPT_UPGRADE_STATUS:
-                        UtilBaseLog.printLog("设置回复:"+UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(),0));
+                        LogUtils.log("设置回复:"+UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(),0));
 						LTE_PT_PARAM.processSetResp(receivePackage);
                         break;
 
@@ -197,7 +188,7 @@ public class LTEDataParse {
                         break;
 
 					case LTE_PT_PARAM.PARAM_GET_ACTIVE_MODE_ASK:
-						UtilBaseLog.printLog("工作模式查询:"+UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(),0));
+						LogUtils.log("工作模式查询:"+UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(),0));
                         break;
 
                     case LTE_PT_PARAM.PARAM_RPT_HEATBEAT:
@@ -234,7 +225,7 @@ public class LTEDataParse {
 	}
 	
 	public void clearReceiveBuffer(){
-	    UtilBaseLog.printLog("clearReceiveBuffer... ...");
+	    LogUtils.log("clearReceiveBuffer... ...");
 		listReceiveBuffer.clear();
 	}
 }

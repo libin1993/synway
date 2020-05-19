@@ -6,7 +6,7 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.doit.net.Utils.UtilBaseLog;
+import com.doit.net.Utils.LogUtils;
 import com.doit.net.ucsi.R;
 
 /**
@@ -85,7 +85,7 @@ public class LocateChart extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        UtilBaseLog.printLog("onSizeChanged");
+
         chartWidth = w;
         chartHeight = h;
         initChart(w,h);

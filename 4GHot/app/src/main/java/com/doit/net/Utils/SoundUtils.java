@@ -14,7 +14,6 @@ public class SoundUtils {
      };
      
     private final int mSoundNumMax = 4;
-    private static Logger log = Logger.getLogger(SoundUtils.class);
 	private SoundPool soundPool = null; // 声明SoundPool的引用
 	private HashMap<String, SoundDetail> hashMapSound = new HashMap<String, SoundDetail>(); // 创建HashMap对象
 	private AudioManager audioManger = null;
@@ -27,7 +26,7 @@ public class SoundUtils {
 		if (context != null) {
 			SoundContext = context;
 		} else {
-			log.error("SoundUtil", "initSoundPool context==NULL!");
+			LogUtils.log("initSoundPool context==NULL!");
 			return;
 		}
 		if (soundPool == null) {
@@ -45,15 +44,15 @@ public class SoundUtils {
 			sDetail.iStreamId = 0;
 			hashMapSound.put(SoundName,sDetail); 
 			if (sDetail.iSoundId <= 0 || sDetail.iSoundId > 255) {
-                log.warn("SoundUtil","warning: addSound the sound error! name = " + SoundName);
+                LogUtils.log("warning: addSound the sound error! name = " + SoundName);
                 return 0;
             }else{
-                log.debug("SoundUtil", "addSound the sound name = "
+				LogUtils.log( "addSound the sound name = "
                         + SoundName + "soundId = " + sDetail.iSoundId);
             }
 			return 1;
 		} else {
-			log.warn("SoundUtil", "warning: addSound the same sound name = "
+			LogUtils.log("warning: addSound the same sound name = "
 					+ SoundName);
 			return 0;
 		}
@@ -62,8 +61,7 @@ public class SoundUtils {
 	public int removeSound(String SoundName) {
 		SoundDetail sDetail = hashMapSound.get(SoundName);
 		if (sDetail.iSoundId <= 0) {
-			log.warn("SoundUtil",
-					"warning: removeSound no exist the sound name = "
+			LogUtils.log("warning: removeSound no exist the sound name = "
 							+ SoundName);
 			return 0;
 		}
@@ -78,7 +76,7 @@ public class SoundUtils {
 	 * @param vol 取值为0.0 - 1.0f 表示取当前媒体音量的幅度
 	 */
 	public void setVolume(float vol) {
-	    log.debug("SoundUtil", "setVolume vol =" + vol);
+		LogUtils.log( "setVolume vol =" + vol);
 	    
 	    if(vol < 0){
 	        this.curVol = 0f;
@@ -109,7 +107,7 @@ public class SoundUtils {
 		if (audioManger != null) {
 			return audioManger.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 		} else {
-			log.error("SoundUtil", "getMaxVolume audioManger not init!");
+			LogUtils.log("getMaxVolume audioManger not init!");
 			return 15;
 		}
 	}
@@ -122,13 +120,13 @@ public class SoundUtils {
 	 */
 	public void setLoop(String name,int loopTimes){
 	    if(bSoundOff){
-            log.debug("SoundUtil", "setLoop soundPool sound off!"+ " name = " + name);
+			LogUtils.log("setLoop soundPool sound off!"+ " name = " + name);
         }
         
         SoundDetail sDetail = hashMapSound.get(name);
         
         if(sDetail == null){
-            log.warn("SoundUtil","setLoop sDetail==null! name = " + name+ " name = " + name);
+			LogUtils.log("setLoop sDetail==null! name = " + name+ " name = " + name);
         }
         
         sDetail.loopTimes = loopTimes;
@@ -160,13 +158,13 @@ public class SoundUtils {
 	 */
 	public int play(String soundName,int times,boolean needStop) {
 		if(bSoundOff){
-			log.debug("SoundUtil", "play soundPool sound off!"+ " name = " + soundName);
+			LogUtils.log( "play soundPool sound off!"+ " name = " + soundName);
 			return 0;
 		}
 		
 		// 偶现soundPool为Null指针
         if(soundPool == null){
-            log.debug("soundPool================================== null");
+			LogUtils.log("soundPool================================== null");
             return 0;
         }
 		
@@ -177,7 +175,7 @@ public class SoundUtils {
 		SoundDetail sDetail = hashMapSound.get(soundName);
 		
 		if (sDetail.iSoundId <= 0) {
-			log.error("SoundUtil",
+			LogUtils.log(
 					"play iStreamId error! id=" + Integer.toString(sDetail.iSoundId)+ " name = " + soundName);
 			return 0;
 		}
@@ -196,7 +194,7 @@ public class SoundUtils {
 	}
 	public void stop(String soundName) {
 		if(bSoundOff){
-			log.debug("SoundUtil", "stop soundPool sound off!"+ " name = " + soundName);
+			LogUtils.log("stop soundPool sound off!"+ " name = " + soundName);
 			return;
 		}
 		
@@ -207,7 +205,7 @@ public class SoundUtils {
 		SoundDetail sDetail = hashMapSound.get(soundName);
 		
 		if(sDetail.iStreamId <= 0){
-			log.warn("SoundUtil","stop iStreamId error! id=" + Integer.toString(sDetail.iStreamId) + " name = " + soundName);
+			LogUtils.log("stop iStreamId error! id=" + Integer.toString(sDetail.iStreamId) + " name = " + soundName);
 			return;
 		}
 				
@@ -217,7 +215,7 @@ public class SoundUtils {
 			sDetail.iStreamId = 0;
 			hashMapSound.put(soundName, sDetail);
 		}else{
-			log.warn("SoundUtil", "stop soundPool invalid iPlayState=" + sDetail.iPlaytate + " name = " + soundName);
+			LogUtils.log( "stop soundPool invalid iPlayState=" + sDetail.iPlaytate + " name = " + soundName);
 		}
 	}
 	public void pause(String soundName) {		
@@ -229,7 +227,7 @@ public class SoundUtils {
 		SoundDetail sDetail = hashMapSound.get(soundName);
 		
 		if(sDetail.iStreamId <= 0){
-			log.warn("SoundUtil","pause iStreamId error! id=" + Integer.toString(sDetail.iStreamId)+ " name = " + soundName);
+			LogUtils.log("pause iStreamId error! id=" + Integer.toString(sDetail.iStreamId)+ " name = " + soundName);
 		}
 			
 		if(sDetail.iPlaytate == PlayState.PLAYING){
@@ -237,7 +235,7 @@ public class SoundUtils {
 			sDetail.iPlaytate = PlayState.PAUSED;///暂停
 			hashMapSound.put(soundName, sDetail);
 		}else{
-			log.warn("SoundUtil", "pause soundPool invalid iPlayState=" + sDetail.iPlaytate+ " name = " + soundName);
+			LogUtils.log( "pause soundPool invalid iPlayState=" + sDetail.iPlaytate+ " name = " + soundName);
 		}
 	}
 	public void resume(String soundName) {		
@@ -249,14 +247,14 @@ public class SoundUtils {
 		SoundDetail sDetail = hashMapSound.get(soundName);
 		
 		if(sDetail.iStreamId <= 0){
-			log.warn("SoundUtil","resume iStreamId error! id=" + Integer.toString(sDetail.iStreamId)+ " name = " + soundName);
+			LogUtils.log("resume iStreamId error! id=" + Integer.toString(sDetail.iStreamId)+ " name = " + soundName);
 		}
 				
 		if(sDetail.iPlaytate == PlayState.PAUSED){
 			soundPool.resume(sDetail.iStreamId);
 			sDetail.iPlaytate = PlayState.PLAYING;///播放
 		}else{
-			log.warn("SoundUtil", "resume soundPool invalid iPlayState="+ sDetail.iPlaytate+ " name = " + soundName);
+			LogUtils.log( "resume soundPool invalid iPlayState="+ sDetail.iPlaytate+ " name = " + soundName);
 		}
 	}
 	

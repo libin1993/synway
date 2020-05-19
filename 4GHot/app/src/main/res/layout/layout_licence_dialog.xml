@@ -27,8 +27,12 @@
         android:orientation="horizontal">
 
         <TextView
-            style="@style/dialog_label"
-            android:text="@string/due_time" />
+            android:layout_width="80dp"
+            android:layout_height="32dp"
+            android:gravity="center_vertical"
+            android:text="@string/due_time"
+            android:textColor="@android:color/white"
+            android:textSize="15sp"/>
 
         <TextView
             android:id="@+id/tvDueTime"
@@ -53,7 +57,11 @@
         android:orientation="horizontal">
 
         <TextView
-            style="@style/dialog_label"
+            android:layout_width="80dp"
+            android:layout_height="32dp"
+            android:gravity="center_vertical"
+            android:textColor="@android:color/white"
+            android:textSize="15sp"
             android:text="@string/machine_id" />
 
         <TextView
@@ -79,23 +87,35 @@
         android:orientation="horizontal">
 
         <TextView
-            style="@style/dialog_label"
+            android:layout_width="80dp"
+            android:layout_height="32dp"
+            android:gravity="center_vertical"
+            android:textColor="@android:color/white"
+            android:textSize="15sp"
             android:text="@string/authorize_code" />
 
         <EditText
             android:id="@+id/etAuthorizeCode"
-            android:layout_width="200dp"
+            android:layout_width="160dp"
             android:paddingStart="3dp"
             android:paddingEnd="3dp"
             android:gravity="center_vertical"
             android:textSize="15sp"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:textColor="@color/white"
             android:background="@drawable/comman_edit_text_bkg"
             android:layout_marginBottom="2dp"
             android:layout_marginTop="2dp"
             android:text=""
             android:textCursorDrawable="@null" />
+
+        <ImageView
+            android:id="@+id/iv_scan_code"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@mipmap/ic_scan"
+            android:scaleType="fitCenter"
+            android:layout_marginLeft="8dp"/>
     </LinearLayout>
 
     <LinearLayout

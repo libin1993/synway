@@ -6,8 +6,6 @@ package com.doit.net.Utils;
  */
 public class ByteUtils {
 
-    private final static Logger log = Logger.getLogger(ByteUtils.class);
-
     /**
      * 转换short为byte
      *
@@ -312,7 +310,7 @@ public class ByteUtils {
             System.arraycopy(arr,start,b,0,b.length);
             return b;
         } catch (Exception e) {
-            log.error(String.format("sub error,byte size=%s,start=%s,len=%s",arr.length,start,len));
+            LogUtils.log(String.format("sub error,byte size=%s,start=%s,len=%s",arr.length,start,len));
         }
         return null;
     }

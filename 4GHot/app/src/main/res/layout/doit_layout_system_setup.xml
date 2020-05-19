@@ -211,6 +211,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textColor="@color/white"
+                android:paddingStart="5dp"
                 android:background="@drawable/comman_edit_text_bkg"
                 android:inputType="number"
                 android:singleLine="true" />

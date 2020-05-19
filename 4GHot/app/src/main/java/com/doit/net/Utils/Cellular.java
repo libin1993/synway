@@ -5,10 +5,10 @@ import android.content.Context;
 import android.os.Environment;
 import android.telephony.TelephonyManager;
 
-import com.doit.net.Activity.GameApplication;
-import com.doit.net.Bean.LteChannelCfg;
-import com.doit.net.Bean.ScanCellInfo;
-import com.doit.net.Event.ProtocolManager;
+import com.doit.net.application.MyApplication;
+import com.doit.net.bean.LteChannelCfg;
+import com.doit.net.bean.ScanCellInfo;
+import com.doit.net.Protocol.ProtocolManager;
 import com.doit.net.Model.CacheManager;
 
 import java.io.BufferedReader;
@@ -30,7 +30,7 @@ public class Cellular {
     @SuppressLint("MissingPermission")
     private static List<List<ScanCellInfo>> getCellFromFile(){
         String ARFCN_FILE_PATH =  Environment.getExternalStorageDirectory()+"/CellularPro/logs/";
-        TelephonyManager telManager = (TelephonyManager) GameApplication.appContext.getSystemService(Context.TELEPHONY_SERVICE);
+        TelephonyManager telManager = (TelephonyManager) MyApplication.mContext.getSystemService(Context.TELEPHONY_SERVICE);
          String imsi =  StringUtils.defaultIfBlank(telManager.getDeviceId(), "");
         String cellFileName = ARFCN_FILE_PATH + imsi+"-0.txt";
         //UtilBaseLog.printLog(cellFileName);
@@ -211,7 +211,7 @@ public class Cellular {
 
         //打印测试
         file_fcns = "文件获取频点值B1:"+ band1FromFile + "B3:"+band3FromFile + "B38:"+ band38FromFile+"B39:"+ band39FromFile + "B40:" + band40FromFile;;
-        UtilBaseLog.printLog(file_fcns);
+        LogUtils.log(file_fcns);
 
         //删除最后的“，”
         removeCommaInTail(band1FromFile);
@@ -284,12 +284,12 @@ public class Cellular {
 
     private static void generalCfgAndSet(String targetOpr, String bandInfo, String bandCommonFcns, LteChannelCfg channel) {
         if (!targetOpr.equals("CTJ") && !targetOpr.equals("CTU") && !targetOpr.equals("CTC")){
-            UtilBaseLog.printLog("generalCfgAndSet fail, error targetOpr");
+            LogUtils.log("generalCfgAndSet fail, error targetOpr");
             return;
         }
 
         if (channel.getPMax().equals("")){
-            UtilBaseLog.printLog("generalCfgAndSet fail, error pmax");
+            LogUtils.log("generalCfgAndSet fail, error pmax");
             return;
         }
 

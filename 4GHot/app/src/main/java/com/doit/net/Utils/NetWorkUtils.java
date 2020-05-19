@@ -278,7 +278,7 @@ public class NetWorkUtils {
             }
         }
 
-        UtilBaseLog.printLog("get ssid:"+ssid);
+        LogUtils.log("get ssid:"+ssid);
         return ssid;
     }
 }

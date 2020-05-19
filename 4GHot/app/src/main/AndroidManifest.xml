@@ -35,6 +35,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <uses-feature android:glEsVersion="0x00020000" />
 
@@ -57,15 +58,16 @@
         android:smallScreens="true"
         android:xlargeScreens="true" />
 
-    <application xmlns:tools="http://schemas.android.com/tools"
-        android:name="com.doit.net.Activity.GameApplication"
+    <application
+        android:name="com.doit.net.application.MyApplication"
         android:hardwareAccelerated="true"
         android:icon="${app_icon}"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:theme="@style/Theme.AppCompat.NoActionBar"
         tools:replace="icon,label"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        tools:ignore="LockedOrientationActivity">
 
 
         <uses-library
@@ -94,7 +96,7 @@
         -->
 
         <activity
-            android:name="com.doit.net.Activity.StartActivity"
+            android:name="com.doit.net.activity.StartActivity"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -104,16 +106,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.doit.net.View.MainActivity"
+            android:name="com.doit.net.activity.MainActivity"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name="com.doit.net.View.HistoryListActivity"
+            android:name="com.doit.net.activity.HistoryListActivity"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale"
             android:label="采集历史记录"
-            android:parentActivityName="com.doit.net.View.MainActivity"
+            android:parentActivityName="com.doit.net.activity.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
 
@@ -122,58 +124,63 @@
             android:value="false" />
 
         <activity
-            android:name="com.doit.net.View.LoginActivity"
+            android:name="com.doit.net.activity.LoginActivity"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name="com.doit.net.View.UserManageActivity"
+            android:name="com.doit.net.activity.UserManageActivity"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale"
             android:label="用户管理"
-            android:parentActivityName="com.doit.net.View.MainActivity"
+            android:parentActivityName="com.doit.net.activity.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
         <activity
-            android:name="com.doit.net.View.BlackBoxActivity"
+            android:name="com.doit.net.activity.BlackBoxActivity"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale"
             android:label="黑匣子"
-            android:parentActivityName="com.doit.net.View.MainActivity"
+            android:parentActivityName="com.doit.net.activity.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
         <activity
-            android:name="com.doit.net.View.JustForTest"
+            android:name="com.doit.net.activity.JustForTest"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale"
             android:label="Just4Test"
-            android:parentActivityName="com.doit.net.View.MainActivity"
+            android:parentActivityName="com.doit.net.activity.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
         <activity
-            android:name="com.doit.net.View.SystemSetting"
+            android:name="com.doit.net.activity.SystemSettingActivity"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale"
             android:label="系统设置"
-            android:parentActivityName="com.doit.net.View.MainActivity"
+            android:parentActivityName="com.doit.net.activity.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
         <activity
-            android:name="com.doit.net.View.ScanFreqConfigActivity"
+            android:name="com.doit.net.activity.ScanFreqConfigActivity"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale"
             android:label="搜网及配置"
-            android:parentActivityName="com.doit.net.View.MainActivity"
+            android:parentActivityName="com.doit.net.activity.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
         <activity
-            android:name="com.doit.net.View.WhitelistManegerActivity"
+            android:name="com.doit.net.activity.WhitelistManagerActivity"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale"
             android:label="白名单管理"
-            android:parentActivityName="com.doit.net.View.MainActivity"
+            android:parentActivityName="com.doit.net.activity.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
 
         <activity
-            android:name="com.doit.net.View.DeviceParamActivity"
+            android:name="com.doit.net.activity.DeviceParamActivity"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale"
             android:label="设备参数"
-            android:parentActivityName="com.doit.net.View.MainActivity"
+            android:parentActivityName="com.doit.net.activity.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+        <activity android:name="com.doit.net.activity.ScanCodeActivity"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale"
+            android:parentActivityName="com.doit.net.activity.MainActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

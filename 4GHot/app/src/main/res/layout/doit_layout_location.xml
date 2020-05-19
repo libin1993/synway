@@ -39,8 +39,8 @@
 
         <com.doit.net.View.LocateCircle
             android:id="@+id/vLocateCircle"
-            android:layout_width="250dp"
-            android:layout_height="248dp"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
             android:layout_gravity="center_horizontal"
             android:padding="20dp"
             app:animTime="800"

@@ -5,44 +5,26 @@
  */
 package com.doit.net.Model;
 
-import android.app.Activity;
 import android.content.Context;
-import android.os.Environment;
-import android.telephony.TelephonyManager;
 
-import com.doit.net.Activity.GameApplication;
-import com.doit.net.Bean.DeviceInfo;
-import com.doit.net.Bean.DeviceState;
-import com.doit.net.Bean.LocationBean;
-import com.doit.net.Bean.LocationRptBean;
-import com.doit.net.Bean.LteCellConfig;
-import com.doit.net.Bean.LteChannelCfg;
-import com.doit.net.Bean.LteEquipConfig;
-import com.doit.net.Bean.Namelist;
-import com.doit.net.Bean.ScanCellInfo;
-import com.doit.net.Bean.ScanFreqRstBean;
-import com.doit.net.Bean.UeidBean;
-import com.doit.net.Constant.FlagConstant;
+import com.doit.net.bean.DeviceState;
+import com.doit.net.bean.LocationBean;
+import com.doit.net.bean.LocationRptBean;
+import com.doit.net.bean.LteCellConfig;
+import com.doit.net.bean.LteChannelCfg;
+import com.doit.net.bean.LteEquipConfig;
+import com.doit.net.bean.Namelist;
+import com.doit.net.bean.ScanFreqRstBean;
+import com.doit.net.bean.UeidBean;
 import com.doit.net.Event.EventAdapter;
-import com.doit.net.Event.ProtocolManager;
-import com.doit.net.Protocol.LTE_PT_PARAM;
+import com.doit.net.Protocol.ProtocolManager;
 import com.doit.net.Utils.MySweetAlertDialog;
-import com.doit.net.Utils.StringUtils;
-import com.doit.net.Utils.ToastUtils;
-import com.doit.net.Utils.UtilBaseLog;
-import com.doit.net.ucsi.R;
-import com.doit.net.udp.g4.bean.G4GpsRpt;
-import com.doit.net.udp.g4.bean.G4LocateRpt;
+import com.doit.net.Utils.LogUtils;
 import com.doit.net.udp.g4.bean.G4MsgChannelCfg;
-import com.doit.net.Utils.Logger;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.xutils.ex.DbException;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -51,8 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * @author 杨维(wiker) 
@@ -65,8 +45,6 @@ public class CacheManager {
     public  static List<UeidBean> realtimeUeidList = new ArrayList<>();
     public static final int MAX_REALTIME_LIST_SIZE = 300;
 
-    public static DeviceInfo deviceInfo = new DeviceInfo();
-    public static int RFStatus = FlagConstant.RF_CLOSE; //RF状态，0，正常
 
     public static List<LocationBean> locations = new ArrayList<>();
     public static LocationBean currentLoction = null;
@@ -82,7 +60,7 @@ public class CacheManager {
 
     public static List<ScanFreqRstBean> listLastScanFreqRst = new ArrayList<>();
 
-    public static boolean loc_mode = false;
+    public static boolean loc_mode = false;  //是否开启搜寻功能
 
     public static boolean isWifiConnected = false;
 
@@ -260,7 +238,7 @@ public class CacheManager {
     }
 
     public static boolean isDeviceOk(){
-        if(deviceInfo == null || cellConfig == null || channels.size() == 0 || equipConfig == null)
+        if(cellConfig == null || channels.size() == 0 || equipConfig == null)
             return false;
         return true;
     }
@@ -269,12 +247,11 @@ public class CacheManager {
      * 重置一下状态，一般设备需要重启时调用
      */
     public static void resetState(){
-        UtilBaseLog.printLog("reset state.");
+        LogUtils.log("reset state.");
         cellConfig = null;
         //deviceInfo = null;
         channels.clear();
         equipConfig = null;
-        CurrentTac = new HashMap<>();
 
     }
 
@@ -282,7 +259,6 @@ public class CacheManager {
     private static LteEquipConfig equipConfig;
     public static List<LteChannelCfg> channels = new ArrayList<>();
 
-    public static Map<String,String> CurrentTac = new HashMap<>();
 
 
     public static LteCellConfig getCellConfig() {
@@ -404,14 +380,14 @@ public class CacheManager {
     public static void setHighGa(boolean on_off) {
         if (on_off){
             for(LteChannelCfg channel : channels){
-                if (Integer.valueOf(channel.getGa()) <= 10){
-                    ProtocolManager.setChannelConfig(channel.getIdx(), "","", "",String.valueOf(Integer.valueOf(channel.getGa())*5),"","","");
+                if (Integer.parseInt(channel.getGa()) <= 10){
+                    ProtocolManager.setChannelConfig(channel.getIdx(), "","", "",String.valueOf(Integer.parseInt(channel.getGa())*5),"","","");
                 }
             }
         }else{
             for(LteChannelCfg channel : channels){
-                if (Integer.valueOf(channel.getGa()) > 10){
-                    ProtocolManager.setChannelConfig(channel.getIdx(), "","", "",String.valueOf(Integer.valueOf(channel.getGa())/5),"","","");
+                if (Integer.parseInt(channel.getGa()) > 10){
+                    ProtocolManager.setChannelConfig(channel.getIdx(), "","", "",String.valueOf(Integer.parseInt(channel.getGa())/5),"","","");
                 }
             }
         }
@@ -423,7 +399,7 @@ public class CacheManager {
 
         int allGa = 0;
         for(LteChannelCfg channel : channels){
-            allGa += Integer.valueOf(channel.getGa());
+            allGa += Integer.parseInt(channel.getGa());
         }
 
         return allGa>32;

@@ -2,7 +2,8 @@ package com.doit.net.Model;
 
 import android.os.Environment;
 
-import com.doit.net.Utils.UtilBaseLog;
+import com.doit.net.Utils.FTPManager;
+import com.doit.net.Utils.LogUtils;
 
 import org.xutils.DbManager;
 import org.xutils.ex.DbException;
@@ -200,11 +201,7 @@ public class AccountManage {
     }
 
     public static void downloadAccountFile(){
-        try {
-            FTPManager.getInstance().downloadFile(LOCAL_FTP_ACCOUNT_PATH, ACCOUNT_FILE_NAME);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        FTPManager.getInstance().downloadFile(LOCAL_FTP_ACCOUNT_PATH, ACCOUNT_FILE_NAME);
     }
 
 
@@ -219,8 +216,7 @@ public class AccountManage {
 
         File file = new File(LOCAL_FTP_ACCOUNT_PATH +ACCOUNT_FILE_NAME);
         if (!file.exists()){
-            result = false;
-            return result;
+            return false;
         }
 
         BufferedReader bufferedReader = null;
@@ -228,15 +224,16 @@ public class AccountManage {
             bufferedReader = new BufferedReader(new FileReader(file));
             String readline = "";
             while ((readline = bufferedReader.readLine()) != null) {
-                if (readline.split(",") == null || readline.split(",").length < 2)
+                String[] split = readline.split(",");
+                if (split.length < 2)
                     continue;
 
-                UtilBaseLog.printLog(readline);
+                LogUtils.log(readline);
                 UserInfo info = new UserInfo();
-                info.setAccount(readline.split(",")[0]);
-                info.setPassword(readline.split(",")[1]);
-                if (readline.split(",").length == 3){
-                    info.setRemake(readline.split(",")[2]);
+                info.setAccount(split[0]);
+                info.setPassword(split[1]);
+                if (split.length == 3){
+                    info.setRemake(split[2]);
                 }else{
                     info.setRemake("");
                 }

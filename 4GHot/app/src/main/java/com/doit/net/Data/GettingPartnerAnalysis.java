@@ -2,8 +2,8 @@ package com.doit.net.Data;
 
 import com.doit.net.Model.DBUeidInfo;
 import com.doit.net.Model.UCSIDBManager;
-import com.doit.net.Utils.DateUtil;
-import com.doit.net.Utils.UtilBaseLog;
+import com.doit.net.Utils.DateUtils;
+import com.doit.net.Utils.LogUtils;
 
 import org.xutils.DbManager;
 import org.xutils.ex.DbException;
@@ -27,7 +27,7 @@ public class GettingPartnerAnalysis {
         List<DBUeidInfo> targetUeidInPeriod = new ArrayList<>();
         HashMap<Long, List<DBUeidInfo>> mapPeriodWithIMSI = new HashMap<>();
         HashMap<String, Integer> mapImsiWithTimes = new HashMap<>();
-        long timeDev = Long.valueOf(deviation)*60*1000;
+        long timeDev = Long.parseLong(deviation)*60*1000;
 
         mapImsiWithDetectTime.clear();
         //listTargetImsiWithDetectTime.clear();
@@ -35,8 +35,8 @@ public class GettingPartnerAnalysis {
         try {
             targetUeidInPeriod = dbManager.selector(DBUeidInfo.class)
                     .where("imsi", "=", targetImsi)
-                    .and("createDate", "BETWEEN", new long[]{DateUtil.convert2long(startTime,DateUtil.LOCAL_DATE),
-                            DateUtil.convert2long(endTime,DateUtil.LOCAL_DATE)})
+                    .and("createDate", "BETWEEN", new long[]{DateUtils.convert2long(startTime, DateUtils.LOCAL_DATE),
+                            DateUtils.convert2long(endTime, DateUtils.LOCAL_DATE)})
                     .orderBy("createDate", false).findAll();
         } catch (DbException e) {e.printStackTrace();}
 
@@ -48,14 +48,14 @@ public class GettingPartnerAnalysis {
         List<DBUeidInfo> imsiInDeviation = new ArrayList<>();
         long tmpLastTimePoint = 0;
         for (DBUeidInfo tmpUeid :targetUeidInPeriod ){
-            UtilBaseLog.printLog(tmpUeid.getCreateDate() + "  " + tmpLastTimePoint + "  " + timeDev);
+            LogUtils.log(tmpUeid.getCreateDate() + "  " + tmpLastTimePoint + "  " + timeDev);
 
             /* 考虑时间交叉 */
             if (tmpUeid.getCreateDate() < tmpLastTimePoint){
-                UtilBaseLog.printLog("1");
+                LogUtils.log("1");
                 continue;
             } else if ((tmpUeid.getCreateDate()-tmpLastTimePoint) >= 2*timeDev){
-                UtilBaseLog.printLog("2");
+                LogUtils.log("2");
                 try {
                     imsiInDeviation = dbManager.selector(DBUeidInfo.class)
                             .where("createDate", "BETWEEN",
@@ -63,7 +63,7 @@ public class GettingPartnerAnalysis {
                             .orderBy("id", true).findAll();
                 } catch (DbException e) {e.printStackTrace();}
             }else if ((tmpUeid.getCreateDate()-tmpLastTimePoint) < 2*timeDev){
-                UtilBaseLog.printLog("3");
+                LogUtils.log("3");
                 try {
                     imsiInDeviation = dbManager.selector(DBUeidInfo.class)
                             .where("createDate", "BETWEEN",
@@ -77,7 +77,7 @@ public class GettingPartnerAnalysis {
             mapPeriodWithIMSI.put(tmpUeid.getCreateDate(), imsiInDeviation);
         }
 
-        UtilBaseLog.printLog("mapPeriodWithIMSI:"+mapPeriodWithIMSI.size());
+        LogUtils.log("mapPeriodWithIMSI:"+mapPeriodWithIMSI.size());
 
         //3.获取所有非重复的IMSI放入map，key为IMSI，value为次数
         for(List<DBUeidInfo> tmpList: mapPeriodWithIMSI.values()) {
@@ -141,7 +141,7 @@ public class GettingPartnerAnalysis {
             }
         });
         for (Long tmpTimeLong : listAllDetectTime){
-            stringAllDetectTime.add(DateUtil.convert2String(tmpTimeLong, DateUtil.LOCAL_DATE));
+            stringAllDetectTime.add(DateUtils.convert2String(tmpTimeLong, DateUtils.LOCAL_DATE));
         }
 
         return stringAllDetectTime;

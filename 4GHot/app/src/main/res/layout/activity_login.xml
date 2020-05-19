@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/activity_login"
-    tools:context="com.doit.net.View.LoginActivity">
+    tools:context="com.doit.net.activity.LoginActivity">
 
 
     <de.hdodenhof.circleimageview.CircleImageView

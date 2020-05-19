@@ -9,7 +9,6 @@ import java.security.MessageDigest;
 
 public class ProtUtils {
 
-	private final static Logger log = Logger.getLogger(ProtUtils.class);
 
 	public static int readIntHtonl(byte[] data, int pos)
 	{
@@ -49,7 +48,7 @@ public class ProtUtils {
             }
 			return ipBits;
 		} catch (Exception e) {
-			log.error("IP地址转换异常",e);
+			LogUtils.log("IP地址转换异常"+e);
 		}
 		return new byte[4];
 	}
@@ -68,7 +67,7 @@ public class ProtUtils {
 			}
 			return ipBits;
 		} catch (Exception e) {
-			log.error("转换异常",e);
+			LogUtils.log("转换异常"+e);
 		}
 		return new byte[4];
 	}
@@ -112,7 +111,7 @@ public class ProtUtils {
 			int copylen=Math.min(dest.length-destPos, data.length);
 			System.arraycopy(data, 0, dest, destPos, copylen);
 		} catch (Exception e) {
-			log.error("",e);
+			LogUtils.log(e.getMessage());
 		}
 		
 	}
@@ -157,7 +156,7 @@ public class ProtUtils {
 				return null;
 			return new String(data, 0, i, charset);
         } catch (Exception e) {
-			log.error("",e);
+			LogUtils.log(e.getMessage());
         }
 		return null;
 	}
@@ -167,7 +166,7 @@ public class ProtUtils {
 		try {
 			Thread.sleep(ms);
 		} catch (Exception e) {
-			log.error("",e);
+			LogUtils.log(e.getMessage());
 		}
 	}
 	
@@ -210,7 +209,7 @@ public class ProtUtils {
 			BigIntegerEx bigInt = new BigIntegerEx(1, digest.digest());
 			return bigInt.toString(16);
         } catch (Exception e) {
-			log.error("",e);
+			LogUtils.log(e.getMessage());
         }
 		return null;
 	}
@@ -223,7 +222,7 @@ public class ProtUtils {
 			digest.update(data, 0, data.length);
 			return digest.digest();
         } catch (Exception e) {
-			log.error("",e);
+			LogUtils.log(e.getMessage());
         }
 		return null;
 	}
@@ -246,7 +245,7 @@ public class ProtUtils {
 			din.close();
 			in.close();
 		} catch (Exception e) {
-			log.error("",e);
+			LogUtils.log(e.getMessage());
 			return null;
 		}
 		BigInteger bigInt = new BigInteger(1, digest.digest());

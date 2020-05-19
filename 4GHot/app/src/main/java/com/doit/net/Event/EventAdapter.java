@@ -9,12 +9,12 @@ import java.util.Map;
 public class EventAdapter {
     private static Map<String,EventCall> event = new HashMap();
 
-    public final static String WIFI_CHANGE = "WIFI_CHANGE";
+    public final static String WIFI_CHANGE = "WIFI_CHANGE";   //wifi状态监控
     public final static String FOUND_BLACK_NAME = "FOUND_BLACK_NAME";
     public final static String BLACK_NAME_RPT = "BLACK_NAME_RPT";
     public final static String LOCATION_RPT = "LOCATION_RPT";
-    public final static String SHIELD_RPT = "SHIELD_RPT";
-    public final static String UEID_RPT = "UEID_RPT";
+    public final static String SHIELD_RPT = "SHIELD_RPT";  //军队app，侦码
+    public final static String UEID_RPT = "UEID_RPT";    //警察app，管控
     public final static String UPDATE_FILE_SYS = "UPDATE_FILE_SYS";
     public final static String SHOW_PROGRESS = "SHOW_PROGRESS";
     public final static String CLOSE_PROGRESS = "CLOSE_PROGRESS";
@@ -31,6 +31,8 @@ public class EventAdapter {
     public final static String CHANGE_TAB = "CHANGE_TAB";
     public final static String UPDATE_WHITELIST = "UPDATE_WHITELIST";
     public final static String POWER_START = "POWER_START";
+    public final static String CHECK_LICENCE = "CHECK_LICENCE"; //校验证书
+    public final static String SCAN_CODE = "SCAN_CODE"; //扫码结果
 
     public static void setEvent(String key,EventCall call) {
         event.put(key,call);

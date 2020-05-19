@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 28
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         applicationId "com.synway.lte"
@@ -104,6 +104,7 @@ android {
     }
 
     productFlavors {
+
 //        police {
 //            minSdkVersion 21
 //            applicationId 'com.synway.lte.hotspot'
@@ -118,7 +119,6 @@ android {
 //            resValue("string", "login_icon", "@drawable/app_icon")
 //            manifestPlaceholders = [app_icon: "@drawable/app_icon"]
 //        }
-
 
         army {
             minSdkVersion 21
@@ -190,8 +190,6 @@ repositories {
 
 
 dependencies {
-    //compile 'com.jakewharton:butterknife:7.0.1'
-    //compile 'cn.pedant.sweetalert:library:1.3'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
@@ -250,4 +248,8 @@ dependencies {
     implementation 'commons-net:commons-net:3.5'
     implementation 'com.squareup.okhttp3:okhttp:3.4.1'
     implementation 'com.ashokvarma.android:bottom-navigation-bar:2.0.3'
+    implementation project(path: ':zbar')
+    //butterknife
+    implementation 'com.jakewharton:butterknife:8.4.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
 }

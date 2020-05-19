@@ -1,7 +1,7 @@
 package com.doit.net.Utils;
 
-import com.doit.net.Bean.LteChannelCfg;
-import com.doit.net.Event.ProtocolManager;
+import com.doit.net.bean.LteChannelCfg;
+import com.doit.net.Protocol.ProtocolManager;
 import com.doit.net.Model.CacheManager;
 
 import java.util.Arrays;
@@ -59,7 +59,7 @@ public class UtilOperator {
         if ("".equals(fcn))
             return false;
 
-        int intFcn = Integer.valueOf(fcn);
+        int intFcn = Integer.parseInt(fcn);
         if (operator.equals("CTJ")){
             return (rangeInDefined(intFcn, 38250, 38600) ||
                     rangeInDefined(intFcn, 38850, 39350) ||

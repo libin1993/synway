@@ -23,14 +23,11 @@ import org.apache.ftpserver.usermanager.impl.ConcurrentLoginPermission;
 import org.apache.ftpserver.usermanager.impl.TransferRatePermission;
 import org.apache.ftpserver.usermanager.impl.WritePermission;
 //
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 //
@@ -185,7 +182,7 @@ public class FTPServer extends DefaultFtplet {
 
     @Override
     public FtpletResult onRenameEnd(FtpSession session, FtpRequest request) throws FtpException, IOException {
-        UtilBaseLog.printLog("一个文件名更改:" + request.getArgument());
+        LogUtils.log("一个文件名更改:" + request.getArgument());
         if (!CacheManager.currentWorkMode.equals("2")){  //管控模式忽略ftp的上报
             String uploadFileName = request.getArgument().replaceAll("./", "");
             LTE_PT_PARAM.processUeidRpt(FTP_DIR+uploadFileName);
@@ -209,12 +206,10 @@ public class FTPServer extends DefaultFtplet {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if (fin != null) {
-                try {
-                    fin.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            try {
+                fin.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
             if (fos != null) {
                 try {

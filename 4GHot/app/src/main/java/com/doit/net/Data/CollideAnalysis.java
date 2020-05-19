@@ -1,17 +1,15 @@
 package com.doit.net.Data;
 
+import com.doit.net.bean.CollideTimePeriodBean;
 import com.doit.net.Model.DBUeidInfo;
 import com.doit.net.Model.UCSIDBManager;
-import com.doit.net.Utils.DateUtil;
+import com.doit.net.Utils.DateUtils;
 
 import org.xutils.ex.DbException;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -32,20 +30,23 @@ public class CollideAnalysis {
     private static HashMap<String, List<Long>> mapRTCollideDetectTime = new HashMap<>();
 
     //时间段碰撞
-    public static HashMap<String, Integer> collideAnalysis(HashMap<String, String> mapCollideTimePeriod){
+    public static HashMap<String, Integer> collideAnalysis(List<CollideTimePeriodBean> listCollideTimePeriod){
         HashMap<String, Integer> mapImsiWithTimes = new HashMap<>();
         List<List<DBUeidInfo>> listCollideTimePeriodIMSI = new ArrayList<>();
         mapCollideDetectTime.clear();
 
         //0. 获取各个时间段对应的IMSI
         List<DBUeidInfo> listUeidInPeriod = new ArrayList<>();
-        for (String tmpTime : mapCollideTimePeriod.keySet()){
+        for (CollideTimePeriodBean collideTimePeriodBean : listCollideTimePeriod) {
             try {
                 listUeidInPeriod = UCSIDBManager.getDbManager().selector(DBUeidInfo.class)
                         .where("createDate", "BETWEEN",
-                                new long[]{DateUtil.convert2long(tmpTime,DateUtil.LOCAL_DATE), DateUtil.convert2long(mapCollideTimePeriod.get(tmpTime),DateUtil.LOCAL_DATE)})
+                                new long[]{DateUtils.convert2long(collideTimePeriodBean.getStartTime(), DateUtils.LOCAL_DATE),
+                                        DateUtils.convert2long(collideTimePeriodBean.getEndTime(), DateUtils.LOCAL_DATE)})
                         .findAll();
+
             } catch (DbException e) {e.printStackTrace();}
+
 
             if (listUeidInPeriod == null  || listUeidInPeriod.size() == 0)
                 continue;
@@ -150,7 +151,7 @@ public class CollideAnalysis {
             }
         });
         for (Long tmpTimeLong : listAllDetectTime){
-            stringAllDetectTime.add(DateUtil.convert2String(tmpTimeLong, DateUtil.LOCAL_DATE));
+            stringAllDetectTime.add(DateUtils.convert2String(tmpTimeLong, DateUtils.LOCAL_DATE));
         }
 
         return stringAllDetectTime;
@@ -167,7 +168,7 @@ public class CollideAnalysis {
             }
         });
         for (Long tmpTimeLong : listAllDetectTime){
-            stringAllDetectTime.add(DateUtil.convert2String(tmpTimeLong, DateUtil.LOCAL_DATE));
+            stringAllDetectTime.add(DateUtils.convert2String(tmpTimeLong, DateUtils.LOCAL_DATE));
         }
 
         return stringAllDetectTime;
@@ -221,7 +222,7 @@ public class CollideAnalysis {
         });
 
         for (Long tmpTimeLong : listAllDetectTime){
-            stringAllDetectTime.add(DateUtil.convert2String(tmpTimeLong, DateUtil.LOCAL_DATE));
+            stringAllDetectTime.add(DateUtils.convert2String(tmpTimeLong, DateUtils.LOCAL_DATE));
         }
 
         return stringAllDetectTime;

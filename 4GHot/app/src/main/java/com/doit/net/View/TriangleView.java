@@ -16,6 +16,8 @@ import android.view.View;
  * Describe：三角形
  */
 public class TriangleView extends View {
+    private Paint paint = new Paint();
+    private Path path = new Path();
     public TriangleView(Context context) {
         super(context);
     }
@@ -27,11 +29,10 @@ public class TriangleView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        Paint paint = new Paint();
+
         paint.setColor(Color.WHITE);
         paint.setAntiAlias(true);
         //实例化路径
-        Path path = new Path();
         path.moveTo(0,0);
         path.lineTo(getMeasuredWidth(),0);
         path.lineTo(getMeasuredWidth(),getMeasuredHeight());
