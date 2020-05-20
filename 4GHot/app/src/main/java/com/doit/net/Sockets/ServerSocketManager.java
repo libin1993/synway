@@ -6,7 +6,9 @@ package com.doit.net.Sockets;
 
 import com.doit.net.Data.DataCenterManager;
 import com.doit.net.Data.LTESendManager;
+import com.doit.net.Model.CacheManager;
 import com.doit.net.Utils.LogUtils;
+import com.doit.net.bean.DeviceState;
 
 import java.io.IOException;
 import java.util.Hashtable;
@@ -149,6 +151,7 @@ public class ServerSocketManager {
                 LTESendManager.currentLocalAddress = "";
                 removeSubSocket(remoteIP, remotePort);
                 DataCenterManager.clearDataBuffer(remoteIP);
+                CacheManager.deviceState.setDeviceState(DeviceState.ON_INIT);
                 //getServerSocketObject(remotePort).CloseSubSocket(remoteIP+":"+remotePort);
             }
         });
@@ -161,6 +164,5 @@ public class ServerSocketManager {
             utilServerSocket.CloseSubSocket(remoteIP + ":" + remotePort);
         }
     }
-
 
 }

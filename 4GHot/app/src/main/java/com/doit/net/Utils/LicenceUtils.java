@@ -51,17 +51,7 @@ public class LicenceUtils {
 
         long newDueTime = DateUtils.convert2long(decryptCode.split("_")[1], DateUtils.LOCAL_DATE_DAY);
 
-        if ("".equals(authorizeCode)) {
-            long nowTime = new Date().getTime();
-            if (nowTime >= newDueTime) {
-                return false;
-            } else {
-                return true;
-            }
-        }
-
-        long oldDueTime = DateUtils.convert2long(getDueTime(), DateUtils.LOCAL_DATE_DAY);
-        return (newDueTime > oldDueTime);
+        return (newDueTime > System.currentTimeMillis());
     }
 
     /**

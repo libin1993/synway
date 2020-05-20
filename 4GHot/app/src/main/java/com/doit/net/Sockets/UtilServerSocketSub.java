@@ -70,7 +70,7 @@ public class UtilServerSocketSub {
             //数据缓存
             byte[] bytesReceived = new byte[1024];
             //接收到流的数量
-            int receiveCount = 0;
+            int receiveCount;
             //lock.lock();
             try {
                 iClientSocketChange.onClientStartReceiveData(remoteIP, remotePort);
@@ -82,6 +82,7 @@ public class UtilServerSocketSub {
                 while (threadLoop) {
                     //读取服务端发送给客户端的数据
                     receiveCount = netInputStream.read(bytesReceived, 0, bytesReceived.length);
+                    LogUtils.log(receiveCount+"");
                     if (receiveCount <= -1) {
                         LogUtils.log("break read!");
                         break;

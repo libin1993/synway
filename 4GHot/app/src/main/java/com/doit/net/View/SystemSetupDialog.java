@@ -167,7 +167,7 @@ public class SystemSetupDialog extends Dialog {
         if ("".equals(carrierIdx))
             return 0;
         else
-            return Integer.valueOf(carrierIdx);
+            return Integer.parseInt(carrierIdx);
     }
 
     private void initView(){

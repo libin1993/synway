@@ -1,6 +1,7 @@
 package com.doit.net.Sockets;
 
 import com.doit.net.Data.LTESendManager;
+import com.doit.net.Utils.LogUtils;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -119,7 +120,7 @@ public class UtilServerSocket {
 
 
                     //发送消息收到一个新的连接
-                    iServerSocketChange.onServerReceiveNewLink("收到新的连接:" + remoteIP, utilSocket);
+                    iServerSocketChange.onServerReceiveNewLink("收到新的连接:" + remoteIP+":"+remotePort, utilSocket);
 
                     //将这个新的连接放入列表中
                     htSubSocket.put(remoteIP + ":" + remotePort, utilSocket);

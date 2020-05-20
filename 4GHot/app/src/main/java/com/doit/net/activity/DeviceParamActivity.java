@@ -102,7 +102,7 @@ public class DeviceParamActivity extends BaseActivity implements IHandlerFinish 
     }
 
     private void initEvent() {
-        checkHandler.postDelayed(new CheckStateRunnable(checkHandler),0);
+//        checkHandler.postDelayed(new CheckStateRunnable(checkHandler),0);
 
         UIEventManager.register(UIEventManager.KEY_REFRESH_DEVICE,this);
     }

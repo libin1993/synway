@@ -118,7 +118,7 @@ public class LTE_PT_PARAM {
         //IDX:12@BAND:3@FCN:1650,1506,1825@ALT_FCN:@PLMN:46000,46001,46011@PA:-7,-7,-7@GA:35@PW:43.0@RLM:-100@AUTO_OPEN:0@MAX:-5
         //IDX:13@BAND:39@FCN:38544,38400,38300@ALT_FCN:@PLMN:46000,46001,46011@PA:-13,-13,-13@GA:40@PW:43.0@RLM:-90@AUTO_OPEN:0@MAX:-10
 		String enbConfigAck = UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(),0);
-		LogUtils.log("processEnbConfigQuery:" + enbConfigAck);
+		LogUtils.log("设备配置回复:" + enbConfigAck);
 		String[] splitStr = enbConfigAck.split("#");
 
         LteEquipConfig lteEquipConfig = praseEquipConfig(splitStr[0]);
@@ -451,6 +451,7 @@ public class LTE_PT_PARAM {
             case LTE_PT_PARAM.PARAM_SET_CHANNEL_CONFIG_ACK:
                 if (respContent.charAt(0) == '0') {
                     LogUtils.log("设置通道成功");
+                    ProtocolManager.getEquipAndAllChannelConfig();
                 }else if (respContent.charAt(0) == '1'){
                     LogUtils.log("设置通道失败");
                 }

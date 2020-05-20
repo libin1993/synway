@@ -37,6 +37,8 @@ import android.widget.ImageView;
 
 import android.widget.Toast;
 
+import com.doit.net.Sockets.OnSocketChangedListener;
+import com.doit.net.Sockets.ServerSocketUtils;
 import com.doit.net.Utils.PermissionUtils;
 import com.doit.net.base.BaseActivity;
 import com.doit.net.base.BaseFragment;
@@ -197,9 +199,27 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
     }
 
     private void initNetWork() {
-        ServerSocketManager.getInstance().setUIServerSocketListener(new ServerSocketChange());
-        ServerSocketManager.getInstance().newServerSocket(Integer.parseInt(NetConfig.MONITOR_PORT));
-        ServerSocketManager.getInstance().startMainListener(NetConfig.MONITOR_PORT);
+//        ServerSocketManager.getInstance().setUIServerSocketListener(new ServerSocketChange());
+//        ServerSocketManager.getInstance().newServerSocket(Integer.parseInt(NetConfig.MONITOR_PORT));
+//        ServerSocketManager.getInstance().startMainListener(NetConfig.MONITOR_PORT);
+
+        ServerSocketUtils.getInstance().startServer(new OnSocketChangedListener() {
+            @Override
+            public void onConnect() {
+                CacheManager.deviceState.setDeviceState(DeviceState.ON_INIT);
+
+                heartbeatCount = 0;    //一旦发现是连接就重置此标志以设置所有配置
+                //设备重启（重连）后需要重新检查设置默认参数
+                hasSetDefaultParam = false;
+                CacheManager.resetState();
+
+            }
+
+            @Override
+            public void onDisconnect() {
+                CacheManager.deviceState.setDeviceState(DeviceState.ON_INIT);
+            }
+        });
     }
 
     private void initFTP() {

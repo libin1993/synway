@@ -124,7 +124,7 @@ public class LTEDataParse {
 		//第八步取出主协议类型Type
 		byte packageSubType = tempPackage[11];
 		receivePackage.setPackageSubType(packageSubType);
-		LogUtils.log("LTE收到(packageSubType):"+receivePackage.getPackageSubType());
+		LogUtils.log("LTE收到packageMainType"+packageMainType+"(packageSubType):"+receivePackage.getPackageSubType());
 		
 		//第九部取出内容
 		//1.计算子协议内容包的长度

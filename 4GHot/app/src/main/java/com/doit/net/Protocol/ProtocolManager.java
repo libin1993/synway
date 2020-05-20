@@ -66,6 +66,7 @@ public class ProtocolManager {
     }
 
     public static void getEquipAndAllChannelConfig(){
+        LogUtils.log("获取设备配置");
         LTE_PT_PARAM.queryCommonParam(LTE_PT_PARAM.PARAM_GET_ENB_CONFIG);
     }
 

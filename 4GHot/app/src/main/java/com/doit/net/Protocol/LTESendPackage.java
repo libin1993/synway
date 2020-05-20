@@ -1,5 +1,6 @@
 package com.doit.net.Protocol;
 
+import com.doit.net.Utils.LogUtils;
 import com.doit.net.Utils.UtilDataFormatChange;
 import org.apache.http.util.ByteArrayBuffer;
 
@@ -125,6 +126,8 @@ public class LTESendPackage
 		if(this.byteSubContent!=null) {
 			byteArray.append(this.byteSubContent,0,this.byteSubContent.length);
 		}
+
+		LogUtils.log("发送主类型："+packageMainType+";发送子类型："+packageSubType);
 		
 		return byteArray.toByteArray();
 	}

@@ -72,7 +72,7 @@ public class RealTimeUeidRptFragment extends BaseFragment implements IHandlerFin
     private final int UEID_RPT = 1;
     private final int UPDATE_VIEW = 0;
     private final int SHIELD_RPT = 2;
-    private boolean isRFStatusChanged; //射频状态被动改变
+
 
     public RealTimeUeidRptFragment() {
     }
@@ -161,11 +161,6 @@ public class RealTimeUeidRptFragment extends BaseFragment implements IHandlerFin
     CompoundButton.OnCheckedChangeListener rfDetectSwichtListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-            //checkbox被动改变状态
-            if (isRFStatusChanged){
-                return;
-            }
-
             if (!compoundButton.isPressed()) {
                 return;
             }
@@ -398,9 +393,9 @@ public class RealTimeUeidRptFragment extends BaseFragment implements IHandlerFin
             }
         }
 
-        isRFStatusChanged = true;
+        cbDetectSwitch.setOnCheckedChangeListener(null);
         cbDetectSwitch.setChecked(rfState);
-        isRFStatusChanged = false;
+        cbDetectSwitch.setOnCheckedChangeListener(rfDetectSwichtListener);
     }
 
     @Override
