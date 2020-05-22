@@ -185,13 +185,33 @@
             android:layout_height="42dp"
             app:leftIcon="@drawable/base_station"
             app:leftText="@string/device_param" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <View
+                android:layout_width="48dp"
+                android:layout_height="0.6dp"
+                android:background="@color/deepgrey2"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="0.6dp"
+                android:background="@color/dimgrey"/>
+        </LinearLayout>
+
+        <com.doit.net.Utils.LSettingItem
+            android:id="@+id/btDeviceFcn"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            app:leftIcon="@drawable/base_station"
+            app:leftText="@string/custom_fcn" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="0.8dp"
             android:background="@color/dimgrey"/>
-
-
 
 
         <View

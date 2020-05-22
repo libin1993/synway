@@ -33,6 +33,7 @@
     <string name="not_support_sound">本机不支持语音播报</string>
     <string name="lab_device_ip">设备IP：</string>
     <string name="device_param">设备参数</string>
+    <string name="custom_fcn">自定义频点</string>
     <string name="lab_port">端口：</string>
     <string name="lab_local_ip">本机IP：</string>
     <string name="set_ip">设置IP</string>
@@ -232,6 +233,7 @@
     <string name="loc_switch_off">静音</string>
 
     <string name="account_rule">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
+    <string name="fcn_rule">0123456789-,</string>
 
     <array name="setup_type">
         <item>----自动搜索、自动配置----</item>

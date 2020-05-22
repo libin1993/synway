@@ -1,6 +1,7 @@
 package com.doit.net.fragment;
 
 import com.doit.net.View.ClearHistoryTimeDialog;
+import com.doit.net.activity.CustomFcnActivity;
 import com.doit.net.activity.DeviceParamActivity;
 import com.doit.net.activity.HistoryListActivity;
 import com.doit.net.activity.JustForTest;
@@ -97,6 +98,10 @@ public class AppFragment extends BaseFragment implements IHandlerFinish {
 
     @ViewInject(R.id.btDeviceParam)
     private LSettingItem btDeviceParam;
+
+
+    @ViewInject(R.id.btDeviceFcn)
+    private LSettingItem btDeviceFcn;
 
     @ViewInject(R.id.btDeviceInfoAndUpgrade)
     private LSettingItem btDeviceInfoAndUpgrade;
@@ -204,6 +209,16 @@ public class AppFragment extends BaseFragment implements IHandlerFinish {
             @Override
             public void click(LSettingItem item) {
                 startActivity(new Intent(getActivity(), DeviceParamActivity.class));
+            }
+        });
+
+        btDeviceFcn.setmOnLSettingItemClick(new LSettingItem.OnLSettingItemClick() {
+            @Override
+            public void click(LSettingItem item) {
+                if (!CacheManager.checkDevice(getContext()))
+                    return;
+
+                startActivity(new Intent(getActivity(), CustomFcnActivity.class));
             }
         });
 

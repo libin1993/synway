@@ -25,8 +25,6 @@ import java.util.Map;
 public class ChannelListViewAdapter extends BaseAdapter {
 
     private Context mContext;
-    private Map<Integer,G4MsgChannelCfg> values = new HashMap<>();
-
 
     public ChannelListViewAdapter(Context mContext) {
         this.mContext = mContext;

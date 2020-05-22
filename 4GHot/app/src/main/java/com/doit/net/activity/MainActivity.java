@@ -974,28 +974,29 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
         //以下判断是否过期
         String dueTime = LicenceUtils.getDueTime();
         long longDueTime = DateUtils.convert2long(dueTime, DateUtils.LOCAL_DATE_DAY);
-        String nowDate = DateUtils.convert2String(new Date(), DateUtils.LOCAL_DATE_DAY);
-        long nowTime = DateUtils.convert2long(nowDate, DateUtils.LOCAL_DATE_DAY);
-        if (nowTime >= longDueTime) {
-            ToastUtils.showMessageLong(activity, "授权已过期，请联系管理员");
-            LicenceDialog licenceDialog = new LicenceDialog(this);
-            licenceDialog.setOnCloseListener(new LicenceDialog.OnCloseListener() {
-                @Override
-                public void onClose() {
-                    appExit();
-                }
-            });
-            licenceDialog.show();
+        long nowTime = System.currentTimeMillis();
+//        if (nowTime >= longDueTime) {
+//            ToastUtils.showMessageLong(activity, "授权已过期，请联系管理员");
+//            LicenceDialog licenceDialog = new LicenceDialog(this);
+//            licenceDialog.setOnCloseListener(new LicenceDialog.OnCloseListener() {
+//                @Override
+//                public void onClose() {
+//                    appExit();
+//                }
+//            });
+//            licenceDialog.show();
+//
+//            return false;
+//        } else {
+//            int dueDay = (int) ((longDueTime - nowTime) / (24 * 60 * 60 * 1000L));
+//            if (dueDay <= 7) {
+//                ToastUtils.showMessageLong(activity, "授权码还剩" + dueDay + "天到期，请联系管理员");
+//            }
+//
+//            return true;
+//        }
 
-            return false;
-        } else {
-            int dueDay = (int) ((longDueTime - nowTime) / (24 * 60 * 60 * 1000L));
-            if (dueDay <= 7) {
-                ToastUtils.showMessageLong(activity, "授权码还剩" + dueDay + "天到期，请联系管理员");
-            }
-
-            return true;
-        }
+        return true;
 
     }
 

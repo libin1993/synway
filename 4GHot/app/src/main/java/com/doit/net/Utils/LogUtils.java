@@ -83,8 +83,11 @@ public class LogUtils {
     private static void saveLog(String content){
         String saveLog = new SimpleDateFormat("HH:mm:ss").format(new Date())+" —— "+content+"\n";
         try {
-            saveLogOS.write(saveLog.getBytes());
-            saveLogOS.flush();
+            if (saveLogOS != null){
+                saveLogOS.write(saveLog.getBytes());
+                saveLogOS.flush();
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }

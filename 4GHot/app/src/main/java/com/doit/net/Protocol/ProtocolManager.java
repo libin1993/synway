@@ -1,13 +1,18 @@
 package com.doit.net.Protocol;
 
+import android.text.TextUtils;
+
 import com.doit.net.Event.EventAdapter;
+import com.doit.net.Model.DBChannel;
+import com.doit.net.Model.UCSIDBManager;
 import com.doit.net.bean.FtpConfig;
 import com.doit.net.bean.LteChannelCfg;
 import com.doit.net.Model.BlackBoxManger;
 import com.doit.net.Model.CacheManager;
-import com.doit.net.Protocol.LTE_PT_PARAM;
-import com.doit.net.Protocol.LTE_PT_SYSTEM;
 import com.doit.net.Utils.LogUtils;
+
+import org.xutils.DbManager;
+import org.xutils.ex.DbException;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,7 +24,8 @@ import java.util.Date;
 public class ProtocolManager {
     private static final String HOLD_VALUE = "0";  //设备是否保存配置：“0”不保存，“1”保存
 
-    public static void setNamelist(String redirectList, String rejectList, String blockList, String releaseList, String redirectRejectList, String restAction){
+
+    public static void setNamelist(String redirectList, String rejectList, String blockList, String releaseList, String redirectRejectList, String restAction) {
         //MODE:[on|off]
         // @REDIRECT_CONFIG:46000,4,38400#46001,4,300#46011,4,100#46002,2,98  //重定向
         // @NAMELIST_REJECT:460001234512345,460011234512345   //拒绝
@@ -32,32 +38,32 @@ public class ProtocolManager {
         namelist += "MODE:on";
 
         namelist += "@REDIRECT_CONFIG:";
-        if (!"".equals(redirectList)){
+        if (!"".equals(redirectList)) {
             namelist += redirectList;
         }
 
         namelist += "@NAMELIST_REJECT:";
-        if (!"".equals(rejectList)){
+        if (!"".equals(rejectList)) {
             namelist += rejectList;
         }
 
         namelist += "@NAMELIST_REDIRECT:";
-        if (!"".equals(redirectRejectList)){
+        if (!"".equals(redirectRejectList)) {
             namelist += redirectRejectList;
         }
 
         namelist += "@NAMELIST_BLOCK:";
-        if (!"".equals(blockList)){
+        if (!"".equals(blockList)) {
             namelist += blockList;
         }
 
         namelist += "@NAMELIST_RELEASE:";
-        if (!"".equals(releaseList)){
+        if (!"".equals(releaseList)) {
             namelist += releaseList;
         }
 
         namelist += "@NAMELIST_REST_ACTION:";
-        if (!"".equals(restAction)){
+        if (!"".equals(restAction)) {
             namelist += restAction;
         }
 
@@ -65,12 +71,12 @@ public class ProtocolManager {
         LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_NAMELIST, namelist);
     }
 
-    public static void getEquipAndAllChannelConfig(){
+    public static void getEquipAndAllChannelConfig() {
         LogUtils.log("获取设备配置");
         LTE_PT_PARAM.queryCommonParam(LTE_PT_PARAM.PARAM_GET_ENB_CONFIG);
     }
 
-    public static void setNowTime(){
+    public static void setNowTime() {
         Date d = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd-HH:mm:ss");
         LogUtils.log("当前时间：" + sdf.format(d));
@@ -78,8 +84,8 @@ public class ProtocolManager {
         LTE_PT_SYSTEM.setSystemParam(LTE_PT_SYSTEM.SYSTEM_SET_DATETIME, sdf.format(d));
     }
 
-    public static void changeTac(){
-        if(!CacheManager.isDeviceOk()){
+    public static void changeTac() {
+        if (!CacheManager.isDeviceOk()) {
             return;
         }
 
@@ -88,27 +94,27 @@ public class ProtocolManager {
         LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_CHANGE_TAG, "");
     }
 
-    public static void setCellConfig(String gpsOffset,String pci, String tacPeriod, String sync){
-        if(!CacheManager.isDeviceOk()){
+    public static void setCellConfig(String gpsOffset, String pci, String tacPeriod, String sync) {
+        if (!CacheManager.isDeviceOk()) {
             return;
         }
 
         String configContent = "";
-        if (!"".equals(pci)){
+        if (!"".equals(pci)) {
             configContent += "@PCI:";
             configContent += pci.replaceAll(",", ":");
         }
-        if (!"".equals(gpsOffset)){
+        if (!"".equals(gpsOffset)) {
             configContent += "@GPS_OFFSET:";
             configContent += gpsOffset.replaceAll(",", ":");
         }
 
-        if (!"".equals(tacPeriod)){
+        if (!"".equals(tacPeriod)) {
             configContent += "@TAC_TIMER:";
             configContent += tacPeriod;
         }
 
-        if (!"".equals(sync)){
+        if (!"".equals(sync)) {
             configContent += "@SYNC:";
             configContent += sync;
         }
@@ -116,13 +122,13 @@ public class ProtocolManager {
         //删掉最开始的@
         configContent = configContent.replaceFirst("@", "");
 
-        LogUtils.log("set cell config:" +configContent);
+        LogUtils.log("set cell config:" + configContent);
         LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_ENB_CONFIG, configContent);
         //EventAdapter.call(EventAdapter.ADD_BLACKBOX,BlackBoxManger.SET_CELL_CONFIG + configContent);
     }
 
-    public static void reboot(){
-        if(!CacheManager.isDeviceOk()){
+    public static void reboot() {
+        if (!CacheManager.isDeviceOk()) {
             return;
         }
 
@@ -130,7 +136,7 @@ public class ProtocolManager {
         EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.REBOOT_DEVICE);
     }
 
-    public static void changeBand(String idx, String changeBand){
+    public static void changeBand(String idx, String changeBand) {
         String content = "IDX:";
         content += idx;
         content += "@BAND:";
@@ -139,28 +145,28 @@ public class ProtocolManager {
         LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_CHANGE_BAND, content);
     }
 
-    public static void setDetectCarrierOpetation(String carrierOpetation){
-        if(!CacheManager.isDeviceOk()){
+    public static void setDetectCarrierOpetation(String carrierOpetation) {
+        if (!CacheManager.isDeviceOk()) {
             return;
         }
 
         String plnmValue = "46000,46001,46011";
-        if (carrierOpetation.equals("detect_ctj")){
+        if (carrierOpetation.equals("detect_ctj")) {
             plnmValue = "46000,46000,46000";
-        }else if (carrierOpetation.equals("detect_ctu")){
+        } else if (carrierOpetation.equals("detect_ctu")) {
             plnmValue = "46001,46001,46001";
-        }else if (carrierOpetation.equals("detect_ctc")){
+        } else if (carrierOpetation.equals("detect_ctc")) {
             plnmValue = "46011,46011,46011";
         }
 
-        for(LteChannelCfg channel:CacheManager.getChannels()){
-            setChannelConfig(channel.getIdx(),"", plnmValue,"", "", "", "", "");
+        for (LteChannelCfg channel : CacheManager.getChannels()) {
+            setChannelConfig(channel.getIdx(), "", plnmValue, "", "", "", "", "");
         }
     }
 
     public static void setChannelConfig(String idx, String fcn, String plmn, String pa,
-                                        String ga, String rxlevMin, String atuoOpenRF, String AltFcn){
-        if(!CacheManager.isDeviceOk()){
+                                        String ga, String rxlevMin, String atuoOpenRF, String AltFcn) {
+        if (!CacheManager.isDeviceOk()) {
             return;
         }
 
@@ -171,39 +177,39 @@ public class ProtocolManager {
         String configContent = "IDX:";
         configContent += idx;
 
-        if (!"".equals(plmn)){
+        if (!"".equals(plmn)) {
             configContent += "@PLMN:";
             configContent += plmn;
         }
 
-        if (!"".equals(fcn)){
+        if (!"".equals(fcn)) {
             configContent += "@FCN:";
             configContent += fcn;
         }
 
-        if (!"".equals(pa)){
+        if (!"".equals(pa)) {
             configContent += "@PA:";
             configContent += pa;
             //configContent += checkPa(idx, pa);
         }
 
-        if (!"".equals(ga)){
+        if (!"".equals(ga)) {
             configContent += "@GA:";
             configContent += ga;
         }
 
-        if (!"".equals(rxlevMin)){
+        if (!"".equals(rxlevMin)) {
             configContent += "@RLM:";
             configContent += rxlevMin;
         }
 
 
-        if (!"".equals(atuoOpenRF)){
+        if (!"".equals(atuoOpenRF)) {
             configContent += "@AUTO_OPEN:";
             configContent += atuoOpenRF;
         }
 
-        if (!"".equals(AltFcn)){
+        if (!"".equals(AltFcn)) {
             configContent += "@ALT_FCN:";
             configContent += AltFcn;
         }
@@ -225,47 +231,47 @@ public class ProtocolManager {
         String returnGa = "";
 
         String[] tmpGa = ga.split(",");
-        if (tmpGa == null || tmpGa.length != 3){
-            LogUtils.log("len "+tmpGa.length);
+        if (tmpGa == null || tmpGa.length != 3) {
+            LogUtils.log("len " + tmpGa.length);
             return ga;
         }
 
 
-        if (band.equals("1") || band.equals("3")){
+        if (band.equals("1") || band.equals("3")) {
             for (int i = 0; i < tmpGa.length; i++) {
-                if (Integer.valueOf(tmpGa[i]) > -7){
+                if (Integer.valueOf(tmpGa[i]) > -7) {
                     returnGa += -7;
-                }else{
+                } else {
                     returnGa += tmpGa[i];
                 }
                 returnGa += ",";
             }
-        }else if (band.equals("38") || band.equals("40") || band.equals("41")){
+        } else if (band.equals("38") || band.equals("40") || band.equals("41")) {
             for (int i = 0; i < tmpGa.length; i++) {
-                if (Integer.valueOf(tmpGa[i]) > -1){
+                if (Integer.valueOf(tmpGa[i]) > -1) {
                     returnGa += -1;
-                }else{
+                } else {
                     returnGa += tmpGa[i];
                 }
                 returnGa += ",";
             }
-        }else if (band.equals("39")){
+        } else if (band.equals("39")) {
             for (int i = 0; i < tmpGa.length; i++) {
-                if (Integer.valueOf(tmpGa[i]) > -13){
+                if (Integer.valueOf(tmpGa[i]) > -13) {
                     returnGa += -13;
-                }else{
+                } else {
                     returnGa += tmpGa[i];
                 }
                 returnGa += ",";
             }
         }
 
-        return returnGa.substring(0, returnGa.length()-1);
+        return returnGa.substring(0, returnGa.length() - 1);
     }
 
     private static String getBandByIdx(String idx) {
-        for(LteChannelCfg channel : CacheManager.getChannels()){
-            if (channel.getIdx().equals(idx)){
+        for (LteChannelCfg channel : CacheManager.getChannels()) {
+            if (channel.getIdx().equals(idx)) {
                 return channel.getBand();
             }
         }
@@ -273,13 +279,13 @@ public class ProtocolManager {
         return "";
     }
 
-    public static void setBlackList(String operation, String content){
+    public static void setBlackList(String operation, String content) {
 //        if(!CacheManager.isDeviceOk()){
 //            return;
 //        }
 
         //operation 1查询  2添加 3删除
-        String configContent = operation+content;
+        String configContent = operation + content;
 
         LogUtils.log("设置黑名单(中标)号码: " + configContent);
 
@@ -287,67 +293,67 @@ public class ProtocolManager {
     }
 
     //这个协议是用于rpt_rt_imsi而不是rpt_black_name
-    public static void setRTImsi(boolean onOff){
-        if(!CacheManager.isDeviceOk()){
+    public static void setRTImsi(boolean onOff) {
+        if (!CacheManager.isDeviceOk()) {
             return;
         }
 
-        LogUtils.log("设置是否上报中标号码: " + (onOff?"1":"0"));
+        LogUtils.log("设置是否上报中标号码: " + (onOff ? "1" : "0"));
 
-        LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_RT_IMSI, onOff?"1":"0");
+        LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_RT_IMSI, onOff ? "1" : "0");
     }
 
 
-    public static void openAllRf(){
-        for(LteChannelCfg channel:CacheManager.getChannels()){
-            if (!channel.getRFState()){
+    public static void openAllRf() {
+        for (LteChannelCfg channel : CacheManager.getChannels()) {
+            if (!channel.getRFState()) {
                 openRf(channel.getIdx());
             }
         }
     }
 
-    public static void openRf(String idx){
+    public static void openRf(String idx) {
         //UtilBaseLog.printLog("打开射频："+idx);
         //LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_CHANNEL_ON, idx+"@HOLD:"+HOLD_VALUE);
         LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_CHANNEL_ON, idx);
         //setChannelConfig(idx,null,null,null,null, FlagConstant.RF_OPEN,null);
     }
 
-    public static void closeRf(String idx){
-        LogUtils.log("关闭射频："+idx);
+    public static void closeRf(String idx) {
+        LogUtils.log("关闭射频：" + idx);
         //LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_CHANNEL_OFF, idx+"@HOLD:"+HOLD_VALUE);
         LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_CHANNEL_OFF, idx);
     }
 
-    public static void closeAllRf(){
-        for(LteChannelCfg channel:CacheManager.getChannels()){
-            if (channel.getRFState()){
+    public static void closeAllRf() {
+        for (LteChannelCfg channel : CacheManager.getChannels()) {
+            if (channel.getRFState()) {
                 closeRf(channel.getIdx());
             }
 
         }
     }
 
-    public static void setLocImsi(String imsi){
-        if(!CacheManager.isDeviceOk()){
+    public static void setLocImsi(String imsi) {
+        if (!CacheManager.isDeviceOk()) {
             return;
         }
 
-        LogUtils.log("下发开始定位："+imsi);
+        LogUtils.log("下发开始定位：" + imsi);
 
         LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_LOC_IMSI, imsi);
     }
 
 
-    public static void setActiveMode(String mode){
-        if(!CacheManager.isDeviceOk()){
+    public static void setActiveMode(String mode) {
+        if (!CacheManager.isDeviceOk()) {
             return;
         }
 
         LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_ACTIVE_MODE, mode);
     }
 
-    public static void setFTPConfig(){
+    public static void setFTPConfig() {
         String configContent = "";
         configContent += FtpConfig.getFtpServerIp();
         configContent += "#";
@@ -364,7 +370,10 @@ public class ProtocolManager {
         LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_FTP_CONFIG, configContent);
     }
 
-    public static void setDefaultArfcnsAndPwr(){
+    /**
+     * 设置默认配置
+     */
+    public static void setDefaultArfcnsAndPwr() {
         String tmpArfcnConfig = "";
         String defaultGa = "";
         String defaultPower = "-7,-7,-7";
@@ -373,13 +382,13 @@ public class ProtocolManager {
         String band38Fcns = "37900,38098,38200";
         String band39Fcns = "38400,38544,38300";
         String band40Fcns = "38950,39148,39300";
-        String band41Fcns = band38Fcns;
+        String band41Fcns = "37900,38098,38200";
         String tmpAllFcns = "";
         String pMax = "";
 
-        for(LteChannelCfg channel:CacheManager.getChannels()){
+        for (LteChannelCfg channel : CacheManager.getChannels()) {
             //2019.9.12讨论不再使用过滤筛选方式，直接使用固定常用频点
-            switch (channel.getBand()){
+            switch (channel.getBand()) {
                 case "1":
 //                    tmpAllFcns = channel.getFcn() + "," + band1Fcns;
 //                    tmpSplitFcn = tmpAllFcns.split(",");
@@ -391,13 +400,22 @@ public class ProtocolManager {
 //                    }
 
                     pMax = channel.getPMax();
-                    if ("".equals(pMax)){
+                    if ("".equals(pMax)) {
                         defaultPower = "-7,-7,-7";
-                    }else{
-                        defaultPower = pMax+","+pMax+","+pMax;
+                    } else {
+                        defaultPower = pMax + "," + pMax + "," + pMax;
                     }
 
                     tmpArfcnConfig = band1Fcns;
+
+                    saveDefaultFcn(channel.getIdx(),channel.getBand(),band1Fcns);
+                    String fcn1 = getCheckedFcn(channel.getBand());
+                    if (!TextUtils.isEmpty(fcn1)){
+                        tmpArfcnConfig = fcn1;
+                    }
+
+
+
                     //tmpArfcnConfig = tmpArfcnConfig.substring(0, tmpArfcnConfig.length()-1);
                     if (Integer.parseInt(channel.getGa()) <= 8)
                         defaultGa = String.valueOf(Integer.parseInt(channel.getGa()) * 5);
@@ -413,14 +431,23 @@ public class ProtocolManager {
 //                        }
 //                    }
                     pMax = channel.getPMax();
-                    if ("".equals(pMax)){
+                    if ("".equals(pMax)) {
                         defaultPower = "-7,-7,-7";
-                    }else{
-                        defaultPower = pMax+","+pMax+","+pMax;
+                    } else {
+                        defaultPower = pMax + "," + pMax + "," + pMax;
                     }
 
                     //tmpArfcnConfig = tmpArfcnConfig.substring(0, tmpArfcnConfig.length()-1);
                     tmpArfcnConfig = band3Fcns;
+                    saveDefaultFcn(channel.getIdx(),channel.getBand(),band3Fcns);
+                    String fcn3 = getCheckedFcn(channel.getBand());
+                    if (!TextUtils.isEmpty(fcn3)){
+                        tmpArfcnConfig = fcn3;
+                    }
+
+
+
+
                     if (Integer.parseInt(channel.getGa()) <= 8)
                         defaultGa = String.valueOf(Integer.parseInt(channel.getGa()) * 5);
                     break;
@@ -435,14 +462,22 @@ public class ProtocolManager {
 //                        }
 //                    }
                     pMax = channel.getPMax();
-                    if ("".equals(pMax)){
+                    if ("".equals(pMax)) {
                         defaultPower = "-1,-1,-1";
-                    }else{
-                        defaultPower = pMax+","+pMax+","+pMax;
+                    } else {
+                        defaultPower = pMax + "," + pMax + "," + pMax;
                     }
 
                     //tmpArfcnConfig = tmpArfcnConfig.substring(0, tmpArfcnConfig.length()-1);
                     tmpArfcnConfig = band38Fcns;
+                    saveDefaultFcn(channel.getIdx(),channel.getBand(),band38Fcns);
+                    String fcn38 = getCheckedFcn(channel.getBand());
+                    if (!TextUtils.isEmpty(fcn38)){
+                        tmpArfcnConfig = fcn38;
+                    }
+
+
+
                     if (Integer.parseInt(channel.getGa()) <= 8)
                         defaultGa = String.valueOf(Integer.parseInt(channel.getGa()) * 5);
                     break;
@@ -457,14 +492,21 @@ public class ProtocolManager {
 //                        }
 //                    }
                     pMax = channel.getPMax();
-                    if ("".equals(pMax)){
+                    if ("".equals(pMax)) {
                         defaultPower = "-13,-13,-13";
-                    }else{
-                        defaultPower = pMax+","+pMax+","+pMax;
+                    } else {
+                        defaultPower = pMax + "," + pMax + "," + pMax;
                     }
 
                     //tmpArfcnConfig = tmpArfcnConfig.substring(0, tmpArfcnConfig.length()-1);
                     tmpArfcnConfig = band39Fcns;
+                    saveDefaultFcn(channel.getIdx(),channel.getBand(),band39Fcns);
+                    String fcn39 = getCheckedFcn(channel.getBand());
+                    if (!TextUtils.isEmpty(fcn39)){
+                        tmpArfcnConfig = fcn39;
+                    }
+
+
                     if (Integer.parseInt(channel.getGa()) <= 8)
                         defaultGa = String.valueOf(Integer.parseInt(channel.getGa()) * 5);
                     break;
@@ -479,13 +521,20 @@ public class ProtocolManager {
 //                        }
 //                    }
                     pMax = channel.getPMax();
-                    if ("".equals(pMax)){
+                    if ("".equals(pMax)) {
                         defaultPower = "-1,-1,-1";
-                    }else{
-                        defaultPower = pMax+","+pMax+","+pMax;
+                    } else {
+                        defaultPower = pMax + "," + pMax + "," + pMax;
                     }
                     ///tmpArfcnConfig = tmpArfcnConfig.substring(0, tmpArfcnConfig.length()-1);
                     tmpArfcnConfig = band40Fcns;
+                    saveDefaultFcn(channel.getIdx(),channel.getBand(),band40Fcns);
+                    String fcn40 = getCheckedFcn(channel.getBand());
+                    if (!TextUtils.isEmpty(fcn40)){
+                        tmpArfcnConfig = fcn40;
+                    }
+
+
                     if (Integer.parseInt(channel.getGa()) <= 8)
                         defaultGa = String.valueOf(Integer.parseInt(channel.getGa()) * 5);
                     break;
@@ -501,14 +550,20 @@ public class ProtocolManager {
 //                    }
 
                     pMax = channel.getPMax();
-                    if ("".equals(pMax)){
+                    if ("".equals(pMax)) {
                         defaultPower = "-1,-1,-1";
-                    }else{
-                        defaultPower = pMax+","+pMax+","+pMax;
+                    } else {
+                        defaultPower = pMax + "," + pMax + "," + pMax;
                     }
 
                     //tmpArfcnConfig = tmpArfcnConfig.substring(0, tmpArfcnConfig.length()-1);
                     tmpArfcnConfig = band41Fcns;
+                    saveDefaultFcn(channel.getIdx(),channel.getBand(),band41Fcns);
+                    String fcn41 = getCheckedFcn(channel.getBand());
+                    if (!TextUtils.isEmpty(fcn41)){
+                        tmpArfcnConfig = fcn41;
+                    }
+
                     if (Integer.parseInt(channel.getGa()) <= 8)
                         defaultGa = String.valueOf(Integer.parseInt(channel.getGa()) * 5);
                     break;
@@ -517,11 +572,13 @@ public class ProtocolManager {
                     break;
             }
 
-            if ("".equals(tmpArfcnConfig)){
-                setChannelConfig(channel.getIdx(),"", "","", defaultGa, "","","");
-            }else{
-                setChannelConfig(channel.getIdx(), tmpArfcnConfig, "","", defaultGa, "","","");
+            if ("".equals(tmpArfcnConfig)) {
+                setChannelConfig(channel.getIdx(), "", "", "", defaultGa, "", "", "");
+            } else {
+                setChannelConfig(channel.getIdx(), tmpArfcnConfig, "", "", defaultGa, "", "", "");
             }
+
+            LogUtils.log("默认fcn:"+tmpArfcnConfig);
 
             //setChannelConfig(channel.getIdx(),tmpArfcnConfig, "","", "", "","","");
             tmpArfcnConfig = "";
@@ -530,24 +587,66 @@ public class ProtocolManager {
         }
     }
 
-    public static void setFancontrol(String maxFanSpeed, String minFanSpeed, String tempThreshold){
-        if(!CacheManager.isDeviceOk()){
+    /**
+     * 获取选中fcn
+     */
+    private static String getCheckedFcn(String band) {
+        try {
+            DbManager dbManager = UCSIDBManager.getDbManager();
+            DBChannel channel = dbManager.selector(DBChannel.class)
+                    .where("band", "=", band)
+                    .and("is_check","=",1)
+                    .findFirst();
+            if (channel !=null){
+               return channel.getFcn();
+            }
+
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+
+        return "";
+    }
+
+    /**
+     * @param band
+     * @param fcn
+     * 存入默认fcn
+     */
+    private static void saveDefaultFcn(String idx,String band, String fcn) {
+        try {
+            DbManager dbManager = UCSIDBManager.getDbManager();
+            DBChannel channel = dbManager.selector(DBChannel.class)
+                    .where("band", "=", band)
+                    .and("fcn", "=", fcn)
+                    .findFirst();
+            if (channel ==null){
+                dbManager.save(new DBChannel(idx,band,fcn,1,1));
+            }
+
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setFancontrol(String maxFanSpeed, String minFanSpeed, String tempThreshold) {
+        if (!CacheManager.isDeviceOk()) {
             return;
         }
 
         String configContent = "";
 
-        if (!"".equals(minFanSpeed)){
+        if (!"".equals(minFanSpeed)) {
             configContent += "MIN_FAN:";
             configContent += minFanSpeed;
         }
 
-        if (!"".equals(maxFanSpeed)){
+        if (!"".equals(maxFanSpeed)) {
             configContent += "@MAX_FAN:";
             configContent += maxFanSpeed;
         }
 
-        if (!"".equals(tempThreshold)){
+        if (!"".equals(tempThreshold)) {
             configContent += "@FAN_TMPT:";
             configContent += tempThreshold;
         }
@@ -558,26 +657,26 @@ public class ProtocolManager {
     }
 
     public static void setAutoRF(boolean onOff) {
-        if(!CacheManager.isDeviceOk()){
+        if (!CacheManager.isDeviceOk()) {
             return;
         }
-        String ifAutoOpen = onOff?"1":"0";
+        String ifAutoOpen = onOff ? "1" : "0";
 
-        for(LteChannelCfg channel:CacheManager.getChannels()){
-            setChannelConfig(channel.getIdx(),"", "", "", "", "", ifAutoOpen,"");
+        for (LteChannelCfg channel : CacheManager.getChannels()) {
+            setChannelConfig(channel.getIdx(), "", "", "", "", "", ifAutoOpen, "");
         }
     }
 
-    public static void scanFreq(){
-        if(!CacheManager.isDeviceOk()){
+    public static void scanFreq() {
+        if (!CacheManager.isDeviceOk()) {
             return;
         }
 
         LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_SCAN_FREQ, "");
     }
 
-    public static void systemUpgrade(String upgradeCommand){
-        if(!CacheManager.isDeviceOk()){
+    public static void systemUpgrade(String upgradeCommand) {
+        if (!CacheManager.isDeviceOk()) {
             return;
         }
 
