@@ -42,7 +42,7 @@ public class QrConfig implements Serializable {
     public String des_text = "(识别二维码)";
     public String open_album_text = "选择要识别的图片";
     public int line_speed = LINE_FAST;
-    public int line_style = ScanLineView.style_hybrid;
+    public int line_style = ScanLineView.style_line;
     public int corner_width = 10;
     public int loop_wait_time = 0;
 

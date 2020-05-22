@@ -20,8 +20,6 @@ public class LTESendManager {
 	 * @return
 	 */
 	public static boolean sendData(byte[] tempByte) {
-		ServerSocketUtils.getInstance().sendData(tempByte);
-
 
 //		String sendStr="";
 //		for(int i=0;i<tempByte.length;i++) {
@@ -35,6 +33,9 @@ public class LTESendManager {
 //		if(clientSocket!=null) {
 //			return clientSocket.sendData(tempByte);
 //		}
+
+
+		ServerSocketUtils.getInstance().sendData(tempByte);
 
 		return false;
 	}

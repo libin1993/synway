@@ -57,7 +57,7 @@ public class ScanLineView extends View {
     private int mScanAnimatorDuration = 1800;//值动画的时长
     private int mScancolor;//扫描颜色
 
-    private int mScanStyle = style_gridding;//网格 0：网格，1：纵向雷达 2:综合 3:线
+    private int mScanStyle = style_line;//网格 0：网格，1：纵向雷达 2:综合 3:线
     private float animatedValue;
 
 

@@ -413,11 +413,6 @@ public class DeviceParamActivity extends BaseActivity implements IHandlerFinish 
             return;
         }
 
-        if ((powerLevel < POWER_LEVEL_HIGH) && (powerLevel > POWER_LEVEL_LOW)){
-            LogUtils.log("set power level error param.");
-            return;
-        }
-
         int powerAtt = powerLevel*-5;
 
         String gaConfig = "";
@@ -428,7 +423,8 @@ public class DeviceParamActivity extends BaseActivity implements IHandlerFinish 
             gaConfig += gaConfig;
             gaConfig += tmpGa;
             LogUtils.log("下发功率设置："+"IDX:"+channel.getIdx()+"@"+"PA:"+gaConfig);
-            LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_CHANNEL_CONFIG, "IDX:"+channel.getIdx()+"@"+"PA:"+gaConfig);
+            LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_CHANNEL_CONFIG,
+                    "IDX:"+channel.getIdx()+"@"+"PA:"+gaConfig);
         }
     }
 

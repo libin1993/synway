@@ -458,7 +458,7 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
         clearDataDir();
 
         unregisterReceiver(networkChangeReceiver);
-        ServerSocketManager.getInstance().closeMainListener(NetConfig.MONITOR_PORT);
+//        ServerSocketManager.getInstance().closeMainListener(NetConfig.MONITOR_PORT);
         if (textToSpeech != null) {
             textToSpeech.stop();
             textToSpeech.shutdown();

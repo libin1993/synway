@@ -1,18 +1,14 @@
 package com.doit.net.Sockets;
 
 import com.doit.net.Data.DataCenterManager;
-import com.doit.net.Data.LTESendManager;
 import com.doit.net.Model.CacheManager;
 import com.doit.net.Utils.LogUtils;
-import com.doit.net.bean.DeviceState;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,22 +16,21 @@ import java.util.Map;
 /**
  * Author：Libin on 2020/5/20 15:43
  * Email：1993911441@qq.com
- * Describe：
+ * Describe：socket服务端
  */
 public class ServerSocketUtils {
-    private final static int PORT = 7003;
-    private  ServerSocket serverSocket;
-    private final static int READ_TIME_OUT=60000;
-    private String currentRemoteAddress="";
-    private Map<String, Socket> map = new HashMap<>();
-    //单例对象
     private static ServerSocketUtils mInstance;
-    private OnSocketChangedListener onSocketChangedListener;
+    private ServerSocket mServerSocket;
+
+    private final static int PORT = 7003;   //端口
+    private final static int READ_TIME_OUT = 60000;  //超时时间
+    private String currentRemoteAddress = "";       //当前访问ip
+    private Map<String, Socket> map = new HashMap<>();
 
 
     private ServerSocketUtils() {
         try {
-            serverSocket = new ServerSocket(PORT);
+            mServerSocket = new ServerSocket(PORT);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -55,22 +50,27 @@ public class ServerSocketUtils {
     }
 
 
+    /**
+     * @param onSocketChangedListener  线程接收连接
+     */
     public void startServer(OnSocketChangedListener onSocketChangedListener) {
-        this.onSocketChangedListener = onSocketChangedListener;
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    while (true){
-                        Socket socket = serverSocket.accept();
-                        String remoteIP =socket.getInetAddress().getHostAddress();
-                        int remotePort = socket.getPort();
-                        map.put(remoteIP+":"+remotePort,socket);
-                        currentRemoteAddress = remoteIP+":"+remotePort;
-                        CacheManager.DEVICE_IP = remoteIP;
+                    while (true) {
+                        Socket socket = mServerSocket.accept();  //获取socket
+                        socket.setSoTimeout(READ_TIME_OUT);      //设置超时
+                        String remoteIP = socket.getInetAddress().getHostAddress();  //远程ip
+                        int remotePort = socket.getPort();    //远程端口
+                        map.put(remoteIP + ":" + remotePort, socket);   //存储socket
+                        currentRemoteAddress = remoteIP + ":" + remotePort;   //ip+端口作为key
+                        CacheManager.DEVICE_IP = remoteIP;  //当前设备ip
 
                         onSocketChangedListener.onConnect();
+                        LogUtils.log("设备连接ip：" + currentRemoteAddress);
 
+                        //开启线程接收数据
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
@@ -79,17 +79,20 @@ public class ServerSocketUtils {
                                 //接收到流的数量
                                 int receiveCount;
                                 try {
-                                    //设置超时
-                                    Socket socket1 = map.get(currentRemoteAddress);
+                                    //获取当前socket
+                                    Socket socket = map.get(currentRemoteAddress);
+                                    if (socket == null) {
+                                        return;
+                                    }
 
-                                    socket1.setSoTimeout(READ_TIME_OUT);
                                     //获取输入流
-                                    InputStream netInputStream = socket1.getInputStream();
+                                    InputStream inputStream = socket.getInputStream();
 
+                                    //循环接收数据
                                     while (true) {
                                         //读取服务端发送给客户端的数据
-                                        receiveCount = netInputStream.read(bytesReceived, 0, bytesReceived.length);
-                                        LogUtils.log(receiveCount+"");
+                                        receiveCount = inputStream.read(bytesReceived, 0, bytesReceived.length);
+                                        LogUtils.log(receiveCount + "");
                                         if (receiveCount <= -1) {
                                             LogUtils.log("break read!");
                                             break;
@@ -104,7 +107,7 @@ public class ServerSocketUtils {
                                     onSocketChangedListener.onDisconnect();
 
                                     currentRemoteAddress = "";
-                                    closeSocket(remoteIP+":"+remotePort);
+                                    closeSocket(remoteIP + ":" + remotePort);  //关闭socket
                                     DataCenterManager.clearDataBuffer(remoteIP);
                                 }
 
@@ -139,20 +142,21 @@ public class ServerSocketUtils {
 
     /**
      * 发送数据
+     *
      * @param tempByte
      * @return
      */
-    public  void sendData(byte[] tempByte) {
-        StringBuffer sb= new StringBuffer();
+    public void sendData(byte[] tempByte) {
+        StringBuffer sb = new StringBuffer();
         for (byte b : tempByte) {
             int v = b & 0xFF;
             String hv = Integer.toHexString(v);
             sb.append(hv).append(",");
         }
-        LogUtils.log("sendStr:"+sb.toString());
+        LogUtils.log("sendStr:" + sb.toString());
 
         Socket socket = map.get(currentRemoteAddress);
-        if (socket !=null){
+        if (socket != null) {
             new Thread() {
                 @Override
                 public void run() {

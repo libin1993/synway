@@ -518,9 +518,9 @@ public class ProtocolManager {
             }
 
             if ("".equals(tmpArfcnConfig)){
-                setChannelConfig(channel.getIdx(),"", "",defaultPower, defaultGa, "","","");
+                setChannelConfig(channel.getIdx(),"", "","", defaultGa, "","","");
             }else{
-                setChannelConfig(channel.getIdx(), tmpArfcnConfig, "",defaultPower, defaultGa, "","","");
+                setChannelConfig(channel.getIdx(), tmpArfcnConfig, "","", defaultGa, "","","");
             }
 
             //setChannelConfig(channel.getIdx(),tmpArfcnConfig, "","", "", "","","");
