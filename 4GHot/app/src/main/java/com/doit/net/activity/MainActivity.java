@@ -907,7 +907,7 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
         } else if (EventAdapter.POWER_START.equals(key)) {
             powerStart();
         } else if (EventAdapter.CHECK_LICENCE.equals(key)) {
-            checkLicence();
+//            checkLicence();
         }
     }
 

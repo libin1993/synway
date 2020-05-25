@@ -74,7 +74,8 @@
                     android:id="@+id/editText_fcn"
                     style="@style/dialog_edit"
                     android:layout_weight="1"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:digits="@string/fcn_rule"/>
             </TableRow>
 
             <TableRow>

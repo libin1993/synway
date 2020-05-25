@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.doit.net.Utils.FormatUtils;
 import com.doit.net.Utils.ToastUtils;
 import com.doit.net.ucsi.R;
 
@@ -20,13 +21,17 @@ import com.doit.net.ucsi.R;
  * Describe：添加频点
  */
 public class AddFcnDialog extends Dialog {
+    private Context mContext;
+    private String mBand;
     private String mFcn;
     private String mTitle;
     private View mView;
     private OnConfirmListener mOnConfirmListener;
-    public AddFcnDialog(Context context, String title,String fcn,OnConfirmListener onConfirmListener) {
+    public AddFcnDialog(Context context, String title,String band,String fcn,OnConfirmListener onConfirmListener) {
         super(context, R.style.Theme_dialog);
-        this.mOnConfirmListener = onConfirmListener;
+        mContext = context;
+        mOnConfirmListener = onConfirmListener;
+        mBand = band;
         mFcn = fcn;
         mTitle = title;
         initView();
@@ -55,9 +60,21 @@ public class AddFcnDialog extends Dialog {
             public void onClick(View v) {
                 String value = etFcn.getText().toString().trim();
                 if (TextUtils.isEmpty(value)){
-                    ToastUtils.showMessage(getContext(),"请输入有效内容");
+                    ToastUtils.showMessage(mContext,"请输入有效内容");
                     return;
                 }
+
+                if (!FormatUtils.getInstance().matchFCN(mFcn)){
+                    ToastUtils.showMessage(mContext,"FCN格式输入有误,请检查");
+                    return;
+                }else {
+                    if (!FormatUtils.getInstance().fcnRange(mBand, mFcn)){
+                        ToastUtils.showMessage(mContext,"FCN格式输入范围有误,请检查");
+                        return;
+                    }
+
+                }
+
                 if (mOnConfirmListener!=null){
                     mOnConfirmListener.onConfirm(value);
                 }

@@ -5,13 +5,6 @@
     android:background="@android:color/black"
     android:alpha="0.8">
 
-    <ImageView
-        android:id="@+id/iv_select_fcn"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:src="@mipmap/ic_fcn_normal"
-        android:padding="6dp"/>
-
     <TextView
         android:id="@+id/tv_fcn"
         android:layout_width="wrap_content"
@@ -19,23 +12,52 @@
         android:textColor="@android:color/white"
         android:textSize="14sp"
         android:layout_centerVertical="true"
-        android:layout_toRightOf="@id/iv_select_fcn"/>
+        android:layout_marginLeft="12dp"/>
+
 
     <LinearLayout
-        android:id="@+id/ll_delete_fcn"
+        android:id="@+id/ll_select_fcn"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
         android:layout_marginRight="12dp"
         android:orientation="horizontal"
+        android:gravity="center_vertical">
+        <ImageView
+            android:id="@+id/iv_select_fcn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@mipmap/ic_fcn_normal"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"/>
+
+        <TextView
+            android:id="@+id/tv_select_fcn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="默认"
+            android:textColor="@android:color/white"
+            android:textSize="10sp"
+            android:visibility="invisible"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_delete_fcn"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_toLeftOf="@id/ll_select_fcn"
+        android:layout_marginRight="12dp"
+        android:orientation="horizontal"
         android:gravity="center_vertical"
         android:visibility="gone">
+
+
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@mipmap/ic_delete_fcn"
-            android:paddingTop="6dp"
-            android:paddingBottom="6dp"/>
+            android:padding="6dp"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -71,7 +93,9 @@
 
     </LinearLayout>
 
-    <ViewFlipper
+
+
+    <View
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:background="@color/dimgrey"

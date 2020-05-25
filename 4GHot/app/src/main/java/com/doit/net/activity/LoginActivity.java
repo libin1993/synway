@@ -54,7 +54,7 @@ public class LoginActivity extends BaseActivity {
         view = View.inflate(this, R.layout.activity_login, null);
         setContentView(view);
 
-//        checkTimeDatum();
+        checkTimeDatum();
 //        checkAuthorize();
         initView();
         checkLocalDir();
@@ -192,10 +192,10 @@ public class LoginActivity extends BaseActivity {
         btLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                boolean tmpCheckRes = checkTimeDatum();
-//                if (!tmpCheckRes){
-//                    return;
-//                }
+                boolean tmpCheckRes = checkTimeDatum();
+                if (!tmpCheckRes){
+                    return;
+                }
 //                tmpCheckRes = checkAuthorize();
 //                if (!tmpCheckRes){
 //                    return;

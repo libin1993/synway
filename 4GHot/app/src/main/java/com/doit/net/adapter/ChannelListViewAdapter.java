@@ -1,6 +1,7 @@
 package com.doit.net.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.doit.net.Utils.FormatUtils;
 import com.doit.net.application.MyApplication;
 import com.doit.net.bean.LteChannelCfg;
 import com.doit.net.Event.EventAdapter;
@@ -74,7 +76,7 @@ public class ChannelListViewAdapter extends BaseAdapter {
 
 
     public void fillValues(int position, final ViewHolder holder) {
-        final LteChannelCfg cfg = CacheManager.channels.get(position);
+         LteChannelCfg cfg = CacheManager.channels.get(position);
         if(cfg == null){
             return;
         }
@@ -108,14 +110,34 @@ public class ChannelListViewAdapter extends BaseAdapter {
         holder.saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String fcn = holder.fcn.getText().toString().trim();
+                String plmn = holder.plmn.getText().toString().trim();
+                String pa = holder.pa.getText().toString().trim();
+                String ga = holder.ga.getText().toString().trim();
+                String rlm = holder.rlm.getText().toString().trim();
+                String alt_fcn = holder.etAltFcn.getText().toString().trim();
+
+                //不为空校验正则，为空不上传
+                if (!TextUtils.isEmpty(fcn)){
+                    if (!FormatUtils.getInstance().matchFCN(fcn)){
+                        ToastUtils.showMessage(mContext,"FCN格式输入有误,请检查");
+                        return;
+                    }else {
+                        if (!FormatUtils.getInstance().fcnRange(cfg.getBand(), fcn)){
+                            ToastUtils.showMessage(mContext,"FCN格式输入范围有误,请检查");
+                            return;
+                        }
+
+                    }
+                }
+
+
                 ToastUtils.showMessage(mContext, R.string.tip_15);
                 EventAdapter.call(EventAdapter.SHOW_PROGRESS);
-                String fcn = holder.fcn.getText().toString();
-                String plmn = holder.plmn.getText().toString();
-                String pa = holder.pa.getText().toString();
-                String ga = holder.ga.getText().toString();
-                String rlm = holder.rlm.getText().toString();
-                String alt_fcn = holder.etAltFcn.getText().toString();
+
+
+
+
                 ProtocolManager.setChannelConfig(cfg.getIdx(), fcn, plmn, pa, ga,rlm,"",alt_fcn);
             }
         });

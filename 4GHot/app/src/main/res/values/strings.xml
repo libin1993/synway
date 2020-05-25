@@ -233,7 +233,7 @@
     <string name="loc_switch_off">静音</string>
 
     <string name="account_rule">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
-    <string name="fcn_rule">0123456789-,</string>
+    <string name="fcn_rule">0123456789,</string>
 
     <array name="setup_type">
         <item>----自动搜索、自动配置----</item>

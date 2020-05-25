@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseSectionQuickAdapter;
@@ -64,12 +65,15 @@ public class CustomFcnActivity extends BaseActivity {
                 DBChannel channel = item.t;
                 helper.setText(R.id.tv_fcn,"FCN:"+channel.getFcn());
                 ImageView ivCheck = helper.getView(R.id.iv_select_fcn);
+                TextView tvCheck = helper.getView(R.id.tv_select_fcn);
                 LinearLayout llEdit  = helper.getView(R.id.ll_edit_fcn);
                 LinearLayout llDelete = helper.getView(R.id.ll_delete_fcn);
                 if (channel.isCheck() == 1){
                     ivCheck.setImageResource(R.mipmap.ic_fcn_checked);
+                    tvCheck.setVisibility(View.VISIBLE);
                 }else {
                     ivCheck.setImageResource(R.mipmap.ic_fcn_normal);
+                    tvCheck.setVisibility(View.INVISIBLE);
                 }
 
                 if (channel.isDefault() == 1){
@@ -80,7 +84,7 @@ public class CustomFcnActivity extends BaseActivity {
                     llDelete.setVisibility(View.VISIBLE);
                 }
 
-                helper.addOnClickListener(R.id.iv_select_fcn);
+                helper.addOnClickListener(R.id.ll_select_fcn);
                 helper.addOnClickListener(R.id.ll_edit_fcn);
                 helper.addOnClickListener(R.id.ll_delete_fcn);
             }
@@ -102,18 +106,19 @@ public class CustomFcnActivity extends BaseActivity {
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 switch (view.getId()){
                     case R.id.iv_add_fcn:
+                        SectionBean sectionBean = dataList.get(position);
+                        String[] split = sectionBean.header.split(",");
                         AddFcnDialog addFcnDialog = new AddFcnDialog(CustomFcnActivity.this,
-                                "添加FCN", "", new AddFcnDialog.OnConfirmListener() {
+                                "添加FCN", split[1],"", new AddFcnDialog.OnConfirmListener() {
                             @Override
                             public void onConfirm(String value) {
-                                SectionBean sectionBean = dataList.get(position);
-                                String[] split = sectionBean.header.split(",");
+
                                 addFcn(position,split[0],split[1],value);
                             }
                         });
                         addFcnDialog.show();
                         break;
-                    case R.id.iv_select_fcn:
+                    case R.id.ll_select_fcn:
                         SectionBean section = dataList.get(position);
                         if (section.t.isCheck() == 1){
                             return;
@@ -122,7 +127,8 @@ public class CustomFcnActivity extends BaseActivity {
                         break;
                     case R.id.ll_edit_fcn:
                         AddFcnDialog editFcnDialog = new AddFcnDialog(CustomFcnActivity.this,
-                                "编辑FCN", dataList.get(position).t.getFcn(), new AddFcnDialog.OnConfirmListener() {
+                                "编辑FCN", dataList.get(position).t.getBand(),
+                                dataList.get(position).t.getFcn(), new AddFcnDialog.OnConfirmListener() {
                             @Override
                             public void onConfirm(String value) {
                                 SectionBean sectionBean = dataList.get(position);
@@ -132,8 +138,8 @@ public class CustomFcnActivity extends BaseActivity {
                         editFcnDialog.show();
                         break;
                     case R.id.ll_delete_fcn:
-                        SectionBean sectionBean = dataList.get(position);
-                        deleteDcn(position,sectionBean.t.getId(),sectionBean.t.getBand(),sectionBean.t.isCheck());
+                        SectionBean sectionDelete = dataList.get(position);
+                        deleteDcn(position,sectionDelete.t.getId(),sectionDelete.t.getBand(),sectionDelete.t.isCheck());
                         break;
                 }
             }
@@ -181,7 +187,7 @@ public class CustomFcnActivity extends BaseActivity {
      * @param id
      * @param band
      * @param fcn
-     * 编辑
+     * 编辑fcn
      */
     private void update(int position,int id,String band,String fcn){
         for (int i = 0; i < dataList.size(); i++) {
@@ -265,6 +271,7 @@ public class CustomFcnActivity extends BaseActivity {
             }
 
         }
+
         DBChannel dbChannel = new DBChannel(idx,band,fcn,0,0);
         SectionBean section = new SectionBean(dbChannel);
         if (index == dataList.size()){
