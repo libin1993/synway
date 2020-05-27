@@ -5,6 +5,8 @@ import android.text.TextUtils;
 import com.doit.net.Event.EventAdapter;
 import com.doit.net.Model.DBChannel;
 import com.doit.net.Model.UCSIDBManager;
+import com.doit.net.Utils.NetWorkUtils;
+import com.doit.net.application.MyApplication;
 import com.doit.net.bean.FtpConfig;
 import com.doit.net.bean.LteChannelCfg;
 import com.doit.net.Model.BlackBoxManger;
@@ -353,19 +355,22 @@ public class ProtocolManager {
         LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_ACTIVE_MODE, mode);
     }
 
+    /**
+     * 设置ftp
+     */
     public static void setFTPConfig() {
-        String configContent = "";
-        configContent += FtpConfig.getFtpServerIp();
-        configContent += "#";
-        configContent += FtpConfig.getFtpUser();
-        configContent += "#";
-        configContent += FtpConfig.getFtpPassword();
-        configContent += "#";
-        configContent += FtpConfig.getFtpPort();
-        configContent += "#";
-        configContent += FtpConfig.getFtpTimer();
-        configContent += "#";
-        configContent += FtpConfig.getFtpMaxSize();
+
+        String configContent = NetWorkUtils.getWIFILocalIpAddress(MyApplication.mContext)
+                + "#"
+                + FtpConfig.ftpUser
+                + "#"
+                + FtpConfig.ftpPassword
+                + "#"
+                + FtpConfig.ftpPort
+                + "#"
+                + FtpConfig.ftpTimer
+                + "#"
+                + FtpConfig.ftpMaxSize;
 
         LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_FTP_CONFIG, configContent);
     }
@@ -408,12 +413,11 @@ public class ProtocolManager {
 
                     tmpArfcnConfig = band1Fcns;
 
-                    saveDefaultFcn(channel.getIdx(),channel.getBand(),band1Fcns);
+                    saveDefaultFcn(channel.getIdx(), channel.getBand(), band1Fcns);
                     String fcn1 = getCheckedFcn(channel.getBand());
-                    if (!TextUtils.isEmpty(fcn1)){
+                    if (!TextUtils.isEmpty(fcn1)) {
                         tmpArfcnConfig = fcn1;
                     }
-
 
 
                     //tmpArfcnConfig = tmpArfcnConfig.substring(0, tmpArfcnConfig.length()-1);
@@ -439,13 +443,11 @@ public class ProtocolManager {
 
                     //tmpArfcnConfig = tmpArfcnConfig.substring(0, tmpArfcnConfig.length()-1);
                     tmpArfcnConfig = band3Fcns;
-                    saveDefaultFcn(channel.getIdx(),channel.getBand(),band3Fcns);
+                    saveDefaultFcn(channel.getIdx(), channel.getBand(), band3Fcns);
                     String fcn3 = getCheckedFcn(channel.getBand());
-                    if (!TextUtils.isEmpty(fcn3)){
+                    if (!TextUtils.isEmpty(fcn3)) {
                         tmpArfcnConfig = fcn3;
                     }
-
-
 
 
                     if (Integer.parseInt(channel.getGa()) <= 8)
@@ -470,12 +472,11 @@ public class ProtocolManager {
 
                     //tmpArfcnConfig = tmpArfcnConfig.substring(0, tmpArfcnConfig.length()-1);
                     tmpArfcnConfig = band38Fcns;
-                    saveDefaultFcn(channel.getIdx(),channel.getBand(),band38Fcns);
+                    saveDefaultFcn(channel.getIdx(), channel.getBand(), band38Fcns);
                     String fcn38 = getCheckedFcn(channel.getBand());
-                    if (!TextUtils.isEmpty(fcn38)){
+                    if (!TextUtils.isEmpty(fcn38)) {
                         tmpArfcnConfig = fcn38;
                     }
-
 
 
                     if (Integer.parseInt(channel.getGa()) <= 8)
@@ -500,9 +501,9 @@ public class ProtocolManager {
 
                     //tmpArfcnConfig = tmpArfcnConfig.substring(0, tmpArfcnConfig.length()-1);
                     tmpArfcnConfig = band39Fcns;
-                    saveDefaultFcn(channel.getIdx(),channel.getBand(),band39Fcns);
+                    saveDefaultFcn(channel.getIdx(), channel.getBand(), band39Fcns);
                     String fcn39 = getCheckedFcn(channel.getBand());
-                    if (!TextUtils.isEmpty(fcn39)){
+                    if (!TextUtils.isEmpty(fcn39)) {
                         tmpArfcnConfig = fcn39;
                     }
 
@@ -528,9 +529,9 @@ public class ProtocolManager {
                     }
                     ///tmpArfcnConfig = tmpArfcnConfig.substring(0, tmpArfcnConfig.length()-1);
                     tmpArfcnConfig = band40Fcns;
-                    saveDefaultFcn(channel.getIdx(),channel.getBand(),band40Fcns);
+                    saveDefaultFcn(channel.getIdx(), channel.getBand(), band40Fcns);
                     String fcn40 = getCheckedFcn(channel.getBand());
-                    if (!TextUtils.isEmpty(fcn40)){
+                    if (!TextUtils.isEmpty(fcn40)) {
                         tmpArfcnConfig = fcn40;
                     }
 
@@ -558,9 +559,9 @@ public class ProtocolManager {
 
                     //tmpArfcnConfig = tmpArfcnConfig.substring(0, tmpArfcnConfig.length()-1);
                     tmpArfcnConfig = band41Fcns;
-                    saveDefaultFcn(channel.getIdx(),channel.getBand(),band41Fcns);
+                    saveDefaultFcn(channel.getIdx(), channel.getBand(), band41Fcns);
                     String fcn41 = getCheckedFcn(channel.getBand());
-                    if (!TextUtils.isEmpty(fcn41)){
+                    if (!TextUtils.isEmpty(fcn41)) {
                         tmpArfcnConfig = fcn41;
                     }
 
@@ -578,7 +579,7 @@ public class ProtocolManager {
                 setChannelConfig(channel.getIdx(), tmpArfcnConfig, "", "", defaultGa, "", "", "");
             }
 
-            LogUtils.log("默认fcn:"+tmpArfcnConfig);
+            LogUtils.log("默认fcn:" + tmpArfcnConfig);
 
             //setChannelConfig(channel.getIdx(),tmpArfcnConfig, "","", "", "","","");
             tmpArfcnConfig = "";
@@ -595,10 +596,10 @@ public class ProtocolManager {
             DbManager dbManager = UCSIDBManager.getDbManager();
             DBChannel channel = dbManager.selector(DBChannel.class)
                     .where("band", "=", band)
-                    .and("is_check","=",1)
+                    .and("is_check", "=", 1)
                     .findFirst();
-            if (channel !=null){
-               return channel.getFcn();
+            if (channel != null) {
+                return channel.getFcn();
             }
 
         } catch (DbException e) {
@@ -610,18 +611,17 @@ public class ProtocolManager {
 
     /**
      * @param band
-     * @param fcn
-     * 存入默认fcn
+     * @param fcn  存入默认fcn
      */
-    private static void saveDefaultFcn(String idx,String band, String fcn) {
+    private static void saveDefaultFcn(String idx, String band, String fcn) {
         try {
             DbManager dbManager = UCSIDBManager.getDbManager();
             DBChannel channel = dbManager.selector(DBChannel.class)
                     .where("band", "=", band)
                     .and("fcn", "=", fcn)
                     .findFirst();
-            if (channel ==null){
-                dbManager.save(new DBChannel(idx,band,fcn,1,1));
+            if (channel == null) {
+                dbManager.save(new DBChannel(idx, band, fcn, 1, 1));
             }
 
         } catch (DbException e) {

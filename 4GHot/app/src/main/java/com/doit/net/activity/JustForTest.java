@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.doit.net.Protocol.ProtocolManager;
 import com.doit.net.base.BaseActivity;
 import com.doit.net.Event.EventAdapter;
 import com.doit.net.Protocol.LTE_PT_SYSTEM;
@@ -18,6 +19,9 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
     private Button test1;
     private Button test2;
     private Button test3;
+    private Button test4;
+    private Button test5;
+    private Button test6;
     private Button btGetDeviceLog;
     private TextView tvTemperature;
     private TextView tvArfcns;
@@ -30,6 +34,9 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
         test1 = (Button) findViewById(R.id.test1);
         test2 = (Button) findViewById(R.id.test2);
         test3 = (Button) findViewById(R.id.test3);
+        test4= (Button) findViewById(R.id.test4);
+        test5 = (Button) findViewById(R.id.test5);
+        test6 = (Button) findViewById(R.id.test6);
         btGetDeviceLog = (Button) findViewById(R.id.btGetDeviceLog);
         tvTemperature = (TextView) findViewById(R.id.tvTemperature);
         tvArfcns = (TextView) findViewById(R.id.tvArfcns);
@@ -71,6 +78,30 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
             public void onClick(View v) {
                 ToastUtils.showMessage(getBaseContext(), "获取设备命令已下发，请等待上传成功");
                 LTE_PT_SYSTEM.commonSystemMsg(LTE_PT_SYSTEM.SYSTEM_GET_LOG);
+            }
+        });
+
+        test4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ProtocolManager.setActiveMode("0");
+
+            }
+        });
+
+        test5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ProtocolManager.setActiveMode("1");
+
+            }
+        });
+
+        test6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ProtocolManager.setActiveMode("2");
+
             }
         });
     }

@@ -63,7 +63,7 @@ public class CustomFcnActivity extends BaseActivity {
             @Override
             protected void convert(BaseViewHolder helper, SectionBean item) {
                 DBChannel channel = item.t;
-                helper.setText(R.id.tv_fcn,"FCN:"+channel.getFcn());
+                helper.setText(R.id.tv_fcn,"FCN: "+channel.getFcn());
                 ImageView ivCheck = helper.getView(R.id.iv_select_fcn);
                 TextView tvCheck = helper.getView(R.id.tv_select_fcn);
                 LinearLayout llEdit  = helper.getView(R.id.ll_edit_fcn);
@@ -177,6 +177,7 @@ public class CustomFcnActivity extends BaseActivity {
                 dbManager.update(dbChannel);
             }
 
+            ToastUtils.showMessage(CustomFcnActivity.this,"设置成功，下次启动APP生效");
         } catch (DbException e) {
             e.printStackTrace();
         }
@@ -209,6 +210,7 @@ public class CustomFcnActivity extends BaseActivity {
             if (dbChannel !=null){
                 dbChannel.setFcn(fcn);
                 dbManager.update(dbChannel);
+                ToastUtils.showMessage(CustomFcnActivity.this,"修改成功，下次启动APP生效");
             }
 
         } catch (DbException e) {
@@ -220,22 +222,33 @@ public class CustomFcnActivity extends BaseActivity {
      * 删除fcn
      */
     private void deleteDcn(int position,int id,String band,int isCheck) {
-        //删除已选中的，重新设置默认
+        //删除已选中的，设置默认fcn为选中状态
         if (isCheck == 1){
             for (int i = 0; i < dataList.size(); i++) {
                 SectionBean sectionBean = dataList.get(i);
                 if (!sectionBean.isHeader && band.equals(sectionBean.t.getBand()) ){
                   if (sectionBean.t.isDefault() == 1){
                       dataList.get(i).t.setCheck(1);
-                  }else {
-                      dataList.get(i).t.setCheck(0);
+                      try {
+                          DbManager dbManager = UCSIDBManager.getDbManager();
+                          DBChannel dbChannel = dbManager.selector(DBChannel.class)
+                                  .where("id", "=", dataList.get(i).t.getId())
+                                  .findFirst();
+                          if (dbChannel !=null){
+                              dbChannel.setCheck(1);
+                              dbManager.update(dbChannel);
+                          }
+
+                      } catch (DbException e) {
+                          e.printStackTrace();
+                      }
+                      break;
                   }
                 }
             }
         }
         dataList.remove(position);
-        adapter.notifyItemRemoved(position);
-        adapter.notifyItemRangeChanged(position,dataList.size()-position);
+        adapter.notifyDataSetChanged();
 
         try {
             UCSIDBManager.getDbManager().deleteById(DBChannel.class,id);

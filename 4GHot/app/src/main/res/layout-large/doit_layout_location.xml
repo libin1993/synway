@@ -27,7 +27,7 @@
             android:gravity="center"
             android:text="@string/loc_not_start"
             android:textColor="@color/white"
-            android:textSize="19sp"/>
+            android:textSize="19sp" />
 
     </LinearLayout>
 
@@ -39,8 +39,8 @@
 
         <com.doit.net.View.LocateCircle
             android:id="@+id/vLocateCircle"
-            android:layout_width="250dp"
-            android:layout_height="250dp"
+            android:layout_width="350dp"
+            android:layout_height="350dp"
             android:layout_gravity="center_horizontal"
             android:padding="20dp"
             app:animTime="800"
@@ -66,7 +66,6 @@
             app:valueBkgColor="@color/dark_blue"
             app:valueColor="@color/white"
             app:valueSize="58dp" />
-
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -138,23 +137,33 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="近"
-                android:textSize="20sp"
+                android:textSize="22sp"
                 android:textColor="@android:color/white" />
             <com.doit.net.View.TriangleView
                 android:layout_width="20dp"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"/>
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="远"
-                android:textSize="20sp"
+                android:textSize="22sp"
                 android:textColor="@android:color/white" />
 
         </LinearLayout>
 
+<!--        <ImageView-->
+<!--            android:layout_width="24dp"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_marginBottom="16dp"-->
+<!--            android:layout_marginEnd="20dp"-->
+<!--            android:layout_marginTop="12dp"-->
+<!--            android:padding="5dp"-->
+<!--            android:scaleType="fitXY"-->
+<!--            android:src="@drawable/loc_dist_scale">-->
+<!--        </ImageView>-->
     </LinearLayout>
 </LinearLayout>

@@ -77,7 +77,7 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
 
     private int lastOpenSwipePos = -1;
 
-    private final String WHITELIST_FILE_PATH =  Environment.getExternalStorageDirectory()+"/4GHotspot/Whitelist.txt";
+    private final String WHITELIST_FILE_PATH =  Environment.getExternalStorageDirectory()+"/4GHotspot/Whitelist.csv";
 
     //handler消息
     private final int REFRESH_LIST = 0;
@@ -286,8 +286,8 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
                     if (listWhitelistInfo != null && listWhitelistInfo.size() > 0) {
                         for (WhiteListInfo info: listWhitelistInfo) {
                             //bufferedWriter.write(DateUtil.getDateByFormat(info.getCreateDate(),DateUtil.LOCAL_DATE)+",");
-                            bufferedWriter.write(info.getImsi()+",");
-                            bufferedWriter.write(info.getMsisdn()+",");
+                            bufferedWriter.write(info.getImsi()+"\t,");
+                            bufferedWriter.write(info.getMsisdn()+"\t,");
                             bufferedWriter.write(info.getRemark());
                             bufferedWriter.write("\r\n");
                         }

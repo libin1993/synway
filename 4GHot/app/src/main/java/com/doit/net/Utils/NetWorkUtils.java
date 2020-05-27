@@ -227,7 +227,7 @@ public class NetWorkUtils {
      * @param mContext
      * @return
      */
-    public static String getWIFILocalIpAdress(Context mContext) {
+    public static String getWIFILocalIpAddress(Context mContext) {
 
         //获取wifi服务  
         WifiManager wifiManager = (WifiManager) mContext.getSystemService(WIFI_SERVICE);
@@ -237,8 +237,7 @@ public class NetWorkUtils {
         }
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
         int ipAddress = wifiInfo.getIpAddress();
-        String ip = formatIpAddress(ipAddress);
-        return ip;
+        return formatIpAddress(ipAddress);
     }
 
     private static String formatIpAddress(int ipAdress) {

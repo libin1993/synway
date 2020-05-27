@@ -37,9 +37,12 @@ import android.widget.ImageView;
 
 import android.widget.Toast;
 
+import com.doit.net.Sockets.NetConfig;
 import com.doit.net.Sockets.OnSocketChangedListener;
 import com.doit.net.Sockets.ServerSocketUtils;
+import com.doit.net.Sockets.UdpClient;
 import com.doit.net.Utils.PermissionUtils;
+import com.doit.net.application.MyApplication;
 import com.doit.net.base.BaseActivity;
 import com.doit.net.base.BaseFragment;
 import com.doit.net.bean.DeviceState;
@@ -56,8 +59,6 @@ import com.doit.net.Utils.LicenceUtils;
 import com.doit.net.Model.PrefManage;
 import com.doit.net.Model.VersionManage;
 import com.doit.net.Sockets.IServerSocketChange;
-import com.doit.net.Sockets.NetConfig;
-import com.doit.net.Sockets.ServerSocketManager;
 import com.doit.net.Sockets.UtilServerSocketSub;
 import com.doit.net.Utils.DateUtils;
 import com.doit.net.Utils.FTPServer;
@@ -70,7 +71,7 @@ import com.doit.net.fragment.AppFragment;
 import com.doit.net.View.LicenceDialog;
 import com.doit.net.fragment.LocationFragment;
 import com.doit.net.fragment.NameListFragment;
-import com.doit.net.adapter.NetworkChangeReceiver;
+import com.doit.net.receiver.NetworkChangeReceiver;
 import com.doit.net.fragment.StartPageFragment;
 import com.doit.net.fragment.UeidFragment;
 import com.doit.net.ucsi.R;
@@ -85,7 +86,6 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
@@ -169,6 +169,8 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
                 initSpeech();
                 initFTP();
                 initBlackBox();
+
+
             }
         }.start();
     }
@@ -179,7 +181,7 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
                 getSystemService(Context.CONNECTIVITY_SERVICE)).getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         String ssid = NetWorkUtils.getWifiSSID(activity);
 
-        if (wifiNetInfo.isConnected() && ssid.contains("synway")) {
+        if (wifiNetInfo.isConnected()) {
             LogUtils.log("wifi state change——connected");
             if (CacheManager.deviceState.getDeviceState().equals(DeviceState.WIFI_DISCONNECT))  //只有从wifi未连接到连接才出现这种状态
                 CacheManager.deviceState.setDeviceState(DeviceState.WAIT_SOCKET);
@@ -592,6 +594,7 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
         fragmentsUpdateFlag[0] = true;
         mTabs.set(0, new UeidFragment());
         adapter.notifyDataSetChanged();
+
     }
 
     @Override
@@ -625,11 +628,13 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
                 getSystemService(Context.CONNECTIVITY_SERVICE)).getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         String ssid = NetWorkUtils.getWifiSSID(activity);
 
-        if (wifiNetInfo.isConnected() && ssid.contains("synway")) {
+        if (wifiNetInfo.isConnected()) {
             LogUtils.log("wifi state change——connected");
             CacheManager.isWifiConnected = true;
             if (CacheManager.deviceState.getDeviceState().equals(DeviceState.WIFI_DISCONNECT))  //只有从wifi未连接到连接才出现这种状态
                 CacheManager.deviceState.setDeviceState(DeviceState.WAIT_SOCKET);
+
+            UdpClient.getInstance().startUdp(NetWorkUtils.getWIFILocalIpAddress(MyApplication.mContext), NetConfig.LOCAL_PORT);
         } else {
             CacheManager.isWifiConnected = false;
             LogUtils.log("wifi state change——disconnected");
@@ -823,6 +828,7 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
 
             if (!hasSetDefaultParam && CacheManager.getChannels().size() > 0) {
                 setDeviceWorkMode();
+                ProtocolManager.setFTPConfig();
                 if (VersionManage.isPoliceVer()) {
                     CacheManager.setCurrentBlackList();
                 }

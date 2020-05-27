@@ -4,6 +4,8 @@ import com.doit.net.Data.DataCenterManager;
 import com.doit.net.Model.CacheManager;
 import com.doit.net.Utils.LogUtils;
 
+import org.apache.commons.net.SocketClient;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -22,9 +24,9 @@ public class ServerSocketUtils {
     private static ServerSocketUtils mInstance;
     private ServerSocket mServerSocket;
 
-    private final static int PORT = 7003;   //端口
+    public final static int PORT = 7003;   //端口
     private final static int READ_TIME_OUT = 60000;  //超时时间
-    private String currentRemoteAddress = "";       //当前访问ip
+    public String currentRemoteAddress = "";       //当前访问ip
     private Map<String, Socket> map = new HashMap<>();
 
 
@@ -124,6 +126,7 @@ public class ServerSocketUtils {
                         LogUtils.log("break read!");
                         break;
                     }
+
                     //将数据交给数据中心管理员处理
                     DataCenterManager.parseData(remoteIP, String.valueOf(remotePort),
                             bytesReceived, receiveCount);

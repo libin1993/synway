@@ -188,7 +188,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <View
                 android:layout_width="48dp"
@@ -208,7 +208,7 @@
             android:layout_height="42dp"
             app:leftIcon="@drawable/base_station"
             app:leftText="@string/custom_fcn"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
 
         <View
             android:layout_width="match_parent"

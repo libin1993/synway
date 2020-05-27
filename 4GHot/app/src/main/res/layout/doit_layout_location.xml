@@ -27,7 +27,7 @@
             android:gravity="center"
             android:text="@string/loc_not_start"
             android:textColor="@color/white"
-            android:textSize="19sp"/>
+            android:textSize="19sp" />
 
     </LinearLayout>
 
@@ -39,8 +39,8 @@
 
         <com.doit.net.View.LocateCircle
             android:id="@+id/vLocateCircle"
-            android:layout_width="250dp"
-            android:layout_height="250dp"
+            android:layout_width="280dp"
+            android:layout_height="280dp"
             android:layout_gravity="center_horizontal"
             android:padding="20dp"
             app:animTime="800"
@@ -66,7 +66,6 @@
             app:valueBkgColor="@color/dark_blue"
             app:valueColor="@color/white"
             app:valueSize="58dp" />
-
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -133,6 +132,7 @@
             android:layout_marginBottom="16dp"
             android:layout_marginEnd="20dp"
             android:layout_marginTop="12dp"
+            android:layout_marginStart="10dp"
             android:gravity="right">
             <TextView
                 android:layout_width="wrap_content"

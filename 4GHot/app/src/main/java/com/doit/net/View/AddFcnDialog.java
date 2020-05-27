@@ -64,11 +64,11 @@ public class AddFcnDialog extends Dialog {
                     return;
                 }
 
-                if (!FormatUtils.getInstance().matchFCN(mFcn)){
+                if (!FormatUtils.getInstance().matchFCN(value)){
                     ToastUtils.showMessage(mContext,"FCN格式输入有误,请检查");
                     return;
                 }else {
-                    if (!FormatUtils.getInstance().fcnRange(mBand, mFcn)){
+                    if (!FormatUtils.getInstance().fcnRange(mBand, value)){
                         ToastUtils.showMessage(mContext,"FCN格式输入范围有误,请检查");
                         return;
                     }
