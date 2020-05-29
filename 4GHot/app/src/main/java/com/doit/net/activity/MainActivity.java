@@ -366,18 +366,30 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
             mTabs.add(new AppFragment());
         } else if (VersionManage.isPoliceVer()) {
             listTitles.add("侦码");
+            if (CacheManager.getLocMode()){
+                listTitles.add("搜寻");
+            }
             listTitles.add("名单");
             listTitles.add("设置");
 
             listSelectIcon.add(R.drawable.detect_lable_select);
-            listSelectIcon.add(R.drawable.location_lable_select);
+            if (CacheManager.getLocMode()){
+                listSelectIcon.add(R.drawable.location_lable_select);
+            }
+            listSelectIcon.add(R.mipmap.name_lable_select);
             listSelectIcon.add(R.drawable.setting_lable_select);
 
             listUnselectIcon.add(R.drawable.detect_lable_unselect);
-            listUnselectIcon.add(R.drawable.location_lable_unselect);
+            if (CacheManager.getLocMode()){
+                listUnselectIcon.add(R.drawable.location_lable_unselect);
+            }
+            listUnselectIcon.add(R.mipmap.name_lable_unselect);
             listUnselectIcon.add(R.drawable.setting_lable_unselect);
 
             mTabs.add(new StartPageFragment());
+            if (CacheManager.getLocMode()){
+                mTabs.add(new LocationFragment());
+            }
             mTabs.add(new NameListFragment());
             mTabs.add(new AppFragment());
         }
@@ -653,6 +665,13 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
         }
 
         ProtocolManager.setActiveMode(workMode);
+
+        if (workMode.equals("2")){
+            CacheManager.setLocalWhiteList("on");
+        }else {
+            CacheManager.setLocalWhiteList("off");
+        }
+
         LogUtils.log("设置默认工作模式：" + workMode);
         CacheManager.currentWorkMode = workMode;
     }
@@ -824,11 +843,15 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
                 //FtpConfig.setFtpServerIp(NetWorkUtils.getWIFILocalIpAdress(this));
                 //ProtocolManager.setFTPConfig();    //目前ftp设置从网页直接配
                 ProtocolManager.setBlackList("1", "");  //防止上报其他手机设置的黑名单，就查上来删掉
+
+                ProtocolManager.setFTPConfig(); //设置ftp配置
+
             }
 
             if (!hasSetDefaultParam && CacheManager.getChannels().size() > 0) {
+
                 setDeviceWorkMode();
-                ProtocolManager.setFTPConfig();
+
                 if (VersionManage.isPoliceVer()) {
                     CacheManager.setCurrentBlackList();
                 }
@@ -913,7 +936,7 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
         } else if (EventAdapter.POWER_START.equals(key)) {
             powerStart();
         } else if (EventAdapter.CHECK_LICENCE.equals(key)) {
-//            checkLicence();
+            checkLicence();
         }
     }
 

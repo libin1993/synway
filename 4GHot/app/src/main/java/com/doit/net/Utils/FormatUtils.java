@@ -92,31 +92,37 @@ public class FormatUtils {
             switch (band){
                 case "1":
                     if (fcn<0 || fcn > 599){
+                        ToastUtils.showMessage("请输入0-599范围内数字");
                         return false;
                     }
                     break;
                 case "3":
                     if (fcn<1200 || fcn > 1949){
+                        ToastUtils.showMessage("请输入1200-1949范围内数字");
                         return false;
                     }
                     break;
                 case "38":
                     if (fcn<37750 || fcn > 38250){
+                        ToastUtils.showMessage("请输入37750-38250范围内数字");
                         return false;
                     }
                     break;
                 case "39":
                     if (fcn<38250 || fcn > 38650){
+                        ToastUtils.showMessage("请输入38250-38650范围内数字");
                         return false;
                     }
                     break;
                 case "40":
                     if (fcn<38650 || fcn > 39650){
+                        ToastUtils.showMessage("请输入38650-39650范围内数字");
                         return false;
                     }
                     break;
                 case "41":
                     if (fcn<39650 || fcn > 41589){
+                        ToastUtils.showMessage("请输入39650-41589范围内数字");
                         return false;
                     }
                     break;

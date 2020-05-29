@@ -24,7 +24,6 @@
         doit:tl_iconGravity="TOP"
         doit:tl_iconHeight="30dp"
         doit:tl_iconMargin="7dp"
-        doit:tl_iconWidth="30dp"
         doit:tl_textSelectColor="@color/darkorange"
         doit:tl_textUnselectColor="@color/white"
         doit:tl_textsize="14sp"

@@ -2,6 +2,7 @@ package com.doit.net.application;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.multidex.MultiDex;
 
 import com.doit.net.Model.PrefManage;
 import com.doit.net.Utils.CipherUtils;
@@ -33,5 +34,15 @@ public class MyApplication extends Application {
 
 
     }
+
+    /**
+     * @param base 分包
+     */
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
+
 
 }

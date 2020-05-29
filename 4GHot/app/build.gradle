@@ -9,9 +9,9 @@ android {
 
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 2019
+        versionCode 2020
         useLibrary 'org.apache.http.legacy'
-        versionName 'v1.3.3'
+        versionName 'v1.3.4'
         multiDexEnabled true
         flavorDimensions "versionCode"
         compileOptions {
@@ -188,7 +188,6 @@ repositories {
 }
 
 
-
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:28.0.0'
@@ -198,60 +197,86 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.android.support:design:28.0.0'
     implementation 'com.android.support:support-v4:28.0.0'
+
     //弹窗
     implementation 'com.github.f0ris.sweetalert:library:1.5.1'
-
     implementation 'com.android.support:animated-vector-drawable:28.0.0'
+
     //侧滑
     implementation 'com.daimajia.swipelayout:library:1.2.0@aar'
+
     //动画框架
     implementation 'com.daimajia.easing:library:1.0.0@aar'
     implementation 'com.daimajia.androidanimations:library:1.1.2@aar'
-
     implementation 'org.xutils:xutils:3.3.34@aar'
+
     //前端框架
     implementation 'com.beardedhen:androidbootstrap:2.3.0'
     implementation 'com.nineoldandroids:library:2.4.0'
+
     //dialog
     implementation 'com.orhanobut:dialogplus:1.11@aar'
+
     //图表库
     implementation 'com.github.lecho:hellocharts-library:1.5.8@aar'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.2'
+
     // This dude gave a shoutout to you (daimajia) on his github page:
+
     //RecyclerView动画
     implementation 'jp.wasabeef:recyclerview-animators:1.0.3@aar'
+
     //开关
     implementation 'com.github.zcweng:switch-button:0.0.3@aar'
     implementation 'org.apache.commons:commons-lang3:3.5'
+
     //dialog
     implementation 'com.flyco.dialog:FlycoDialog_Lib:1.3.2@aar'
+
     //tab
     implementation 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
+
     //圆形图片
     implementation 'de.hdodenhof:circleimageview:2.1.0'
+
     //设置页面
     implementation 'com.leon:lsettingviewlibrary:1.3.0'
 
     //other maven dependencies
+
     //compile 'com.yy.nms:nms-tdd-lte-udp:2.0.00'
+
     //https://github.com/twwwt/slf4j
+
     //    compile 'org.slf4j:slf4j-android:1.7.2'
+
     //https://github.com/noveogroup/android-logger
     implementation 'com.noveogroup.android:android-logger:1.3.5'
     implementation files('libs/fastjson-1.1.30.jar')
+
     //网络应用框架
     implementation files('libs/mina-core-2.0.16.jar')
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+
     //侧滑
     implementation 'com.baoyz.swipemenulistview:library:1.3.0'
+
     //FTP
     implementation 'commons-net:commons-net:3.5'
     implementation 'com.squareup.okhttp3:okhttp:3.4.1'
     implementation 'com.ashokvarma.android:bottom-navigation-bar:2.0.3'
     implementation project(path: ':zbar')
+
     //butterknife
     implementation 'com.jakewharton:butterknife:8.4.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+
     //adapter
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
+
+    //分包
+    implementation 'com.android.support:multidex:1.0.3'
+    //excel导入导出
+//    implementation files('libs/poi-3.12-android-a.jar')
+//    implementation files('libs/poi-ooxml-schemas-3.12-20150511-a.jar')
 }

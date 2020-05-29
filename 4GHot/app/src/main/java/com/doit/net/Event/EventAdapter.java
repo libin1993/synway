@@ -33,6 +33,7 @@ public class EventAdapter {
     public final static String POWER_START = "POWER_START";
     public final static String CHECK_LICENCE = "CHECK_LICENCE"; //校验证书
     public final static String SCAN_CODE = "SCAN_CODE"; //扫码结果
+    public final static String GET_NAME_LIST = "GET_NAME_LIST"; //获取白名单
 
     public static void setEvent(String key,EventCall call) {
         event.put(key,call);

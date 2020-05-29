@@ -27,7 +27,9 @@ public class ProtocolManager {
     private static final String HOLD_VALUE = "0";  //设备是否保存配置：“0”不保存，“1”保存
 
 
-    public static void setNamelist(String redirectList, String rejectList, String blockList, String releaseList, String redirectRejectList, String restAction) {
+    public static void setNameList(String mode, String redirectConfig, String nameListReject,
+                                   String nameListRedirect, String nameListBlock,
+                                   String nameListRestAction, String nameListRelease,String nameListFile) {
         //MODE:[on|off]
         // @REDIRECT_CONFIG:46000,4,38400#46001,4,300#46011,4,100#46002,2,98  //重定向
         // @NAMELIST_REJECT:460001234512345,460011234512345   //拒绝
@@ -36,46 +38,59 @@ public class ProtocolManager {
         // @NAMELIST_RELEASE:460001233332345,460011235452345   //release
         // @NAMELIST_REST_ACTION:block  //其余手机操作
 
-        String namelist = "";
-        namelist += "MODE:on";
+
+        String namelist = "MODE:"+mode;
 
         namelist += "@REDIRECT_CONFIG:";
-        if (!"".equals(redirectList)) {
-            namelist += redirectList;
+        if (!"".equals(redirectConfig)) {
+            namelist += redirectConfig;
         }
 
         namelist += "@NAMELIST_REJECT:";
-        if (!"".equals(rejectList)) {
-            namelist += rejectList;
+        if (!"".equals(nameListReject)) {
+            namelist += nameListReject;
         }
 
         namelist += "@NAMELIST_REDIRECT:";
-        if (!"".equals(redirectRejectList)) {
-            namelist += redirectRejectList;
+        if (!"".equals(nameListRedirect)) {
+            namelist += nameListRedirect;
         }
 
         namelist += "@NAMELIST_BLOCK:";
-        if (!"".equals(blockList)) {
-            namelist += blockList;
-        }
-
-        namelist += "@NAMELIST_RELEASE:";
-        if (!"".equals(releaseList)) {
-            namelist += releaseList;
+        if (!"".equals(nameListBlock)) {
+            namelist += nameListBlock;
         }
 
         namelist += "@NAMELIST_REST_ACTION:";
-        if (!"".equals(restAction)) {
-            namelist += restAction;
+        if (!"".equals(nameListRestAction)) {
+            namelist += nameListRestAction;
         }
 
-        LogUtils.log(namelist);
+        namelist += "@NAMELIST_RELEASE:";
+        if (!"".equals(nameListRelease)) {
+            namelist += nameListRelease;
+        }
+
+        namelist += "@NAMELIST_FILE:";
+        if (!"".equals(nameListFile)) {
+            namelist += nameListFile;
+        }
+
+        LogUtils.log("关闭管控模式"+namelist);
         LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_NAMELIST, namelist);
     }
 
     public static void getEquipAndAllChannelConfig() {
         LogUtils.log("获取设备配置");
         LTE_PT_PARAM.queryCommonParam(LTE_PT_PARAM.PARAM_GET_ENB_CONFIG);
+    }
+
+    /**
+     * 获取白名单
+     */
+    public static void getNameList() {
+        LogUtils.log("获取白名单");
+        LTE_PT_PARAM.queryCommonParam(LTE_PT_PARAM.PARAM_GET_NAMELIST);
     }
 
     public static void setNowTime() {
@@ -372,6 +387,9 @@ public class ProtocolManager {
                 + "#"
                 + FtpConfig.ftpMaxSize;
 
+
+        LogUtils.log("设置ftp:"+configContent);
+
         LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_FTP_CONFIG, configContent);
     }
 
@@ -574,9 +592,9 @@ public class ProtocolManager {
             }
 
             if ("".equals(tmpArfcnConfig)) {
-                setChannelConfig(channel.getIdx(), "", "", "", defaultGa, "", "", "");
+                setChannelConfig(channel.getIdx(), "", "", defaultPower, defaultGa, "", "", "");
             } else {
-                setChannelConfig(channel.getIdx(), tmpArfcnConfig, "", "", defaultGa, "", "", "");
+                setChannelConfig(channel.getIdx(), tmpArfcnConfig, "", defaultPower, defaultGa, "", "", "");
             }
 
             LogUtils.log("默认fcn:" + tmpArfcnConfig);

@@ -52,7 +52,7 @@ public class LocationFragment extends BaseFragment implements View.OnClickListen
     private List<Integer> listChartValue = new ArrayList<>();
     private final int LOCATE_CHART_X_AXIS_P_CNT = 15;       //图表横坐标点数
     private final int LOCATE_CHART_Y_AXIS_P_CNT = 25;       //图表纵坐标点数
-    private String textContent;
+    private String textContent="搜寻未开始";
 
     private int currentSRSP = 0;
     private int lastRptSRSP = 60;//初始平滑地开始
@@ -96,84 +96,8 @@ public class LocationFragment extends BaseFragment implements View.OnClickListen
     }
 
 
-    public static String getSimIMSI(Context context, int simid) {
-        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP_MR1)
-            return "";
-
-        int[] subId = null;//SubscriptionManager.getSubId(simid);
-        Class<?> threadClazz = null;
-        threadClazz = SubscriptionManager.class;
-
-        try {
-            Method method = threadClazz.getDeclaredMethod("getSubId", int.class);
-            method.setAccessible(true);
-            subId = (int[]) method.invoke(null, simid);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-        int sub = -1;
-        if (Build.VERSION.SDK_INT >= 24) {
-            sub = (subId != null) ? subId[0] : SubscriptionManager.getDefaultSubscriptionId();
-        } else {
-            try {
-                Method method = threadClazz.getDeclaredMethod("getDefaultSubId");
-                method.setAccessible(true);
-                sub = (subId != null) ? subId[0] : (Integer) method.invoke(null, (Object[]) null);
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-        String IMSI = "";
-        if (sub != -1) {
-            Class clazz = telephonyManager.getClass();
-            try {
-                Method method = clazz.getDeclaredMethod("getSubscriberId", int.class);
-                method.setAccessible(true);
-                IMSI = (String) method.invoke(telephonyManager, sub);
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return IMSI;
-    }
-
-    private void setLocalWhiteList() {
-        String imsi0 = getSimIMSI(getContext(), 0);
-        String imsi1 = getSimIMSI(getContext(), 1);
-
-        if (imsi0 == null || imsi0.equals("000000000000000"))
-            imsi0 = "";
-
-        if (imsi1 == null || imsi1.equals("000000000000000"))
-            imsi1 = "";
 
 
-        String whitelistContent = "";
-
-        if ("".equals(imsi0) && "".equals(imsi1)) {
-            return;
-        } else if (!"".equals(imsi0) && "".equals(imsi1)) {
-            whitelistContent = imsi0;
-        } else if ("".equals(imsi0) && !"".equals(imsi1)) {
-            whitelistContent = imsi1;
-        } else {
-            whitelistContent = imsi0 + "," + imsi1;
-        }
-
-        ProtocolManager.setNamelist("", whitelistContent, "", "", "", "");
-    }
 
     private void initEvent() {
         UIEventManager.register(UIEventManager.KEY_SET_LOC_RESP, this);
@@ -288,11 +212,12 @@ public class LocationFragment extends BaseFragment implements View.OnClickListen
     void addLocation(String imsi) {
         LogUtils.log("##########  addLocation:" + imsi + "  ###########");
         if ("".equals(lastLocateIMSI)) {
-            setLocalWhiteList();
             if (VersionManage.isPoliceVer()) {
                 startUpdateArfcn();
             }
         }
+
+        textContent = "正在搜寻" + imsi;
 
         if (!"".equals(lastLocateIMSI) && !lastLocateIMSI.equals(imsi)) {   //更换目标
             restartLoc();
@@ -302,7 +227,9 @@ public class LocationFragment extends BaseFragment implements View.OnClickListen
             Cellular.adjustArfcnPwrForLocTarget(CacheManager.getCurrentLoction().getImsi());
         }
         startSpeechBroadcastLoop();
+
         lastLocateIMSI = CacheManager.getCurrentLoction().getImsi();
+
         refreshPage();
     }
 

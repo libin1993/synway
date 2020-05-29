@@ -10,8 +10,25 @@ public class Namelist {
     private String namelistReject;
     private String namelistRedirect;
     private String namelistBlock;
-    private String namelistRelease;
     private String namelistRestAciton;
+    private String namelistFile;
+    private String namelistRelease;
+
+    public String getNamelistRelease() {
+        return namelistRelease;
+    }
+
+    public void setNamelistRelease(String namelistRelease) {
+        this.namelistRelease = namelistRelease;
+    }
+
+    public String getNamelistFile() {
+        return namelistFile;
+    }
+
+    public void setNamelistFile(String namelistFile) {
+        this.namelistFile = namelistFile;
+    }
 
     public String getMode() {
         return mode;
@@ -33,9 +50,7 @@ public class Namelist {
         return namelistBlock;
     }
 
-    public String getNamelistRelease() {
-        return namelistRelease;
-    }
+
 
     public String getNamelistRestAciton() {
         return namelistRestAciton;
@@ -61,11 +76,23 @@ public class Namelist {
         this.namelistBlock = namelistBlock;
     }
 
-    public void setNamelistRelease(String namelistRelease) {
-        this.namelistRelease = namelistRelease;
-    }
+
 
     public void setNamelistRestAciton(String namelistRestAciton) {
         this.namelistRestAciton = namelistRestAciton;
+    }
+
+    @Override
+    public String toString() {
+        return "Namelist{" +
+                "mode='" + mode + '\'' +
+                ", redirectConfig='" + redirectConfig + '\'' +
+                ", namelistReject='" + namelistReject + '\'' +
+                ", namelistRedirect='" + namelistRedirect + '\'' +
+                ", namelistBlock='" + namelistBlock + '\'' +
+                ", namelistRestAciton='" + namelistRestAciton + '\'' +
+                ", namelistFile='" + namelistFile + '\'' +
+                ", namelistRelease='" + namelistRelease + '\'' +
+                '}';
     }
 }

@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.doit.net.Model.CacheManager;
 import com.doit.net.Protocol.ProtocolManager;
 import com.doit.net.base.BaseActivity;
 import com.doit.net.Event.EventAdapter;
@@ -15,6 +16,9 @@ import com.doit.net.Utils.Cellular;
 import com.doit.net.Utils.ToastUtils;
 import com.doit.net.ucsi.R;
 
+import static com.doit.net.Event.EventAdapter.GET_NAME_LIST;
+import static com.doit.net.Event.EventAdapter.UPDATE_TMEPRATURE;
+
 public class JustForTest extends BaseActivity implements EventAdapter.EventCall {
     private Button test1;
     private Button test2;
@@ -22,9 +26,12 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
     private Button test4;
     private Button test5;
     private Button test6;
+    private Button test7;
     private Button btGetDeviceLog;
     private TextView tvTemperature;
     private TextView tvArfcns;
+    private TextView tvNameList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,13 +44,16 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
         test4= (Button) findViewById(R.id.test4);
         test5 = (Button) findViewById(R.id.test5);
         test6 = (Button) findViewById(R.id.test6);
+        test7 = (Button) findViewById(R.id.test7);
         btGetDeviceLog = (Button) findViewById(R.id.btGetDeviceLog);
         tvTemperature = (TextView) findViewById(R.id.tvTemperature);
         tvArfcns = (TextView) findViewById(R.id.tvArfcns);
+        tvNameList = (TextView) findViewById(R.id.tv_name_list);
 
         initView();
 
-        EventAdapter.setEvent(EventAdapter.UPDATE_TMEPRATURE,this);
+        EventAdapter.setEvent(UPDATE_TMEPRATURE,this);
+        EventAdapter.setEvent(EventAdapter.GET_NAME_LIST,this);
         //EventAdapter.setEvent(EventAdapter.SPEAK,this);
     }
 
@@ -104,6 +114,14 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
 
             }
         });
+
+        test7.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ProtocolManager.getNameList();
+
+            }
+        });
     }
 
 
@@ -113,17 +131,33 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
     private Handler mHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            if(msg.what == 0){
-                tvTemperature.setText("温度："+(String)msg.obj);
+            switch (msg.what){
+                case 0:
+                    tvTemperature.setText("温度："+(String)msg.obj);
+                    break;
+                case 1:
+                    tvNameList.setText("白名单："+CacheManager.namelist.toString());
+                    break;
             }
+
         }
     };
 
     @Override
     public void call(String key, Object val) {
-        Message msg = new Message();
-        msg.what = 0;
-        msg.obj = val;
-        mHandler.sendMessage(msg);
+        switch (key){
+            case UPDATE_TMEPRATURE:
+                Message msg = new Message();
+                msg.what = 0;
+                msg.obj = val;
+                mHandler.sendMessage(msg);
+                break;
+            case GET_NAME_LIST:
+                Message msg1 = new Message();
+                msg1.what = 1;
+                mHandler.sendMessage(msg1);
+                break;
+        }
+
     }
 }

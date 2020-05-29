@@ -109,7 +109,7 @@
             android:layout_marginStart="30dp"
             android:layout_weight="1"
             android:textColor="@color/darkorange"
-            android:background="@drawable/comman_button_bkg"
+            android:background="@drawable/common_button_bkg"
             android:text="@string/search" />
 
         <Button
@@ -122,7 +122,7 @@
             android:layout_weight="1.8"
             android:text="@string/export_search_res"
             android:textColor="@color/darkorange"
-            android:background="@drawable/comman_button_bkg" />
+            android:background="@drawable/common_button_bkg" />
     </LinearLayout>
 
     <ListView
@@ -134,5 +134,5 @@
         android:divider="@drawable/comman_listview_divider"
         android:dividerHeight="0.6dp"
         android:layout_height="match_parent"
-        android:background="@drawable/comman_button_bkg"/>
+        android:background="@drawable/common_button_bkg"/>
 </LinearLayout>

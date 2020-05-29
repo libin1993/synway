@@ -41,6 +41,16 @@ import com.doit.net.Utils.ToastUtils;
 import com.doit.net.Utils.LogUtils;
 import com.doit.net.ucsi.R;
 
+//import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+//import org.apache.poi.ss.usermodel.Cell;
+//import org.apache.poi.ss.usermodel.CellValue;
+//import org.apache.poi.ss.usermodel.FormulaEvaluator;
+//import org.apache.poi.ss.usermodel.Row;
+//import org.apache.poi.ss.usermodel.Sheet;
+//import org.apache.poi.ss.usermodel.Workbook;
+//import org.apache.poi.ss.usermodel.WorkbookFactory;
+//import org.apache.poi.xssf.usermodel.XSSFSheet;
+//import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.xutils.DbManager;
 import org.xutils.ex.DbException;
 
@@ -51,7 +61,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -426,8 +439,62 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
                     .show();
 
             EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.EXPORT_WHITELIST+WHITELIST_FILE_PATH);
+
+
+//            InputStream stream = getResources().openRawResource(R.raw.test1);
+//            try {
+//                Workbook workbook = WorkbookFactory.create(stream);
+//                Sheet sheet = workbook.getSheetAt(0);  //示意访问sheet
+//                int rowsCount = sheet.getPhysicalNumberOfRows();
+//                FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
+//                for (int r = 0; r<rowsCount; r++) {
+//                    Row row = sheet.getRow(r);
+//                    int cellsCount = row.getPhysicalNumberOfCells();
+//                    for (int c = 0; c<cellsCount; c++) {
+//                        String value = getCellAsString(row, c, formulaEvaluator);
+//                        String cellInfo = "r:"+r+"; c:"+c+"; v:"+value;
+//                        LogUtils.log(cellInfo);
+//                    }
+//                }
+//            } catch (Exception e) {
+//                /* proper exception handling to be here */
+//                LogUtils.log(e.toString());
+//            }
         }
     };
+
+//    protected String getCellAsString(Row row, int c, FormulaEvaluator formulaEvaluator) {
+//        String value = "";
+//        try {
+//            Cell cell = row.getCell(c);
+//            CellValue cellValue = formulaEvaluator.evaluate(cell);
+//            switch (cellValue.getCellType()) {
+//                case Cell.CELL_TYPE_BOOLEAN:
+//                    value = ""+cellValue.getBooleanValue();
+//                    break;
+//                case Cell.CELL_TYPE_NUMERIC:
+//
+//                    if(HSSFDateUtil.isCellDateFormatted(cell)) {
+//                        double date = cellValue.getNumberValue();
+//                        SimpleDateFormat formatter =
+//                                new SimpleDateFormat("dd/MM/yy");
+//                        value = formatter.format(HSSFDateUtil.getJavaDate(date));
+//                    } else {
+//                        DecimalFormat df = new DecimalFormat("#.####");  //去除科学计数法
+//                        value = df.format(cell.getNumericCellValue());
+//                    }
+//                    break;
+//                case Cell.CELL_TYPE_STRING:
+//                    value = ""+cellValue.getStringValue();
+//                    break;
+//                default:
+//            }
+//        } catch (NullPointerException e) {
+//            /* proper error handling should be here */
+//            LogUtils.log(e.toString());
+//        }
+//        return value;
+//    }
 
     View.OnClickListener clearWhitelistClick = new View.OnClickListener() {
         @Override

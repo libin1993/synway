@@ -6,7 +6,11 @@
 package com.doit.net.Model;
 
 import android.content.Context;
+import android.os.Build;
+import android.telephony.SubscriptionManager;
+import android.telephony.TelephonyManager;
 
+import com.doit.net.application.MyApplication;
 import com.doit.net.bean.DeviceState;
 import com.doit.net.bean.LocationBean;
 import com.doit.net.bean.LocationRptBean;
@@ -25,6 +29,8 @@ import com.doit.net.udp.g4.bean.G4MsgChannelCfg;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.xutils.ex.DbException;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -35,13 +41,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * @author 杨维(wiker) 
+ * @author 杨维(wiker)
  * @date 2016-4-26 下午3:37:39
  * @version 1.0
  */
 public class CacheManager {
     public static String DEVICE_IP = "192.168.4.100";
-    
+
     public  static List<UeidBean> realtimeUeidList = new ArrayList<>();
     public static final int MAX_REALTIME_LIST_SIZE = 300;
 
@@ -54,7 +60,7 @@ public class CacheManager {
 
     public static long last_heart_time;
 
-    public static String currentWorkMode = "2";   //0侦码  1定位 2管控
+    public static String currentWorkMode = "2";   //0公安侦码  2军队管控
 
     public static DeviceState deviceState = new DeviceState();
 
@@ -152,6 +158,11 @@ public class CacheManager {
 
         ProtocolManager.setLocImsi(imsi);
         ProtocolManager.setActiveMode("1");
+
+        if (VersionManage.isPoliceVer()){
+            setLocalWhiteList("off");
+        }
+
         CacheManager.getCurrentLoction().setLocateStart(true);
     }
 
@@ -164,10 +175,101 @@ public class CacheManager {
             public void run() {
                 ProtocolManager.setLocImsi(imsi);
                 ProtocolManager.setActiveMode("1");
+
+                if (VersionManage.isPoliceVer()){
+                    setLocalWhiteList("off");
+                }
+
             }
         },4000);
 
     }
+
+    /**
+     * 关闭管控模式
+     */
+    public  static void setLocalWhiteList(String mode) {
+        String imsi0 = getSimIMSI(0);
+        String imsi1 = getSimIMSI( 1);
+
+        if (imsi0 == null || imsi0.equals("000000000000000"))
+            imsi0 = "";
+
+        if (imsi1 == null || imsi1.equals("000000000000000"))
+            imsi1 = "";
+
+
+        String whitelistContent = "";
+
+        if ("".equals(imsi0) && "".equals(imsi1)) {
+            whitelistContent = "";
+        } else if(!"".equals(imsi0) && "".equals(imsi1)) {
+            whitelistContent = imsi0;
+        } else if ("".equals(imsi0) && !"".equals(imsi1)) {
+            whitelistContent = imsi1;
+        } else {
+            whitelistContent = imsi0 + "," + imsi1;
+        }
+
+
+        ProtocolManager.setNameList(mode, "", whitelistContent,
+                "", "", "block","","");
+
+    }
+
+    public static String getSimIMSI(int simid) {
+        TelephonyManager telephonyManager = (TelephonyManager) MyApplication.mContext.getSystemService(Context.TELEPHONY_SERVICE);
+
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP_MR1)
+            return "";
+
+        int[] subId = null;//SubscriptionManager.getSubId(simid);
+        Class<?> threadClazz = null;
+        threadClazz = SubscriptionManager.class;
+
+        try {
+            Method method = threadClazz.getDeclaredMethod("getSubId", int.class);
+            method.setAccessible(true);
+            subId = (int[]) method.invoke(null, simid);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        int sub = -1;
+        if (Build.VERSION.SDK_INT >= 24) {
+            sub = (subId != null) ? subId[0] : SubscriptionManager.getDefaultSubscriptionId();
+        } else {
+            try {
+                Method method = threadClazz.getDeclaredMethod("getDefaultSubId");
+                method.setAccessible(true);
+                sub = (subId != null) ? subId[0] : (Integer) method.invoke(null, (Object[]) null);
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        String IMSI = "";
+        if (sub != -1) {
+            Class clazz = telephonyManager.getClass();
+            try {
+                Method method = clazz.getDeclaredMethod("getSubscriberId", int.class);
+                method.setAccessible(true);
+                IMSI = (String) method.invoke(telephonyManager, sub);
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return IMSI;
+    }
+
 
     public static void clearCurrentBlackList() {
         List<DBBlackInfo> listBlackList = null;
@@ -192,6 +294,8 @@ public class CacheManager {
     public static void stopCurrentLoc(){
         ProtocolManager.setLocImsi("0000");
         ProtocolManager.setActiveMode(CacheManager.currentWorkMode);
+
+
         if (CacheManager.getCurrentLoction() != null)
             CacheManager.getCurrentLoction().setLocateStart(false);
         if (VersionManage.isPoliceVer()){

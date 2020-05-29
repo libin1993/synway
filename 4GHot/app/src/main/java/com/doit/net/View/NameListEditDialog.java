@@ -5,6 +5,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.doit.net.Event.AddToLocalBlackListener;
@@ -33,44 +35,44 @@ public class NameListEditDialog extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(mView);
-        x.view().inject(this,mView);
-//        id_imei.setVisibility(View.GONE);
+
     }
 
     private void initView(){
         LayoutInflater inflater= LayoutInflater.from(getContext());
         mView = inflater.inflate(R.layout.doit_layout_add_name_list, null);
-//        setContentView(R.layout.doit_layout_system_setup);
 
+        EditText etIMSI = mView.findViewById(R.id.id_imsi);
+        EditText etName = mView.findViewById(R.id.id_name);
+        EditText etRemark = mView.findViewById(R.id.etRemark);
+        Button btnSave = mView.findViewById(R.id.button_save);
+        Button btnCancel= mView.findViewById(R.id.button_cancel);
+
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String imsi = etIMSI.getText().toString();
+                String name = etName.getText().toString();
+                String remake = etRemark.getText().toString();
+
+                if(imsi.length() != 15){
+                    ToastUtils.showMessage(getContext(),R.string.tip_09);
+                    return;
+                }
+
+                EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.ADD_NAMELIST+imsi+"+"+name);
+                AddToLocalBlackListener listener = new AddToLocalBlackListener(getContext(),name,imsi,remake);
+                listener.onClick(v);
+                dismiss();
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
     }
 
-    @Event(value = R.id.button_cancel)
-    private void cancelClick(View v){
-        dismiss();
-    }
-
-    @Event(value = R.id.button_save)
-    private void saveClick(View v){
-        String imsi = id_imsi.getText().toString();
-        String name = id_name.getText().toString();
-        String remake = etRemark.getText().toString();
-
-        if(imsi.length() != 15){
-            ToastUtils.showMessage(getContext(),R.string.tip_09);
-            return;
-        }
-
-        EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.ADD_NAMELIST+imsi+"+"+name);
-        AddToLocalBlackListener listener = new AddToLocalBlackListener(getContext(),name,imsi,remake);
-        listener.onClick(v);
-        dismiss();
-    }
-
-
-    @ViewInject(value = R.id.id_imsi)
-    private BootstrapEditText id_imsi;
-    @ViewInject(value = R.id.id_name)
-    private BootstrapEditText id_name;
-    @ViewInject(value = R.id.etRemark)
-    private BootstrapEditText etRemark;
 }

@@ -27,6 +27,13 @@ public class AddFcnDialog extends Dialog {
     private String mTitle;
     private View mView;
     private OnConfirmListener mOnConfirmListener;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(mView);
+
+    }
     public AddFcnDialog(Context context, String title,String band,String fcn,OnConfirmListener onConfirmListener) {
         super(context, R.style.Theme_dialog);
         mContext = context;
@@ -42,12 +49,30 @@ public class AddFcnDialog extends Dialog {
         mView = inflater.inflate(R.layout.dialog_add_fcn, null);
         setCancelable(false);
         TextView tvTitle = mView.findViewById(R.id.tv_dialog_title);
-        EditText etFcn = mView.findViewById(R.id.et_dialog_value);
+        EditText etFcn1 = mView.findViewById(R.id.et_fcn1);
+        EditText etFcn2 = mView.findViewById(R.id.et_fcn2);
+        EditText etFcn3 = mView.findViewById(R.id.et_fcn3);
         Button btnSave = mView.findViewById(R.id.btn_save);
         Button btnCancel = mView.findViewById(R.id.btn_cancel);
 
         tvTitle.setText(mTitle);
-        etFcn.setText(mFcn);
+        if (!TextUtils.isEmpty(mFcn)){
+            String[] split = mFcn.split(",");
+            for (int i = 0; i < split.length; i++) {
+                switch (i){
+                    case 0:
+                        etFcn1.setText(split[i]);
+                        break;
+                    case 1:
+                        etFcn2.setText(split[i]);
+                        break;
+                    case 2:
+                        etFcn3.setText(split[i]);
+                        break;
+                }
+            }
+        }
+
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,37 +83,42 @@ public class AddFcnDialog extends Dialog {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String value = etFcn.getText().toString().trim();
-                if (TextUtils.isEmpty(value)){
+                String fcn1 = etFcn1.getText().toString().trim();
+                String fcn2 = etFcn2.getText().toString().trim();
+                String fcn3 = etFcn3.getText().toString().trim();
+
+                if (TextUtils.isEmpty(fcn1) && TextUtils.isEmpty(fcn2) && TextUtils.isEmpty(fcn3)){
                     ToastUtils.showMessage(mContext,"请输入有效内容");
                     return;
                 }
 
-                if (!FormatUtils.getInstance().matchFCN(value)){
-                    ToastUtils.showMessage(mContext,"FCN格式输入有误,请检查");
-                    return;
-                }else {
-                    if (!FormatUtils.getInstance().fcnRange(mBand, value)){
-                        ToastUtils.showMessage(mContext,"FCN格式输入范围有误,请检查");
-                        return;
-                    }
+                String fcn="";
 
+                if (!TextUtils.isEmpty(fcn1)){
+                    fcn += fcn1+",";
+                }
+                if (!TextUtils.isEmpty(fcn2)){
+                    fcn += fcn2+",";
+                }
+                if (!TextUtils.isEmpty(fcn3)){
+                    fcn += fcn3+",";
+                }
+
+                fcn = fcn.substring(0,fcn.length()-1);
+
+                if (!FormatUtils.getInstance().fcnRange(mBand, fcn)){
+                    return;
                 }
 
                 if (mOnConfirmListener!=null){
-                    mOnConfirmListener.onConfirm(value);
+                    mOnConfirmListener.onConfirm(fcn);
                 }
                 dismiss();
             }
         });
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(mView);
 
-    }
 
     public interface OnConfirmListener{
         void onConfirm(String value);

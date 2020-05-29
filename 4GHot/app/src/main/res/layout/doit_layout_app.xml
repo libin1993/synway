@@ -206,7 +206,7 @@
             android:id="@+id/btDeviceFcn"
             android:layout_width="match_parent"
             android:layout_height="42dp"
-            app:leftIcon="@drawable/base_station"
+            app:leftIcon="@drawable/ic_custom_fcn"
             app:leftText="@string/custom_fcn"
             android:visibility="visible"/>
 

@@ -69,6 +69,13 @@
             android:layout_marginStart="5dp"
             android:text="管控模式" />
 
+        <Button
+            android:id="@+id/test7"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginStart="5dp"
+            android:text="获取白名单" />
+
     </LinearLayout>
 
 
@@ -83,6 +90,14 @@
 
     <TextView
         android:id="@+id/tvArfcns"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:textColor="@color/dark_background"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tv_name_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"

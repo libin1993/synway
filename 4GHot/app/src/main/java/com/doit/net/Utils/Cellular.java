@@ -309,6 +309,7 @@ public class Cellular {
                     effectArfcnNum++;
                     effectArfcns += arfcns[i];
                     effectArfcns += ",";
+
                 }
 
                 if (effectArfcnNum >= 3)
@@ -345,7 +346,6 @@ public class Cellular {
                             channel.getPMax()+","+channel.getPMax()+","+channel.getPMax(), "", "","","");
                     break;
                 default:
-
                     break;
             }
         }
