@@ -55,7 +55,7 @@ public class ServerSocketUtils {
     /**
      * @param onSocketChangedListener 线程接收连接
      */
-    public void startServer(OnSocketChangedListener onSocketChangedListener) {
+    public void startTCP(OnSocketChangedListener onSocketChangedListener) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -69,7 +69,10 @@ public class ServerSocketUtils {
                         currentRemoteAddress = remoteIP + ":" + remotePort;   //ip+端口作为key
                         CacheManager.DEVICE_IP = remoteIP;  //当前设备ip
 
-                        onSocketChangedListener.onConnect();
+                        if (onSocketChangedListener !=null){
+                            onSocketChangedListener.onConnect();
+                        }
+
                         LogUtils.log("设备连接ip：" + currentRemoteAddress);
 
 

@@ -40,7 +40,7 @@ import android.widget.Toast;
 import com.doit.net.Sockets.NetConfig;
 import com.doit.net.Sockets.OnSocketChangedListener;
 import com.doit.net.Sockets.ServerSocketUtils;
-import com.doit.net.Sockets.UdpClient;
+import com.doit.net.Sockets.DatagramSocketUtils;
 import com.doit.net.Utils.PermissionUtils;
 import com.doit.net.application.MyApplication;
 import com.doit.net.base.BaseActivity;
@@ -81,6 +81,9 @@ import com.doit.net.Utils.ToastUtils;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -205,7 +208,7 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
 //        ServerSocketManager.getInstance().newServerSocket(Integer.parseInt(NetConfig.MONITOR_PORT));
 //        ServerSocketManager.getInstance().startMainListener(NetConfig.MONITOR_PORT);
 
-        ServerSocketUtils.getInstance().startServer(new OnSocketChangedListener() {
+        ServerSocketUtils.getInstance().startTCP(new OnSocketChangedListener() {
             @Override
             public void onConnect() {
                 CacheManager.deviceState.setDeviceState(DeviceState.ON_INIT);
@@ -646,13 +649,34 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
             if (CacheManager.deviceState.getDeviceState().equals(DeviceState.WIFI_DISCONNECT))  //只有从wifi未连接到连接才出现这种状态
                 CacheManager.deviceState.setDeviceState(DeviceState.WAIT_SOCKET);
 
-            UdpClient.getInstance().startUdp(NetWorkUtils.getWIFILocalIpAddress(MyApplication.mContext), NetConfig.LOCAL_PORT);
+            sendData();
+
         } else {
             CacheManager.isWifiConnected = false;
             LogUtils.log("wifi state change——disconnected");
             CacheManager.deviceState.setDeviceState(DeviceState.WIFI_DISCONNECT);
             CacheManager.resetState();
         }
+    }
+
+    /**
+     * udp发送数据
+     */
+    private void sendData() {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("ip", NetWorkUtils.getWIFILocalIpAddress(MyApplication.mContext));
+            jsonObject.put("port", NetConfig.LOCAL_PORT);
+            jsonObject.put("id", DatagramSocketUtils.SEND_LOCAL_IP);
+            jsonObject.put("ok", true);
+
+            String data = jsonObject.toString();
+
+            DatagramSocketUtils.getInstance().sendData(data);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 
 

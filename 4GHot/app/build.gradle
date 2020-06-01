@@ -105,37 +105,37 @@ android {
 
     productFlavors {
 
-//        police {
-//            minSdkVersion 21
-//            applicationId 'com.synway.lte.hotspot'
-//            targetSdkVersion 28
-//            versionCode android.defaultConfig.versionCode
-//            versionName android.defaultConfig.versionName + "P" + releaseTime()
-//            //versionName android.defaultConfig.versionName+"P"
-//            signingConfig signingConfigs.relealse
-//            buildConfigField "boolean", "SPLASH_SCREEN", "true"
-//            resValue("string", "app_name", "便携式侦码")
-//            resValue("string", "login_lable", "便携式侦码")
-//            resValue("string", "login_icon", "@drawable/app_icon")
-//            manifestPlaceholders = [app_icon: "@drawable/app_icon"]
-//        }
-
-        army {
+        police {
             minSdkVersion 21
             applicationId 'com.synway.lte.hotspot'
             targetSdkVersion 28
             versionCode android.defaultConfig.versionCode
-            versionName android.defaultConfig.versionName + "A" + releaseTime()
-            //versionName android.defaultConfig.versionName+"A"
+            versionName android.defaultConfig.versionName + "P" + releaseTime()
+            //versionName android.defaultConfig.versionName+"P"
             signingConfig signingConfigs.relealse
-            buildConfigField "boolean", "SPLASH_SCREEN", "false"//军队版本找不到合适的启动画面，所以暂时不用
-            //buildConfigField "boolean", "LOC_MODEL", "false"
-            resValue("string", "app_name", "手机搜寻设备")
-            resValue("string", "login_lable", "手机搜寻设备")
-            resValue("string", "login_icon", "@drawable/august_first")
-            //resValue("string", "app_icon", "@drawable/august_first")
-            manifestPlaceholders = [app_icon: "@drawable/august_first"]
+            buildConfigField "boolean", "SPLASH_SCREEN", "true"
+            resValue("string", "app_name", "便携式侦码")
+            resValue("string", "login_lable", "便携式侦码")
+            resValue("string", "login_icon", "@drawable/app_icon")
+            manifestPlaceholders = [app_icon: "@drawable/app_icon"]
         }
+
+//        army {
+//            minSdkVersion 21
+//            applicationId 'com.synway.lte.hotspot'
+//            targetSdkVersion 28
+//            versionCode android.defaultConfig.versionCode
+//            versionName android.defaultConfig.versionName + "A" + releaseTime()
+//            //versionName android.defaultConfig.versionName+"A"
+//            signingConfig signingConfigs.relealse
+//            buildConfigField "boolean", "SPLASH_SCREEN", "false"//军队版本找不到合适的启动画面，所以暂时不用
+//            //buildConfigField "boolean", "LOC_MODEL", "false"
+//            resValue("string", "app_name", "手机搜寻设备")
+//            resValue("string", "login_lable", "手机搜寻设备")
+//            resValue("string", "login_icon", "@drawable/august_first")
+//            //resValue("string", "app_icon", "@drawable/august_first")
+//            manifestPlaceholders = [app_icon: "@drawable/august_first"]
+//        }
     }
 }
 
