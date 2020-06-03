@@ -31,6 +31,7 @@ public class LTEDataParse {
 		if(listReceiveCount>=packageHeadLength) {
 			parseData(listReceiveCount);
 		}
+
 	}
 	
 	//将收到的字节数解析并且组成一个整包
@@ -44,10 +45,10 @@ public class LTEDataParse {
 			//取出长度
 			byte[] byteLength={listReceiveBuffer.get(i),listReceiveBuffer.get(i+1)};
 			short packageLength =getShortData(byteLength[0],byteLength[1]);
-			//UtilBaseLog.printLog("LTE组包的长度:"+packageLength);
+			LogUtils.log("分包大小："+listReceiveBuffer.size()+","+packageLength);
 			//判断缓存列表中的数据是否达到一个包的数据
 			if(listReceiveBuffer.size()<packageLength) {
-				LogUtils.log("LTE没有达到整包数");
+				LogUtils.log("LTE没有达到整包数:");
 				break;
 			}
 			
@@ -124,7 +125,7 @@ public class LTEDataParse {
 		//第八步取出主协议类型Type
 		byte packageSubType = tempPackage[11];
 		receivePackage.setPackageSubType(packageSubType);
-		LogUtils.log("LTE收到packageMainType"+packageMainType+"(packageSubType):"+receivePackage.getPackageSubType());
+		LogUtils.log("LTE收到packageMainType:"+packageMainType+";  packageSubType:"+receivePackage.getPackageSubType());
 		
 		//第九部取出内容
 		//1.计算子协议内容包的长度

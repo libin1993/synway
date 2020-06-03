@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.doit.net.Event.EventAdapter;
+import com.doit.net.Protocol.ProtocolManager;
 import com.doit.net.Utils.FTPManager;
 import com.doit.net.Utils.FileUtils;
 import com.doit.net.Utils.LicenceUtils;
@@ -36,7 +38,9 @@ public class LicenceDialog extends Dialog implements EventAdapter.EventCall{
     private EditText etAuthorizeCode;
     private TextView tvMachineId;
     private TextView tvDueTime;
+    private Button btnCancel;
     private Context mContext;
+    private String mCancelTxt="取消";
 
     public final static int CAMERA_REQUEST_CODE = 2;
 
@@ -46,6 +50,13 @@ public class LicenceDialog extends Dialog implements EventAdapter.EventCall{
     public LicenceDialog(Activity activity) {
         super(activity, R.style.Theme_dialog);
         mContext = activity;
+        initView();
+    }
+
+    public LicenceDialog(Activity activity,String cancelTxt) {
+        super(activity, R.style.Theme_dialog);
+        mContext = activity;
+        mCancelTxt = cancelTxt;
         initView();
     }
 
@@ -60,6 +71,7 @@ public class LicenceDialog extends Dialog implements EventAdapter.EventCall{
         EventAdapter.setEvent(EventAdapter.SCAN_CODE, this);
         tvMachineId.setText(LicenceUtils.machineID);
         tvDueTime.setText(LicenceUtils.getDueTime());
+        btnCancel.setText(mCancelTxt);
     }
 
     @Nullable
@@ -101,9 +113,8 @@ public class LicenceDialog extends Dialog implements EventAdapter.EventCall{
 
                 if(LicenceUtils.checkAuthorizeCode(authorizeCode)){
                     LicenceUtils.authorizeCode = authorizeCode;
-                    ToastUtils.showMessageLong(getContext(),"授权成功，到期时间："+ LicenceUtils.getDueTime());
                     dismiss();
-
+                    ToastUtils.showMessageLong(getContext(),"授权成功，到期时间："+LicenceUtils.getDueTime()+"。设备即将重启，请耐心等待...");
                     new Thread() {
                         public void run() {
                             try {
@@ -118,20 +129,23 @@ public class LicenceDialog extends Dialog implements EventAdapter.EventCall{
                                                 + LicenceUtils.LICENCE_FILE_NAME);
                                     }
 
+                                    ProtocolManager.reboot();
+
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
                     }.start();
+
                 }else{
                     ToastUtils.showMessage(getContext(), "授权码有误，请确认后输入！");
                 }
             }
         });
 
-        Button btCancel = (Button) mView.findViewById(R.id.btCancel);
-        btCancel.setOnClickListener(new View.OnClickListener(){
+        btnCancel = (Button) mView.findViewById(R.id.btCancel);
+        btnCancel.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 if (onCloseListener !=null){

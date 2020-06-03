@@ -97,7 +97,7 @@ public class UtilServerSocketSub {
                 LogUtils.log("UtilSocket Error:" + ex.toString());
             } finally {
 
-                //iClientSocketChange.onClientStopLink(remoteIP,remotePort);
+               LogUtils.log("读取失败");
                 threadLoop = false;
                 try {
                     if (socket != null && !socket.isClosed()) {
@@ -113,7 +113,7 @@ public class UtilServerSocketSub {
 
                 iClientSocketChange.onClientStopLink(remoteIP, remotePort);
             }
-            //lock.unlock();
+
         }
     }
 

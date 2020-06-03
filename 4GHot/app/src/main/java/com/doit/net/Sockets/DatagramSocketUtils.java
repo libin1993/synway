@@ -1,15 +1,17 @@
 package com.doit.net.Sockets;
 
-import android.text.TextUtils;
-
+import com.doit.net.Model.CacheManager;
 import com.doit.net.Utils.LogUtils;
+import com.doit.net.Utils.NetWorkUtils;
+import com.doit.net.application.MyApplication;
+import com.doit.net.bean.DeviceState;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.SocketException;
 
 
@@ -27,7 +29,7 @@ public class DatagramSocketUtils {
     public final static String SEND_LOCAL_IP_ACK = "MSG_SET_XA_IP_ACK"; //手机发送ip设备回复
 
     private DatagramSocketUtils() {
-        startUDP();
+
     }
 
     public static DatagramSocketUtils getInstance() {
@@ -44,13 +46,18 @@ public class DatagramSocketUtils {
     /**
      * 开启udp socket
      */
-    public void startUDP() {
-        try {
-            mSocket = new DatagramSocket();
-        } catch (SocketException e) {
-            e.printStackTrace();
+    public void init() {
+        isRunning = true;
+        if (mSocket == null || mSocket.isClosed()) {
+            try {
+                mSocket = new DatagramSocket();
+            } catch (SocketException e) {
+                e.printStackTrace();
+            }
+
+            new ReceiveThread().start();
         }
-        new ReceiveThread().start();
+
     }
 
     public class ReceiveThread extends Thread {
@@ -58,7 +65,7 @@ public class DatagramSocketUtils {
         public void run() {
             super.run();
             try {
-                while (isRunning){
+                while (isRunning) {
                     byte[] buf = new byte[1024];
                     DatagramPacket dp = new DatagramPacket(buf, buf.length);
                     mSocket.receive(dp);
@@ -75,9 +82,9 @@ public class DatagramSocketUtils {
 //                        }
 
                     //tcp有设备连接,关闭socket
-                    if (!TextUtils.isEmpty(ServerSocketUtils.getInstance().currentRemoteAddress)) {
+                    if (CacheManager.deviceState.getDeviceState().equals(DeviceState.NORMAL)) {
                         isRunning = false;
-                        mSocket.close();
+                        closeSocket();
                     }
                     LogUtils.log("udp来自ip为：" + remoteIP + " 端口为：" + remotePort + "的信息为：" + receiveData);
                 }
@@ -93,10 +100,17 @@ public class DatagramSocketUtils {
 
 
     /**
-     * @param data 发送数据
+     * 发送数据
      */
     public void sendData(String data) {
         new SendThread(data).start();
+
+    }
+
+    private void closeSocket() {
+        if (mSocket != null && !mSocket.isClosed()) {
+            mSocket.close();
+        }
     }
 
 
@@ -114,18 +128,26 @@ public class DatagramSocketUtils {
         @Override
         public void run() {
             super.run();
-            try {
+            while (isRunning) {
+                try {
+                    LogUtils.log("UDP开始发送");
 
-                LogUtils.log("UDP开始发送");
+                    InetAddress inetAddress = InetAddress.getByName(NetConfig.BOALINK_LTE_IP);
+                    DatagramPacket packet = new DatagramPacket(data.getBytes(), data.getBytes().length,
+                            inetAddress, UDP_PORT); //创建要发送的数据包，然后用套接字发送
+                    mSocket.send(packet); //用套接字发送数据包
+                    LogUtils.log("udp发送：" + data);
+                    sleep(5000);
+                } catch (Exception e) {
+                    LogUtils.log("udp发送失败： " + e.toString());
+                    isRunning = false;
+                    closeSocket();
+                    init();
+                    sendData(data);
+                    break;
+                }
 
-                InetAddress inetAddress = InetAddress.getByName(NetConfig.BOALINK_LTE_IP);
-                DatagramPacket packet = new DatagramPacket(data.getBytes(), data.getBytes().length,
-                        inetAddress, UDP_PORT); //创建要发送的数据包，然后用套接字发送
-                mSocket.send(packet); //用套接字发送数据包
-                LogUtils.log("udp发送：" + data);
-            } catch (Exception e) {
-                e.printStackTrace();
-                LogUtils.log("udp发送失败： " + e.toString());
+
             }
 
         }

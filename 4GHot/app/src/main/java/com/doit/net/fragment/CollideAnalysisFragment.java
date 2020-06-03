@@ -51,7 +51,7 @@ import java.util.List;
  */
 
 public class CollideAnalysisFragment extends BaseFragment {
-    private View rootView;
+//    private View rootView;
 
     private EditText etCollideStartTime;
     private EditText etCollideEndTime;
@@ -83,10 +83,19 @@ public class CollideAnalysisFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (rootView != null)
-            return rootView;
+//        if (rootView != null)
+//            return rootView;
 
-        rootView = inflater.inflate(R.layout.fragment_collide_analysis, null);
+        View rootView = inflater.inflate(R.layout.fragment_collide_analysis, null);
+        etCollideStartTime = (EditText) rootView.findViewById(R.id.etCollideStartTime);
+        etCollideEndTime = (EditText) rootView.findViewById(R.id.etCollideEndTime);
+        lvCollideTimePeriod = (SwipeMenuListView)rootView.findViewById(R.id.lvCollideTimePeriod) ;
+        btStartCollide = (Button) rootView.findViewById(R.id.btStartCollide);
+
+        btAddTimePeriod = (Button) rootView.findViewById(R.id.btAddTimePeriod);
+        btExportCollideResult = (Button) rootView.findViewById(R.id.btExportCollideResult);
+        lvCollideResult = (ListView)rootView.findViewById(R.id.lvAnalysisResult) ;
+        layoutCollideResult = (LinearLayout) rootView.findViewById(R.id.layoutCollideResult);
         initWidget();
 
         return rootView;
@@ -94,7 +103,7 @@ public class CollideAnalysisFragment extends BaseFragment {
 
 
     private void initWidget() {
-        etCollideStartTime = (EditText) rootView.findViewById(R.id.etCollideStartTime);
+
         etCollideStartTime.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -104,7 +113,7 @@ public class CollideAnalysisFragment extends BaseFragment {
         });
 
 
-        etCollideEndTime = (EditText) rootView.findViewById(R.id.etCollideEndTime);
+
         etCollideEndTime.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -114,7 +123,7 @@ public class CollideAnalysisFragment extends BaseFragment {
         });
 
         collideTimePeriodAdapter = new CollideTimePeriodAdapter(getContext(), listCollideTimePeriod);
-        lvCollideTimePeriod = (SwipeMenuListView)rootView.findViewById(R.id.lvCollideTimePeriod) ;
+
         lvCollideTimePeriod.setAdapter(collideTimePeriodAdapter);
         lvCollideTimePeriod.setMenuCreator(timePerioCreator);
         lvCollideTimePeriod.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
@@ -130,23 +139,22 @@ public class CollideAnalysisFragment extends BaseFragment {
             }
         });
 
-        btAddTimePeriod = (Button) rootView.findViewById(R.id.btAddTimePeriod);
         btAddTimePeriod.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String startTime = etCollideStartTime.getText().toString();
                 String endTime = etCollideEndTime.getText().toString();
                 if ("".equals(startTime) || "".equals(endTime)){
-                    ToastUtils.showMessage(rootView.getContext(), "还未设置开始时间或者结束时间！");
+                    ToastUtils.showMessage(getContext(), "还未设置开始时间或者结束时间！");
                     return;
                 }else if (startTime.equals(endTime)){
-                    ToastUtils.showMessage(rootView.getContext(), "开始时间和结束时间一样，请重新设置！");
+                    ToastUtils.showMessage(getContext(), "开始时间和结束时间一样，请重新设置！");
                     return;
                 }else if (!DateUtils.isStartEndTimeOrderRight(startTime, endTime)){
-                    ToastUtils.showMessage(rootView.getContext(), "开始时间比结束时间晚，请重新设置！");
+                    ToastUtils.showMessage(getContext(), "开始时间比结束时间晚，请重新设置！");
                     return;
                 }else if(checkTimePeriodExist(startTime, endTime)){
-                    ToastUtils.showMessage(rootView.getContext(), "此时间段已添加过，请勿重复添加！");
+                    ToastUtils.showMessage(getContext(), "此时间段已添加过，请勿重复添加！");
                     return;
                 }
 
@@ -157,7 +165,7 @@ public class CollideAnalysisFragment extends BaseFragment {
         });
 
 
-        btStartCollide = (Button) rootView.findViewById(R.id.btStartCollide);
+
         btStartCollide.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -181,7 +189,7 @@ public class CollideAnalysisFragment extends BaseFragment {
         });
 
 
-        btExportCollideResult = (Button) rootView.findViewById(R.id.btExportCollideResult);
+
         btExportCollideResult.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -195,7 +203,7 @@ public class CollideAnalysisFragment extends BaseFragment {
         });
 
         analysisResultAdapter = new AnalysisResultAdapter(getContext(), R.layout.analysis_result_item, listCollideResult);
-        lvCollideResult = (ListView)rootView.findViewById(R.id.lvAnalysisResult) ;
+
         lvCollideResult.setAdapter(analysisResultAdapter);
         lvCollideResult.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -214,7 +222,6 @@ public class CollideAnalysisFragment extends BaseFragment {
             }
         });
 
-        layoutCollideResult = (LinearLayout) rootView.findViewById(R.id.layoutCollideResult);
     }
 
     private void ExportCollideResult(List<AnalysisResultBean> listCollideResult) {

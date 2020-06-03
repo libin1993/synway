@@ -41,10 +41,10 @@ public class ProtocolManager {
 
         String namelist = "MODE:"+mode;
 
-        namelist += "@REDIRECT_CONFIG:";
-        if (!"".equals(redirectConfig)) {
-            namelist += redirectConfig;
-        }
+//        namelist += "@REDIRECT_CONFIG:";
+//        if (!"".equals(redirectConfig)) {
+//            namelist += redirectConfig;
+//        }
 
         namelist += "@NAMELIST_REJECT:";
         if (!"".equals(nameListReject)) {
@@ -71,12 +71,12 @@ public class ProtocolManager {
             namelist += nameListRelease;
         }
 
-        namelist += "@NAMELIST_FILE:";
-        if (!"".equals(nameListFile)) {
-            namelist += nameListFile;
-        }
+//        namelist += "@NAMELIST_FILE:";
+//        if (!"".equals(nameListFile)) {
+//            namelist += nameListFile;
+//        }
 
-        LogUtils.log("关闭管控模式"+namelist);
+        LogUtils.log("设置白名单："+namelist);
         LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_NAMELIST, namelist);
     }
 

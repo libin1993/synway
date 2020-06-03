@@ -16,18 +16,13 @@ import android.os.Message;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
@@ -39,9 +34,11 @@ import android.widget.Toast;
 
 import com.doit.net.Sockets.NetConfig;
 import com.doit.net.Sockets.OnSocketChangedListener;
+import com.doit.net.Sockets.ServerSocketManager;
 import com.doit.net.Sockets.ServerSocketUtils;
 import com.doit.net.Sockets.DatagramSocketUtils;
 import com.doit.net.Utils.PermissionUtils;
+import com.doit.net.adapter.MainTabLayoutAdapter;
 import com.doit.net.application.MyApplication;
 import com.doit.net.base.BaseActivity;
 import com.doit.net.base.BaseFragment;
@@ -105,7 +102,7 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
     private List<BaseFragment> mTabs = new ArrayList<BaseFragment>();
     private CommonTabLayout tabLayout;
     private MainTabLayoutAdapter adapter;
-    boolean[] fragmentsUpdateFlag = {false, false, false};
+//    boolean[] fragmentsUpdateFlag = {false, false, false};
     private List<String> listTitles = new ArrayList<>();
     private ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
 
@@ -217,7 +214,6 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
                 //设备重启（重连）后需要重新检查设置默认参数
                 hasSetDefaultParam = false;
                 CacheManager.resetState();
-
             }
 
             @Override
@@ -353,19 +349,27 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
 
         if (VersionManage.isArmyVer()) {
             listTitles.add("侦码");
-            listTitles.add("搜寻");
+            if (CacheManager.getLocMode()){
+                listTitles.add("搜寻");
+            }
             listTitles.add("设置");
 
             listSelectIcon.add(R.drawable.detect_lable_select);
-            listSelectIcon.add(R.drawable.location_lable_select);
+            if (CacheManager.getLocMode()){
+                listSelectIcon.add(R.drawable.location_lable_select);
+            }
             listSelectIcon.add(R.drawable.setting_lable_select);
 
             listUnselectIcon.add(R.drawable.detect_lable_unselect);
-            listUnselectIcon.add(R.drawable.location_lable_unselect);
+            if (CacheManager.getLocMode()){
+                listUnselectIcon.add(R.drawable.location_lable_unselect);
+            }
             listUnselectIcon.add(R.drawable.setting_lable_unselect);
 
             mTabs.add(new StartPageFragment());
-            mTabs.add(new LocationFragment());
+            if (CacheManager.getLocMode()){
+                mTabs.add(new LocationFragment());
+            }
             mTabs.add(new AppFragment());
         } else if (VersionManage.isPoliceVer()) {
             listTitles.add("侦码");
@@ -405,11 +409,11 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
         mViewPager.setAdapter(adapter);
 
         tabLayout.setTabData(mTabEntities);
+
         tabLayout.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelect(int position) {
                 mViewPager.setCurrentItem(position);
-                mTabs.get(position).onFocus();
             }
 
             @Override
@@ -544,71 +548,67 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
 
     private NetworkChangeReceiver networkChangeReceiver;
 
-    public class MainTabLayoutAdapter<T extends Fragment> extends FragmentPagerAdapter {
-        private List<BaseFragment> mList;
-        private List<String> mTitles;
-        private FragmentManager fm;
-
-        public MainTabLayoutAdapter(FragmentManager fm, List<BaseFragment> list, List<String> titles) {
-            super(fm);
-            this.mList = list;
-            this.mTitles = titles;
-            this.fm = fm;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            Fragment fragment = mTabs.get(position % mTabs.size());
-//            UtilBaseLog.printLog("getItem:position=" + position + ",fragment:"
-//                    + fragment.getClass().getName() + ",fragment.tag=" + fragment.getTag());
-            return mTabs.get(position % mTabs.size());
-        }
-
-        @Override
-        public int getItemPosition(Object object) {
-            return POSITION_NONE;
-        }
-
-        @Override
-        public int getCount() {
-            return mList.size();
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mTitles == null ? super.getPageTitle(position) : mTitles.get(position);
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            Fragment fragment = (Fragment) super.instantiateItem(container, position);
-            String fragmentTag = fragment.getTag();
-            if (fragmentsUpdateFlag[position % fragmentsUpdateFlag.length]) {
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.remove(fragment);
-                fragment = mTabs.get(position % mTabs.size());
-                //添加新fragment时必须用前面获得的tag，这点很重要
-                ft.add(container.getId(), fragment, fragmentTag == null ? fragment.getClass().getName() + position : fragmentTag);
-                ft.attach(fragment);
-                ft.commit();
-
-                fragmentsUpdateFlag[position % fragmentsUpdateFlag.length] = false;
-            } else {
-                fragment = mTabs.get(position);
-
-            }
-            return fragment;
-        }
-    }
+//    public class MainTabLayoutAdapter1 extends FragmentPagerAdapter {
+//        private List<BaseFragment> mList;
+//        private List<String> mTitles;
+//        private FragmentManager fm;
+//
+//        public MainTabLayoutAdapter1(FragmentManager fm, List<BaseFragment> list, List<String> titles) {
+//            super(fm);
+//            this.mList = list;
+//            this.mTitles = titles;
+//            this.fm = fm;
+//        }
+//
+//        @Override
+//        public Fragment getItem(int position) {
+//            return mList.get(position);
+//        }
+//
+//        @Override
+//        public int getItemPosition(Object object) {
+//            return POSITION_NONE;
+//        }
+//
+//        @Override
+//        public int getCount() {
+//            return mList.size();
+//        }
+//
+//        @Override
+//        public CharSequence getPageTitle(int position) {
+//            return mTitles == null ? super.getPageTitle(position) : mTitles.get(position);
+//        }
+//
+//        @Override
+//        public Object instantiateItem(ViewGroup container, int position) {
+//            Fragment fragment = (Fragment) super.instantiateItem(container, position);
+//            String fragmentTag = fragment.getTag();
+//            if (fragmentsUpdateFlag[position % fragmentsUpdateFlag.length]) {
+//                FragmentTransaction ft = fm.beginTransaction();
+//                ft.remove(fragment);
+//                fragment = mTabs.get(position % mTabs.size());
+//                //添加新fragment时必须用前面获得的tag，这点很重要
+//                ft.add(container.getId(), fragment, fragmentTag == null ? fragment.getClass().getName() + position : fragmentTag);
+//                ft.attach(fragment);
+//                ft.commit();
+//
+//                fragmentsUpdateFlag[position % fragmentsUpdateFlag.length] = false;
+//            } else {
+//                fragment = mTabs.get(position);
+//
+//            }
+//            return fragment;
+//        }
+//    }
 
     private void powerStart() {
-        TurnToUeidPage();
+        turnToUeidPage();
     }
 
-    private void TurnToUeidPage() {
-        fragmentsUpdateFlag[0] = true;
+    private void turnToUeidPage() {
         mTabs.set(0, new UeidFragment());
-        adapter.notifyDataSetChanged();
+        adapter.exchangeFragment();
 
     }
 
@@ -641,15 +641,16 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
     private void wifiChangeEvent() {
         NetworkInfo wifiNetInfo = ((ConnectivityManager) activity.
                 getSystemService(Context.CONNECTIVITY_SERVICE)).getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        String ssid = NetWorkUtils.getWifiSSID(activity);
+//        String ssid = NetWorkUtils.getWifiSSID(activity);
 
         if (wifiNetInfo.isConnected()) {
             LogUtils.log("wifi state change——connected");
             CacheManager.isWifiConnected = true;
-            if (CacheManager.deviceState.getDeviceState().equals(DeviceState.WIFI_DISCONNECT))  //只有从wifi未连接到连接才出现这种状态
+            if (CacheManager.deviceState.getDeviceState().equals(DeviceState.WIFI_DISCONNECT)) {
                 CacheManager.deviceState.setDeviceState(DeviceState.WAIT_SOCKET);
+            } //只有从wifi未连接到连接才出现这种状态
 
-            sendData();
+            initUDP();  //重连wifi后udp发送ip、端口
 
         } else {
             CacheManager.isWifiConnected = false;
@@ -660,9 +661,17 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
     }
 
     /**
-     * udp发送数据
+     * 创建DatagramSocket
      */
-    private void sendData() {
+    private void initUDP(){
+        DatagramSocketUtils.getInstance().init();
+        sendData();
+    }
+
+    /**
+     *  发送数据
+     */
+    public void sendData() {
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("ip", NetWorkUtils.getWIFILocalIpAddress(MyApplication.mContext));
@@ -671,13 +680,15 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
             jsonObject.put("ok", true);
 
             String data = jsonObject.toString();
-
             DatagramSocketUtils.getInstance().sendData(data);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
     }
+
+
 
 
     private void setDeviceWorkMode() {
@@ -1013,7 +1024,7 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
 
         if (TextUtils.isEmpty(LicenceUtils.authorizeCode)) {
             ToastUtils.showMessageLong(this, "App未授权，请联系管理员。");
-            LicenceDialog licenceDialog = new LicenceDialog(this);
+            LicenceDialog licenceDialog = new LicenceDialog(this,"退出");
             licenceDialog.setOnCloseListener(new LicenceDialog.OnCloseListener() {
                 @Override
                 public void onClose() {
@@ -1028,28 +1039,26 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
         String dueTime = LicenceUtils.getDueTime();
         long longDueTime = DateUtils.convert2long(dueTime, DateUtils.LOCAL_DATE_DAY);
         long nowTime = System.currentTimeMillis();
-//        if (nowTime >= longDueTime) {
-//            ToastUtils.showMessageLong(activity, "授权已过期，请联系管理员");
-//            LicenceDialog licenceDialog = new LicenceDialog(this);
-//            licenceDialog.setOnCloseListener(new LicenceDialog.OnCloseListener() {
-//                @Override
-//                public void onClose() {
-//                    appExit();
-//                }
-//            });
-//            licenceDialog.show();
-//
-//            return false;
-//        } else {
-//            int dueDay = (int) ((longDueTime - nowTime) / (24 * 60 * 60 * 1000L));
-//            if (dueDay <= 7) {
-//                ToastUtils.showMessageLong(activity, "授权码还剩" + dueDay + "天到期，请联系管理员");
-//            }
-//
-//            return true;
-//        }
+        if (nowTime >= longDueTime) {
+            ToastUtils.showMessageLong(activity, "授权已过期，请联系管理员");
+            LicenceDialog licenceDialog = new LicenceDialog(this,"退出");
+            licenceDialog.setOnCloseListener(new LicenceDialog.OnCloseListener() {
+                @Override
+                public void onClose() {
+                    appExit();
+                }
+            });
+            licenceDialog.show();
 
-        return true;
+            return false;
+        } else {
+            int dueDay = (int) ((longDueTime - nowTime) / (24 * 60 * 60 * 1000L));
+            if (dueDay <= 7) {
+                ToastUtils.showMessageLong(activity, "授权码还剩" + dueDay + "天到期，请联系管理员");
+            }
+
+            return true;
+        }
 
     }
 

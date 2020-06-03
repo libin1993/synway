@@ -77,14 +77,20 @@ public class RealTimeUeidRptFragment extends BaseFragment implements IHandlerFin
     public RealTimeUeidRptFragment() {
     }
 
-    private View rootView;
+//    private View rootView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (rootView != null)
-            return rootView;
-        rootView = inflater.inflate(R.layout.doit_layout_ueid_list, container, false);
 
+        View rootView = inflater.inflate(R.layout.doit_layout_ueid_list, container, false);
+        mListView = (ListView) rootView.findViewById(R.id.listview);
+        btClearRealtimeUeid = (Button) rootView.findViewById(R.id.button_clear);
+        btClearRealtimeUeid.setOnClickListener(clearListener);
+
+        tvRealtimeCTJCount = rootView.findViewById(R.id.tvCTJCount);
+        tvRealtimeCTUCount = rootView.findViewById(R.id.tvCTUCount);
+        tvRealtimeCTCCount = rootView.findViewById(R.id.tvCTCCount);
+        cbDetectSwitch = rootView.findViewById(R.id.cbDetectSwitch);
         initView();
 
         UIEventManager.register(UIEventManager.KEY_UEID_RPT, this);
@@ -97,13 +103,7 @@ public class RealTimeUeidRptFragment extends BaseFragment implements IHandlerFin
     }
 
     private void initView() {
-        mListView = (ListView) rootView.findViewById(R.id.listview);
-        btClearRealtimeUeid = (Button) rootView.findViewById(R.id.button_clear);
-        btClearRealtimeUeid.setOnClickListener(clearListener);
 
-        tvRealtimeCTJCount = rootView.findViewById(R.id.tvCTJCount);
-        tvRealtimeCTUCount = rootView.findViewById(R.id.tvCTUCount);
-        tvRealtimeCTCCount = rootView.findViewById(R.id.tvCTCCount);
 
         mAdapter = new UeidListViewAdapter(getActivity());
         mListView.setAdapter(mAdapter);
@@ -124,7 +124,7 @@ public class RealTimeUeidRptFragment extends BaseFragment implements IHandlerFin
         });
 
         ueidItemPopView = LayoutInflater.from(getActivity()).inflate(R.layout.realtime_ueid_pop_window, null);
-        ueidItemPop = new PopupWindow(ueidItemPopView, rootView.getResources().getDisplayMetrics().widthPixels / 3,
+        ueidItemPop = new PopupWindow(ueidItemPopView, getResources().getDisplayMetrics().widthPixels / 3,
                 LinearLayout.LayoutParams.WRAP_CONTENT, true);   //宽度和屏幕成比例
         ueidItemPop.setContentView(ueidItemPopView);
         ueidItemPop.setBackgroundDrawable(new ColorDrawable());  //据说不设在有些情况下会关不掉
@@ -152,7 +152,7 @@ public class RealTimeUeidRptFragment extends BaseFragment implements IHandlerFin
             }
         });
 
-        cbDetectSwitch = (CheckBox) rootView.findViewById(R.id.cbDetectSwitch);
+
         LogUtils.log("状态1" + CacheManager.isDeviceOk());
         cbDetectSwitch.setChecked(CacheManager.isDeviceOk());
         cbDetectSwitch.setOnCheckedChangeListener(rfDetectSwichtListener);
@@ -376,7 +376,6 @@ public class RealTimeUeidRptFragment extends BaseFragment implements IHandlerFin
     @Override
     public void onResume() {
         super.onResume();
-
         isRFOpen();
     }
 

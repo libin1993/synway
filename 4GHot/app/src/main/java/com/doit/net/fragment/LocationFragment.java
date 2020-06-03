@@ -76,20 +76,30 @@ public class LocationFragment extends BaseFragment implements View.OnClickListen
     public LocationFragment() {
     }
 
-    private View rootView;
+//    private View rootView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (null != rootView) {
-            ViewGroup parent = (ViewGroup) rootView.getParent();
-            if (null != parent) {
-                parent.removeView(rootView);
-            }
-            refreshPage();
-            return rootView;
-        }
+//        if (null != rootView) {
+//            ViewGroup parent = (ViewGroup) rootView.getParent();
+//            if (null != parent) {
+//                parent.removeView(rootView);
+//            }
+//            refreshPage();
+//            return rootView;
+//        }
 
-        rootView = inflater.inflate(R.layout.doit_layout_location, container, false);
+        View rootView = inflater.inflate(R.layout.doit_layout_location, container, false);
+        tvLocatingImsi = (TextView) rootView.findViewById(R.id.tvLocatingImsi);
+        vLocateChart = (LocateChart) rootView.findViewById(R.id.vLocateChart);
+        vLocateCircle = (LocateCircle) rootView.findViewById(R.id.vLocateCircle);
+        cbVoiceSwitch = (CheckBox) rootView.findViewById(R.id.cbVoiceSwitch);
+        cbVoiceSwitch.setOnCheckedChangeListener(voiceSwitchListener);
+        cbGainSwitch = (CheckBox) rootView.findViewById(R.id.cbGainSwitch);
+
+        cbGainSwitch.setOnCheckedChangeListener(gainSwitchListener);
+        cbLocSwitch = (CheckBox) rootView.findViewById(R.id.cbLocSwitch);
+
         initView();
         initEvent();
         return rootView;
@@ -112,15 +122,7 @@ public class LocationFragment extends BaseFragment implements View.OnClickListen
     }
 
     private void initView() {
-        tvLocatingImsi = (TextView) rootView.findViewById(R.id.tvLocatingImsi);
-        vLocateChart = (LocateChart) rootView.findViewById(R.id.vLocateChart);
-        vLocateCircle = (LocateCircle) rootView.findViewById(R.id.vLocateCircle);
-        cbVoiceSwitch = (CheckBox) rootView.findViewById(R.id.cbVoiceSwitch);
-        cbVoiceSwitch.setOnCheckedChangeListener(voiceSwitchListener);
-        cbGainSwitch = (CheckBox) rootView.findViewById(R.id.cbGainSwitch);
 
-        cbGainSwitch.setOnCheckedChangeListener(gainSwitchListener);
-        cbLocSwitch = (CheckBox) rootView.findViewById(R.id.cbLocSwitch);
         cbLocSwitch.setOnCheckedChangeListener(rfLocSwitchListener);
 
         vLocateChart.setCylinderCount(LOCATE_CHART_X_AXIS_P_CNT);

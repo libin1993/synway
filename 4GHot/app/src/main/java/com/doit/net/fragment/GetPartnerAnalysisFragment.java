@@ -48,7 +48,6 @@ import java.util.List;
  */
 
 public class GetPartnerAnalysisFragment extends BaseFragment {
-    private View rootView;
 
     private EditText etStartTime;
     private EditText etEndTime;
@@ -78,17 +77,25 @@ public class GetPartnerAnalysisFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (rootView != null)
-            return rootView;
 
-        rootView = inflater.inflate(R.layout.fragment_get_partner, null);
+        View rootView = inflater.inflate(R.layout.fragment_get_partner, null);
+        etStartTime = (EditText) rootView.findViewById(R.id.etStartTime);
+        etEndTime = (EditText) rootView.findViewById(R.id.etEndTime);
+        etGetPartnerIMSI = (EditText) rootView.findViewById(R.id.etGetPartnerIMSI);
+        etDeviation = (EditText) rootView.findViewById(R.id.etDeviation);
+        btStartGettPartner = (Button) rootView.findViewById(R.id.btStartGetPartner);
+        btExportGetPartnerRes = (Button) rootView.findViewById(R.id.btExportGetPartnerRes);
+        lvGetPartnerResult = (ListView)rootView.findViewById(R.id.lvAnalysisResult) ;
+        tvTargetIMSI = (TextView) rootView.findViewById(R.id.tvTargetIMSI);
+        tvTargetIMSITimes = (TextView) rootView.findViewById(R.id.tvTargetIMSITimes);
+        layoutCollideTarget = (LinearLayout) rootView.findViewById(R.id.layoutCollideTarget);
         initWidget();
         return rootView;
     }
 
 
     private void initWidget() {
-        etStartTime = (EditText) rootView.findViewById(R.id.etStartTime);
+
         etStartTime.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -97,7 +104,6 @@ public class GetPartnerAnalysisFragment extends BaseFragment {
             }
         });
 
-        etEndTime = (EditText) rootView.findViewById(R.id.etEndTime);
         etEndTime.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -106,9 +112,6 @@ public class GetPartnerAnalysisFragment extends BaseFragment {
             }
         });
 
-        etGetPartnerIMSI = (EditText) rootView.findViewById(R.id.etGetPartnerIMSI);
-        etDeviation = (EditText) rootView.findViewById(R.id.etDeviation);
-        btStartGettPartner = (Button) rootView.findViewById(R.id.btStartGetPartner);
         btStartGettPartner.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -120,21 +123,21 @@ public class GetPartnerAnalysisFragment extends BaseFragment {
                 }
 
                 if (etStartTime.getText().toString().equals(etEndTime.getText().toString())){
-                    ToastUtils.showMessage(rootView.getContext(), "开始时间和结束时间一样，请重新设置！");
+                    ToastUtils.showMessage(getContext(), "开始时间和结束时间一样，请重新设置！");
                     return;
                 }
                 if (!DateUtils.isStartEndTimeOrderRight(etStartTime.getText().toString(), etEndTime.getText().toString())){
-                    ToastUtils.showMessage(rootView.getContext(), "开始时间比结束时间晚，请重新设置！");
+                    ToastUtils.showMessage(getContext(), "开始时间比结束时间晚，请重新设置！");
                     return;
                 }
 
                 if ("".equals(targetImsi)){
-                    ToastUtils.showMessage(getContext(), "请输入伴随目标的IMSI！");
+                    ToastUtils.showMessage(getContext(), "请输入伴随目标的IMSI!");
                     return;
                 }
 
                 if ("".equals(etDeviation.getText().toString())){
-                    ToastUtils.showMessage(getContext(), "请输入伴随的时间偏差！");
+                    ToastUtils.showMessage(getContext(), "请输入伴随的时间偏差!");
                     return;
                 }
 
@@ -162,7 +165,6 @@ public class GetPartnerAnalysisFragment extends BaseFragment {
             }
         });
 
-        btExportGetPartnerRes = (Button) rootView.findViewById(R.id.btExportGetPartnerRes);
         btExportGetPartnerRes.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -176,7 +178,7 @@ public class GetPartnerAnalysisFragment extends BaseFragment {
         });
 
         analysisResultAdapter = new AnalysisResultAdapter(getContext(), R.layout.analysis_result_item, listCollideResult);
-        lvGetPartnerResult = (ListView)rootView.findViewById(R.id.lvAnalysisResult) ;
+
         lvGetPartnerResult.setAdapter(analysisResultAdapter);
         lvGetPartnerResult.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -187,7 +189,7 @@ public class GetPartnerAnalysisFragment extends BaseFragment {
             }
         });
 
-        tvTargetIMSI = (TextView) rootView.findViewById(R.id.tvTargetIMSI);
+
         tvTargetIMSI.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -196,7 +198,7 @@ public class GetPartnerAnalysisFragment extends BaseFragment {
             }
         });
 
-        tvTargetIMSITimes = (TextView) rootView.findViewById(R.id.tvTargetIMSITimes);
+
         tvTargetIMSITimes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -204,7 +206,7 @@ public class GetPartnerAnalysisFragment extends BaseFragment {
                 showAnalysisDetailDialog(tvTargetIMSI.getText().toString(), listDetail);
             }
         });
-        layoutCollideTarget = (LinearLayout) rootView.findViewById(R.id.layoutCollideTarget);
+
     }
 
     private void exportCollideResult(List<AnalysisResultBean> listCollideResult) {

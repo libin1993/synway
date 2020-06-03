@@ -59,8 +59,9 @@ public class ServerSocketUtils {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    while (true) {
+                while (true) {
+                    try {
+
                         Socket socket = mServerSocket.accept();  //获取socket
                         socket.setSoTimeout(READ_TIME_OUT);      //设置超时
                         String remoteIP = socket.getInetAddress().getHostAddress();  //远程ip
@@ -69,19 +70,21 @@ public class ServerSocketUtils {
                         currentRemoteAddress = remoteIP + ":" + remotePort;   //ip+端口作为key
                         CacheManager.DEVICE_IP = remoteIP;  //当前设备ip
 
-                        if (onSocketChangedListener !=null){
+                        if (onSocketChangedListener != null) {
                             onSocketChangedListener.onConnect();
                         }
 
-                        LogUtils.log("设备连接ip：" + currentRemoteAddress);
+                        LogUtils.log("设备连接ip：" + remoteIP + ":" + remotePort);
 
 
                         ReceiveThread receiveThread = new ReceiveThread(remoteIP, remotePort, onSocketChangedListener);
                         receiveThread.start();
 
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        LogUtils.log("tcp错误："+e.getMessage());
+
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
             }
         }).start();
@@ -110,9 +113,10 @@ public class ServerSocketUtils {
             byte[] bytesReceived = new byte[1024];
             //接收到流的数量
             int receiveCount;
+            Socket socket = null;
             try {
                 //获取当前socket
-                Socket socket = map.get(currentRemoteAddress);
+                socket = map.get(remoteIP + ":" + remotePort);
                 if (socket == null) {
                     return;
                 }
@@ -127,6 +131,9 @@ public class ServerSocketUtils {
                     LogUtils.log(receiveCount + "");
                     if (receiveCount <= -1) {
                         LogUtils.log("break read!");
+                        onSocketChangedListener.onDisconnect();
+                        closeSocket(remoteIP + ":" + remotePort);  //关闭socket
+                        DataCenterManager.clearDataBuffer(remoteIP);
                         break;
                     }
 
@@ -136,10 +143,8 @@ public class ServerSocketUtils {
                     //收到数据
                 }
             } catch (IOException ex) {
-                LogUtils.log("UtilSocket Error:" + ex.toString());
+                LogUtils.log("读取错误:" + ex.toString());
                 onSocketChangedListener.onDisconnect();
-
-                currentRemoteAddress = "";
                 closeSocket(remoteIP + ":" + remotePort);  //关闭socket
                 DataCenterManager.clearDataBuffer(remoteIP);
             }
@@ -154,7 +159,6 @@ public class ServerSocketUtils {
             try {
                 socket.shutdownInput();
                 socket.close();//临时
-                socket = null;//临时
                 map.remove(ip);
             } catch (IOException e) {
                 e.printStackTrace();

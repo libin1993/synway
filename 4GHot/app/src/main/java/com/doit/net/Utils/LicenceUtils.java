@@ -1,6 +1,7 @@
 package com.doit.net.Utils;
 
 import android.os.Environment;
+import android.text.TextUtils;
 
 import java.util.Date;
 
@@ -18,6 +19,9 @@ public class LicenceUtils {
 
 
     public static String getDueTime() {
+        if (TextUtils.isEmpty(authorizeCode)){
+            return "";
+        }
 
         String decryptCode = "";
         try {

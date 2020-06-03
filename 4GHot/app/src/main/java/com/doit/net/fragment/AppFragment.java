@@ -133,13 +133,13 @@ public class AppFragment extends BaseFragment implements IHandlerFinish {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if (null != rootView) {
-            ViewGroup parent = (ViewGroup) rootView.getParent();
-            if (null != parent) {
-                parent.removeView(rootView);
-            }
-            return rootView;
-        }
+//        if (null != rootView) {
+//            ViewGroup parent = (ViewGroup) rootView.getParent();
+//            if (null != parent) {
+//                parent.removeView(rootView);
+//            }
+//            return rootView;
+//        }
 
         rootView = inflater.inflate(R.layout.doit_layout_app, container, false);
 

@@ -19,7 +19,7 @@ import com.doit.net.ucsi.R;
  */
 
 public class StartPageFragment extends BaseFragment {
-    private View rootView;
+
 
     private ImageButton ivPowerStart;
     public StartPageFragment(){
@@ -27,22 +27,22 @@ public class StartPageFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (null != rootView) {
-            ViewGroup parent = (ViewGroup) rootView.getParent();
-            if (null != parent) {
-                parent.removeView(rootView);
-            }
-            return rootView;
-        }
-        rootView = inflater.inflate(R.layout.start_page_fragment, null);
-
+//        if (null != rootView) {
+//            ViewGroup parent = (ViewGroup) rootView.getParent();
+//            if (null != parent) {
+//                parent.removeView(rootView);
+//            }
+//            return rootView;
+//        }
+        View rootView = inflater.inflate(R.layout.start_page_fragment, null);
+        ivPowerStart = rootView.findViewById(R.id.ivPowerStart);
         initWidget();
 
         return rootView;
     }
 
     private void initWidget() {
-        ivPowerStart = rootView.findViewById(R.id.ivPowerStart);
+
         ivPowerStart.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {

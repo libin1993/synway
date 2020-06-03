@@ -15,12 +15,12 @@ public class UeidTabLayoutAdapter extends FragmentPagerAdapter{
     //添加fragment的集合
     private List<Fragment> listFragments;
     //添加标题的集合
-    private List<String> listTiltes;
+    private List<String> listTitles;
 
-    public UeidTabLayoutAdapter(FragmentManager fm, List<Fragment> fragmentList, List<String> tilteLis) {
+    public UeidTabLayoutAdapter(FragmentManager fm, List<Fragment> fragmentList, List<String> titleList) {
         super(fm);
         listFragments = fragmentList;
-        listTiltes = tilteLis;
+        listTitles = titleList;
     }
 
     @Override
@@ -36,14 +36,7 @@ public class UeidTabLayoutAdapter extends FragmentPagerAdapter{
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return listTiltes.get(position);
+        return listTitles.get(position);
     }
 
-    @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
-    }
-
-    public UeidTabLayoutAdapter(FragmentManager fm) {
-        super(fm);
-    }
 }

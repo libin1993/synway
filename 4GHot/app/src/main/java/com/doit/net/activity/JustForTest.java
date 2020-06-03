@@ -95,7 +95,7 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
             @Override
             public void onClick(View v) {
                 ProtocolManager.setActiveMode("0");
-
+                CacheManager.setLocalWhiteList("off");
             }
         });
 
@@ -103,7 +103,7 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
             @Override
             public void onClick(View v) {
                 ProtocolManager.setActiveMode("1");
-
+                CacheManager.setLocalWhiteList("off");
             }
         });
 
@@ -111,7 +111,7 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
             @Override
             public void onClick(View v) {
                 ProtocolManager.setActiveMode("2");
-
+                CacheManager.setLocalWhiteList("on");
             }
         });
 

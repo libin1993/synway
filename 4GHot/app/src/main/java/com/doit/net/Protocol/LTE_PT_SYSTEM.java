@@ -80,7 +80,8 @@ public class LTE_PT_SYSTEM {
             case LTE_PT_SYSTEM.SYSTEM_REBOOT_ACK:
                 LogUtils.log("parseSystemReboot:" + respcContent);
                 if (respcContent.charAt(0) == '0'){
-                    ToastUtils.showMessageLong(MyApplication.mContext,"设备正在重启");
+                    LogUtils.log("设备正在重启");
+//                    ToastUtils.showMessageLong(MyApplication.mContext,"设备正在重启");
                 }else{
                     ToastUtils.showMessage(MyApplication.mContext,"设备重启失败");
                 }

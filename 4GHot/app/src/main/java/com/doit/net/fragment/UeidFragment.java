@@ -22,7 +22,7 @@ import java.util.List;
  */
 
 public class UeidFragment extends BaseFragment {
-    private View rootView;
+//    private View rootView;
     private TabLayout tabLayout;
     private ViewPager viewPagers;
     private List<Fragment> listFragments;
@@ -33,23 +33,22 @@ public class UeidFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (null != rootView) {
-            ViewGroup parent = (ViewGroup) rootView.getParent();
-            if (null != parent) {
-                parent.removeView(rootView);
-            }
-            return rootView;
-        }
+//        if (null != rootView) {
+//            ViewGroup parent = (ViewGroup) rootView.getParent();
+//            if (null != parent) {
+//                parent.removeView(rootView);
+//            }
+//            return rootView;
+//        }
 
-        rootView = inflater.inflate(R.layout.layout_ueid_all, container, false);
+        View rootView = inflater.inflate(R.layout.layout_ueid_all, container, false);
+        tabLayout = (TabLayout) rootView.findViewById(R.id.tabLayoutTab);
+        viewPagers = (ViewPager) rootView.findViewById(R.id.vpViewPaper);
         initView();
-
         return rootView;
     }
 
     private void initView() {
-        tabLayout = (TabLayout) rootView.findViewById(R.id.tabLayoutTab);
-        viewPagers = (ViewPager) rootView.findViewById(R.id.vpViewPaper);
 
         listTitles = new ArrayList<>();
         listFragments = new ArrayList<>();
@@ -131,11 +130,11 @@ public class UeidFragment extends BaseFragment {
         });
     }
 
-    @Override
-    public void onFocus() {
-        listFragments.get(0).onResume();  //刷新实时上报界面功率开关
-        super.onFocus();
-    }
+//    @Override
+//    public void onFocus() {
+//        listFragments.get(0).onResume();  //刷新实时上报界面功率开关
+//
+//    }
 
     private View getTabView(int currentPosition) {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.comman_text, null);

@@ -151,7 +151,7 @@ public class LTE_PT_PARAM {
         // @NAMELIST_RELEASE:460001234512345
         // @NAMELIST_REST_ACTION:block
         String namelistAck = UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(), 0);
-        LogUtils.log("白名单:" + namelistAck);
+        LogUtils.log("获取白名单回复:" + namelistAck);
         String[] splitStr = namelistAck.split("@");
 
         Namelist namelist = new Namelist();
@@ -457,9 +457,9 @@ public class LTE_PT_PARAM {
             case LTE_PT_PARAM.PARAM_SET_NAMELIST_ACK:
                 String setNameListAsk = respContent;
                 if (setNameListAsk.charAt(0) == '0') {
-                    LogUtils.log("设置管控名单成功");
+                    LogUtils.log("设置白名单成功");
                 } else if (setNameListAsk.charAt(0) == '1') {
-                    LogUtils.log("设置管控名单失败");
+                    LogUtils.log("设置白名单失败");
                 }
                 break;
 
