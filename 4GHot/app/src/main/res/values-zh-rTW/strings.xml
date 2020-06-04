@@ -18,6 +18,7 @@
     <string name="action_add">添加</string>
     <string name="lab_name">姓名：</string>
     <string name="save">保存</string>
+    <string name="btn_import">导 入</string>
     <string name="cancel">取消</string>
     <string name="clear_history">清除上号历史数据</string>
     <string name="sound_option">语音播报选项</string>

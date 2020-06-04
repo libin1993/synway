@@ -104,6 +104,22 @@ android {
     }
 
     productFlavors {
+        army {
+            minSdkVersion 21
+            applicationId 'com.synway.lte.hotspot'
+            targetSdkVersion 28
+            versionCode android.defaultConfig.versionCode
+            versionName android.defaultConfig.versionName + "A" + releaseTime()
+            //versionName android.defaultConfig.versionName+"A"
+            signingConfig signingConfigs.relealse
+            buildConfigField "boolean", "SPLASH_SCREEN", "false"//军队版本找不到合适的启动画面，所以暂时不用
+            //buildConfigField "boolean", "LOC_MODEL", "false"
+            resValue("string", "app_name", "手机搜寻设备")
+            resValue("string", "login_lable", "手机搜寻设备")
+            resValue("string", "login_icon", "@drawable/august_first")
+            //resValue("string", "app_icon", "@drawable/august_first")
+            manifestPlaceholders = [app_icon: "@drawable/august_first"]
+        }
 
         police {
             minSdkVersion 21
@@ -120,22 +136,7 @@ android {
             manifestPlaceholders = [app_icon: "@drawable/app_icon"]
         }
 
-//        army {
-//            minSdkVersion 21
-//            applicationId 'com.synway.lte.hotspot'
-//            targetSdkVersion 28
-//            versionCode android.defaultConfig.versionCode
-//            versionName android.defaultConfig.versionName + "A" + releaseTime()
-//            //versionName android.defaultConfig.versionName+"A"
-//            signingConfig signingConfigs.relealse
-//            buildConfigField "boolean", "SPLASH_SCREEN", "false"//军队版本找不到合适的启动画面，所以暂时不用
-//            //buildConfigField "boolean", "LOC_MODEL", "false"
-//            resValue("string", "app_name", "手机搜寻设备")
-//            resValue("string", "login_lable", "手机搜寻设备")
-//            resValue("string", "login_icon", "@drawable/august_first")
-//            //resValue("string", "app_icon", "@drawable/august_first")
-//            manifestPlaceholders = [app_icon: "@drawable/august_first"]
-//        }
+
     }
 }
 
@@ -277,6 +278,6 @@ dependencies {
     //分包
     implementation 'com.android.support:multidex:1.0.3'
     //excel导入导出
-//    implementation files('libs/poi-3.12-android-a.jar')
-//    implementation files('libs/poi-ooxml-schemas-3.12-20150511-a.jar')
+    implementation files('libs/poi-3.12-android-a.jar')
+    implementation files('libs/poi-ooxml-schemas-3.12-20150511-a.jar')
 }

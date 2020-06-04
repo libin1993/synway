@@ -315,7 +315,6 @@ public class AppFragment extends BaseFragment implements IHandlerFinish {
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
         dialog.setView(dialogView);
         dialog.setCancelable(true);
-        dialog.setCancelable(true);
         dialog.show();
     }
 

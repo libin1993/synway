@@ -74,6 +74,16 @@
             android:name="org.apache.http.legacy"
             android:required="false" />
 
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.synway.lte.hotspot.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"/>
+        </provider>
+
 
 
         <!-- android:largeHeap="true" 使用较大内存堆栈 -->

@@ -72,6 +72,8 @@ public class CacheManager {
 
     private static boolean hasPressStartButton = false;  //是否已经在主页面点击开始按钮
 
+    public static boolean checkLicense= false; //连接成功后校验证书
+
     public static boolean getLocMode() {
         return loc_mode;
     }

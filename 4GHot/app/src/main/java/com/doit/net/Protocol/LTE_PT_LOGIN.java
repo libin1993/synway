@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import com.doit.net.Data.LTESendManager;
 import com.doit.net.Event.EventAdapter;
+import com.doit.net.Model.CacheManager;
 import com.doit.net.Utils.LicenceUtils;
 import com.doit.net.Utils.UtilDataFormatChange;
 
@@ -46,7 +47,8 @@ public class LTE_PT_LOGIN {
             if (!TextUtils.isEmpty(str) && str.length() == 8 && TextUtils.isEmpty(LicenceUtils.machineID)
 					|| !TextUtils.equals(LicenceUtils.machineID,str)){
                 LicenceUtils.machineID = str;
-                EventAdapter.call(EventAdapter.CHECK_LICENCE);
+
+				CacheManager.checkLicense = true;
             }
 		}
 

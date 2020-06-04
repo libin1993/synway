@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -160,7 +161,7 @@ public class AccountManage {
 
         BufferedWriter bufferedWriter = null;
         try {
-            bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(LOCAL_FTP_ACCOUNT_PATH +ACCOUNT_FILE_NAME,true)));
+            bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(LOCAL_FTP_ACCOUNT_PATH +ACCOUNT_FILE_NAME,true), StandardCharsets.UTF_8));
             if (listUserInfo != null){
                 //bufferedWriter.write(AccountManage.getAdminAcount()+","+AccountManage.getAdminPassword()+ "," + AccountManage.getAdminRemark()+"\n");
                 for (UserInfo info: listUserInfo) {

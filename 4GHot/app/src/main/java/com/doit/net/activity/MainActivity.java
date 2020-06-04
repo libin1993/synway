@@ -881,6 +881,11 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
 
                 ProtocolManager.setFTPConfig(); //设置ftp配置
 
+               if (CacheManager.checkLicense){
+                   CacheManager.checkLicense = false;
+                   checkLicence();
+               }
+
             }
 
             if (!hasSetDefaultParam && CacheManager.getChannels().size() > 0) {
@@ -971,7 +976,7 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
         } else if (EventAdapter.POWER_START.equals(key)) {
             powerStart();
         } else if (EventAdapter.CHECK_LICENCE.equals(key)) {
-            checkLicence();
+//            checkLicence();
         }
     }
 

@@ -1,18 +1,32 @@
 package com.doit.net.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
+import android.support.v4.content.FileProvider;
+import android.support.v7.widget.LinearLayoutCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -21,8 +35,11 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.util.Attributes;
+import com.doit.net.Utils.FormatUtils;
 import com.doit.net.View.AddWhitelistDialog;
 import com.doit.net.adapter.HistoryListViewAdapter;
 import com.doit.net.adapter.WhitelistAdapter;
@@ -39,6 +56,7 @@ import com.doit.net.Utils.MySweetAlertDialog;
 import com.doit.net.Utils.StringUtils;
 import com.doit.net.Utils.ToastUtils;
 import com.doit.net.Utils.LogUtils;
+import com.doit.net.bean.FileBean;
 import com.doit.net.ucsi.R;
 
 //import org.apache.poi.hssf.usermodel.HSSFDateUtil;
@@ -51,18 +69,32 @@ import com.doit.net.ucsi.R;
 //import org.apache.poi.ss.usermodel.WorkbookFactory;
 //import org.apache.poi.xssf.usermodel.XSSFSheet;
 //import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.util.WorkbookUtil;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.xutils.DbManager;
 import org.xutils.ex.DbException;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -90,7 +122,8 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
 
     private int lastOpenSwipePos = -1;
 
-    private final String WHITELIST_FILE_PATH =  Environment.getExternalStorageDirectory()+"/4GHotspot/Whitelist.csv";
+    private final String WHITELIST_FILE_PATH = Environment.getExternalStorageDirectory() + "/4GHotspot/Whitelist.xls";
+    private final String FILE_PATH = Environment.getExternalStorageDirectory() + "/4GHotspot/";
 
     //handler消息
     private final int REFRESH_LIST = 0;
@@ -102,14 +135,14 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_whitelist);
-        getWindow ().setFlags (WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         initView();
 
         updateListFromDB();
-        UIEventManager.register(UIEventManager.KEY_REFRESH_WHITE_LIST,this);
-        EventAdapter.setEvent(EventAdapter.UPDATE_WHITELIST,this);
+        UIEventManager.register(UIEventManager.KEY_REFRESH_WHITE_LIST, this);
+        EventAdapter.setEvent(EventAdapter.UPDATE_WHITELIST, this);
     }
 
     private void initView() {
@@ -138,7 +171,7 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
         });
 
         whitelistItemPopView = LayoutInflater.from(activity).inflate(R.layout.whitelist_pop_windows, null);
-        whitelistItemPop = new PopupWindow(whitelistItemPopView, getResources().getDisplayMetrics().widthPixels/3,
+        whitelistItemPop = new PopupWindow(whitelistItemPopView, getResources().getDisplayMetrics().widthPixels / 3,
                 LinearLayout.LayoutParams.WRAP_CONTENT, true);   //宽度和屏幕成比例
         whitelistItemPop.setContentView(whitelistItemPopView);
         whitelistItemPop.setBackgroundDrawable(new ColorDrawable());  //据说不设在有些情况下会关不掉
@@ -146,28 +179,28 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
             @Override
             public void onItemLongClick(MotionEvent motionEvent, int position) {
                 selectedWhitelistItem = mAdapter.getWhitelistList().get(position);
-                showListPopWindow(lvWhitelistInfo, calcPopWindowPosX((int)motionEvent.getX()), calcPopWindowPosY((int)motionEvent.getY()));
+                showListPopWindow(lvWhitelistInfo, calcPopWindowPosX((int) motionEvent.getX()), calcPopWindowPosY((int) motionEvent.getY()));
             }
         });
 
         tvGetImsi = (TextView) whitelistItemPopView.findViewById(R.id.tvGetImsi);
-        tvGetImsi.setOnClickListener(new View.OnClickListener(){
+        tvGetImsi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String msisdn = selectedWhitelistItem.getMsisdn();
                 String imsi = selectedWhitelistItem.getImsi();
-                if (!"".equals(imsi)){
-                    ToastUtils.showMessage(activity,"已知IMSI，无需翻译！");
+                if (!"".equals(imsi)) {
+                    ToastUtils.showMessage(activity, "已知IMSI，无需翻译！");
                     return;
                 }
 
-                if("".equals(msisdn)){
-                    ToastUtils.showMessage(activity,"手机号为空，请确认后点击！");
+                if ("".equals(msisdn)) {
+                    ToastUtils.showMessage(activity, "手机号为空，请确认后点击！");
                     return;
                 }
 
-                LogUtils.log("点击了："+ msisdn);
-                if (!ImsiMsisdnConvert.isAuthenticated()){
+                LogUtils.log("点击了：" + msisdn);
+                if (!ImsiMsisdnConvert.isAuthenticated()) {
                     ToastUtils.showMessageLong(activity, "尚未通过认证，请先进入“号码翻译设置”进行认证");
                     whitelistItemPop.dismiss();
                     return;
@@ -196,8 +229,8 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
         int popWinHeight = whitelistItemPop.getContentView().getMeasuredHeight();
 
         boolean isNeedShowUpward = (eventY + popWinHeight > listviewHeight);  //超过范围就向上显示
-        if (isNeedShowUpward){
-            return eventY-popWinHeight;
+        if (isNeedShowUpward) {
+            return eventY - popWinHeight;
         } else {
             return eventY;
         }
@@ -208,9 +241,9 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
         whitelistItemPop.getContentView().measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         int windowWidth = whitelistItemPop.getContentView().getMeasuredWidth();
 
-        boolean isShowLeft = (eventX+windowWidth > listviewWidth);  //超过屏幕的话就向左边显示
+        boolean isShowLeft = (eventX + windowWidth > listviewWidth);  //超过屏幕的话就向左边显示
         if (isShowLeft) {
-            return eventX-windowWidth;
+            return eventX - windowWidth;
         } else {
             return eventX;
         }
@@ -231,16 +264,16 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
     };
 
     private boolean isWhitelistExist(String imsi, String msisdn, List<WhiteListInfo> listWhitelistFromFile) {
-        if (listWhitelistInfo != null){
-            for (WhiteListInfo tmpdbWhiteInfo : listWhitelistInfo){
-                if((!"".equals(imsi) && tmpdbWhiteInfo.getImsi().equals(imsi)) || (!"".equals(msisdn) && tmpdbWhiteInfo.getMsisdn().equals(msisdn)))
+        if (listWhitelistInfo != null) {
+            for (WhiteListInfo tmpdbWhiteInfo : listWhitelistInfo) {
+                if ((!"".equals(imsi) && tmpdbWhiteInfo.getImsi().equals(imsi)) || (!"".equals(msisdn) && tmpdbWhiteInfo.getMsisdn().equals(msisdn)))
                     return true;
             }
         }
 
-        if (listWhitelistFromFile != null){
-            for (WhiteListInfo tmpdbWhiteInfo : listWhitelistFromFile){
-                if((!"".equals(imsi) && tmpdbWhiteInfo.getImsi().equals(imsi)) || (!"".equals(msisdn) && tmpdbWhiteInfo.getMsisdn().equals(msisdn)))
+        if (listWhitelistFromFile != null) {
+            for (WhiteListInfo tmpdbWhiteInfo : listWhitelistFromFile) {
+                if ((!"".equals(imsi) && tmpdbWhiteInfo.getImsi().equals(imsi)) || (!"".equals(msisdn) && tmpdbWhiteInfo.getMsisdn().equals(msisdn)))
                     return true;
             }
         }
@@ -248,8 +281,8 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
         return false;
     }
 
-    public static boolean isNumeric(String str){
-        Pattern pattern=Pattern.compile("[0-9]*");
+    public static boolean isNumeric(String str) {
+        Pattern pattern = Pattern.compile("[0-9]*");
         return pattern.matcher(str).matches();
     }
 
@@ -265,15 +298,15 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
         //判断长度和是否含有非数字
         if (!"".equals(readline.split(",")[0]) &&
                 (readline.split(",")[0].length() != 15 ||
-                !isNumeric(readline.split(",")[0]))){
+                        !isNumeric(readline.split(",")[0]))) {
             return false;
         }
 
         //判断手机号
-        if (readline.split(",").length >= 2){
+        if (readline.split(",").length >= 2) {
             if (!"".equals(readline.split(",")[1]) &&
                     (readline.split(",")[1].length() != 11 ||
-                            !isNumeric(readline.split(",")[1]))){
+                            !isNumeric(readline.split(",")[1]))) {
                 return false;
             }
         }
@@ -284,217 +317,278 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
     View.OnClickListener importWhitelistClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            File namelistFile = new File(WHITELIST_FILE_PATH);
-            if (!namelistFile.exists()) {
-                new SweetAlertDialog(activity, SweetAlertDialog.ERROR_TYPE)
-                        .setTitleText("导入失败")
-                        .setContentText("文件不存在，但已生成模板:"+"手机存储"+WHITELIST_FILE_PATH+ "，请按模板格式填入名单后导入！")
-                        .show();
+            File file = new File(FILE_PATH);
+            if (!file.exists()) {
+                ToastUtils.showMessageLong(WhitelistManagerActivity.this, "未找到白名单，请确认已将升级包放在\"手机存储/4GHotspot\"目录下");
+                return;
+            }
 
-                BufferedWriter bufferedWriter = null;
-                try {
-                    namelistFile.createNewFile();
-                    bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(WHITELIST_FILE_PATH,true)));
-                    bufferedWriter.write("IMSI,手机号,备注"+"\r\n");
-                    if (listWhitelistInfo != null && listWhitelistInfo.size() > 0) {
-                        for (WhiteListInfo info: listWhitelistInfo) {
-                            //bufferedWriter.write(DateUtil.getDateByFormat(info.getCreateDate(),DateUtil.LOCAL_DATE)+",");
-                            bufferedWriter.write(info.getImsi()+"\t,");
-                            bufferedWriter.write(info.getMsisdn()+"\t,");
-                            bufferedWriter.write(info.getRemark());
-                            bufferedWriter.write("\r\n");
-                        }
-                    }
-                } catch (FileNotFoundException e){
-                    //log.error("File Error",e);
-                    createExportError("文件未创建成功");
-                } catch (IOException e){
-                    //log.error("File Error",e);
-                    createExportError("写入文件错误");
-                } finally {
-                    if(bufferedWriter != null){
-                        try {
-                            bufferedWriter.close();
-                        } catch (IOException e) {e.printStackTrace();}
-                    }
-                }
-                EventAdapter.call(EventAdapter.UPDATE_FILE_SYS, WHITELIST_FILE_PATH);
-            }else{
-                int validImportNum = 0;
-                int repeatNum = 0;
-                int errorFormatNum = 0;
-                BufferedReader bufferedReader = null;
-                try {
-                    bufferedReader = new BufferedReader(new FileReader(namelistFile));
-                    String readline = "";
-                    String imsiInLine = "";
-                    String msisdnInLine = "";
-                    String remark = "";
-                    List<WhiteListInfo> listValidWhite = new ArrayList<>();
-                    while ((readline = bufferedReader.readLine()) != null) {
-                        if (readline.contains("IMSI") && readline.contains("手机号") && readline.contains("备注"))
-                            continue;
+            File[] files = file.listFiles();
+            if (files == null || files.length == 0) {
+                ToastUtils.showMessageLong(WhitelistManagerActivity.this, "未找到白名单，请确认已将白名单放在\"手机存储/4GHotspot\"目录下");
+                return;
+            }
 
-                        if (!isFormatRight(readline)){
-                            errorFormatNum++;
-                            continue;
-                        }
+            List<FileBean> fileList = new ArrayList<>();
 
-                        imsiInLine = "";
-                        msisdnInLine = "";
-                        if (readline.startsWith(",")){
-                            imsiInLine = "";
-                        }else{
-                            imsiInLine = readline.split(",")[0];
-                        }
-                        msisdnInLine = readline.substring(readline.indexOf(",")+1, readline.lastIndexOf(","));
-                        remark = readline.split(",").length ==3?readline.split(",")[2]:"";
-
-                        if (isWhitelistExist(imsiInLine, msisdnInLine, listValidWhite)){
-                            repeatNum ++;
-                            continue;
-                        }
-
-                        validImportNum++;
-                        listValidWhite.add(new WhiteListInfo(imsiInLine, msisdnInLine, remark));
-                        if (validImportNum > 10000)  //白名单最大10000
-                            break;
-                    }
-
-                    dbManager.save(listValidWhite);
-                } catch (FileNotFoundException e){
-                    createExportError("文件未创建成功");
-                } catch (IOException e){
-                    createExportError("写入文件错误");
-                } finally {
-                    if(bufferedReader != null){
-                        try {
-                            bufferedReader.close();
-                        } catch (IOException e) {}
-                    }
-                }
-
-                new MySweetAlertDialog(activity, MySweetAlertDialog.TEXT_SUCCESS)
-                        .setTitleText("导入完成")
-                        .setContentText("成功导入"+String.valueOf(validImportNum)+"个名单，忽略"+
-                                String.valueOf(repeatNum)+"个重复的名单，忽略"+String.valueOf(errorFormatNum)+"行格式或号码错误")
-                        .show();
-
-                updateListFromDB();
-                if (CacheManager.isDeviceOk()){
-                    //当导入量相当大时，数据下发是相当慢的，所以放在子线程里发
-                    new Thread() {@Override public void run() {CacheManager.updateWhitelistToDev(activity);}}.start();
-                    //CacheManager.updateWhitelistToDev(activity);
+            for (int i = 0; i < files.length; i++) {
+                String tmpFileName = files[i].getName();
+                if (tmpFileName.endsWith(".xls") || tmpFileName.endsWith(".xlsx")) {
+                    FileBean fileBean = new FileBean();
+                    fileBean.setFileName(tmpFileName);
+                    fileBean.setCheck(false);
+                    fileList.add(fileBean);
                 }
             }
 
-            EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.IMPORT_WhiteLIST+WHITELIST_FILE_PATH);
+            if (fileList.size() == 0) {
+                ToastUtils.showMessageLong(WhitelistManagerActivity.this, "未找到白名单，白名单必须是以\".xls\"或\".xlsx\"为后缀的文件");
+                return;
+            }
+
+
+            fileList.get(0).setCheck(true);  //默认选中第一个
+
+            View dialogView = LayoutInflater.from(WhitelistManagerActivity.this).inflate(R.layout.layout_import_whitelist, null);
+            PopupWindow mPopupWindow = new PopupWindow(dialogView, FormatUtils.getInstance().dip2px(300), ViewGroup.LayoutParams.WRAP_CONTENT);
+
+            //设置Popup具体控件
+            RecyclerView rvFile = dialogView.findViewById(R.id.rv_file);
+            Button btnCancel = dialogView.findViewById(R.id.btn_cancel_import);
+            Button btnConfirm = dialogView.findViewById(R.id.btn_confirm_import);
+
+
+            //设置Popup具体参数
+            mPopupWindow.setBackgroundDrawable(new BitmapDrawable(getResources(), (Bitmap) null));
+            mPopupWindow.setFocusable(true);//点击空白，popup不自动消失
+            mPopupWindow.setTouchable(true);//popup区域可触摸
+            mPopupWindow.setOutsideTouchable(true);//非popup区域可触摸
+            mPopupWindow.showAtLocation(getWindow().getDecorView(), Gravity.CENTER, 0, 0);
+
+
+            rvFile.setLayoutManager(new LinearLayoutManager(WhitelistManagerActivity.this));
+            BaseQuickAdapter<FileBean, BaseViewHolder> adapter = new BaseQuickAdapter<FileBean, BaseViewHolder>(R.layout.layout_file_item, fileList) {
+                @Override
+                protected void convert(BaseViewHolder helper, FileBean item) {
+                    helper.setText(R.id.tv_file_name, item.getFileName());
+                    helper.setVisible(R.id.iv_select_whitelist, item.isCheck());
+                }
+            };
+
+            rvFile.setAdapter(adapter);
+
+
+            adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                    for (int i = 0; i < fileList.size(); i++) {
+                        fileList.get(i).setCheck(i == position);
+                    }
+                    adapter.notifyDataSetChanged();
+                }
+            });
+
+            btnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mPopupWindow.dismiss();
+                }
+            });
+
+            btnConfirm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mPopupWindow.dismiss();
+
+                    File file = null;
+                    for (FileBean fileBean : fileList) {
+                        if (fileBean.isCheck()) {
+                            file = new File(FILE_PATH + fileBean.getFileName());
+                            break;
+                        }
+                    }
+                    if (file == null) {
+                        return;
+                    }
+                    int validImportNum = 0;
+                    int repeatNum = 0;
+                    int errorFormatNum = 0;
+                    try {
+                        InputStream stream = new FileInputStream(file);
+                        Workbook workbook = WorkbookFactory.create(stream);
+                        Sheet sheet = workbook.getSheetAt(0);  //示意访问sheet
+                        int rowsCount = sheet.getPhysicalNumberOfRows();
+                        FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
+                        List<WhiteListInfo> listValidWhite = new ArrayList<>();
+                        for (int r = 0; r < rowsCount; r++) {
+                            String imsiInLine = "";
+                            String msisdnInLine = "";
+                            String remark = "";
+                            Row row = sheet.getRow(r);
+                            int cellsCount = row.getPhysicalNumberOfCells();
+
+                            if (cellsCount < 2 || cellsCount > 3) {
+                                errorFormatNum++;
+                                continue;
+                            }
+
+                            imsiInLine = getCellAsString(row, 0, formulaEvaluator);
+                            msisdnInLine = getCellAsString(row, 1, formulaEvaluator);
+                            if (cellsCount == 3) {
+                                remark = getCellAsString(row, 2, formulaEvaluator);
+                            }
+
+                            if ("IMSI".equals(imsiInLine) && msisdnInLine.equals("手机号") && "备注".equals(remark)) {
+                                continue;
+                            }
+
+
+                            if (TextUtils.isEmpty(imsiInLine) || TextUtils.isEmpty(msisdnInLine) ||
+                                    !isNumeric(imsiInLine) || imsiInLine.length() != 15 ||
+                                    !isNumeric(msisdnInLine) || msisdnInLine.length() != 11) {
+                                errorFormatNum++;
+                                continue;
+                            }
+
+
+                            if (isWhitelistExist(imsiInLine, msisdnInLine, listValidWhite)) {
+                                repeatNum++;
+                                continue;
+                            }
+
+                            listValidWhite.add(new WhiteListInfo(imsiInLine, msisdnInLine, remark));
+                            validImportNum++;
+                            if (validImportNum > 10000)  //白名单最大10000
+                                break;
+
+                        }
+                        stream.close();
+                        dbManager.save(listValidWhite);
+                    } catch (Exception e) {
+                        /* proper exception handling to be here */
+                        LogUtils.log(e.toString());
+                        createExportError("写入文件错误");
+                    }
+
+                    new MySweetAlertDialog(activity, MySweetAlertDialog.TEXT_SUCCESS)
+                            .setTitleText("导入完成")
+                            .setContentText("成功导入" + String.valueOf(validImportNum) + "个名单，忽略" +
+                                    String.valueOf(repeatNum) + "个重复的名单，忽略" + String.valueOf(errorFormatNum) + "行格式或号码错误")
+                            .show();
+
+                    updateListFromDB();
+                    if (CacheManager.isDeviceOk()) {
+                        //当导入量相当大时，数据下发是相当慢的，所以放在子线程里发
+                        new Thread() {
+                            @Override
+                            public void run() {
+                                CacheManager.updateWhitelistToDev(activity);
+                            }
+                        }.start();
+                    }
+
+
+                    EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.IMPORT_WhiteLIST + file.getName());
+                }
+            });
+
         }
     };
+
+    /**
+     * @param row
+     * @param c
+     * @param formulaEvaluator
+     * @return 获取单元格值
+     */
+    protected String getCellAsString(Row row, int c, FormulaEvaluator formulaEvaluator) {
+        String value = "";
+        try {
+            Cell cell = row.getCell(c);
+            CellValue cellValue = formulaEvaluator.evaluate(cell);
+            switch (cellValue.getCellType()) {
+                case Cell.CELL_TYPE_BOOLEAN:
+                    value = "" + cellValue.getBooleanValue();
+                    break;
+                case Cell.CELL_TYPE_NUMERIC:
+
+                    if (HSSFDateUtil.isCellDateFormatted(cell)) {
+                        double date = cellValue.getNumberValue();
+                        SimpleDateFormat formatter =
+                                new SimpleDateFormat("dd/MM/yy");
+                        value = formatter.format(HSSFDateUtil.getJavaDate(date));
+                    } else {
+                        DecimalFormat df = new DecimalFormat("#.########");  //去除科学计数法
+                        value = df.format(cell.getNumericCellValue());
+                    }
+                    break;
+                case Cell.CELL_TYPE_STRING:
+                    value = "" + cellValue.getStringValue();
+                    break;
+                default:
+            }
+        } catch (NullPointerException e) {
+            /* proper error handling should be here */
+            LogUtils.log(e.toString());
+        }
+        return value;
+    }
 
     View.OnClickListener exortWhitelistClick = new View.OnClickListener() {
         @Override
 
         public void onClick(View v) {
-            File namelistFile = new File(WHITELIST_FILE_PATH);
-            if (namelistFile.exists()){
-                namelistFile.delete();
-            }
-
-            BufferedWriter bufferedWriter = null;
             try {
-                bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(WHITELIST_FILE_PATH,true)));
-                bufferedWriter.write("IMSI,手机号,备注"+"\r\n");
-                if (listWhitelistInfo == null || listWhitelistInfo.size() == 0){
+                File file = new File(WHITELIST_FILE_PATH);
+                if (file.exists()) {
+                    file.delete();
+                }
+
+                XSSFWorkbook workbook = new XSSFWorkbook();
+                XSSFSheet sheet = workbook.createSheet(WorkbookUtil.createSafeSheetName("WhiteList"));
+
+                Row row = sheet.createRow(0);
+                Cell cell1 = row.createCell(0);
+                cell1.setCellValue("IMSI");
+                Cell cell2 = row.createCell(1);
+                cell2.setCellValue("手机号");
+                Cell cell3 = row.createCell(2);
+                cell3.setCellValue("备注");
+
+
+                if (listWhitelistInfo == null || listWhitelistInfo.size() == 0) {
                     ToastUtils.showMessageLong(activity, "当前名单为空，此次导出为模板");
-                }else{
-                    for (WhiteListInfo info: listWhitelistInfo) {
-                        bufferedWriter.write(info.getImsi()+",");
-                        bufferedWriter.write(info.getMsisdn()+",");
-                        bufferedWriter.write(StringUtils.defaultString(info.getRemark()));
-                        bufferedWriter.write("\r\n");
+                } else {
+                    for (int i = 0; i < listWhitelistInfo.size(); i++) {
+                        Row rowi = sheet.createRow(i+1);
+                        rowi.createCell(0).setCellValue(listWhitelistInfo.get(i).getImsi()+"");
+                        rowi.createCell(1).setCellValue(listWhitelistInfo.get(i).getMsisdn()+"");
+                        rowi.createCell(2).setCellValue(listWhitelistInfo.get(i).getRemark()+"");
                     }
                 }
-            } catch (DbException e) {
-                //log.error("Export SELECT ERROR",e);
-                createExportError("数据查询错误");
-            } catch (FileNotFoundException e){
-                //log.error("File Error",e);
-                createExportError("文件未创建成功");
-            } catch (IOException e){
-                //log.error("File Error",e);
-                createExportError("写入文件错误");
-            } finally {
-                if(bufferedWriter != null){
-                    try {
-                        bufferedWriter.close();
-                    } catch (IOException e) {}
-                }
+
+                OutputStream outputStream = new FileOutputStream(file);
+                workbook.write(outputStream);
+                outputStream.flush();
+                outputStream.close();
+
+            } catch (Exception e) {
+                /* proper exception handling to be here */
+                createExportError("导出名单失败");
             }
+
 
             EventAdapter.call(EventAdapter.UPDATE_FILE_SYS, WHITELIST_FILE_PATH);
             new MySweetAlertDialog(activity, MySweetAlertDialog.TEXT_SUCCESS)
                     .setTitleText("导出成功")
-                    .setContentText("文件导出在：手机存储"+WHITELIST_FILE_PATH)
+                    .setContentText("文件导出在：手机存储" + WHITELIST_FILE_PATH)
                     .show();
 
-            EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.EXPORT_WHITELIST+WHITELIST_FILE_PATH);
+            EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.EXPORT_WHITELIST + WHITELIST_FILE_PATH);
 
-
-//            InputStream stream = getResources().openRawResource(R.raw.test1);
-//            try {
-//                Workbook workbook = WorkbookFactory.create(stream);
-//                Sheet sheet = workbook.getSheetAt(0);  //示意访问sheet
-//                int rowsCount = sheet.getPhysicalNumberOfRows();
-//                FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
-//                for (int r = 0; r<rowsCount; r++) {
-//                    Row row = sheet.getRow(r);
-//                    int cellsCount = row.getPhysicalNumberOfCells();
-//                    for (int c = 0; c<cellsCount; c++) {
-//                        String value = getCellAsString(row, c, formulaEvaluator);
-//                        String cellInfo = "r:"+r+"; c:"+c+"; v:"+value;
-//                        LogUtils.log(cellInfo);
-//                    }
-//                }
-//            } catch (Exception e) {
-//                /* proper exception handling to be here */
-//                LogUtils.log(e.toString());
-//            }
         }
     };
 
-//    protected String getCellAsString(Row row, int c, FormulaEvaluator formulaEvaluator) {
-//        String value = "";
-//        try {
-//            Cell cell = row.getCell(c);
-//            CellValue cellValue = formulaEvaluator.evaluate(cell);
-//            switch (cellValue.getCellType()) {
-//                case Cell.CELL_TYPE_BOOLEAN:
-//                    value = ""+cellValue.getBooleanValue();
-//                    break;
-//                case Cell.CELL_TYPE_NUMERIC:
-//
-//                    if(HSSFDateUtil.isCellDateFormatted(cell)) {
-//                        double date = cellValue.getNumberValue();
-//                        SimpleDateFormat formatter =
-//                                new SimpleDateFormat("dd/MM/yy");
-//                        value = formatter.format(HSSFDateUtil.getJavaDate(date));
-//                    } else {
-//                        DecimalFormat df = new DecimalFormat("#.####");  //去除科学计数法
-//                        value = df.format(cell.getNumericCellValue());
-//                    }
-//                    break;
-//                case Cell.CELL_TYPE_STRING:
-//                    value = ""+cellValue.getStringValue();
-//                    break;
-//                default:
-//            }
-//        } catch (NullPointerException e) {
-//            /* proper error handling should be here */
-//            LogUtils.log(e.toString());
-//        }
-//        return value;
-//    }
 
     View.OnClickListener clearWhitelistClick = new View.OnClickListener() {
         @Override
@@ -502,14 +596,16 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
         public void onClick(View v) {
             try {
                 dbManager.delete(WhiteListInfo.class);
-            } catch (DbException e) {e.printStackTrace();}
+            } catch (DbException e) {
+                e.printStackTrace();
+            }
             updateListFromDB();
             EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CLEAR_WHITELIST);
         }
     };
 
 
-    void updateListFromDB(){
+    void updateListFromDB() {
         try {
             listWhitelistInfo = dbManager.selector(WhiteListInfo.class).findAll();
             if (listWhitelistInfo == null)
@@ -523,7 +619,7 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
         }
     }
 
-    private void openSwipe(int position){
+    private void openSwipe(int position) {
         if (position < 0)
             return;
 
@@ -531,7 +627,7 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
         ((SwipeLayout) (lvWhitelistInfo.getChildAt(position))).setClickToClose(true);
     }
 
-    private void closeSwipe(int position){
+    private void closeSwipe(int position) {
         if (listWhitelistInfo == null || listWhitelistInfo.size() == 0)
             return;
 
@@ -559,10 +655,10 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
         }
     }
 
-    private void createExportError(String obj){
+    private void createExportError(String obj) {
         Message msg = new Message();
         msg.what = EXPORT_ERROR;
-        msg.obj=obj;
+        msg.obj = obj;
         mHandler.sendMessage(msg);
     }
 
@@ -573,16 +669,16 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
                 if (mAdapter != null) {
                     mAdapter.updateView();
                 }
-            }else if(msg.what == UPDATE_LIST) {
+            } else if (msg.what == UPDATE_LIST) {
                 updateListFromDB();
                 closeSwipe(lastOpenSwipePos);
-            }else if(msg.what == UPDATE_WHITELIST){
+            } else if (msg.what == UPDATE_WHITELIST) {
                 updateListFromDB();
                 CacheManager.updateWhitelistToDev(activity);
-            }else if(msg.what == EXPORT_ERROR){
+            } else if (msg.what == EXPORT_ERROR) {
                 new SweetAlertDialog(activity, SweetAlertDialog.ERROR_TYPE)
                         .setTitleText("导出失败")
-                        .setContentText("失败原因："+msg.obj)
+                        .setContentText("失败原因：" + msg.obj)
                         .show();
             }
         }
@@ -591,7 +687,7 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
 
     @Override
     public void handlerFinish(String key) {
-        if (key.equals(UIEventManager.KEY_REFRESH_WHITE_LIST)){
+        if (key.equals(UIEventManager.KEY_REFRESH_WHITE_LIST)) {
             mHandler.sendEmptyMessage(UPDATE_LIST);
         }
     }
