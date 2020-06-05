@@ -301,16 +301,16 @@ public class AppFragment extends BaseFragment implements IHandlerFinish {
 
         final View dialogView = LayoutInflater.from(getContext())
                 .inflate(R.layout.layout_device_info, null);
-        TextView tvDeviceIP = (TextView) dialogView.findViewById(R.id.tvDeviceIP);
+        TextView tvDeviceIP = dialogView.findViewById(R.id.tvDeviceIP);
         tvDeviceIP.setText(CacheManager.DEVICE_IP);
-        TextView tvHwVersion = (TextView) dialogView.findViewById(R.id.tvHwVersion);
+        TextView tvHwVersion = dialogView.findViewById(R.id.tvHwVersion);
         tvHwVersion.setText(CacheManager.getLteEquipConfig().getHw());
-        TextView tvSwVersion = (TextView) dialogView.findViewById(R.id.tvSwVersion);
+        TextView tvSwVersion = dialogView.findViewById(R.id.tvSwVersion);
         tvSwVersion.setText(CacheManager.getLteEquipConfig().getSw());
-        Button btDeviceUpgrade = (Button) dialogView.findViewById(R.id.btDeviceUpgrade);
+        Button btDeviceUpgrade = dialogView.findViewById(R.id.btDeviceUpgrade);
         btDeviceUpgrade.setOnClickListener(upgradeListner);
-        lvPackageList = (ListView) dialogView.findViewById(R.id.lvPackageList);
-        layoutUpgradePackage = (LinearLayout) dialogView.findViewById(R.id.layoutUpgradePackage);
+        lvPackageList = dialogView.findViewById(R.id.lvPackageList);
+        layoutUpgradePackage = dialogView.findViewById(R.id.layoutUpgradePackage);
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
         dialog.setView(dialogView);

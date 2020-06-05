@@ -58,8 +58,8 @@ public class WhitelistAdapter extends BaseSwipeAdapter {
 
     @Override
     public void fillValues(int position, View convertView) {
-        TextView tvIndex = (TextView)convertView.findViewById(R.id.tvIndex);
-        TextView tvWhitelistInfo = (TextView)convertView.findViewById(R.id.tvWhitelistInfo);
+        TextView tvIndex = convertView.findViewById(R.id.tvIndex);
+        TextView tvWhitelistInfo = convertView.findViewById(R.id.tvWhitelistInfo);
 
         final WhiteListInfo whitelistInfo = listWhitelistInfo.get(position);
         tvIndex.setText(" " +(position + 1) + ".");

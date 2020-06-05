@@ -32,11 +32,14 @@ import android.widget.ImageView;
 
 import android.widget.Toast;
 
+import com.doit.net.Protocol.GSMSendPackage;
+import com.doit.net.Protocol.GSMSubPackage;
 import com.doit.net.Sockets.NetConfig;
 import com.doit.net.Sockets.OnSocketChangedListener;
 import com.doit.net.Sockets.ServerSocketManager;
 import com.doit.net.Sockets.ServerSocketUtils;
 import com.doit.net.Sockets.DatagramSocketUtils;
+import com.doit.net.Sockets.UDPSocketUtils;
 import com.doit.net.Utils.PermissionUtils;
 import com.doit.net.adapter.MainTabLayoutAdapter;
 import com.doit.net.application.MyApplication;
@@ -256,19 +259,19 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
     private void initView() {
         setOverflowShowingAlways();
 //        getActionBar().setDisplayShowHomeEnabled(false);
-        mViewPager = (ViewPager) findViewById(R.id.vpTabPage);
-        tabLayout = (CommonTabLayout) findViewById(R.id.tablayout);
+        mViewPager = findViewById(R.id.vpTabPage);
+        tabLayout = findViewById(R.id.tablayout);
 
-        ivWifiState = (ImageView) findViewById(R.id.ivWifiState);
+        ivWifiState = findViewById(R.id.ivWifiState);
         ivWifiState.setOnClickListener(wifiSystemSetting);
         //ivWifiState.setOnClickListener(showSetParamDialogListener);
 
-        ivDeviceState = (ImageView) findViewById(R.id.ivDeviceState);
+        ivDeviceState = findViewById(R.id.ivDeviceState);
         //ivDeviceState.setOnClickListener(showSetParamDialogListener);
 
-        ivSyncError = (ImageView) findViewById(R.id.ivSyncError);
+        ivSyncError = findViewById(R.id.ivSyncError);
 
-        ivBatteryLevel = (ImageView) findViewById(R.id.ivBatteryLevel);
+        ivBatteryLevel = findViewById(R.id.ivBatteryLevel);
 
         initTabs();
         initProgressDialog();
@@ -652,6 +655,10 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
 
             initUDP();  //重连wifi后udp发送ip、端口
 
+
+//            initGSM();
+
+
         } else {
             CacheManager.isWifiConnected = false;
             LogUtils.log("wifi state change——disconnected");
@@ -663,9 +670,58 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
     /**
      * 创建DatagramSocket
      */
+    private void initGSM(){
+
+        Timer timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                GSMSendPackage sendPackage = new GSMSendPackage();
+                sendPackage.setMsgNumber((byte) 0x01);
+                sendPackage.setCarrierInstruction((byte)0x00);
+                sendPackage.setMsgParameter((byte)0x00);
+
+                GSMSubPackage subPackage = new GSMSubPackage();
+
+                subPackage.setSubMsgNumber((short) 0x0001);
+
+                byte[] a = new byte[20];
+                subPackage.setSubMsgContent(a);
+
+                sendPackage.setMsgSubContent(subPackage.getMsgContent());
+                UDPSocketUtils.getInstance().sendData(sendPackage.getMsgContent());
+            }
+        };
+
+        timer.schedule(timerTask,
+                0,
+                5000);//周期时间
+
+    }
+
+
+    /**
+     * 创建DatagramSocket
+     */
     private void initUDP(){
-        DatagramSocketUtils.getInstance().init();
-        sendData();
+
+        Timer timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                if (!CacheManager.deviceState.getDeviceState().equals(DeviceState.NORMAL)) {
+                    sendData();
+                }else {
+                    DatagramSocketUtils.getInstance().closeSocket();
+                    timer.cancel();
+                }
+            }
+        };
+
+        timer.schedule(timerTask,
+                0,
+                5000);//周期时间
+
     }
 
     /**

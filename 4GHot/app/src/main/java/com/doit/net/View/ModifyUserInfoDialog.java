@@ -61,13 +61,13 @@ public class ModifyUserInfoDialog extends Dialog {
         mView = inflater.inflate(R.layout.layout_modify_user_info, null);
         setCancelable(false);
 
-        etUserName = (EditText)mView.findViewById(R.id.etImsi);
+        etUserName = mView.findViewById(R.id.etImsi);
         etUserName.setText(modifyName);
-        etRemake = (EditText)mView.findViewById(R.id.etRemark);
+        etRemake = mView.findViewById(R.id.etRemark);
         etRemake.setText(modifyRemake);
-        etPassword = (EditText)mView.findViewById(R.id.etPassword);
+        etPassword = mView.findViewById(R.id.etPassword);
         etPassword.setText(modifyPassword);
-        btSave = (Button)mView.findViewById(R.id.btSave);
+        btSave = mView.findViewById(R.id.btSave);
         btSave.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -131,7 +131,7 @@ public class ModifyUserInfoDialog extends Dialog {
         });
 
 
-        btCancel = (Button)mView.findViewById(R.id.btCancel);
+        btCancel = mView.findViewById(R.id.btCancel);
         btCancel.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {

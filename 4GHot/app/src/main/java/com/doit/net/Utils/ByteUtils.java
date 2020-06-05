@@ -14,7 +14,7 @@ public class ByteUtils {
      *            需要转换的short
      * @param index
      */
-    public static void putShort(byte b[], short s, int index) {
+    public static void putShort(byte[] b, short s, int index) {
         b[index + 1] = (byte) (s >> 8);
         b[index + 0] = (byte) (s >> 0);
     }
@@ -61,9 +61,9 @@ public class ByteUtils {
      * @return
      */
     public static int getInt(byte[] bb, int index) {
-        return (int) ((((bb[index + 3] & 0xff) << 24)
+        return (((bb[index + 3] & 0xff) << 24)
                 | ((bb[index + 2] & 0xff) << 16)
-                | ((bb[index + 1] & 0xff) << 8) | ((bb[index + 0] & 0xff) << 0)));
+                | ((bb[index + 1] & 0xff) << 8) | ((bb[index + 0] & 0xff) << 0));
     }
 
     /**
@@ -108,7 +108,7 @@ public class ByteUtils {
      * @return
      */
     public static void putChar(byte[] bb, char ch, int index) {
-        int temp = (int) ch;
+        int temp = ch;
         // byte[] b = new byte[2];
         for (int i = 0; i < 2; i ++ ) {
             bb[index + i] = new Integer(temp & 0xff).byteValue(); // 将最高位保存在最低位
@@ -226,7 +226,7 @@ public class ByteUtils {
     }
 
     public static String getHexString(byte[] b, int index, int count){
-        StringBuilder stringBuilder = new StringBuilder("");
+        StringBuilder stringBuilder = new StringBuilder();
         if (b == null || index < 0 || b.length < index + count ) {
             return null;
         }
@@ -242,7 +242,7 @@ public class ByteUtils {
     }
 
     public static String getBinaryString(int d,int length){
-        StringBuilder stringBuilder = new StringBuilder("");
+        StringBuilder stringBuilder = new StringBuilder();
         String hv = Integer.toBinaryString(d);
         for (int j = 0; j < length - hv.length(); j++) {
             stringBuilder.append(0);
@@ -252,7 +252,7 @@ public class ByteUtils {
     }
 
     public static String getBinaryReverseString(int d,int length){
-        StringBuilder stringBuilder = new StringBuilder("");
+        StringBuilder stringBuilder = new StringBuilder();
         String hv = Integer.toBinaryString(d);
         for (int j = 0; j < length - hv.length(); j++) {
             stringBuilder.append(0);
@@ -265,10 +265,10 @@ public class ByteUtils {
 
 
     //网络字节逆序
-    public static byte[] ReversEndian(byte b[],int count, boolean big)
+    public static byte[] ReversEndian(byte[] b, int count, boolean big)
     {
         byte by;
-        byte data[] = new byte[count];
+        byte[] data = new byte[count];
         for(int i=0;i<count;i++)
         {
             data[i] = b[i];

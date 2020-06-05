@@ -35,8 +35,8 @@ public class CollideTimePointAdapter extends BaseAdapter {
             holder= new CollideTimePointAdapter.ViewHolder();
             view = layoutinflater.inflate(R.layout.collide_time_point_item, null);
 
-            holder.tvTime = (TextView) view.findViewById(R.id.tvTime);
-            holder.tvLocation = (TextView) view.findViewById(R.id.tvRemark);
+            holder.tvTime = view.findViewById(R.id.tvTime);
+            holder.tvLocation = view.findViewById(R.id.tvRemark);
             view.setTag(holder);
         }
         else {

@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 
 
@@ -107,7 +108,7 @@ public class ProtUtils {
 	static public void arraycopy(byte[] dest, int destPos, String src)
 	{
 		try {
-			byte[] data=src.getBytes("UTF-8");
+			byte[] data=src.getBytes(StandardCharsets.UTF_8);
 			int copylen=Math.min(dest.length-destPos, data.length);
 			System.arraycopy(data, 0, dest, destPos, copylen);
 		} catch (Exception e) {
@@ -233,7 +234,7 @@ public class ProtUtils {
 		}
 		MessageDigest digest = null;
 		FileInputStream in = null;
-		byte buffer[] = new byte[10240];
+		byte[] buffer = new byte[10240];
 		int len;
 		try {
 			digest = MessageDigest.getInstance("MD5");

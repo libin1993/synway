@@ -173,12 +173,12 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void initView(){
-        etUserName = (EditText) findViewById(R.id.etImsi);
-        etPassword = (EditText) findViewById(R.id.etPassword);
-        ivUserNameClear = (ImageView) findViewById(R.id.ivUserNameClear);
-        ivdPasswordClear = (ImageView) findViewById(R.id.ivdPasswordClear);
-        ckRememberPass = (CheckBox) findViewById(R.id.ckRememberPass);
-        btLogin = (Button) findViewById(R.id.btLogin);
+        etUserName = findViewById(R.id.etImsi);
+        etPassword = findViewById(R.id.etPassword);
+        ivUserNameClear = findViewById(R.id.ivUserNameClear);
+        ivdPasswordClear = findViewById(R.id.ivdPasswordClear);
+        ckRememberPass = findViewById(R.id.ckRememberPass);
+        btLogin = findViewById(R.id.btLogin);
 
         isRemember = PrefManage.getBoolean("remember_password", false);
         if (isRemember) {

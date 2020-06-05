@@ -122,32 +122,32 @@ public class QRActivity extends Activity implements View.OnClickListener, Sensor
      * 初始化布局
      */
     private void initView() {
-        cp = (CameraPreview) findViewById(R.id.cp);
+        cp = findViewById(R.id.cp);
         //bi~
         soundPool = new SoundPool(10, AudioManager.STREAM_SYSTEM, 5);
-        soundPool.load(this, options.getDing_path(), 1);
+        soundPool.load(this, QrConfig.getDing_path(), 1);
 
-        sv = (ScanView) findViewById(R.id.sv);
+        sv = findViewById(R.id.sv);
         sv.setType(options.getScan_view_type());
 
-        mo_scanner_back = (ImageView) findViewById(R.id.mo_scanner_back);
+        mo_scanner_back = findViewById(R.id.mo_scanner_back);
         mo_scanner_back.setOnClickListener(this);
         mo_scanner_back.setImageResource(options.getBackImgRes());
 
-        iv_flash = (ImageView) findViewById(R.id.iv_flash);
+        iv_flash = findViewById(R.id.iv_flash);
         iv_flash.setOnClickListener(this);
         iv_flash.setImageResource(options.getLightImageRes());
 
 
-        iv_album = (ImageView) findViewById(R.id.iv_album);
+        iv_album = findViewById(R.id.iv_album);
         iv_album.setOnClickListener(this);
         iv_album.setImageResource(options.getAblumImageRes());
 
-        tv_title = (TextView) findViewById(R.id.tv_title);
-        fl_title = (FrameLayout) findViewById(R.id.fl_title);
-        tv_des = (TextView) findViewById(R.id.tv_des);
+        tv_title = findViewById(R.id.tv_title);
+        fl_title = findViewById(R.id.fl_title);
+        tv_des = findViewById(R.id.tv_des);
 
-        vsb_zoom = (VerticalSeekBar) findViewById(R.id.vsb_zoom);
+        vsb_zoom = findViewById(R.id.vsb_zoom);
 
         iv_album.setVisibility(options.isShow_light() ? View.VISIBLE : View.GONE);
         fl_title.setVisibility(options.isShow_title() ? View.VISIBLE : View.GONE);
@@ -421,8 +421,8 @@ public class QRActivity extends Activity implements View.OnClickListener, Sensor
         builder.setCancelable(false);
         View view = View.inflate(this, R.layout.dialog_loading, null);
         builder.setView(view);
-        ProgressBar pb_loading = (ProgressBar) view.findViewById(R.id.pb_loading);
-        TextView tv_hint = (TextView) view.findViewById(R.id.tv_hint);
+        ProgressBar pb_loading = view.findViewById(R.id.pb_loading);
+        TextView tv_hint = view.findViewById(R.id.tv_hint);
         if (Build.VERSION.SDK_INT >= 23) {
             pb_loading.setIndeterminateTintList(getColorStateList(R.color.dialog_pro_color));
         }

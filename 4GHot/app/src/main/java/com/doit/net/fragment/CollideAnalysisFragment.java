@@ -87,15 +87,15 @@ public class CollideAnalysisFragment extends BaseFragment {
 //            return rootView;
 
         View rootView = inflater.inflate(R.layout.fragment_collide_analysis, null);
-        etCollideStartTime = (EditText) rootView.findViewById(R.id.etCollideStartTime);
-        etCollideEndTime = (EditText) rootView.findViewById(R.id.etCollideEndTime);
-        lvCollideTimePeriod = (SwipeMenuListView)rootView.findViewById(R.id.lvCollideTimePeriod) ;
-        btStartCollide = (Button) rootView.findViewById(R.id.btStartCollide);
+        etCollideStartTime = rootView.findViewById(R.id.etCollideStartTime);
+        etCollideEndTime = rootView.findViewById(R.id.etCollideEndTime);
+        lvCollideTimePeriod = rootView.findViewById(R.id.lvCollideTimePeriod);
+        btStartCollide = rootView.findViewById(R.id.btStartCollide);
 
-        btAddTimePeriod = (Button) rootView.findViewById(R.id.btAddTimePeriod);
-        btExportCollideResult = (Button) rootView.findViewById(R.id.btExportCollideResult);
-        lvCollideResult = (ListView)rootView.findViewById(R.id.lvAnalysisResult) ;
-        layoutCollideResult = (LinearLayout) rootView.findViewById(R.id.layoutCollideResult);
+        btAddTimePeriod = rootView.findViewById(R.id.btAddTimePeriod);
+        btExportCollideResult = rootView.findViewById(R.id.btExportCollideResult);
+        lvCollideResult = rootView.findViewById(R.id.lvAnalysisResult);
+        layoutCollideResult = rootView.findViewById(R.id.layoutCollideResult);
         initWidget();
 
         return rootView;

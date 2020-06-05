@@ -92,12 +92,12 @@ public class HistoryListActivity extends BaseActivity implements IHandlerFinish 
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         dbManager = UCSIDBManager.getDbManager();
-        mListView = (ListView) findViewById(R.id.lvUeidSearchRes);
-        editText_keyword = (EditText) findViewById(R.id.editText_keyword);
-        button_search = (Button) findViewById(R.id.button_search);
+        mListView = findViewById(R.id.lvUeidSearchRes);
+        editText_keyword = findViewById(R.id.editText_keyword);
+        button_search = findViewById(R.id.button_search);
         button_search.setOnClickListener(searchClick);
 
-        etStartTime = (EditText)findViewById(R.id.etStartTime);
+        etStartTime = findViewById(R.id.etStartTime);
         etStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,7 +105,7 @@ public class HistoryListActivity extends BaseActivity implements IHandlerFinish 
                 myTimePicKDialog.dateTimePicKDialog(etStartTime);
             }
         });
-        etEndTime = (EditText)findViewById(R.id.etEndTime);
+        etEndTime = findViewById(R.id.etEndTime);
         etEndTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,7 +113,7 @@ public class HistoryListActivity extends BaseActivity implements IHandlerFinish 
                 myTimePicKDialog.dateTimePicKDialog(etEndTime);
             }
         });
-        btExportSearchResult = (Button)findViewById(R.id.btExportSearchResult);
+        btExportSearchResult = findViewById(R.id.btExportSearchResult);
         btExportSearchResult.setOnClickListener(exportClick);
 
         mAdapter = new HistoryListViewAdapter(this);
@@ -139,15 +139,15 @@ public class HistoryListActivity extends BaseActivity implements IHandlerFinish 
                 LinearLayout.LayoutParams.WRAP_CONTENT, true);   //宽度和屏幕成比例
         ueidItemPop.setContentView(ueidItemPopView);
         ueidItemPop.setBackgroundDrawable(new ColorDrawable());  //据说不设在有些情况下会关不掉
-        mAdapter.setOnItemLongClickListener(new HistoryListViewAdapter.onItemLongClickListener() {
-            @Override
-            public void onItemLongClick(MotionEvent motionEvent, int position) {
-                selectedUeidItem = mAdapter.getUeidList().get(position);
-                showListPopWindow(mListView, calcPopWindowPosX((int)motionEvent.getX()), calcPopWindowPosY((int)motionEvent.getY()));
-            }
-        });
+//        mAdapter.setOnItemLongClickListener(new HistoryListViewAdapter.onItemLongClickListener() {
+//            @Override
+//            public void onItemLongClick(MotionEvent motionEvent, int position) {
+//                selectedUeidItem = mAdapter.getUeidList().get(position);
+//                showListPopWindow(mListView, calcPopWindowPosX((int)motionEvent.getX()), calcPopWindowPosY((int)motionEvent.getY()));
+//            }
+//        });
 
-        tvGetTelNumber = (TextView) ueidItemPopView.findViewById(R.id.tvGetTelNumber);
+        tvGetTelNumber = ueidItemPopView.findViewById(R.id.tvGetTelNumber);
         tvGetTelNumber.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -261,9 +261,9 @@ public class HistoryListActivity extends BaseActivity implements IHandlerFinish 
         setContentView(R.layout.doit_layout_history_title);
         getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,
                 R.layout.doit_layout_history_title);
-        TextView textView = (TextView) findViewById(R.id.head_center_text);
+        TextView textView = findViewById(R.id.head_center_text);
         textView.setText("采集历史记录");
-        Button titleBackBtn = (Button) findViewById(R.id.btn_back);
+        Button titleBackBtn = findViewById(R.id.btn_back);
         titleBackBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 KeyEvent newEvent = new KeyEvent(KeyEvent.ACTION_DOWN,
@@ -437,10 +437,7 @@ public class HistoryListActivity extends BaseActivity implements IHandlerFinish 
             dateEndTime = simpleDateFormat.parse(endTime);
         } catch (ParseException e) {e.printStackTrace();}
 
-        if (dataStartTime.before(dateEndTime))
-            return true;
-        else
-            return  false;
+        return dataStartTime.before(dateEndTime);
     }
 
     @Override

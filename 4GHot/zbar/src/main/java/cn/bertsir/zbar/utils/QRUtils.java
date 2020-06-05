@@ -41,6 +41,7 @@ import com.google.zxing.qrcode.QRCodeReader;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.Hashtable;
 
 import cn.bertsir.zbar.Qr.Config;
@@ -264,7 +265,7 @@ public class QRUtils {
             Hashtable<EncodeHintType, Object> hints = new Hashtable<EncodeHintType, Object>();
             hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);//这里调整二维码的容错率
             hints.put(EncodeHintType.MARGIN, 1);   //设置白边取值1-4，值越大白边越大
-            result = multiFormatWriter.encode(new String(content.getBytes("UTF-8"), "ISO-8859-1"), BarcodeFormat
+            result = multiFormatWriter.encode(new String(content.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1), BarcodeFormat
                     .QR_CODE, width, height, hints);
             int w = result.getWidth();
             int h = result.getHeight();
@@ -544,10 +545,7 @@ public class QRUtils {
 
     public boolean isMIUI() {
         String manufacturer = Build.MANUFACTURER;
-        if ("xiaomi".equalsIgnoreCase(manufacturer)) {
-            return true;
-        }
-        return false;
+        return "xiaomi".equalsIgnoreCase(manufacturer);
     }
 
     /**
@@ -649,11 +647,7 @@ public class QRUtils {
     public boolean deleteTempFile(String delFile) {
         File file = new File(delFile);
         if (file.exists() && file.isFile()) {
-            if (file.delete()) {
-                return true;
-            } else {
-                return false;
-            }
+            return file.delete();
         } else {
             return false;
         }

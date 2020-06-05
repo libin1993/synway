@@ -76,8 +76,7 @@ public class LTESendPackage
 	//得到包长度
 	public short getPackLength() {
 		short packageLength=12;
-		if(this.byteSubContent!=null)
-		{
+		if(this.byteSubContent!=null) {
 			packageLength+=byteSubContent.length;
 		}
 		return packageLength;

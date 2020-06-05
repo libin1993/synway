@@ -44,7 +44,7 @@ public class BlacklistAdapter extends BaseSwipeAdapter {
     }
 
     public void setUeidList(List<DBBlackInfo> ueidList) {
-        this.ueidList = ueidList;
+        BlacklistAdapter.ueidList = ueidList;
     }
 
     @Override
@@ -104,15 +104,15 @@ public class BlacklistAdapter extends BaseSwipeAdapter {
 
     @Override
     public void fillValues(int position, View convertView) {
-        TextView index = (TextView)convertView.findViewById(R.id.position);
+        TextView index = convertView.findViewById(R.id.position);
         index.setText((position + 1) + ".");
 
-        TextView BlacklistInfo = (TextView)convertView.findViewById(R.id.text_data);
+        TextView BlacklistInfo = convertView.findViewById(R.id.text_data);
 
         final DBBlackInfo resp = ueidList.get(position);
         String name = "";
         if(!StringUtils.isBlank(resp.getName())){
-            name = mContext.getString(R.string.lab_name)+resp.getName()+"          ";
+            name = mContext.getString(R.string.lab_name)+resp.getName()+"        ";
         }
         BlacklistInfo.setText(name +"IMSI:"+resp.getImsi()+ "\n" +"备注:" + (resp.getRemark()==null?"":resp.getRemark())+
                 "\n"+ mContext.getString(R.string.lab_create_date)+ DateUtils.getDateByFormat(resp.getCreateDate(),"yyyy-MM-dd HH:mm:ss"));

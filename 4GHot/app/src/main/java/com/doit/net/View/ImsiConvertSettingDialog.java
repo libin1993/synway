@@ -62,15 +62,15 @@ public class ImsiConvertSettingDialog extends Dialog {
         mView = inflater.inflate(R.layout.layout_imsi_convert_setting, null);
         setCancelable(false);
 
-        cbRememberAccout = (CheckBox) mView.findViewById(R.id.cbRememberAccout);
-        etServerAddress = (BootstrapEditText)mView.findViewById(R.id.etServerAddress);
+        cbRememberAccout = mView.findViewById(R.id.cbRememberAccout);
+        etServerAddress = mView.findViewById(R.id.etServerAddress);
         //etServerAddress.setText("http://101.201.213.210:8081");
-        etAccount = (BootstrapEditText)mView.findViewById(R.id.etAccount);
+        etAccount = mView.findViewById(R.id.etAccount);
 //        if (!ImsiMsisdnConvert.getCurrentUsername().equals("")){
 //            etAccount.setText(ImsiMsisdnConvert.getCurrentUsername());
 //        }
 
-        etPassword = (BootstrapEditText)mView.findViewById(R.id.etPassword);
+        etPassword = mView.findViewById(R.id.etPassword);
 //        if (!ImsiMsisdnConvert.getCurrentpassword().equals("")){
 //            etPassword.setText(ImsiMsisdnConvert.getCurrentpassword());
 //        }
@@ -81,13 +81,13 @@ public class ImsiConvertSettingDialog extends Dialog {
             cbRememberAccout.setChecked(true);
         }
 
-        etRestConvertTimes = (TextView) mView.findViewById(R.id.etRestConvertTimes);
+        etRestConvertTimes = mView.findViewById(R.id.etRestConvertTimes);
         if(ImsiMsisdnConvert.getRestConvertTimes() != -1){
             etRestConvertTimes.setText(""+ImsiMsisdnConvert.getRestConvertTimes());
         }
 
 
-        btAuthenticate = (BootstrapButton)mView.findViewById(R.id.btAuthenticate);
+        btAuthenticate = mView.findViewById(R.id.btAuthenticate);
         btAuthenticate.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -127,7 +127,7 @@ public class ImsiConvertSettingDialog extends Dialog {
             }
         });
 
-        btClose = (BootstrapButton)mView.findViewById(R.id.btClose);
+        btClose = mView.findViewById(R.id.btClose);
         btClose.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {

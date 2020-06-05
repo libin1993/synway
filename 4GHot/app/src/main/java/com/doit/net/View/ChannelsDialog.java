@@ -57,7 +57,7 @@ public class ChannelsDialog extends Dialog {
         LayoutInflater inflater= LayoutInflater.from(getContext());
         mView = inflater.inflate(R.layout.doit_layout_channels_dialog, null);
 
-        channelListView = (ListView)mView.findViewById(R.id.listview);
+        channelListView = mView.findViewById(R.id.listview);
         channelListViewAdapter = new ChannelListViewAdapter(getContext());
         channelListView.setAdapter(channelListViewAdapter);
     }

@@ -53,10 +53,10 @@ public class AddUserDialog extends Dialog {
         mView = inflater.inflate(R.layout.layout_add_user, null);
         setCancelable(false);
 
-        etUserName = (EditText)mView.findViewById(R.id.etImsi);
-        etRemake = (EditText)mView.findViewById(R.id.etRemark);
-        etPassword = (EditText)mView.findViewById(R.id.etPassword);
-        btAddUser = (Button)mView.findViewById(R.id.btAddUser);
+        etUserName = mView.findViewById(R.id.etImsi);
+        etRemake = mView.findViewById(R.id.etRemark);
+        etPassword = mView.findViewById(R.id.etPassword);
+        btAddUser = mView.findViewById(R.id.btAddUser);
         btAddUser.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -82,7 +82,7 @@ public class AddUserDialog extends Dialog {
         });
 
 
-        btCancel = (Button)mView.findViewById(R.id.btCancel);
+        btCancel = mView.findViewById(R.id.btCancel);
         btCancel.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {

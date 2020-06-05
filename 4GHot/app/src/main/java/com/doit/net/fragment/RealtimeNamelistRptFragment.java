@@ -54,9 +54,9 @@ public class RealtimeNamelistRptFragment extends BaseFragment implements IHandle
             return rootView;
 
         rootView = inflater.inflate(R.layout.fragment_namelist_rpt, null);
-        lvRealTimeNum = (ListView) rootView.findViewById(R.id.lvRealTimeNum);
-        btClear = (BootstrapButton) rootView.findViewById(R.id.btClear);
-        tvRealTimeNum = (TextView) rootView.findViewById(R.id.tvRealTimeNum);
+        lvRealTimeNum = rootView.findViewById(R.id.lvRealTimeNum);
+        btClear = rootView.findViewById(R.id.btClear);
+        tvRealTimeNum = rootView.findViewById(R.id.tvRealTimeNum);
         btClear.setOnClickListener(clearListener);
 
         mAdapter = new RealtimeNamelistRptAdapter(getActivity());

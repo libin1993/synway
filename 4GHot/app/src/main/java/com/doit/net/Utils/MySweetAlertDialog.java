@@ -70,8 +70,8 @@ public class MySweetAlertDialog extends Dialog implements View.OnClickListener {
     public static final int PROGRESS_TYPE = 5;
     public static final int TEXT_SUCCESS = 6;
 
-    public static interface OnSweetClickListener {
-        public void onClick (MySweetAlertDialog mySweetAlertDialog);
+    public interface OnSweetClickListener {
+        void onClick(MySweetAlertDialog mySweetAlertDialog);
     }
 
     public MySweetAlertDialog(Context context) {
@@ -147,21 +147,21 @@ public class MySweetAlertDialog extends Dialog implements View.OnClickListener {
         setContentView(R.layout.layout_my_dialog);
 
         mDialogView = getWindow().getDecorView().findViewById(android.R.id.content);
-        mTitleTextView = (TextView)findViewById(R.id.tvTitle);
-        mContentTextView = (TextView)findViewById(R.id.tvContent);
-        mErrorFrame = (FrameLayout)findViewById(R.id.error_frame);
-        mErrorX = (ImageView)mErrorFrame.findViewById(R.id.error_x);
-        mSuccessFrame = (FrameLayout)findViewById(R.id.success_frame);
-        mProgressFrame = (FrameLayout)findViewById(R.id.progress_dialog);
-        mSuccessTick = (SuccessTickView)mSuccessFrame.findViewById(R.id.success_tick);
+        mTitleTextView = findViewById(R.id.tvTitle);
+        mContentTextView = findViewById(R.id.tvContent);
+        mErrorFrame = findViewById(R.id.error_frame);
+        mErrorX = mErrorFrame.findViewById(R.id.error_x);
+        mSuccessFrame = findViewById(R.id.success_frame);
+        mProgressFrame = findViewById(R.id.progress_dialog);
+        mSuccessTick = mSuccessFrame.findViewById(R.id.success_tick);
         mSuccessLeftMask = mSuccessFrame.findViewById(R.id.mask_left);
         mSuccessRightMask = mSuccessFrame.findViewById(R.id.mask_right);
-        mCustomImage = (ImageView)findViewById(R.id.custom_image);
-        mWarningFrame = (FrameLayout)findViewById(R.id.layoutWarning);
-        mTextSuccessFrame = (FrameLayout)findViewById(R.id.text_success_frame);
-        mConfirmButton = (Button)findViewById(R.id.btConfirm);
-        mCancelButton = (Button)findViewById(R.id.btCancel);
-        mProgressHelper.setProgressWheel((ProgressWheel)findViewById(R.id.progressWheel));
+        mCustomImage = findViewById(R.id.custom_image);
+        mWarningFrame = findViewById(R.id.layoutWarning);
+        mTextSuccessFrame = findViewById(R.id.text_success_frame);
+        mConfirmButton = findViewById(R.id.btConfirm);
+        mCancelButton = findViewById(R.id.btCancel);
+        mProgressHelper.setProgressWheel(findViewById(R.id.progressWheel));
         mConfirmButton.setOnClickListener(this);
         mCancelButton.setOnClickListener(this);
 

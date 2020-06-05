@@ -47,7 +47,7 @@ public class SaveValueDialog extends Dialog {
         super.onCreate(savedInstanceState);
         setContentView(mView);
         x.view().inject(this,mView);
-        tvName = (TextView)findViewById(R.id.id_name);
+        tvName = findViewById(R.id.id_name);
         dbManager = UCSIDBManager.getDbManager();
         createProcessDialog();
     }

@@ -60,7 +60,7 @@ public class ClearHistoryTimeDialog extends Dialog {
         mView = inflater.inflate(R.layout.layout_clear_history, null);
         setCancelable(false);
 
-        etStartTime = (EditText)mView.findViewById(R.id.etStartTime);
+        etStartTime = mView.findViewById(R.id.etStartTime);
         etStartTime.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -69,7 +69,7 @@ public class ClearHistoryTimeDialog extends Dialog {
             }
         });
 
-        etEndTime = (EditText)mView.findViewById(R.id.etEndTime);
+        etEndTime = mView.findViewById(R.id.etEndTime);
         etEndTime.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -79,7 +79,7 @@ public class ClearHistoryTimeDialog extends Dialog {
         });
 
 
-        btSure = (Button)mView.findViewById(R.id.btSure);
+        btSure = mView.findViewById(R.id.btSure);
         btSure.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -120,7 +120,7 @@ public class ClearHistoryTimeDialog extends Dialog {
             }
         });
 
-        btCancel = (Button)mView.findViewById(R.id.btCancel);
+        btCancel = mView.findViewById(R.id.btCancel);
         btCancel.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {

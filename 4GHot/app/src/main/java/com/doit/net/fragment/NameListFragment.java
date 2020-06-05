@@ -86,15 +86,15 @@ public class NameListFragment extends BaseFragment implements IHandlerFinish {
         rootView = inflater.inflate(R.layout.doit_layout_name_list, container, false);
 
         dbManager = UCSIDBManager.getDbManager();
-        mListView = (ListView) rootView.findViewById(R.id.listview);
-        etSearchKeyword = (EditText) rootView.findViewById(R.id.editText_keyword);
-        btSearch = (Button) rootView.findViewById(R.id.button_search);
+        mListView = rootView.findViewById(R.id.listview);
+        etSearchKeyword = rootView.findViewById(R.id.editText_keyword);
+        btSearch = rootView.findViewById(R.id.button_search);
         btSearch.setOnClickListener(searchClick);
-        btImportNamelist = (Button) rootView.findViewById(R.id.btImportNamelist);
+        btImportNamelist = rootView.findViewById(R.id.btImportNamelist);
         btImportNamelist.setOnClickListener(importNamelistClick);
-        btExportNamelist = (Button) rootView.findViewById(R.id.btExportNamelist);
+        btExportNamelist = rootView.findViewById(R.id.btExportNamelist);
         btExportNamelist.setOnClickListener(exportNamelistClick);
-        btClearNamelist = (Button) rootView.findViewById(R.id.btClearNamelist);
+        btClearNamelist = rootView.findViewById(R.id.btClearNamelist);
         btClearNamelist.setOnClickListener(clearNamelistClick);
 
         blacklistAdapter = new BlacklistAdapter(getActivity());
@@ -377,8 +377,8 @@ public class NameListFragment extends BaseFragment implements IHandlerFinish {
 
             new MySweetAlertDialog(getContext(), MySweetAlertDialog.SUCCESS_TYPE)
                     .setTitleText("导入完成")
-                    .setContentText("成功导入"+String.valueOf(validImportNum)+"个名单，忽略"+
-                            String.valueOf(repeatNum)+"个重复的名单，忽略"+String.valueOf(errorFormatNum)+"行格式或号码错误")
+                    .setContentText("成功导入"+ validImportNum +"个名单，忽略"+
+                            repeatNum +"个重复的名单，忽略"+ errorFormatNum +"行格式或号码错误")
                     .show();
             refreshNamelist();
             if (CacheManager.isDeviceOk() && !CacheManager.getLocState()){
@@ -399,13 +399,10 @@ public class NameListFragment extends BaseFragment implements IHandlerFinish {
     private boolean isBlacklistFormatRight(String readline) {
 
         //导出会将创建时间导出，但是导入不需要创建时间字段
-        if (((readline.length() - readline.replace(",", "").length()) < 2) ||
-                (readline.startsWith(",")) ||
-                (readline.split(",")[0].length() != 15) ||   //判断长度和是否含有非数字
-                !isNumeric(readline.split(",")[0])) {
-            return false;
-        }
-        return true;
+        return ((readline.length() - readline.replace(",", "").length()) >= 2) &&
+                (!readline.startsWith(",")) &&
+                (readline.split(",")[0].length() == 15) &&   //判断长度和是否含有非数字
+                isNumeric(readline.split(",")[0]);
     }
 
 
@@ -430,11 +427,7 @@ public class NameListFragment extends BaseFragment implements IHandlerFinish {
         }
 
         String msisdn = readline.substring(readline.indexOf(",")+1, readline.lastIndexOf(","));
-        if (!"".equals(msisdn) && (msisdn.length() != 11 || !isNumeric(msisdn))){
-            return false;
-        }
-
-        return true;
+        return "".equals(msisdn) || (msisdn.length() == 11 && isNumeric(msisdn));
     }
 
     private boolean isBlacklistExist(String imsi, List<DBBlackInfo> listFromFile) {

@@ -49,7 +49,7 @@ public class LineView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        String line_colors = String.valueOf(Integer.toHexString(line_color));
+        String line_colors = Integer.toHexString(line_color);
         line_colors = line_colors.substring(line_colors.length() - 6, line_colors.length() - 0);
         mShader = new LinearGradient(0,0,getMeasuredWidth(),0,new int[] {Color.parseColor("#00"+line_colors),line_color, Color.parseColor("#00"+line_colors),},null,
                 Shader.TileMode.CLAMP);

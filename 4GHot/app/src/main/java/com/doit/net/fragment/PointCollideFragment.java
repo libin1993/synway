@@ -90,7 +90,7 @@ public class PointCollideFragment extends BaseFragment {
 
     private void initWidget() {
         collideTimePointAdapter = new CollideTimePointAdapter(getContext(), listCollideTimePoint);
-        lvCollideTimePoint = (SwipeMenuListView)rootView.findViewById(R.id.lvCollideTimePoint) ;
+        lvCollideTimePoint = rootView.findViewById(R.id.lvCollideTimePoint);
         lvCollideTimePoint.setAdapter(collideTimePointAdapter);
         lvCollideTimePoint.setMenuCreator(timePointCreator);
         lvCollideTimePoint.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
@@ -117,8 +117,8 @@ public class PointCollideFragment extends BaseFragment {
             }
         });
 
-        etDeviation = (BootstrapEditText) rootView.findViewById(R.id.etDeviation);
-        btAddTimePoint = (BootstrapButton) rootView.findViewById(R.id.btAddTimePoint);
+        etDeviation = rootView.findViewById(R.id.etDeviation);
+        btAddTimePoint = rootView.findViewById(R.id.btAddTimePoint);
         btAddTimePoint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -136,7 +136,7 @@ public class PointCollideFragment extends BaseFragment {
         });
 
 
-        btStartCollide = (BootstrapButton) rootView.findViewById(R.id.btStartCollide);
+        btStartCollide = rootView.findViewById(R.id.btStartCollide);
         btStartCollide.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -165,7 +165,7 @@ public class PointCollideFragment extends BaseFragment {
             }});
 
         analysisResultAdapter = new AnalysisResultAdapter(getContext(), R.layout.analysis_result_item, listCollideResult);
-        lvCollideResult = (ListView)rootView.findViewById(R.id.lvAnalysisResult) ;
+        lvCollideResult = rootView.findViewById(R.id.lvAnalysisResult);
         lvCollideResult.setAdapter(analysisResultAdapter);
         lvCollideResult.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -176,7 +176,7 @@ public class PointCollideFragment extends BaseFragment {
             }
         });
 
-        layoutCollideResult = (LinearLayout) rootView.findViewById(R.id.layoutCollideResult);
+        layoutCollideResult = rootView.findViewById(R.id.layoutCollideResult);
     }
 
     private void showCollideDetailDialog(String imsi, List<String> listAllDetectTime) {

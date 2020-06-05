@@ -14,11 +14,13 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
+import static com.doit.net.Sockets.NetConfig.BOALINK_LTE_IP;
+
 
 /**
  * Author：Libin on 2020/5/26 15:11
  * Email：1993911441@qq.com
- * Describe：udp
+ * Describe：udp发送ip
  */
 public class DatagramSocketUtils {
     private static DatagramSocketUtils mInstance;
@@ -82,10 +84,6 @@ public class DatagramSocketUtils {
 //                        }
 
                     //tcp有设备连接,关闭socket
-                    if (CacheManager.deviceState.getDeviceState().equals(DeviceState.NORMAL)) {
-                        isRunning = false;
-                        closeSocket();
-                    }
                     LogUtils.log("udp来自ip为：" + remoteIP + " 端口为：" + remotePort + "的信息为：" + receiveData);
                 }
 
@@ -103,11 +101,14 @@ public class DatagramSocketUtils {
      * 发送数据
      */
     public void sendData(String data) {
+        init();
         new SendThread(data).start();
 
     }
 
-    private void closeSocket() {
+
+
+    public void closeSocket() {
         if (mSocket != null && !mSocket.isClosed()) {
             mSocket.close();
         }
@@ -128,28 +129,17 @@ public class DatagramSocketUtils {
         @Override
         public void run() {
             super.run();
-            while (isRunning) {
-                try {
-                    LogUtils.log("UDP开始发送");
+            try {
+                LogUtils.log("UDP开始发送");
 
-                    InetAddress inetAddress = InetAddress.getByName(NetConfig.BOALINK_LTE_IP);
-                    DatagramPacket packet = new DatagramPacket(data.getBytes(), data.getBytes().length,
-                            inetAddress, UDP_PORT); //创建要发送的数据包，然后用套接字发送
-                    mSocket.send(packet); //用套接字发送数据包
-                    LogUtils.log("udp发送：" + data);
-                    sleep(5000);
-                } catch (Exception e) {
-                    LogUtils.log("udp发送失败： " + e.toString());
-                    isRunning = false;
-                    closeSocket();
-                    init();
-                    sendData(data);
-                    break;
-                }
-
-
+                InetAddress inetAddress = InetAddress.getByName(BOALINK_LTE_IP);
+                DatagramPacket packet = new DatagramPacket(data.getBytes(), data.getBytes().length,
+                        inetAddress, UDP_PORT); //创建要发送的数据包，然后用套接字发送
+                mSocket.send(packet); //用套接字发送数据包
+                LogUtils.log("udp发送：" + data);
+            } catch (Exception e) {
+                LogUtils.log("udp发送失败： " + e.toString());
             }
-
         }
     }
 }

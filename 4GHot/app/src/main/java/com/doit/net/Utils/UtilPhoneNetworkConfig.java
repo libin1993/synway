@@ -150,9 +150,7 @@ public class UtilPhoneNetworkConfig {
         if (linkProperties == null)
             return;
         Class<?> laClass = Class.forName("android.net.LinkAddress");
-        Constructor<?> laConstructor = laClass.getConstructor(new Class[]{
-
-                InetAddress.class, int.class});
+        Constructor<?> laConstructor = laClass.getConstructor(InetAddress.class, int.class);
         Object linkAddress = laConstructor.newInstance(addr, prefixLength);
         ArrayList<Object> mLinkAddresses = (ArrayList<Object>) getDeclaredField(
                 linkProperties, "mLinkAddresses");
@@ -192,7 +190,7 @@ public class UtilPhoneNetworkConfig {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH) { // android4.x版本
             Class<?> routeInfoClass = Class.forName("android.net.RouteInfo");
             Constructor<?> routeInfoConstructor = routeInfoClass
-                    .getConstructor(new Class[]{InetAddress.class});
+                    .getConstructor(InetAddress.class);
             Object routeInfo = routeInfoConstructor.newInstance(gateway);
             ArrayList<Object> mRoutes = (ArrayList<Object>) getDeclaredField(linkProperties, "mRoutes");
             mRoutes.clear();
@@ -240,13 +238,13 @@ public class UtilPhoneNetworkConfig {
      */
     public String long2ip(long ip) {
         StringBuffer sb = new StringBuffer();
-        sb.append(String.valueOf((int) (ip & 0xff)));
+        sb.append((int) (ip & 0xff));
         sb.append('.');
-        sb.append(String.valueOf((int) ((ip >> 8) & 0xff)));
+        sb.append((int) ((ip >> 8) & 0xff));
         sb.append('.');
-        sb.append(String.valueOf((int) ((ip >> 16) & 0xff)));
+        sb.append((int) ((ip >> 16) & 0xff));
         sb.append('.');
-        sb.append(String.valueOf((int) ((ip >> 24) & 0xff)));
+        sb.append((int) ((ip >> 24) & 0xff));
         return sb.toString();
     }
 

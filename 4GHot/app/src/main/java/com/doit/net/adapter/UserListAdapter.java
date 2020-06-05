@@ -57,14 +57,14 @@ public class UserListAdapter extends BaseSwipeAdapter {
 
     @Override
     public void fillValues(int position, View convertView) {
-        LinearLayout layoutItemText = (LinearLayout)convertView.findViewById(R.id.layoutUserItemText);
+        LinearLayout layoutItemText = convertView.findViewById(R.id.layoutUserItemText);
         if (position % 2 == 0){
             layoutItemText.setBackgroundColor(mContext.getResources().getColor(R.color.deepgrey2));
         }else{
             layoutItemText.setBackgroundColor(mContext.getResources().getColor(R.color.black));
         }
-        TextView tvIndex = (TextView)convertView.findViewById(R.id.tvIndex);
-        TextView tvUserInfo = (TextView)convertView.findViewById(R.id.tvUserInfo);
+        TextView tvIndex = convertView.findViewById(R.id.tvIndex);
+        TextView tvUserInfo = convertView.findViewById(R.id.tvUserInfo);
 
         final UserInfo userInfo = listUserInfo.get(position);
         tvIndex.setText(" " +(position + 1) + ".");

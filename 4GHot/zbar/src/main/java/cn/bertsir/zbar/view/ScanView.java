@@ -47,10 +47,10 @@ public class ScanView extends FrameLayout {
     private void initView(Context mContext){
         View scan_view = View.inflate(mContext, R.layout.view_scan, this);
 
-        cnv_left_top = (CornerView) scan_view.findViewById(R.id.cnv_left_top);
-        cnv_left_bottom = (CornerView) scan_view.findViewById(R.id.cnv_left_bottom);
-        cnv_right_top = (CornerView) scan_view.findViewById(R.id.cnv_right_top);
-        cnv_right_bottom = (CornerView) scan_view.findViewById(R.id.cnv_right_bottom);
+        cnv_left_top = scan_view.findViewById(R.id.cnv_left_top);
+        cnv_left_bottom = scan_view.findViewById(R.id.cnv_left_bottom);
+        cnv_right_top = scan_view.findViewById(R.id.cnv_right_top);
+        cnv_right_bottom = scan_view.findViewById(R.id.cnv_right_bottom);
 
         cornerViews = new ArrayList<>();
         cornerViews.add(cnv_left_top);
@@ -58,9 +58,9 @@ public class ScanView extends FrameLayout {
         cornerViews.add(cnv_right_top);
         cornerViews.add(cnv_right_bottom);
 
-        iv_scan_line = (ScanLineView) scan_view.findViewById(R.id.iv_scan_line);
+        iv_scan_line = scan_view.findViewById(R.id.iv_scan_line);
 
-        fl_scan = (FrameLayout) scan_view.findViewById(R.id.fl_scan);
+        fl_scan = scan_view.findViewById(R.id.fl_scan);
         getViewWidthHeight();
 
     }

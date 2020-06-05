@@ -92,8 +92,8 @@ public class MyTimePickDialog implements OnDateChangedListener, OnTimeChangedLis
     public AlertDialog dateTimePicKDialog(final EditText inputDate) {
         LinearLayout dateTimeLayout = (LinearLayout) activity
                 .getLayoutInflater().inflate(R.layout.date_time, null);
-        datePicker = (DatePicker) dateTimeLayout.findViewById(R.id.dpDatePicker);
-        timePicker = (TimePicker) dateTimeLayout.findViewById(R.id.tpTimePicker);
+        datePicker = dateTimeLayout.findViewById(R.id.dpDatePicker);
+        timePicker = dateTimeLayout.findViewById(R.id.tpTimePicker);
         init(datePicker, timePicker);
         timePicker.setIs24HourView(true);
         timePicker.setOnTimeChangedListener(this);
@@ -159,7 +159,7 @@ public class MyTimePickDialog implements OnDateChangedListener, OnTimeChangedLis
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date dateTmp = null;
         try {
-            dateTmp = (Date) simpleDateFormat.parse(initDateTime);
+            dateTmp = simpleDateFormat.parse(initDateTime);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -220,7 +220,7 @@ public class MyTimePickDialog implements OnDateChangedListener, OnTimeChangedLis
                 result = srcStr.substring(0, loc); // 截取子串
         } else {
             if (loc != -1)
-                result = srcStr.substring(loc + 1, srcStr.length()); // 截取子串
+                result = srcStr.substring(loc + 1); // 截取子串
         }
         return result;
     }
@@ -277,8 +277,8 @@ public class MyTimePickDialog implements OnDateChangedListener, OnTimeChangedLis
         int minute_numberpicker_id = system.getIdentifier("minute", "id", "android");
         //int ampm_numberpicker_id = system.getIdentifier("amPm", "id", "android");
 
-        NumberPicker hour_numberpicker = (NumberPicker) time_picker.findViewById(hour_numberpicker_id);
-        NumberPicker minute_numberpicker = (NumberPicker) time_picker.findViewById(minute_numberpicker_id);
+        NumberPicker hour_numberpicker = time_picker.findViewById(hour_numberpicker_id);
+        NumberPicker minute_numberpicker = time_picker.findViewById(minute_numberpicker_id);
         //NumberPicker ampm_numberpicker = (NumberPicker) time_picker.findViewById(ampm_numberpicker_id);
 
         setNumberPickerDividerColor(hour_numberpicker);

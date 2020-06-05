@@ -90,15 +90,15 @@ public class LocationFragment extends BaseFragment implements View.OnClickListen
 //        }
 
         View rootView = inflater.inflate(R.layout.doit_layout_location, container, false);
-        tvLocatingImsi = (TextView) rootView.findViewById(R.id.tvLocatingImsi);
-        vLocateChart = (LocateChart) rootView.findViewById(R.id.vLocateChart);
-        vLocateCircle = (LocateCircle) rootView.findViewById(R.id.vLocateCircle);
-        cbVoiceSwitch = (CheckBox) rootView.findViewById(R.id.cbVoiceSwitch);
+        tvLocatingImsi = rootView.findViewById(R.id.tvLocatingImsi);
+        vLocateChart = rootView.findViewById(R.id.vLocateChart);
+        vLocateCircle = rootView.findViewById(R.id.vLocateCircle);
+        cbVoiceSwitch = rootView.findViewById(R.id.cbVoiceSwitch);
         cbVoiceSwitch.setOnCheckedChangeListener(voiceSwitchListener);
-        cbGainSwitch = (CheckBox) rootView.findViewById(R.id.cbGainSwitch);
+        cbGainSwitch = rootView.findViewById(R.id.cbGainSwitch);
 
         cbGainSwitch.setOnCheckedChangeListener(gainSwitchListener);
-        cbLocSwitch = (CheckBox) rootView.findViewById(R.id.cbLocSwitch);
+        cbLocSwitch = rootView.findViewById(R.id.cbLocSwitch);
 
         initView();
         initEvent();

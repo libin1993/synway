@@ -92,7 +92,7 @@ public class IconResolver {
                     endIndex = -1;
                 }
             }
-            return builder.addText(markdown.substring(lastAddedIndex, markdown.length())).build();
+            return builder.addText(markdown.substring(lastAddedIndex)).build();
         }
     }
 

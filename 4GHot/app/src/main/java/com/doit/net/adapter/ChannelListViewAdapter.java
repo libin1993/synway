@@ -55,16 +55,16 @@ public class ChannelListViewAdapter extends BaseAdapter {
         if(convertView == null){
             holder = new ViewHolder();
             convertView = LayoutInflater.from(mContext).inflate(R.layout.doit_layout_channel_item, null);
-            holder.title = (TextView)convertView.findViewById(R.id.title_text);
-            holder.rfButton = (SwitchButton)convertView.findViewById(R.id.id_switch_rf);
+            holder.title = convertView.findViewById(R.id.title_text);
+            holder.rfButton = convertView.findViewById(R.id.id_switch_rf);
 //            holder.reLevelMin = (BootstrapEditText)convertView.findViewById(R.id.editText_rxlevmin);
-            holder.fcn = (EditText)convertView.findViewById(R.id.editText_fcn);
-            holder.plmn = (EditText)convertView.findViewById(R.id.editText_plmn);
-            holder.pa = (EditText)convertView.findViewById(R.id.editText_pa);
-            holder.ga = (EditText)convertView.findViewById(R.id.editText_ga);
-            holder.rlm = (EditText)convertView.findViewById(R.id.etRLM);
-            holder.etAltFcn = (EditText)convertView.findViewById(R.id.etAltFcn);
-            holder.saveBtn = (Button)convertView.findViewById(R.id.button_save);
+            holder.fcn = convertView.findViewById(R.id.editText_fcn);
+            holder.plmn = convertView.findViewById(R.id.editText_plmn);
+            holder.pa = convertView.findViewById(R.id.editText_pa);
+            holder.ga = convertView.findViewById(R.id.editText_ga);
+            holder.rlm = convertView.findViewById(R.id.etRLM);
+            holder.etAltFcn = convertView.findViewById(R.id.etAltFcn);
+            holder.saveBtn = convertView.findViewById(R.id.button_save);
 
             convertView.setTag(holder);
         }else{

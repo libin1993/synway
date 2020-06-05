@@ -2,6 +2,7 @@ package com.doit.net.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -32,7 +33,7 @@ public class UeidListViewAdapter extends BaseSwipeAdapter {
 
     private Context mContext;
 
-    private onItemLongClickListener mOnItemLongClickListener;
+    //    private onItemLongClickListener mOnItemLongClickListener;
     private MotionEvent motionEvent;
 
     public UeidListViewAdapter(Context mContext) {
@@ -41,7 +42,7 @@ public class UeidListViewAdapter extends BaseSwipeAdapter {
 
     private DbManager dbManager;
 
-    public void refreshData(){
+    public void refreshData() {
         notifyDataSetChanged();
     }
 
@@ -58,135 +59,138 @@ public class UeidListViewAdapter extends BaseSwipeAdapter {
         return v;
     }
 
-    public void setOnItemLongClickListener(onItemLongClickListener mOnItemLongClickListener) {
-        this.mOnItemLongClickListener = mOnItemLongClickListener;
-    }
+//    public void setOnItemLongClickListener(onItemLongClickListener mOnItemLongClickListener) {
+//        this.mOnItemLongClickListener = mOnItemLongClickListener;
+//    }
 
-    TextView ueidContent = null;
+
     @Override
     public synchronized void fillValues(int position, View convertView) {
-        LinearLayout layoutItemText = (LinearLayout)convertView.findViewById(R.id.layoutItemText);
-        if (position % 2 == 0){
+        LinearLayout layoutItemText = convertView.findViewById(R.id.layoutItemText);
+        if (position % 2 == 0) {
             layoutItemText.setBackgroundColor(mContext.getResources().getColor(R.color.deepgrey2));
-        }else{
+        } else {
             layoutItemText.setBackgroundColor(mContext.getResources().getColor(R.color.black));
         }
 
-        TextView index = (TextView)convertView.findViewById(R.id.position);
+        TextView index = convertView.findViewById(R.id.position);
         index.setText((position + 1) + ".");
 
-        ueidContent = (TextView)convertView.findViewById(R.id.tvUeidItemText);
+        TextView tvContent = convertView.findViewById(R.id.tvUeidItemText);
         UeidBean resp = CacheManager.realtimeUeidList.get(position);
 
-        String msisdn = ImsiMsisdnConvert.getMsisdnFromLocal(resp.getImsi());
-        if (CacheManager.currentWorkMode.equals("0")){
-            ueidContent.setText("IMSI:"+resp.getImsi() + "                "+"制式: "+ UtilOperator.getOperatorNameCH(resp.getImsi()) +"\n"
-                    +"手机号:"+ msisdn+"                 "+"\n"+mContext.getString(R.string.ueid_last_rpt_time)+resp.getRptTime());
-        }else if(CacheManager.currentWorkMode.equals("2")){
-            ueidContent.setText("IMSI:"+resp.getImsi() + "                "+"制式: "+ UtilOperator.getOperatorNameCH(resp.getImsi()) +"\n"
-                    +"手机号:"+msisdn+"           "+ mContext.getString(R.string.ueid_last_intensity) +resp.getSrsp()+"        "+ "次数:"+resp.getRptTimes()+"\n"
-                    +mContext.getString(R.string.ueid_last_rpt_time)+resp.getRptTime() +"       " );
-        }
+//        String msisdn = ImsiMsisdnConvert.getMsisdnFromLocal(resp.getImsi());
 
-        if (VersionManage.isPoliceVer()){
-            convertView.findViewById(R.id.add_to_black).setOnClickListener(new AddToLocalBlackListener(mContext,resp.getImsi()));
-        }else if (VersionManage.isArmyVer()){
+
+        if (VersionManage.isPoliceVer()) {
+            convertView.findViewById(R.id.add_to_black).setOnClickListener(new AddToLocalBlackListener(mContext, resp.getImsi()));
+        } else if (VersionManage.isArmyVer()) {
             convertView.findViewById(R.id.add_to_black).setVisibility(View.GONE);
         }
 
-        if(CacheManager.getLocMode()){
-            convertView.findViewById(R.id.add_to_localtion).setOnClickListener(new AddToLocationListener(position,mContext,resp.getImsi(),resp.getTmsi()));
-        }else{
+        if (CacheManager.getLocMode()) {
+            convertView.findViewById(R.id.add_to_localtion).setOnClickListener(new AddToLocationListener(position, mContext, resp.getImsi(), resp.getTmsi()));
+        } else {
             convertView.findViewById(R.id.add_to_localtion).setVisibility(View.GONE);
         }
 
-        if (mOnItemLongClickListener != null) {
-            //获取触摸点的坐标，以决定pop从哪里弹出
-            convertView.setOnTouchListener(new View.OnTouchListener() {
-                @SuppressLint("ClickableViewAccessibility")
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    switch (event.getAction()) {
-                        case MotionEvent.ACTION_DOWN:
-                            motionEvent = event;
-                            break;
-                        default:
-                            break;
-                    }
-                    // 如果onTouch返回false,首先是onTouch事件的down事件发生，此时，如果长按，触发onLongClick事件；
-                    // 然后是onTouch事件的up事件发生，up完毕，最后触发onClick事件。
-                    return false;
-                }
-            });
+//        if (mOnItemLongClickListener != null) {
+//            //获取触摸点的坐标，以决定pop从哪里弹出
+//            convertView.setOnTouchListener(new View.OnTouchListener() {
+//                @SuppressLint("ClickableViewAccessibility")
+//                @Override
+//                public boolean onTouch(View v, MotionEvent event) {
+//                    switch (event.getAction()) {
+//                        case MotionEvent.ACTION_DOWN:
+//                            motionEvent = event;
+//                            break;
+//                        default:
+//                            break;
+//                    }
+//                    // 如果onTouch返回false,首先是onTouch事件的down事件发生，此时，如果长按，触发onLongClick事件；
+//                    // 然后是onTouch事件的up事件发生，up完毕，最后触发onClick事件。
+//                    return false;
+//                }
+//            });
+//
+//
+//            final int pos = position;
+//            convertView.setOnLongClickListener(new View.OnLongClickListener() {
+//                @Override
+//                public boolean onLongClick(View v) {
+//                    //int position = holder.getLayoutPosition();
+//                    mOnItemLongClickListener.onItemLongClick(motionEvent, pos);
+//                    //返回true 表示消耗了事件 事件不会继续传递
+//                    return true; //长按了就禁止swipe弹出
+//                }
+//            });
+//        }
 
+        checkBlackWhiteList(resp,tvContent);
 
-            final int pos = position;
-            convertView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    //int position = holder.getLayoutPosition();
-                    mOnItemLongClickListener.onItemLongClick(motionEvent, pos);
-                    //返回true 表示消耗了事件 事件不会继续传递
-                    return true; //长按了就禁止swipe弹出
-                }
-            });
-        }
-
-        checkBlackWhiteList(resp, msisdn);
-
-        ueidContent.setTag(position);
     }
 
-    private void checkBlackWhiteList(UeidBean resp, String msisdn){
-        if(ueidContent == null){
-            return;
-        }
+    private void checkBlackWhiteList(UeidBean resp,TextView tvContent) {
+
+        String content = "IMSI:" + resp.getImsi() + "                " + "制式: " + UtilOperator.getOperatorNameCH(resp.getImsi()) + "\n";
 
         //优先先检查是否为黑名单
-        if (VersionManage.isPoliceVer()){
+        if (VersionManage.isPoliceVer()) {
             DBBlackInfo dbBlackInfo = null;
             try {
-                dbBlackInfo = dbManager.selector(DBBlackInfo.class).where("imsi","=",resp.getImsi()).findFirst();
+                dbBlackInfo = dbManager.selector(DBBlackInfo.class).where("imsi", "=", resp.getImsi()).findFirst();
             } catch (DbException e) {
-                LogUtils.log("查询黑名单异常"+e.getMessage());}
-            if(dbBlackInfo != null){
-                //black_warn.setVisibility(View.VISIBLE);
+                LogUtils.log("查询黑名单异常" + e.getMessage());
+            }
+            if (dbBlackInfo != null) {
                 String name = "";
-                if(!StringUtils.isBlank(dbBlackInfo.getName())){
-                    name = mContext.getString(R.string.lab_name)+ dbBlackInfo.getName();
+                if (!StringUtils.isBlank(dbBlackInfo.getName())) {
+                    name = "\n" +mContext.getString(R.string.lab_name) + dbBlackInfo.getName();
                 }
 
-                String tipTxt = ueidContent.getText() + "     " + name;
-                ueidContent.setText(tipTxt);
-                ueidContent.setTextColor(MyApplication.mContext.getResources().getColor(R.color.red));
-                return;
+                content += mContext.getString(R.string.ueid_last_rpt_time) + resp.getRptTime() + name;
+                tvContent.setTextColor(MyApplication.mContext.getResources().getColor(R.color.red));
+            }else {
+                content += mContext.getString(R.string.ueid_last_rpt_time) + resp.getRptTime();
+                tvContent.setTextColor(MyApplication.mContext.getResources().getColor(R.color.white));
             }
+            tvContent.setText(content);
         }
 
         //如果是管控模式，其次检查白名单
-        if (CacheManager.currentWorkMode.equals("2")){
-            boolean isWhitelist = false;
+        if (CacheManager.currentWorkMode.equals("2")) {
+
             try {
-                if(!"".equals(resp.getImsi())){
-                    WhiteListInfo info = dbManager.selector(WhiteListInfo.class).where("imsi","=",resp.getImsi()).findFirst();
-                    if (info == null){
-                        if (!"".equals(msisdn) && !msisdn.equals("未获取")){
-                            info = dbManager.selector(WhiteListInfo.class).where("msisdn","=",msisdn).findFirst();
+                if (!"".equals(resp.getImsi())) {
+
+                    content += resp.getRptTime() + "       " + "次数:" + resp.getRptTimes() + "       "
+                            + mContext.getString(R.string.ueid_last_intensity) + resp.getSrsp();
+                    WhiteListInfo info = dbManager.selector(WhiteListInfo.class).where("imsi", "=", resp.getImsi()).findFirst();
+                    if (info != null) {
+                        String msisdn = info.getMsisdn();
+                        String remark = info.getRemark();
+                        if (!TextUtils.isEmpty(msisdn)) {
+                            content += "\n"+"手机号："+msisdn + "           ";
                         }
+
+                        if (!TextUtils.isEmpty(remark)){
+                            content += remark;
+                        }
+
+                        tvContent.setTextColor(MyApplication.mContext.getResources().getColor(R.color.forestgreen));
+
+                    }else {
+                        tvContent.setTextColor(MyApplication.mContext.getResources().getColor(R.color.white));
                     }
-                    isWhitelist = (info != null);
+                    tvContent.setText(content);
                 }
 
-                if (isWhitelist){
-                    ueidContent.setTextColor(MyApplication.mContext.getResources().getColor(R.color.forestgreen));
-                    return;
-                }
             } catch (DbException e) {
-                LogUtils.log("查询白名单异常"+e.getMessage());
+                LogUtils.log("查询白名单异常" + e.getMessage());
             }
         }
 
-        ueidContent.setTextColor(MyApplication.mContext.getResources().getColor(R.color.white));
+
     }
 
     @Override

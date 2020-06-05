@@ -48,7 +48,7 @@ public class AddTimePointDialog extends Dialog {
         mView = inflater.inflate(R.layout.layout_add_time_point_dialog, null);
         setCancelable(false);
 
-        etTimePoint = (BootstrapEditText)mView.findViewById(R.id.etTimePoint);
+        etTimePoint = mView.findViewById(R.id.etTimePoint);
         etTimePoint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,8 +63,8 @@ public class AddTimePointDialog extends Dialog {
             }
         });
 
-        etRemark = (BootstrapEditText)mView.findViewById(R.id.etRemark);
-        btTimePoint = (BootstrapButton)mView.findViewById(R.id.btTimePoint);
+        etRemark = mView.findViewById(R.id.etRemark);
+        btTimePoint = mView.findViewById(R.id.btTimePoint);
         btTimePoint.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -85,7 +85,7 @@ public class AddTimePointDialog extends Dialog {
         });
 
 
-        btCancel = (BootstrapButton)mView.findViewById(R.id.btCancel);
+        btCancel = mView.findViewById(R.id.btCancel);
         btCancel.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {

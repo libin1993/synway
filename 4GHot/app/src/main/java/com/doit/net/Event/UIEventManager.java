@@ -115,9 +115,7 @@ public class UIEventManager {
      * @param key
      */
     public static void unRegisterAll(String key){
-        if(callList.containsKey(key)) {
-            callList.remove(key);
-        }
+        callList.remove(key);
     }
 
     /**

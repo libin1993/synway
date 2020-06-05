@@ -83,8 +83,8 @@ public class RealTimeUeidRptFragment extends BaseFragment implements IHandlerFin
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.doit_layout_ueid_list, container, false);
-        mListView = (ListView) rootView.findViewById(R.id.listview);
-        btClearRealtimeUeid = (Button) rootView.findViewById(R.id.button_clear);
+        mListView = rootView.findViewById(R.id.listview);
+        btClearRealtimeUeid = rootView.findViewById(R.id.button_clear);
         btClearRealtimeUeid.setOnClickListener(clearListener);
 
         tvRealtimeCTJCount = rootView.findViewById(R.id.tvCTJCount);
@@ -115,20 +115,20 @@ public class RealTimeUeidRptFragment extends BaseFragment implements IHandlerFin
                 ((SwipeLayout) (mListView.getChildAt(position - mListView.getFirstVisiblePosition()))).setClickToClose(true);
             }
         });
-        mAdapter.setOnItemLongClickListener(new UeidListViewAdapter.onItemLongClickListener() {
-            @Override
-            public void onItemLongClick(MotionEvent motionEvent, int position) {
-                selectedUeidItem = CacheManager.realtimeUeidList.get(position);
-                showListPopWindow(mListView, calcPopWindowPosX((int) motionEvent.getX()), calcPopWindowPosY((int) motionEvent.getY()));
-            }
-        });
+//        mAdapter.setOnItemLongClickListener(new UeidListViewAdapter.onItemLongClickListener() {
+//            @Override
+//            public void onItemLongClick(MotionEvent motionEvent, int position) {
+//                selectedUeidItem = CacheManager.realtimeUeidList.get(position);
+//                showListPopWindow(mListView, calcPopWindowPosX((int) motionEvent.getX()), calcPopWindowPosY((int) motionEvent.getY()));
+//            }
+//        });
 
         ueidItemPopView = LayoutInflater.from(getActivity()).inflate(R.layout.realtime_ueid_pop_window, null);
         ueidItemPop = new PopupWindow(ueidItemPopView, getResources().getDisplayMetrics().widthPixels / 3,
                 LinearLayout.LayoutParams.WRAP_CONTENT, true);   //宽度和屏幕成比例
         ueidItemPop.setContentView(ueidItemPopView);
         ueidItemPop.setBackgroundDrawable(new ColorDrawable());  //据说不设在有些情况下会关不掉
-        tvGetTelNumber = (TextView) ueidItemPopView.findViewById(R.id.tvGetTelNumber);
+        tvGetTelNumber = ueidItemPopView.findViewById(R.id.tvGetTelNumber);
         tvGetTelNumber.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -246,7 +246,11 @@ public class RealTimeUeidRptFragment extends BaseFragment implements IHandlerFin
         LogUtils.log("IMSI：" + imsi + "强度：" + srsp);
         for (int i = 0; i < CacheManager.realtimeUeidList.size(); i++) {
             if (CacheManager.realtimeUeidList.get(i).getImsi().equals(imsi)) {
-                CacheManager.realtimeUeidList.get(i).setRptTimes(CacheManager.realtimeUeidList.get(i).getRptTimes() + 1);
+                int times = CacheManager.realtimeUeidList.get(i).getRptTimes();
+                if (times > 1000){
+                    times =0;
+                }
+                CacheManager.realtimeUeidList.get(i).setRptTimes(times + 1);
                 CacheManager.realtimeUeidList.get(i).setSrsp("" + Integer.parseInt(srsp) * 5 / 6);
                 CacheManager.realtimeUeidList.get(i).setRptTime(DateUtils.convert2String(new Date().getTime(), DateUtils.LOCAL_DATE));
 

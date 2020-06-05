@@ -214,15 +214,15 @@ public class LSettingItem extends RelativeLayout {
 
     private void initView(Context context) {
         mView = View.inflate(context, R.layout.settingitem, this);
-        mRootLayout = (RelativeLayout) mView.findViewById(R.id.rootLayout);
+        mRootLayout = mView.findViewById(R.id.rootLayout);
         //mUnderLine = (View) mView.findViewById(R.id.underline);
-        mTvLeftText = (TextView) mView.findViewById(R.id.tv_lefttext);
-        mTvRightText = (TextView) mView.findViewById(R.id.tv_righttext);
-        mIvLeftIcon = (ImageView) mView.findViewById(R.id.iv_lefticon);
-        mIvRightIcon = (ImageView) mView.findViewById(R.id.iv_righticon);
-        mRightLayout = (FrameLayout) mView.findViewById(R.id.rightlayout);
-        mRightIcon_check = (AppCompatCheckBox) mView.findViewById(R.id.rightcheck);
-        mRightIcon_switch = (SwitchCompat) mView.findViewById(R.id.rightswitch);
+        mTvLeftText = mView.findViewById(R.id.tv_lefttext);
+        mTvRightText = mView.findViewById(R.id.tv_righttext);
+        mIvLeftIcon = mView.findViewById(R.id.iv_lefticon);
+        mIvRightIcon = mView.findViewById(R.id.iv_righticon);
+        mRightLayout = mView.findViewById(R.id.rightlayout);
+        mRightIcon_check = mView.findViewById(R.id.rightcheck);
+        mRightIcon_switch = mView.findViewById(R.id.rightswitch);
 
         mRightIcon_switch.setOnClickListener(new OnClickListener() {
             @Override
@@ -234,7 +234,7 @@ public class LSettingItem extends RelativeLayout {
             }
         });
 
-        mDivider = (View)mView.findViewById(R.id.vDivider);
+        mDivider = mView.findViewById(R.id.vDivider);
     }
 
     public void setClickItemChangeState(boolean clickItemChangeState) {

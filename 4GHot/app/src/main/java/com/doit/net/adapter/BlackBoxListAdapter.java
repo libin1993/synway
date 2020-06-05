@@ -34,8 +34,8 @@ public class BlackBoxListAdapter extends ArrayAdapter<BlackBoxBean> {
         if(convertView == null){
             view =  LayoutInflater.from(getContext()).inflate(resourceId, parent,false);
             viewHolder = new ViewHolder();
-            viewHolder.tvIndex = (TextView)view.findViewById(R.id.tvIndex);
-            viewHolder.tvBlackBox = (TextView)view.findViewById(R.id.tvBlackBox);
+            viewHolder.tvIndex = view.findViewById(R.id.tvIndex);
+            viewHolder.tvBlackBox = view.findViewById(R.id.tvBlackBox);
             view.setTag(viewHolder);
         }else{
             view = convertView;

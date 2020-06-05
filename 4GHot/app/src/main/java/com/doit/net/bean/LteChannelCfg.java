@@ -91,7 +91,7 @@ public class LteChannelCfg {
     }
 
     public boolean isRfOpen() {
-        return this.state == null?false:this.state.intValue() == 1;
+        return this.state != null && this.state.intValue() == 1;
     }
 
     public String getPMax() {

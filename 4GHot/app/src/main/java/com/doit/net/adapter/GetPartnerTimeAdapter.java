@@ -34,7 +34,7 @@ public class GetPartnerTimeAdapter extends BaseAdapter {
             holder= new GetPartnerTimeAdapter.ViewHolder();
             view = layoutinflater.inflate(R.layout.time_item, null);
 
-            holder.tvTime = (TextView) view.findViewById(R.id.tvTime);
+            holder.tvTime = view.findViewById(R.id.tvTime);
             view.setTag(holder);
         }
         else {

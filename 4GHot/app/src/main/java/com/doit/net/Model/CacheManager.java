@@ -344,9 +344,7 @@ public class CacheManager {
     }
 
     public static boolean isDeviceOk(){
-        if(cellConfig == null || channels.size() == 0 || equipConfig == null)
-            return false;
-        return true;
+        return cellConfig != null && channels.size() != 0 && equipConfig != null;
     }
 
     /**

@@ -88,7 +88,7 @@ public class LicenceDialog extends Dialog implements EventAdapter.EventCall{
         etAuthorizeCode = mView.findViewById(R.id.etAuthorizeCode);
         tvDueTime = mView.findViewById(R.id.tvDueTime);
         tvMachineId =  mView.findViewById(R.id.tvMachineId);
-        Button btAuthorize = (Button) mView.findViewById(R.id.btAuthorize);
+        Button btAuthorize = mView.findViewById(R.id.btAuthorize);
         ImageView ivScanCode = mView.findViewById(R.id.iv_scan_code);
         ivScanCode.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,7 +144,7 @@ public class LicenceDialog extends Dialog implements EventAdapter.EventCall{
             }
         });
 
-        btnCancel = (Button) mView.findViewById(R.id.btCancel);
+        btnCancel = mView.findViewById(R.id.btCancel);
         btnCancel.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {

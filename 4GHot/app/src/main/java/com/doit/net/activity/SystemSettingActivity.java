@@ -52,27 +52,27 @@ public class SystemSettingActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_system_setting);
 
-        tvOnOffLocation = (LSettingItem) findViewById(R.id.tvOnOffLocation);
+        tvOnOffLocation = findViewById(R.id.tvOnOffLocation);
         tvOnOffLocation.setOnLSettingCheckedChange(settingItemLocSwitch);
         tvOnOffLocation.setmOnLSettingItemClick(settingItemLocSwitch);  //点击该行开关以外地方也会切换开关，故覆盖其回调
 
-        tvIfAutoOpenRF = (LSettingItem) findViewById(R.id.tvIfAutoOpenRF);
+        tvIfAutoOpenRF = findViewById(R.id.tvIfAutoOpenRF);
         tvIfAutoOpenRF.setOnLSettingCheckedChange(settingItemAutoRFSwitch);
         tvIfAutoOpenRF.setmOnLSettingItemClick(settingItemAutoRFSwitch);
 
-        tvGeneralAdmin = (LSettingItem) findViewById(R.id.tvGeneralAdmin);
+        tvGeneralAdmin = findViewById(R.id.tvGeneralAdmin);
         tvGeneralAdmin.setmOnLSettingItemClick(generalAdminAccount);
 
-        etMaxWindSpeed = (BootstrapEditText)findViewById(R.id.etMaxWindSpeed);
-        etMinWindSpeed = (BootstrapEditText)findViewById(R.id.etMinWindSpeed);
-        etTempThreshold = (BootstrapEditText)findViewById(R.id.etTempThreshold);
-        btSetFan = (BootstrapButton) findViewById(R.id.btSetFan);
+        etMaxWindSpeed = findViewById(R.id.etMaxWindSpeed);
+        etMinWindSpeed = findViewById(R.id.etMinWindSpeed);
+        etTempThreshold = findViewById(R.id.etTempThreshold);
+        btSetFan = findViewById(R.id.btSetFan);
         btSetFan.setOnClickListener(setFanClikListen);
 
-        btResetFreqScanFcn = (BootstrapButton) findViewById(R.id.btResetFreqScanFcn);
+        btResetFreqScanFcn = findViewById(R.id.btResetFreqScanFcn);
         btResetFreqScanFcn.setOnClickListener(resetFreqScanFcnClikListener);
 
-        btRefresh = (BootstrapButton) findViewById(R.id.btRefresh);
+        btRefresh = findViewById(R.id.btRefresh);
         btRefresh.setOnClickListener(refreshClikListen);
 
         if (PrefManage.getBoolean(LOC_PREF_KEY, true)){

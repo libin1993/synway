@@ -360,7 +360,7 @@ public class QrConfig implements Serializable {
         }
 
         public Builder setDingPath(int ding){
-            watcher.ding_path = ding;
+            ding_path = ding;
             return this;
         }
 

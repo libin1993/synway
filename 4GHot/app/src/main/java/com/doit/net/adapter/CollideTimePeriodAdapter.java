@@ -36,8 +36,8 @@ public class CollideTimePeriodAdapter extends BaseAdapter {
             holder= new ViewHolder();
             view = layoutinflater.inflate(R.layout.time_period_item, null);
 
-            holder.tvStartTime = (TextView) view.findViewById(R.id.tvStartTime);
-            holder.tvEndTime = (TextView) view.findViewById(R.id.tvEndTime);
+            holder.tvStartTime = view.findViewById(R.id.tvStartTime);
+            holder.tvEndTime = view.findViewById(R.id.tvEndTime);
             view.setTag(holder);
         }
         else {

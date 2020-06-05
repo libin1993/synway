@@ -59,10 +59,10 @@ public class UserManageActivity extends BaseActivity implements IHandlerFinish {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-        lvUserInfo = (ListView) findViewById(R.id.lvUserInfo);
-        btAddUser = (Button) findViewById(R.id.btAddUser);
+        lvUserInfo = findViewById(R.id.lvUserInfo);
+        btAddUser = findViewById(R.id.btAddUser);
         btAddUser.setOnClickListener(addUserClick);
-        btModifyAdmin = (Button) findViewById(R.id.btModifyAdmin);
+        btModifyAdmin = findViewById(R.id.btModifyAdmin);
         btModifyAdmin.setOnClickListener(modifyAdminClick);
 
         mAdapter = new UserListAdapter(activity);

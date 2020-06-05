@@ -61,13 +61,13 @@ public class ModifyWhitelistDialog extends Dialog {
         mView = inflater.inflate(R.layout.layout_modify_whitelist_info, null);
         setCancelable(false);
 
-        etMsisdn = (EditText)mView.findViewById(R.id.etMsisdn);
+        etMsisdn = mView.findViewById(R.id.etMsisdn);
         etMsisdn.setText(modifyMsisdn);
-        etIMSI = (EditText)mView.findViewById(R.id.etImsi);
+        etIMSI = mView.findViewById(R.id.etImsi);
         etIMSI.setText(modifyIMSI);
-        etRemark = (EditText)mView.findViewById(R.id.etRemark);
+        etRemark = mView.findViewById(R.id.etRemark);
         etRemark.setText(modifyRemark);
-        btSave = (Button)mView.findViewById(R.id.btSave);
+        btSave = mView.findViewById(R.id.btSave);
         btSave.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -131,7 +131,7 @@ public class ModifyWhitelistDialog extends Dialog {
             }
         });
 
-        btCancel = (Button)mView.findViewById(R.id.btCancel);
+        btCancel = mView.findViewById(R.id.btCancel);
         btCancel.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {

@@ -45,8 +45,8 @@ public class SystemSetupAdapter extends BaseAdapter {
             view = layoutInflater.inflate(R.layout.doit_layout_device_contl, parent, false);
 
             viewHolder = new ViewHolder();
-            viewHolder.textView = (TextView) view.findViewById(R.id.text_view);
-            viewHolder.imageView = (ImageView) view.findViewById(R.id.image_view);
+            viewHolder.textView = view.findViewById(R.id.text_view);
+            viewHolder.imageView = view.findViewById(R.id.image_view);
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) view.getTag();

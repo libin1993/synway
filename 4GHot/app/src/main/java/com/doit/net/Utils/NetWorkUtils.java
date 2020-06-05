@@ -46,9 +46,7 @@ public class NetWorkUtils {
         if (linkProperties == null)
             return;
         Class<?> laClass = Class.forName("android.net.LinkAddress");
-        Constructor<?> laConstructor = laClass.getConstructor(new Class[]{
-                InetAddress.class, int.class
-        });
+        Constructor<?> laConstructor = laClass.getConstructor(InetAddress.class, int.class);
         Object linkAddress = laConstructor.newInstance(addr, prefixLength);
 
         ArrayList<Object> mLinkAddresses = (ArrayList<Object>) getDeclaredField(linkProperties, "mLinkAddresses");
@@ -67,9 +65,7 @@ public class NetWorkUtils {
 
         if (android.os.Build.VERSION.SDK_INT >= 14) { // android4.x版本
             Class<?> routeInfoClass = Class.forName("android.net.RouteInfo");
-            Constructor<?> routeInfoConstructor = routeInfoClass.getConstructor(new Class[]{
-                    InetAddress.class
-            });
+            Constructor<?> routeInfoConstructor = routeInfoClass.getConstructor(InetAddress.class);
             Object routeInfo = routeInfoConstructor.newInstance(gateway);
 
             ArrayList<Object> mRoutes = (ArrayList<Object>) getDeclaredField(linkProperties, "mRoutes");

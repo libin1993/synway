@@ -116,8 +116,8 @@
     <string name="lab_cell_freq">小区频点：</string>
     <string name="lab_freq">小区频点：</string>
     <string name="lab_rpt_time">上报时间：</string>
-    <string name="ueid_last_rpt_time">最近时间：</string>
-    <string name="ueid_last_intensity">最近场强：</string>
+    <string name="ueid_last_rpt_time">时间：</string>
+    <string name="ueid_last_intensity">场强：</string>
     <string name="search_not_found">未搜索到对应的数据</string>
     <string name="can_not_export_search">未搜索到数据，无法导出</string>
     <string name="set_now">立即设置</string>

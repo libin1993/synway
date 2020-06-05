@@ -329,7 +329,6 @@ class CameraScanAnalysis implements Camera.PreviewCallback {
         data = rotatedData;
         PlanarYUVLuminanceSource source = new PlanarYUVLuminanceSource(data, width, height, 0,
                 0, width, height, true);
-        ;
         Hashtable<DecodeHintType, Object> scanOption = new Hashtable<>();
         scanOption.put(DecodeHintType.CHARACTER_SET, "utf-8");
         Collection<Reader> readers = new ArrayList<>();

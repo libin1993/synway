@@ -64,7 +64,7 @@ public class LocNameListAdapter extends BaseSwipeAdapter {
 
     @Override
     public void fillValues(int position, View convertView) {
-        TextView t = (TextView)convertView.findViewById(R.id.position);
+        TextView t = convertView.findViewById(R.id.position);
         t.setText((position + 1) + ".");
 
 //        TextView ueidContent = (TextView)convertView.findViewById(R.id.ueidContent);

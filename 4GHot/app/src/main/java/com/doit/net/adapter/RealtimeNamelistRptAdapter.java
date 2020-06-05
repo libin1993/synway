@@ -59,8 +59,8 @@ public class RealtimeNamelistRptAdapter extends BaseSwipeAdapter {
 
     @Override
     public void fillValues(final int position, View convertView) {
-        tvIndex = (TextView)convertView.findViewById(R.id.position);
-        tvNamelistItem = (TextView)convertView.findViewById(R.id.text_data);
+        tvIndex = convertView.findViewById(R.id.position);
+        tvNamelistItem = convertView.findViewById(R.id.text_data);
 
         tvIndex.setText((position + 1) + ". ");
         final String resp = listNamelist.get(position);

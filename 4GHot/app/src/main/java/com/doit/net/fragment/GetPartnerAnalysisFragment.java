@@ -79,16 +79,16 @@ public class GetPartnerAnalysisFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_get_partner, null);
-        etStartTime = (EditText) rootView.findViewById(R.id.etStartTime);
-        etEndTime = (EditText) rootView.findViewById(R.id.etEndTime);
-        etGetPartnerIMSI = (EditText) rootView.findViewById(R.id.etGetPartnerIMSI);
-        etDeviation = (EditText) rootView.findViewById(R.id.etDeviation);
-        btStartGettPartner = (Button) rootView.findViewById(R.id.btStartGetPartner);
-        btExportGetPartnerRes = (Button) rootView.findViewById(R.id.btExportGetPartnerRes);
-        lvGetPartnerResult = (ListView)rootView.findViewById(R.id.lvAnalysisResult) ;
-        tvTargetIMSI = (TextView) rootView.findViewById(R.id.tvTargetIMSI);
-        tvTargetIMSITimes = (TextView) rootView.findViewById(R.id.tvTargetIMSITimes);
-        layoutCollideTarget = (LinearLayout) rootView.findViewById(R.id.layoutCollideTarget);
+        etStartTime = rootView.findViewById(R.id.etStartTime);
+        etEndTime = rootView.findViewById(R.id.etEndTime);
+        etGetPartnerIMSI = rootView.findViewById(R.id.etGetPartnerIMSI);
+        etDeviation = rootView.findViewById(R.id.etDeviation);
+        btStartGettPartner = rootView.findViewById(R.id.btStartGetPartner);
+        btExportGetPartnerRes = rootView.findViewById(R.id.btExportGetPartnerRes);
+        lvGetPartnerResult = rootView.findViewById(R.id.lvAnalysisResult);
+        tvTargetIMSI = rootView.findViewById(R.id.tvTargetIMSI);
+        tvTargetIMSITimes = rootView.findViewById(R.id.tvTargetIMSITimes);
+        layoutCollideTarget = rootView.findViewById(R.id.layoutCollideTarget);
         initWidget();
         return rootView;
     }

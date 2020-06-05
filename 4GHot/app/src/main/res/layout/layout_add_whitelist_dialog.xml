@@ -64,7 +64,8 @@
             android:id="@+id/etRemark"
             style="@style/dialog_edit"
             android:textCursorDrawable="@null"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:maxLength="8"/>
     </LinearLayout>
 
     <LinearLayout

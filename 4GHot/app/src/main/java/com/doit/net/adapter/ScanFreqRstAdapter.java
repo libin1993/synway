@@ -48,8 +48,8 @@ public class ScanFreqRstAdapter extends BaseAdapter {
         if(convertView == null){
             convertView = View.inflate(context, R.layout.scan_freq_rst_item, null);
             viewHolder = new ViewHolder();
-            viewHolder.tvScanFreqRst = (TextView) convertView.findViewById(R.id.tvScanFreqRst);
-            viewHolder.cbIsSelected = (CheckBox) convertView.findViewById(R.id.cbIsRstSeleted);
+            viewHolder.tvScanFreqRst = convertView.findViewById(R.id.tvScanFreqRst);
+            viewHolder.cbIsSelected = convertView.findViewById(R.id.cbIsRstSeleted);
             convertView.setTag(viewHolder);
         }else{
             viewHolder=(ViewHolder) convertView.getTag();

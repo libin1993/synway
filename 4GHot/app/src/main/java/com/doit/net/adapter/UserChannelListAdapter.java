@@ -55,7 +55,7 @@ public class UserChannelListAdapter extends BaseAdapter {
             view = layoutInflater.inflate(R.layout.doit_layout_user_channel_list_item, parent, false);
 
             viewHolder = new ViewHolder();
-            viewHolder.tvContent = (TextView) view.findViewById(R.id.id_tv_content);
+            viewHolder.tvContent = view.findViewById(R.id.id_tv_content);
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) view.getTag();

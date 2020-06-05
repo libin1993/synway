@@ -139,11 +139,8 @@ public class Cellular {
         if (StringUtils.getChrCount(arfcns1,",") != 2 || StringUtils.getChrCount(arfcns2,",") != 2)
             return false;
 
-        String split1[] = arfcns1.split(",");
-        if (arfcns2.contains(split1[0]) && arfcns2.contains(split1[1])  && arfcns2.contains(split1[2]))
-            return true;
-        else
-            return false;
+        String[] split1 = arfcns1.split(",");
+        return arfcns2.contains(split1[0]) && arfcns2.contains(split1[1]) && arfcns2.contains(split1[2]);
     }
 
 
@@ -210,7 +207,7 @@ public class Cellular {
         }
 
         //打印测试
-        file_fcns = "文件获取频点值B1:"+ band1FromFile + "B3:"+band3FromFile + "B38:"+ band38FromFile+"B39:"+ band39FromFile + "B40:" + band40FromFile;;
+        file_fcns = "文件获取频点值B1:"+ band1FromFile + "B3:"+band3FromFile + "B38:"+ band38FromFile+"B39:"+ band39FromFile + "B40:" + band40FromFile;
         LogUtils.log(file_fcns);
 
         //删除最后的“，”
@@ -293,7 +290,7 @@ public class Cellular {
             return;
         }
 
-        String arfcns[] = bandInfo.split(",");
+        String[] arfcns = bandInfo.split(",");
         if (arfcns == null || arfcns.length == 0){
             if (!bandCommonFcns.equals("") && bandCommonFcns.split(",").length == 3){
                 ProtocolManager.setChannelConfig(channel.getIdx(), bandCommonFcns, "",

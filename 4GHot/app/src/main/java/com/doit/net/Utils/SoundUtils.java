@@ -11,8 +11,8 @@ public class SoundUtils {
         STOP,
         PLAYING,
         PAUSED
-     };
-     
+     }
+
     private final int mSoundNumMax = 4;
 	private SoundPool soundPool = null; // 声明SoundPool的引用
 	private HashMap<String, SoundDetail> hashMapSound = new HashMap<String, SoundDetail>(); // 创建HashMap对象
@@ -176,7 +176,7 @@ public class SoundUtils {
 		
 		if (sDetail.iSoundId <= 0) {
 			LogUtils.log(
-					"play iStreamId error! id=" + Integer.toString(sDetail.iSoundId)+ " name = " + soundName);
+					"play iStreamId error! id=" + sDetail.iSoundId + " name = " + soundName);
 			return 0;
 		}
 		
@@ -205,7 +205,7 @@ public class SoundUtils {
 		SoundDetail sDetail = hashMapSound.get(soundName);
 		
 		if(sDetail.iStreamId <= 0){
-			LogUtils.log("stop iStreamId error! id=" + Integer.toString(sDetail.iStreamId) + " name = " + soundName);
+			LogUtils.log("stop iStreamId error! id=" + sDetail.iStreamId + " name = " + soundName);
 			return;
 		}
 				
@@ -227,7 +227,7 @@ public class SoundUtils {
 		SoundDetail sDetail = hashMapSound.get(soundName);
 		
 		if(sDetail.iStreamId <= 0){
-			LogUtils.log("pause iStreamId error! id=" + Integer.toString(sDetail.iStreamId)+ " name = " + soundName);
+			LogUtils.log("pause iStreamId error! id=" + sDetail.iStreamId + " name = " + soundName);
 		}
 			
 		if(sDetail.iPlaytate == PlayState.PLAYING){
@@ -247,7 +247,7 @@ public class SoundUtils {
 		SoundDetail sDetail = hashMapSound.get(soundName);
 		
 		if(sDetail.iStreamId <= 0){
-			LogUtils.log("resume iStreamId error! id=" + Integer.toString(sDetail.iStreamId)+ " name = " + soundName);
+			LogUtils.log("resume iStreamId error! id=" + sDetail.iStreamId + " name = " + soundName);
 		}
 				
 		if(sDetail.iPlaytate == PlayState.PAUSED){

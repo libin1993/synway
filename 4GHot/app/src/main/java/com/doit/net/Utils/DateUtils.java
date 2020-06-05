@@ -209,7 +209,7 @@ public class DateUtils {
      */
     public static String getDateByFormat(Calendar c,String format){
         Calendar ca=Calendar.getInstance();    
-        Date d =(Date) ca.getTime();
+        Date d = ca.getTime();
         return getDateByFormat(d,format);
     }
     
@@ -307,7 +307,7 @@ public class DateUtils {
             tempDay = "";
         }
         
-        String returnDays[] = new String[2];
+        String[] returnDays = new String[2];
         
         if (currMonth.equals("01") && currDay.equals("01")) {
             returnDays[0] = (Integer.parseInt(currYear) - 1) + "1231";

@@ -42,8 +42,8 @@ public class UeidFragment extends BaseFragment {
 //        }
 
         View rootView = inflater.inflate(R.layout.layout_ueid_all, container, false);
-        tabLayout = (TabLayout) rootView.findViewById(R.id.tabLayoutTab);
-        viewPagers = (ViewPager) rootView.findViewById(R.id.vpViewPaper);
+        tabLayout = rootView.findViewById(R.id.tabLayoutTab);
+        viewPagers = rootView.findViewById(R.id.vpViewPaper);
         initView();
         return rootView;
     }
@@ -138,7 +138,7 @@ public class UeidFragment extends BaseFragment {
 
     private View getTabView(int currentPosition) {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.comman_text, null);
-        TextView textView = (TextView) view.findViewById(R.id.tvCommanText);
+        TextView textView = view.findViewById(R.id.tvCommanText);
         textView.setText(listTitles.get(currentPosition));
         return view;
     }

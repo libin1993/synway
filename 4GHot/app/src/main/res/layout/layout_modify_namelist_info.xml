@@ -46,9 +46,10 @@
             <EditText
                 android:id="@+id/etName"
                 style="@style/dialog_edit"
-                android:layout_weight="2"
+                android:layout_weight="1"
                 android:singleLine="true"
-                android:layout_marginEnd="15dp" />
+                android:layout_marginEnd="15dp"
+                android:maxLength="8"/>
         </LinearLayout>
 
         <LinearLayout
@@ -90,7 +91,8 @@
                 style="@style/dialog_edit"
                 android:layout_weight="1"
                 android:singleLine="true"
-                android:layout_marginEnd="15dp" />
+                android:layout_marginEnd="15dp"
+                android:maxLength="20"/>
         </LinearLayout>
 
         <LinearLayout

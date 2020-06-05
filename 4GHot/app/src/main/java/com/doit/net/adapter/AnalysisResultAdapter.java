@@ -34,8 +34,8 @@ public class AnalysisResultAdapter extends ArrayAdapter<AnalysisResultBean> {
         }else{
             view = convertView;
         }
-        TextView tvIMSI = (TextView)view.findViewById(R.id.tvIMSI);
-        TextView tvTimes = (TextView)view.findViewById(R.id.tvTimes);
+        TextView tvIMSI = view.findViewById(R.id.tvIMSI);
+        TextView tvTimes = view.findViewById(R.id.tvTimes);
         tvIMSI.setText(collideTimePeriodItem.getImsi());
         tvTimes.setText(collideTimePeriodItem.getTimes());
 

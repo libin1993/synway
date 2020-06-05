@@ -38,17 +38,17 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_just_for_test);
 
-        test1 = (Button) findViewById(R.id.test1);
-        test2 = (Button) findViewById(R.id.test2);
-        test3 = (Button) findViewById(R.id.test3);
-        test4= (Button) findViewById(R.id.test4);
-        test5 = (Button) findViewById(R.id.test5);
-        test6 = (Button) findViewById(R.id.test6);
-        test7 = (Button) findViewById(R.id.test7);
-        btGetDeviceLog = (Button) findViewById(R.id.btGetDeviceLog);
-        tvTemperature = (TextView) findViewById(R.id.tvTemperature);
-        tvArfcns = (TextView) findViewById(R.id.tvArfcns);
-        tvNameList = (TextView) findViewById(R.id.tv_name_list);
+        test1 = findViewById(R.id.test1);
+        test2 = findViewById(R.id.test2);
+        test3 = findViewById(R.id.test3);
+        test4= findViewById(R.id.test4);
+        test5 = findViewById(R.id.test5);
+        test6 = findViewById(R.id.test6);
+        test7 = findViewById(R.id.test7);
+        btGetDeviceLog = findViewById(R.id.btGetDeviceLog);
+        tvTemperature = findViewById(R.id.tvTemperature);
+        tvArfcns = findViewById(R.id.tvArfcns);
+        tvNameList = findViewById(R.id.tv_name_list);
 
         initView();
 
@@ -133,7 +133,7 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case 0:
-                    tvTemperature.setText("温度："+(String)msg.obj);
+                    tvTemperature.setText("温度："+ msg.obj);
                     break;
                 case 1:
                     tvNameList.setText("白名单："+CacheManager.namelist.toString());

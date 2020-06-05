@@ -176,7 +176,7 @@ public class ScanLineView extends View {
 
     private void initLineStyle() {
         if (mLinearGradient_line == null) {
-            String line_colors = String.valueOf(Integer.toHexString(mScancolor));
+            String line_colors = Integer.toHexString(mScancolor);
             line_colors = line_colors.substring(line_colors.length() - 6, line_colors.length() - 0);
             mLinearGradient_line = new LinearGradient(0,0,getMeasuredWidth(),0,new int[] {Color.parseColor("#00"+line_colors),
                     mScancolor, Color.parseColor("#00"+line_colors),},null, Shader.TileMode.CLAMP);

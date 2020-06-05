@@ -65,12 +65,12 @@ public class BlackBoxActivity extends BaseActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         dbManager = UCSIDBManager.getDbManager();
-        lvBlackBox = (ListView) findViewById(R.id.lvBlackBox);
-        etKeyword = (EditText) findViewById(R.id.etKeyword);
-        btSearch = (Button) findViewById(R.id.btSearch);
+        lvBlackBox = findViewById(R.id.lvBlackBox);
+        etKeyword = findViewById(R.id.etKeyword);
+        btSearch = findViewById(R.id.btSearch);
         btSearch.setOnClickListener(searchClick);
 
-        etStartTime = (EditText)findViewById(R.id.etStartTime);
+        etStartTime = findViewById(R.id.etStartTime);
         etStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,7 +79,7 @@ public class BlackBoxActivity extends BaseActivity {
             }
         });
 
-        etEndTime = (EditText)findViewById(R.id.etEndTime);
+        etEndTime = findViewById(R.id.etEndTime);
         etEndTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,7 +88,7 @@ public class BlackBoxActivity extends BaseActivity {
             }
         });
 
-        btExportSearchResult = (Button)findViewById(R.id.btExportSearchResult);
+        btExportSearchResult = findViewById(R.id.btExportSearchResult);
         btExportSearchResult.setOnClickListener(exportClick);
 
         blackBoxListAdapter = new BlackBoxListAdapter(this, R.layout.layout_black_box_item, listBlackBox);
@@ -301,10 +301,7 @@ public class BlackBoxActivity extends BaseActivity {
             dateEndTime = simpleDateFormat.parse(endTime);
         } catch (ParseException e) {e.printStackTrace();}
 
-        if (dataStartTime.before(dateEndTime))
-            return true;
-        else
-            return  false;
+        return dataStartTime.before(dateEndTime);
     }
 
     private void createExportError(String obj){

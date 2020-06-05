@@ -58,13 +58,13 @@ public class ModifyNamelistInfoDialog extends Dialog {
         mView = inflater.inflate(R.layout.layout_modify_namelist_info, null);
         setCancelable(false);
 
-        etName = (EditText)mView.findViewById(R.id.etName);
+        etName = mView.findViewById(R.id.etName);
         etName.setText(modifyName);
-        etRemake = (EditText)mView.findViewById(R.id.etRemark);
+        etRemake = mView.findViewById(R.id.etRemark);
         etRemake.setText(modifyRemake);
-        etIMSI = (EditText)mView.findViewById(R.id.etPassword);
+        etIMSI = mView.findViewById(R.id.etPassword);
         etIMSI.setText(modifyIMSI);
-        btSave = (Button)mView.findViewById(R.id.btSave);
+        btSave = mView.findViewById(R.id.btSave);
         btSave.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -108,7 +108,7 @@ public class ModifyNamelistInfoDialog extends Dialog {
         });
 
 
-        btCancel = (Button)mView.findViewById(R.id.btCancel);
+        btCancel = mView.findViewById(R.id.btCancel);
         btCancel.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {

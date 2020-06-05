@@ -82,13 +82,13 @@ public class RealTimeAnalysisFragment extends BaseFragment {
 
 
     private void initWidget() {
-        btStartStop = (BootstrapButton) rootView.findViewById(R.id.btStartStop);
+        btStartStop = rootView.findViewById(R.id.btStartStop);
         btStartStop.setOnClickListener(startStopListener);
-        btRestart = (BootstrapButton) rootView.findViewById(R.id.btRestart);
+        btRestart = rootView.findViewById(R.id.btRestart);
         btRestart.setOnClickListener(restartListener);
 
         analysisResultAdapter = new AnalysisResultAdapter(getContext(), R.layout.analysis_result_item, listAnalysisResult);
-        lvRealtimeAnalysisResult = (ListView)rootView.findViewById(R.id.lvAnalysisResult) ;
+        lvRealtimeAnalysisResult = rootView.findViewById(R.id.lvAnalysisResult);
         lvRealtimeAnalysisResult.setAdapter(analysisResultAdapter);
         lvRealtimeAnalysisResult.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -207,7 +207,7 @@ public class RealTimeAnalysisFragment extends BaseFragment {
                 public synchronized void run() {
                     while(true){
                         if (isStart){
-                            LogUtils.log("实时碰撞当前大小：" + String.valueOf(mapTempCollideResult.size()));
+                            LogUtils.log("实时碰撞当前大小：" + mapTempCollideResult.size());
                             collideTempEndTime = new Date().getTime();
                             CollideAnalysis.collideAnalysis(mapTempCollideResult, collideTempEndTime, COLLIED_TIME_PERIOD);
                             UpdateCollideResultToList();

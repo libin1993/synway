@@ -85,7 +85,7 @@ public class BlackBoxManger {
         try {
             UCSIDBManager.getDbManager().save(new BlackBoxBean(operation.split(",")[0],
                     operation.split(",")[1],
-                    DateUtils.convert2long(operation.substring(operation.lastIndexOf(",")+1, operation.length()), DateUtils.LOCAL_DATE)));
+                    DateUtils.convert2long(operation.substring(operation.lastIndexOf(",")+1), DateUtils.LOCAL_DATE)));
         } catch (DbException e) {
             e.printStackTrace();
         }

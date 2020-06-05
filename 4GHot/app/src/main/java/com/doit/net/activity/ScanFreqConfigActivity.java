@@ -41,11 +41,11 @@ public class ScanFreqConfigActivity extends BaseActivity implements EventAdapter
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan_freq_config);
 
-        btStartScan = (BootstrapButton) findViewById(R.id.btStartScan);
+        btStartScan = findViewById(R.id.btStartScan);
         btStartScan.setOnClickListener(startScanFreqClick);
-        btConfigSelectedFcn = (BootstrapButton) findViewById(R.id.btConfigSelectedFcn);
+        btConfigSelectedFcn = findViewById(R.id.btConfigSelectedFcn);
         btConfigSelectedFcn.setOnClickListener(configSelectedFcnClick);
-        lvScanFreqResult = (ListView) findViewById(R.id.lvScanFreqResult);
+        lvScanFreqResult = findViewById(R.id.lvScanFreqResult);
 
         listScanFreqResult = CacheManager.listLastScanFreqRst;
         scanFreqRstAdapter = new ScanFreqRstAdapter(listScanFreqResult, this);

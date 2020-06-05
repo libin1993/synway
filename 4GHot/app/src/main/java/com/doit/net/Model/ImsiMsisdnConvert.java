@@ -230,7 +230,7 @@ public class ImsiMsisdnConvert {
                         objs[0] = imsiToMsisdn(context, okHttpClient, imsi);
                     }
 
-                    if (!((String)objs[0]).equals(""))
+                    if (!objs[0].equals(""))
                         ToastUtils.showMessageLong(context, (String)objs[0]);
                 }
             });
@@ -587,7 +587,7 @@ public class ImsiMsisdnConvert {
                         LogUtils.log("okHttpClient ok");
                         objs[0] = queryMsisdnConvert(context, okHttpClient, Msisdn);
                     }
-                    if (!((String)objs[0]).equals(""))
+                    if (!objs[0].equals(""))
                         ToastUtils.showMessageLong(context, (String)objs[0]);
                 }
             });
@@ -727,7 +727,7 @@ public class ImsiMsisdnConvert {
                         objs[0] = getToken(okHttpClient, server, username,password);
                     }
 
-                    if (!((String)objs[0]).equals(""))
+                    if (!objs[0].equals(""))
                         ToastUtils.showMessageLong(context, (String)objs[0]);
                 }
             });

@@ -108,36 +108,36 @@ public class DeviceParamActivity extends BaseActivity implements IHandlerFinish 
     }
 
     private void intView() {
-        btSetCellParam = (Button) findViewById(R.id.btSetCellParam);
+        btSetCellParam = findViewById(R.id.btSetCellParam);
         btSetCellParam.setOnClickListener(setCellParamClick);
-        btSetChannelCfg = (Button)findViewById(R.id.btSetChannelCfg);
+        btSetChannelCfg = findViewById(R.id.btSetChannelCfg);
         btSetChannelCfg.setOnClickListener(setChannelCfgClick);
-        btUpdateTac = (Button)findViewById(R.id.btUpdateTac);
+        btUpdateTac = findViewById(R.id.btUpdateTac);
         btUpdateTac.setOnClickListener(updateTacClick);
-        btRebootDevice = (Button)findViewById(R.id.btRebootDevice);
+        btRebootDevice = findViewById(R.id.btRebootDevice);
         btRebootDevice.setOnClickListener(rebootDeviceClick);
-        btRefreshParam = (Button)findViewById(R.id.btRefreshParam);
+        btRefreshParam = findViewById(R.id.btRefreshParam);
         btRefreshParam.setOnClickListener(refreshParamClick);
 
-        rgPowerLevel = (RadioGroup) findViewById(R.id.rgPowerLevel);
-        rbPowerHigh = (RadioButton) findViewById(R.id.rbPowerHigh);
-        rbPowerMedium = (RadioButton) findViewById(R.id.rbPowerMedium);
-        rbPowerLow = (RadioButton) findViewById(R.id.rbPowerLow);
+        rgPowerLevel = findViewById(R.id.rgPowerLevel);
+        rbPowerHigh = findViewById(R.id.rbPowerHigh);
+        rbPowerMedium = findViewById(R.id.rbPowerMedium);
+        rbPowerLow = findViewById(R.id.rbPowerLow);
         lastPowerPress = rbPowerHigh;
         rgPowerLevel.setOnCheckedChangeListener(powerLevelListener);
 
-        rgDetectCarrierOperate = (RadioGroup) findViewById(R.id.rgDetectCarrierOperate);
-        rbDetectAll = (RadioButton) findViewById(R.id.rbDetectAll);
-        rbCTJ = (RadioButton) findViewById(R.id.rbCTJ);
-        rbCTU = (RadioButton) findViewById(R.id.rbCTU);
-        rbCTC = (RadioButton) findViewById(R.id.rbCTC);
+        rgDetectCarrierOperate = findViewById(R.id.rgDetectCarrierOperate);
+        rbDetectAll = findViewById(R.id.rbDetectAll);
+        rbCTJ = findViewById(R.id.rbCTJ);
+        rbCTU = findViewById(R.id.rbCTU);
+        rbCTC = findViewById(R.id.rbCTC);
         lastDetectCarrierOperatePress = rbDetectAll;
         rgDetectCarrierOperate.setOnCheckedChangeListener(detectCarrierOperateListener);
 
-        cbRFSwitch = (CheckBox) findViewById(R.id.cbRFSwitch);
+        cbRFSwitch = findViewById(R.id.cbRFSwitch);
         cbRFSwitch.setOnCheckedChangeListener(rfCheckChangeListener);
 
-        layoutChannelList = (LinearLayout) findViewById(R.id.id_channel_list);
+        layoutChannelList = findViewById(R.id.id_channel_list);
 
         mProgressDialog = new MySweetAlertDialog(activity, MySweetAlertDialog.PROGRESS_TYPE);
         mProgressDialog.setTitleText("Loading...");

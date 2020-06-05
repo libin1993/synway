@@ -146,17 +146,17 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
     }
 
     private void initView() {
-        lvWhitelistInfo = (ListView) findViewById(R.id.lvWhitelistInfo);
-        btAddWhitelist = (Button) findViewById(R.id.btAddWhitelist);
+        lvWhitelistInfo = findViewById(R.id.lvWhitelistInfo);
+        btAddWhitelist = findViewById(R.id.btAddWhitelist);
         btAddWhitelist.setOnClickListener(addWhitelistClick);
 
-        btImportWhitelist = (Button) findViewById(R.id.btImportWhitelist);
+        btImportWhitelist = findViewById(R.id.btImportWhitelist);
         btImportWhitelist.setOnClickListener(importWhitelistClick);
 
-        btExportWhitelist = (Button) findViewById(R.id.btExportWhitelist);
+        btExportWhitelist = findViewById(R.id.btExportWhitelist);
         btExportWhitelist.setOnClickListener(exortWhitelistClick);
 
-        btClearWhitelist = (Button) findViewById(R.id.btClearWhitelist);
+        btClearWhitelist = findViewById(R.id.btClearWhitelist);
         btClearWhitelist.setOnClickListener(clearWhitelistClick);
 
         mAdapter = new WhitelistAdapter(activity);
@@ -183,7 +183,7 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
             }
         });
 
-        tvGetImsi = (TextView) whitelistItemPopView.findViewById(R.id.tvGetImsi);
+        tvGetImsi = whitelistItemPopView.findViewById(R.id.tvGetImsi);
         tvGetImsi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -304,11 +304,9 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
 
         //判断手机号
         if (readline.split(",").length >= 2) {
-            if (!"".equals(readline.split(",")[1]) &&
-                    (readline.split(",")[1].length() != 11 ||
-                            !isNumeric(readline.split(",")[1]))) {
-                return false;
-            }
+            return "".equals(readline.split(",")[1]) ||
+                    (readline.split(",")[1].length() == 11 &&
+                            isNumeric(readline.split(",")[1]));
         }
 
         return true;
@@ -456,6 +454,9 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
                                 continue;
                             }
 
+                            if (TextUtils.isEmpty(remark) &&remark.length() > 10){
+                                remark = remark.substring(0,8);
+                            }
                             listValidWhite.add(new WhiteListInfo(imsiInLine, msisdnInLine, remark));
                             validImportNum++;
                             if (validImportNum > 10000)  //白名单最大10000
@@ -472,8 +473,8 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
 
                     new MySweetAlertDialog(activity, MySweetAlertDialog.TEXT_SUCCESS)
                             .setTitleText("导入完成")
-                            .setContentText("成功导入" + String.valueOf(validImportNum) + "个名单，忽略" +
-                                    String.valueOf(repeatNum) + "个重复的名单，忽略" + String.valueOf(errorFormatNum) + "行格式或号码错误")
+                            .setContentText("成功导入" + validImportNum + "个名单，忽略" +
+                                    repeatNum + "个重复的名单，忽略" + errorFormatNum + "行格式或号码错误")
                             .show();
 
                     updateListFromDB();

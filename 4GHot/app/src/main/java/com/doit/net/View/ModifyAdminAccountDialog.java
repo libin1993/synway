@@ -53,11 +53,11 @@ public class ModifyAdminAccountDialog extends Dialog {
         mView = inflater.inflate(R.layout.layout_modify_admin_account, null);
         setCancelable(false);
 
-        etAccount = (EditText)mView.findViewById(R.id.etAccount);
+        etAccount = mView.findViewById(R.id.etAccount);
         etAccount.setText(modifyAccount);
-        etPassword = (EditText)mView.findViewById(R.id.etPassword);
+        etPassword = mView.findViewById(R.id.etPassword);
         etPassword.setText(modifyPassword);
-        btSave = (Button)mView.findViewById(R.id.btSave);
+        btSave = mView.findViewById(R.id.btSave);
         btSave.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -78,7 +78,7 @@ public class ModifyAdminAccountDialog extends Dialog {
         });
 
 
-        btCancel = (Button)mView.findViewById(R.id.btCancel);
+        btCancel = mView.findViewById(R.id.btCancel);
         btCancel.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
