@@ -55,6 +55,7 @@ public class NameListFragment extends BaseFragment implements IHandlerFinish {
     private BlacklistAdapter blacklistAdapter;
     private EditText etSearchKeyword;
     private Button btSearch;
+    private Button btnAddBlacklist;
     private Button btImportNamelist;
     private Button btExportNamelist;
     private Button btClearNamelist;
@@ -72,24 +73,20 @@ public class NameListFragment extends BaseFragment implements IHandlerFinish {
     public NameListFragment() {
     }
 
-    private View rootView;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if (null != rootView) {
-            ViewGroup parent = (ViewGroup) rootView.getParent();
-            if (null != parent) {
-                parent.removeView(rootView);
-            }
-            return rootView;
-        }
-        rootView = inflater.inflate(R.layout.doit_layout_name_list, container, false);
+
+        View rootView = inflater.inflate(R.layout.doit_layout_name_list, container, false);
 
         dbManager = UCSIDBManager.getDbManager();
         mListView = rootView.findViewById(R.id.listview);
         etSearchKeyword = rootView.findViewById(R.id.editText_keyword);
         btSearch = rootView.findViewById(R.id.button_search);
         btSearch.setOnClickListener(searchClick);
+        btnAddBlacklist = rootView.findViewById(R.id.button_add);
+        btnAddBlacklist.setOnClickListener(addClick);
         btImportNamelist = rootView.findViewById(R.id.btImportNamelist);
         btImportNamelist.setOnClickListener(importNamelistClick);
         btExportNamelist = rootView.findViewById(R.id.btExportNamelist);
@@ -118,18 +115,7 @@ public class NameListFragment extends BaseFragment implements IHandlerFinish {
         refreshNamelist();
     }
 
-    @Event(value = R.id.button_add,type = View.OnClickListener.class)
-    private void addClick(View view){
-        NameListEditDialog dialog = new NameListEditDialog(getActivity());
-        dialog.show();
-        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                //btSearch.performClick();如果此时输入框里有东西，应该是刷不出来的0.o
-                refreshNamelist();
-            }
-        });
-    }
+
 
     private void refreshNamelist() {
         try {
@@ -183,6 +169,22 @@ public class NameListFragment extends BaseFragment implements IHandlerFinish {
             mHandler.sendEmptyMessage(UPDATE_NAMELIST);
         }
     };
+
+    View.OnClickListener addClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            NameListEditDialog dialog = new NameListEditDialog(getActivity());
+            dialog.show();
+            dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    //btSearch.performClick();如果此时输入框里有东西，应该是刷不出来的0.o
+                    refreshNamelist();
+                }
+            });
+        }
+    };
+
 
     View.OnClickListener exportNamelistClick = new View.OnClickListener(){
         @Override

@@ -2,6 +2,8 @@ package com.doit.net.adapter;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -109,13 +111,17 @@ public class BlacklistAdapter extends BaseSwipeAdapter {
 
         TextView BlacklistInfo = convertView.findViewById(R.id.text_data);
 
-        final DBBlackInfo resp = ueidList.get(position);
+        DBBlackInfo resp = ueidList.get(position);
         String name = "";
         if(!StringUtils.isBlank(resp.getName())){
-            name = mContext.getString(R.string.lab_name)+resp.getName()+"        ";
+            name = mContext.getString(R.string.lab_name)+resp.getName()+"      ";
         }
-        BlacklistInfo.setText(name +"IMSI:"+resp.getImsi()+ "\n" +"备注:" + (resp.getRemark()==null?"":resp.getRemark())+
-                "\n"+ mContext.getString(R.string.lab_create_date)+ DateUtils.getDateByFormat(resp.getCreateDate(),"yyyy-MM-dd HH:mm:ss"));
+        String remark = "";
+        if (!TextUtils.isEmpty(resp.getRemark())){
+            remark = "备注："+resp.getRemark()+"\n";
+        }
+        BlacklistInfo.setText(name +"IMSI："+resp.getImsi()+ "\n" +remark+ mContext.getString(R.string.lab_create_date)
+                + DateUtils.getDateByFormat(resp.getCreateDate(),"yyyy-MM-dd HH:mm:ss"));
         BlacklistInfo.setTag(position);
 
 
@@ -139,6 +145,7 @@ public class BlacklistAdapter extends BaseSwipeAdapter {
         }else{
             convertView.findViewById(R.id.add_to_localtion).setVisibility(View.GONE);
         }
+
     }
 
     @Override

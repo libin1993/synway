@@ -107,7 +107,6 @@ public class LTE_PT_PARAM {
         sendPackage.setByteSubContent(null);
         //设置校验位
         sendPackage.setPackageCheckNum(sendPackage.getCheckNum());
-
         //获取整体的包
         byte[] tempSendBytes = sendPackage.getPackageContent();
         return LTESendManager.sendData(tempSendBytes);

@@ -3,6 +3,7 @@ package com.doit.net.View;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -71,6 +72,11 @@ public class ModifyNamelistInfoDialog extends Dialog {
                 String imsi =  etIMSI.getText().toString();
                 String name =  etName.getText().toString();
                 String remark =  etRemake.getText().toString();
+
+                if (TextUtils.isEmpty(imsi) || imsi.length() <15){
+                    ToastUtils.showMessage("请输入15位IMSI");
+                    return;
+                }
 
                 try {
                     DbManager db = UCSIDBManager.getDbManager();

@@ -3,6 +3,7 @@ package com.doit.net.View;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -55,10 +56,11 @@ public class NameListEditDialog extends Dialog {
                 String name = etName.getText().toString();
                 String remake = etRemark.getText().toString();
 
-                if(imsi.length() != 15){
-                    ToastUtils.showMessage(getContext(),R.string.tip_09);
+                if (TextUtils.isEmpty(imsi) || imsi.length() <15){
+                    ToastUtils.showMessage("请输入15位IMSI");
                     return;
                 }
+
 
                 EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.ADD_NAMELIST+imsi+"+"+name);
                 AddToLocalBlackListener listener = new AddToLocalBlackListener(getContext(),name,imsi,remake);

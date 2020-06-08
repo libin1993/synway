@@ -132,7 +132,7 @@ public class UeidListViewAdapter extends BaseSwipeAdapter {
 
     private void checkBlackWhiteList(UeidBean resp,TextView tvContent) {
 
-        String content = "IMSI:" + resp.getImsi() + "                " + "制式: " + UtilOperator.getOperatorNameCH(resp.getImsi()) + "\n";
+        String content = "IMSI：" + resp.getImsi() + "                " + "制式: " + UtilOperator.getOperatorNameCH(resp.getImsi()) + "\n";
 
         //优先先检查是否为黑名单
         if (VersionManage.isPoliceVer()) {
@@ -142,16 +142,26 @@ public class UeidListViewAdapter extends BaseSwipeAdapter {
             } catch (DbException e) {
                 LogUtils.log("查询黑名单异常" + e.getMessage());
             }
+
+            content += mContext.getString(R.string.ueid_last_rpt_time) + resp.getRptTime();
             if (dbBlackInfo != null) {
-                String name = "";
-                if (!StringUtils.isBlank(dbBlackInfo.getName())) {
-                    name = "\n" +mContext.getString(R.string.lab_name) + dbBlackInfo.getName();
+                String name = dbBlackInfo.getName();
+                String remark = dbBlackInfo.getRemark();
+
+                if (!TextUtils.isEmpty(name)) {
+                    content += "\n"+mContext.getString(R.string.lab_name)+name + "         ";
                 }
 
-                content += mContext.getString(R.string.ueid_last_rpt_time) + resp.getRptTime() + name;
+                if (!TextUtils.isEmpty(remark)){
+                    if (!TextUtils.isEmpty(name)){
+                        content += remark;
+                    }else {
+                        content += "\n"+remark;
+                    }
+                }
+
                 tvContent.setTextColor(MyApplication.mContext.getResources().getColor(R.color.red));
             }else {
-                content += mContext.getString(R.string.ueid_last_rpt_time) + resp.getRptTime();
                 tvContent.setTextColor(MyApplication.mContext.getResources().getColor(R.color.white));
             }
             tvContent.setText(content);
@@ -163,7 +173,7 @@ public class UeidListViewAdapter extends BaseSwipeAdapter {
             try {
                 if (!"".equals(resp.getImsi())) {
 
-                    content += resp.getRptTime() + "       " + "次数:" + resp.getRptTimes() + "       "
+                    content += resp.getRptTime() + "       " + "次数：" + resp.getRptTimes() + "       "
                             + mContext.getString(R.string.ueid_last_intensity) + resp.getSrsp();
                     WhiteListInfo info = dbManager.selector(WhiteListInfo.class).where("imsi", "=", resp.getImsi()).findFirst();
                     if (info != null) {

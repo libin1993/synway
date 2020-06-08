@@ -25,7 +25,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/item_selector"
-        android:padding="5dp">
+        android:padding="5dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/position"
@@ -37,7 +39,8 @@
             android:id="@+id/text_data"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:tag="Hover" />
+            android:tag="Hover"
+            android:gravity="center"/>
 
         <View
             android:layout_width="match_parent"
