@@ -3,8 +3,7 @@ package com.doit.net.Protocol;
 /**
  * Created by Zxc on 2018/10/18.
  */
-public class LTEReceivePackage
-{
+public class LTEReceivePackage {
 	short packageLength;//长 2字节
 	short packageCheckNum;//校验位2字节
 	short packageSequence;//包的序号2字节

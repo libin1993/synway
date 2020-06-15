@@ -76,18 +76,10 @@ public class LocationFragment extends BaseFragment implements View.OnClickListen
     public LocationFragment() {
     }
 
-//    private View rootView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//        if (null != rootView) {
-//            ViewGroup parent = (ViewGroup) rootView.getParent();
-//            if (null != parent) {
-//                parent.removeView(rootView);
-//            }
-//            refreshPage();
-//            return rootView;
-//        }
+
 
         View rootView = inflater.inflate(R.layout.doit_layout_location, container, false);
         tvLocatingImsi = rootView.findViewById(R.id.tvLocatingImsi);
