@@ -317,7 +317,7 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
         public void onClick(View v) {
             File file = new File(FILE_PATH);
             if (!file.exists()) {
-                ToastUtils.showMessageLong(WhitelistManagerActivity.this, "未找到白名单，请确认已将升级包放在\"手机存储/4GHotspot\"目录下");
+                ToastUtils.showMessageLong(WhitelistManagerActivity.this, "未找到白名单，请确认已将白名单放在\"手机存储/4GHotspot\"目录下");
                 return;
             }
 
@@ -354,6 +354,8 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
             RecyclerView rvFile = dialogView.findViewById(R.id.rv_file);
             Button btnCancel = dialogView.findViewById(R.id.btn_cancel_import);
             Button btnConfirm = dialogView.findViewById(R.id.btn_confirm_import);
+            TextView tvTitle = dialogView.findViewById(R.id.tv_name_list);
+            tvTitle.setText("请选择白名单文件");
 
 
             //设置Popup具体参数
@@ -454,7 +456,7 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
                                 continue;
                             }
 
-                            if (TextUtils.isEmpty(remark) &&remark.length() > 10){
+                            if (!TextUtils.isEmpty(remark) &&remark.length() > 8){
                                 remark = remark.substring(0,8);
                             }
                             listValidWhite.add(new WhiteListInfo(imsiInLine, msisdnInLine, remark));

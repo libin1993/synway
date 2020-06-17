@@ -33,10 +33,11 @@ import static cn.pedant.SweetAlert.SweetAlertDialog.WARNING_TYPE;
 public class SystemSettingActivity extends BaseActivity {
     private Activity activity = this;
     public static String LOC_PREF_KEY = "LOC_PREF_KEY";
-
+    public static String SET_STATIC_IP = "STATIC_IP";
     private LSettingItem tvOnOffLocation;
     private LSettingItem tvIfAutoOpenRF;
     private LSettingItem tvGeneralAdmin;
+    private LSettingItem tvStaticIp;
     //private SettingItemClickEvent settingItemLocSwitch = new SettingItemClickEvent();
 
     private BootstrapButton btSetFan;
@@ -81,6 +82,11 @@ public class SystemSettingActivity extends BaseActivity {
             tvOnOffLocation.setChecked(false);
         }
 
+        tvStaticIp = findViewById(R.id.tv_static_ip);
+        tvStaticIp.setChecked(PrefManage.getBoolean(SET_STATIC_IP,false));
+        tvStaticIp.setOnLSettingCheckedChange(setStaticIpSwitch);
+        tvStaticIp.setmOnLSettingItemClick(setStaticIpSwitch);
+
         if (CacheManager.checkDevice(activity)){
             etMaxWindSpeed.setText(CacheManager.getLteEquipConfig().getMaxFanSpeed());
             etMinWindSpeed.setText(CacheManager.getLteEquipConfig().getMinFanSpeed());
@@ -117,6 +123,21 @@ public class SystemSettingActivity extends BaseActivity {
             ProtocolManager.setAutoRF(tvIfAutoOpenRF.isChecked());
 
             ToastUtils.showMessage(activity, "下次开机生效");
+        }
+    };
+
+    private LSettingItem.OnLSettingItemClick setStaticIpSwitch = new LSettingItem.OnLSettingItemClick(){
+        @Override
+        public void click(LSettingItem item) {
+            if (tvStaticIp.isChecked()){
+                PrefManage.setBoolean(SET_STATIC_IP, true);
+                ToastUtils.showMessage(activity, "已开启自动连接，无需配置WIFI静态IP，以后将自动连接设备");
+            }else {
+                PrefManage.setBoolean(SET_STATIC_IP, false);
+                ToastUtils.showMessageLong(activity, "已关闭自动连接，请配置WIFI静态IP，否则将无法连接设备");
+            }
+
+
         }
     };
 

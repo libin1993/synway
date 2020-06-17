@@ -122,6 +122,16 @@ public class ToastUtils {
     }
 
     /**
+     * Toast发送消息，默认Toast.LENGTH_LONG
+     * @author WikerYong   Email:<a href="#">yw_312@foxmail.com</a>
+     * @version 2012-5-22 上午11:13:10
+     * @param msg
+     */
+    public static void showMessageLong(String msg) {
+        showMessage(MyApplication.mContext, msg, Toast.LENGTH_LONG);
+    }
+
+    /**
      * Toast发送消息，默认Toast.LENGTH_SHORT
      * @author WikerYong   Email:<a href="#">yw_312@foxmail.com</a>
      * @version 2012-5-22 上午11:13:35

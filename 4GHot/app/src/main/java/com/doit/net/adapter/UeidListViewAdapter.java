@@ -184,7 +184,11 @@ public class UeidListViewAdapter extends BaseSwipeAdapter {
                         }
 
                         if (!TextUtils.isEmpty(remark)){
-                            content += remark;
+                            if (!TextUtils.isEmpty(msisdn)){
+                                content += remark;
+                            }else {
+                                content += "\n"+remark;
+                            }
                         }
 
                         tvContent.setTextColor(MyApplication.mContext.getResources().getColor(R.color.forestgreen));

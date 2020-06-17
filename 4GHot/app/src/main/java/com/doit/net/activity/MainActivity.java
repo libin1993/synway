@@ -96,6 +96,7 @@ import java.util.TimerTask;
 
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+import static com.doit.net.activity.SystemSettingActivity.SET_STATIC_IP;
 
 @SuppressLint("NewApi")
 public class MainActivity extends BaseActivity implements IHandlerFinish, TextToSpeech.OnInitListener, EventAdapter.EventCall {
@@ -204,9 +205,6 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
     }
 
     private void initNetWork() {
-//        ServerSocketManager.getInstance().setUIServerSocketListener(new ServerSocketChange());
-//        ServerSocketManager.getInstance().newServerSocket(Integer.parseInt(NetConfig.MONITOR_PORT));
-//        ServerSocketManager.getInstance().startMainListener(NetConfig.MONITOR_PORT);
 
         ServerSocketUtils.getInstance().startTCP(new OnSocketChangedListener() {
             @Override
@@ -655,10 +653,6 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
 
             initUDP();  //重连wifi后udp发送ip、端口
 
-
-//            initGSM();
-
-
         } else {
             CacheManager.isWifiConnected = false;
             LogUtils.log("wifi state change——disconnected");
@@ -704,6 +698,9 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
      * 创建DatagramSocket
      */
     private void initUDP(){
+        if (!PrefManage.getBoolean(SET_STATIC_IP,false)){     //是否设置自动连接
+            return;
+        }
 
         Timer timer = new Timer();
         TimerTask timerTask = new TimerTask() {

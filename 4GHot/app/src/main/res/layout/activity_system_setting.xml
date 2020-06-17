@@ -33,6 +33,14 @@
             app:rightStyle="iconSwitch" />
 
         <com.doit.net.Utils.LSettingItem
+            android:id="@+id/tv_static_ip"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            app:isShowLeftIcon="false"
+            app:leftText="自动连接设备"
+            app:rightStyle="iconSwitch" />
+
+        <com.doit.net.Utils.LSettingItem
             android:id="@+id/tvGeneralAdmin"
             android:layout_width="match_parent"
             android:layout_height="50dp"
