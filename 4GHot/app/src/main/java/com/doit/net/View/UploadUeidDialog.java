@@ -75,11 +75,11 @@ public class UploadUeidDialog extends Dialog {
             String url = uploadUrl.getText().toString();
 
             if(StringUtils.isBlank(nameVal)){
-                ToastUtils.showMessageLong(getContext(),R.string.tip_please_input_name);
+                ToastUtils.showMessageLong(R.string.tip_please_input_name);
                 return;
             }
             if(StringUtils.isBlank(url) || !url.startsWith("http")){
-                ToastUtils.showMessageLong(getContext(),R.string.tip_please_input_right_url);
+                ToastUtils.showMessageLong(R.string.tip_please_input_right_url);
                 return;
             }
 
@@ -87,7 +87,7 @@ public class UploadUeidDialog extends Dialog {
                     .orderBy("id", true)
                     .findAll();
             if(dbUeidInfos == null || dbUeidInfos.size()<=0){
-                ToastUtils.showMessageLong(getContext(),R.string.tip_no_upload_data);
+                ToastUtils.showMessageLong(R.string.tip_no_upload_data);
                 return;
             }
             pDialog.show();

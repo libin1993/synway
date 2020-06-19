@@ -85,7 +85,7 @@ public class ModifyNamelistInfoDialog extends Dialog {
                             .findFirst();
 
                     if (tmpNamelist == null){
-                        ToastUtils.showMessage(getContext(),R.string.modify_namelist_fail);
+                        ToastUtils.showMessage(R.string.modify_namelist_fail);
                         return;
                     }
 
@@ -100,7 +100,7 @@ public class ModifyNamelistInfoDialog extends Dialog {
                         db.update(tmpNamelist, "name", "remark");
                     }
 
-                    ToastUtils.showMessage(getContext(),R.string.modify_namelist_success);
+                    ToastUtils.showMessage(R.string.modify_namelist_success);
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.MODIFY_NAMELIST+"修改名单"+modifyName+"为:"+ etName.getText().toString()
                             + "+" + etIMSI.getText().toString() + "+" + etRemake.getText().toString());
                 } catch (DbException e) {

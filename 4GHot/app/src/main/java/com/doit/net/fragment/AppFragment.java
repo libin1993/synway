@@ -1,5 +1,7 @@
 package com.doit.net.fragment;
 
+import com.doit.net.Event.EventAdapter;
+import com.doit.net.Utils.FileUtils;
 import com.doit.net.View.ClearHistoryTimeDialog;
 import com.doit.net.activity.CustomFcnActivity;
 import com.doit.net.activity.DeviceParamActivity;
@@ -19,7 +21,6 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.telephony.TelephonyManager;
@@ -35,9 +36,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.doit.net.base.BaseFragment;
-import com.doit.net.Event.IHandlerFinish;
 import com.doit.net.Protocol.ProtocolManager;
-import com.doit.net.Event.UIEventManager;
 import com.doit.net.Model.AccountManage;
 import com.doit.net.Model.CacheManager;
 import com.doit.net.Model.PrefManage;
@@ -62,7 +61,7 @@ import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-public class AppFragment extends BaseFragment implements IHandlerFinish {
+public class AppFragment extends BaseFragment implements EventAdapter.EventCall {
 
     private MySweetAlertDialog mProgressDialog;
 
@@ -119,7 +118,6 @@ public class AppFragment extends BaseFragment implements IHandlerFinish {
     private ArrayAdapter upgradePackageAdapter;
     private LinearLayout layoutUpgradePackage;
 
-    private View rootView;
     private String[] playTypes;
 
     //handler消息
@@ -133,17 +131,9 @@ public class AppFragment extends BaseFragment implements IHandlerFinish {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-//        if (null != rootView) {
-//            ViewGroup parent = (ViewGroup) rootView.getParent();
-//            if (null != parent) {
-//                parent.removeView(rootView);
-//            }
-//            return rootView;
-//        }
+        View rootView = inflater.inflate(R.layout.doit_layout_app, container, false);
 
-        rootView = inflater.inflate(R.layout.doit_layout_app, container, false);
-
-        UIEventManager.register(UIEventManager.RPT_UPGRADE_STATUS, this);
+        EventAdapter.register(EventAdapter.UPGRADE_STATUS, this);
 
         return rootView;
     }
@@ -239,7 +229,7 @@ public class AppFragment extends BaseFragment implements IHandlerFinish {
                     LicenceDialog licenceDialog = new LicenceDialog(getActivity());
                     licenceDialog.show();
                 } else {
-                    ToastUtils.showMessage(getActivity(), "获取机器码中，请稍等");
+                    ToastUtils.showMessage("获取机器码中，请稍等");
                 }
 
             }
@@ -365,18 +355,17 @@ public class AppFragment extends BaseFragment implements IHandlerFinish {
     View.OnClickListener upgradeListner = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            final String FTP_SERVER_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/4GHotspot";
-            final String UPGRADE_PACKAGE_PATH = "/upgrade/";
+           String UPGRADE_PACKAGE_PATH = "upgrade/";
 
-            File file = new File(FTP_SERVER_PATH + UPGRADE_PACKAGE_PATH);
+            File file = new File(FileUtils.ROOT_PATH + UPGRADE_PACKAGE_PATH);
             if (!file.exists()) {
-                ToastUtils.showMessageLong(getContext(), "未找到升级包，请确认已将升级包放在\"手机存储/4GHotspot/upgrade\"目录下");
+                ToastUtils.showMessageLong("未找到升级包，请确认已将升级包放在\"手机存储/"+FileUtils.ROOT_DIRECTORY+"/upgrade\"目录下");
                 return;
             }
 
             File[] files = file.listFiles();
             if (files == null || files.length == 0) {
-                ToastUtils.showMessageLong(getContext(), "未找到升级包，请确认已将升级包放在\"手机存储/4GHotspot/upgrade\"目录下");
+                ToastUtils.showMessageLong("未找到升级包，请确认已将升级包放在\"手机存储/"+FileUtils.ROOT_DIRECTORY+"/upgrade\"目录下");
                 return;
             }
 
@@ -389,7 +378,7 @@ public class AppFragment extends BaseFragment implements IHandlerFinish {
                     fileList.add(tmpFileName);
             }
             if (fileList.size() == 0) {
-                ToastUtils.showMessageLong(getContext(), "文件错误，升级包必须是以\".tgz\"为后缀的文件");
+                ToastUtils.showMessageLong("文件错误，升级包必须是以\".tgz\"为后缀的文件");
                 return;
             }
 
@@ -411,9 +400,9 @@ public class AppFragment extends BaseFragment implements IHandlerFinish {
                             .setConfirmClickListener(new MySweetAlertDialog.OnSweetClickListener() {
                                 @Override
                                 public void onClick(MySweetAlertDialog sweetAlertDialog) {
-                                    String md5 = getPackageMD5(FTP_SERVER_PATH + UPGRADE_PACKAGE_PATH + choosePackage);
+                                    String md5 = getPackageMD5(FileUtils.ROOT_PATH+ UPGRADE_PACKAGE_PATH + choosePackage);
                                     if ("".equals(md5)) {
-                                        ToastUtils.showMessage(getContext(), "文件校验失败，升级取消！");
+                                        ToastUtils.showMessage("文件校验失败，升级取消！");
                                         sweetAlertDialog.dismiss();
                                     } else {
                                         LogUtils.log("MD5：" + md5);
@@ -458,12 +447,11 @@ public class AppFragment extends BaseFragment implements IHandlerFinish {
         mHandler.sendMessage(msg);
     }
 
+
     @Override
-    public void handlerFinish(String key) {
-        if (key.equals(UIEventManager.RPT_UPGRADE_STATUS)) {
-            Message msg = new Message();
-            msg.what = UPGRADE_STATUS_RPT;
-            mHandler.sendMessage(msg);
+    public void call(String key, Object val) {
+        if (key.equals(EventAdapter.UPGRADE_STATUS)) {
+            mHandler.sendEmptyMessage(UPGRADE_STATUS_RPT);
         }
     }
 }

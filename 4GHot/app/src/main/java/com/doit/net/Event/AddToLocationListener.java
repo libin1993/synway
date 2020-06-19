@@ -52,19 +52,19 @@ public class AddToLocationListener implements View.OnClickListener
 
             if (CacheManager.getLocState()){
                 if (CacheManager.getCurrentLoction().getImsi().equals(imsi)){
-                    ToastUtils.showMessage(mContext, "该号码正在搜寻中");
+                    ToastUtils.showMessage( "该号码正在搜寻中");
                     return;
                 }else{
                     EventAdapter.call(EventAdapter.SHOW_PROGRESS,8000);  //防止快速频繁更换定位目标
                     CacheManager.updateLoc(imsi);
                     CacheManager.changeLocTarget(imsi);
-                    ToastUtils.showMessage(mContext, "开始新的搜寻");
+                    ToastUtils.showMessage( "开始新的搜寻");
                 }
             }else{
                 CacheManager.updateLoc(imsi);
                 CacheManager.startLoc(imsi);
                 ProtocolManager.openAllRf();
-                ToastUtils.showMessage(mContext, "搜寻开始");
+                ToastUtils.showMessage("搜寻开始");
             }
 
             TurnToLocInterface();

@@ -2,10 +2,13 @@ package com.doit.net.application;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.Environment;
 import android.support.multidex.MultiDex;
 
 import com.doit.net.Model.PrefManage;
 import com.doit.net.Utils.CipherUtils;
+import com.doit.net.Utils.LogUtils;
+import com.doit.net.Utils.MyExceptionHandler;
 
 import org.xutils.x;
 
@@ -32,7 +35,8 @@ public class MyApplication extends Application {
         PrefManage.init(this);
         CipherUtils.init("");
 
-
+        //异常捕获
+        Thread.setDefaultUncaughtExceptionHandler(new MyExceptionHandler());
     }
 
     /**

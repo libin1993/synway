@@ -1,5 +1,7 @@
 package com.doit.net.Utils;
 
+import android.location.LocationManager;
+
 import java.security.Key;
 
 import javax.crypto.Cipher;
@@ -12,6 +14,7 @@ public class CipherUtils {
     private static String defaultSecretKey = "syn"; //默认密钥
     private static Cipher encryptCipher = null; //加密器
     private static Cipher decryptCipher = null; //解密器
+
 
 
     /**

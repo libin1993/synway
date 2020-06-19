@@ -63,7 +63,7 @@ public class ModifyAdminAccountDialog extends Dialog {
             public void onClick(View v) {
                 AccountManage.saveAccoutToPref(etAccount.getText().toString(), etPassword.getText().toString());
                 if (AccountManage.UpdateAccountToDevice()){
-                    ToastUtils.showMessage(getContext(),R.string.modify_admin_success);
+                    ToastUtils.showMessage(R.string.modify_admin_success);
                 }else{
                     new SweetAlertDialog(getContext(), SweetAlertDialog.ERROR_TYPE)
                             .setTitleText(getContext().getString(R.string.modify_admin_fail))

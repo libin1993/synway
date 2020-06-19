@@ -125,7 +125,7 @@ public class BaiduAudio {
 
     private void initialEnv() {
         if (mSampleDirPath == null) {
-            String sdcardPath = Environment.getExternalStorageDirectory().toString();
+            String sdcardPath = Environment.getExternalStorageDirectory().getAbsolutePath();
             mSampleDirPath = sdcardPath + "/" + SAMPLE_DIR_NAME;
         }
         makeDir(mSampleDirPath);

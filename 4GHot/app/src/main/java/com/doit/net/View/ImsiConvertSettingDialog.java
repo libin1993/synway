@@ -96,13 +96,13 @@ public class ImsiConvertSettingDialog extends Dialog {
                 final String password = etPassword.getText().toString();
 
                 if ("".equals(serverAddress)){
-                    ToastUtils.showMessage(getContext(), "请输入服务器地址！");
+                    ToastUtils.showMessage( "请输入服务器地址！");
                     return;
                 } else if (username.equals("")){
-                    ToastUtils.showMessage(getContext(), "请输入账号！");
+                    ToastUtils.showMessage("请输入账号！");
                     return;
                 }else if ("".equals(password)){
-                    ToastUtils.showMessage(getContext(), "请输入密码！");
+                    ToastUtils.showMessage("请输入密码！");
                     return;
                 }
 

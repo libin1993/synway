@@ -27,13 +27,7 @@ public class StartPageFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//        if (null != rootView) {
-//            ViewGroup parent = (ViewGroup) rootView.getParent();
-//            if (null != parent) {
-//                parent.removeView(rootView);
-//            }
-//            return rootView;
-//        }
+
         View rootView = inflater.inflate(R.layout.start_page_fragment, null);
         ivPowerStart = rootView.findViewById(R.id.ivPowerStart);
         initWidget();

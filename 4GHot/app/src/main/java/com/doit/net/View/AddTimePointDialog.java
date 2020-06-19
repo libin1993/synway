@@ -72,7 +72,7 @@ public class AddTimePointDialog extends Dialog {
                 String remark = etRemark.getText().toString();
 
                 if ("".equals(timePoint)){
-                    ToastUtils.showMessage(getContext(), "请设定时间！");
+                    ToastUtils.showMessage( "请设定时间！");
                     return;
                 }
 

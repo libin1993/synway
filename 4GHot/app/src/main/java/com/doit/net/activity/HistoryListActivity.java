@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
@@ -12,7 +11,6 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -26,12 +24,11 @@ import android.widget.TextView;
 
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.util.Attributes;
+import com.doit.net.Utils.FileUtils;
 import com.doit.net.adapter.HistoryListViewAdapter;
 import com.doit.net.View.MyTimePickDialog;
 import com.doit.net.base.BaseActivity;
 import com.doit.net.bean.UeidBean;
-import com.doit.net.Event.IHandlerFinish;
-import com.doit.net.Event.UIEventManager;
 import com.doit.net.Model.BlackBoxManger;
 import com.doit.net.Event.EventAdapter;
 import com.doit.net.Model.DBUeidInfo;
@@ -58,7 +55,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class HistoryListActivity extends BaseActivity implements IHandlerFinish {
+public class HistoryListActivity extends BaseActivity implements EventAdapter.EventCall {
 
     private final Activity activity = this;
     private ListView mListView;
@@ -71,8 +68,6 @@ public class HistoryListActivity extends BaseActivity implements IHandlerFinish 
     private DbManager dbManager;
 
     private List<DBUeidInfo> dbUeidInfos = new ArrayList<>();
-
-    private final String EXPORT_PATH = Environment.getExternalStorageDirectory()+"/4GHotspot/";
 
     private PopupWindow ueidItemPop;
     View ueidItemPopView;
@@ -153,7 +148,7 @@ public class HistoryListActivity extends BaseActivity implements IHandlerFinish 
             public void onClick(View v) {
                 LogUtils.log("点击了："+selectedUeidItem.getImsi());
                 if (!ImsiMsisdnConvert.isAuthenticated()){
-                    ToastUtils.showMessageLong(activity, "尚未通过认证，请先进入“号码翻译设置”进行认证");
+                    ToastUtils.showMessageLong( "尚未通过认证，请先进入“号码翻译设置”进行认证");
                     ueidItemPop.dismiss();
                     return;
                 }
@@ -170,7 +165,7 @@ public class HistoryListActivity extends BaseActivity implements IHandlerFinish 
             }
         });
 
-        UIEventManager.register(UIEventManager.KEY_RESEARCH_HISTORY_LIST,this);
+        EventAdapter.register(EventAdapter.RESEARCH_HISTORY_LIST,this);
     }
 
     private void test() {
@@ -329,13 +324,13 @@ public class HistoryListActivity extends BaseActivity implements IHandlerFinish 
             String endTime = etEndTime.getText().toString();
 
             if (("".equals(startTime) && !"".equals(endTime)) || ((!"".equals(startTime) && "".equals(endTime)))){
-                ToastUtils.showMessage(activity, "未设置开始时间及结束时间！");
+                ToastUtils.showMessage("未设置开始时间及结束时间！");
                 return;
             } else if (!"".equals(startTime) && startTime.equals(endTime)){
-                ToastUtils.showMessage(activity, "开始时间和结束时间一样，请重新设置！");
+                ToastUtils.showMessage("开始时间和结束时间一样，请重新设置！");
                 return;
             } else if (!"".equals(startTime) && !"".equals(endTime) && !isStartEndTimeOrderRight(startTime, endTime)){
-                ToastUtils.showMessage(activity, "开始时间比结束时间晚，请重新设置！");
+                ToastUtils.showMessage( "开始时间比结束时间晚，请重新设置！");
                 return;
             }
 
@@ -364,7 +359,7 @@ public class HistoryListActivity extends BaseActivity implements IHandlerFinish 
 
             if (dbUeidInfos == null || dbUeidInfos.size() <= 0) {
                 clearSearchHistory();
-                ToastUtils.showMessage(HistoryListActivity.this, R.string.search_not_found);
+                ToastUtils.showMessage(R.string.search_not_found);
                 return;
             }
 
@@ -377,12 +372,12 @@ public class HistoryListActivity extends BaseActivity implements IHandlerFinish 
         @Override
         public void onClick(View v) {
             if (dbUeidInfos == null || dbUeidInfos.size() <= 0) {
-                ToastUtils.showMessage(HistoryListActivity.this, R.string.can_not_export_search);
+                ToastUtils.showMessage( R.string.can_not_export_search);
                 return;
             }
 
             String fileName = "UEID_"+ DateUtils.getStrOfDate()+".csv";
-            String fullPath = EXPORT_PATH+fileName;
+            String fullPath = FileUtils.ROOT_PATH+fileName;
             BufferedWriter bufferedWriter = null;
             try {
                 bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fullPath,true)));
@@ -417,7 +412,7 @@ public class HistoryListActivity extends BaseActivity implements IHandlerFinish 
             EventAdapter.call(EventAdapter.UPDATE_FILE_SYS, fullPath);
             new MySweetAlertDialog(activity, MySweetAlertDialog.TEXT_SUCCESS)
                     .setTitleText("导出成功")
-                    .setContentText("文件导出在：手机存储/4GHotspot/"+ fileName)
+                    .setContentText("文件导出在：手机存储/"+FileUtils.ROOT_DIRECTORY+"/"+ fileName)
                     .show();
 
             EventAdapter.call(EventAdapter.ADD_BLACKBOX,BlackBoxManger.EXPORT_HISTORT_DATA+ fullPath);
@@ -440,12 +435,6 @@ public class HistoryListActivity extends BaseActivity implements IHandlerFinish 
         return dataStartTime.before(dateEndTime);
     }
 
-    @Override
-    protected void onDestroy() {
-        UIEventManager.unRegister(UIEventManager.KEY_RESEARCH_HISTORY_LIST, this);
-        super.onDestroy();
-    }
-
     private void createExportError(String obj){
         Message msg = new Message();
         msg.what = EXPORT_ERROR;
@@ -453,12 +442,14 @@ public class HistoryListActivity extends BaseActivity implements IHandlerFinish 
         mHandler.sendMessage(msg);
     }
 
+
     @Override
-    public void handlerFinish(String key) {
-        if (key.equals(UIEventManager.KEY_RESEARCH_HISTORY_LIST)){
-            Message msg = new Message();
-            msg.what = SEARCH_HISTORT;
-            mHandler.sendMessage(msg);
+    public void call(String key, Object val) {
+        switch (key){
+            case EventAdapter.RESEARCH_HISTORY_LIST:
+                mHandler.sendEmptyMessage(SEARCH_HISTORT);
+                break;
         }
+
     }
 }

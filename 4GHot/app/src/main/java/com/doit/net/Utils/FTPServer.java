@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 //
 //
+
 /**
  * Created by Zxc on 2018/10/22.
  */
@@ -41,8 +42,6 @@ public class FTPServer extends DefaultFtplet {
     // private final Logger LOG = LoggerFactory.getLogger(FTPServer.class);
     private static final List<Authority> ADMIN_AUTHORITIES;
     private static final int BYTES_PER_KB = 1024;
-    public static String FTP_DIR = Environment.getExternalStorageDirectory().getAbsolutePath()+"/4GHotspot/";
-    private static final String DEFAULT_USER_DIR = FTP_DIR;
 
     public final static int MAX_CONCURRENT_LOGINS = 3;
     public final static int MAX_CONCURRENT_LOGINS_PER_IP = 3;
@@ -76,7 +75,7 @@ public class FTPServer extends DefaultFtplet {
         //mFTPServerFactory.getFtplets().put(FTPLetImpl.class.getAccount(), new FTPLetImpl());
 
         PropertiesUserManagerFactory userManagerFactory = new PropertiesUserManagerFactory();
-        userManagerFactory.setFile(new File(FTP_DIR + "users.properties"));
+        userManagerFactory.setFile(new File(FileUtils.ROOT_PATH + "users.properties"));
         userManagerFactory.setPasswordEncryptor(new SaltedPasswordEncryptor());
         mUserManager = userManagerFactory.createUserManager();
         mFTPServerFactory.setUserManager(mUserManager);
@@ -91,7 +90,7 @@ public class FTPServer extends DefaultFtplet {
         mFTPServer = mFTPServerFactory.createServer();
     }
 
-    public void startFTPServer(){
+    public void startFTPServer() {
         try {
             mFTPServer.start();
         } catch (FtpException e) {
@@ -109,7 +108,7 @@ public class FTPServer extends DefaultFtplet {
             adminUser.setPassword(adminName);
             adminUser.setEnabled(true);
             adminUser.setAuthorities(ADMIN_AUTHORITIES);
-            adminUser.setHomeDirectory(DEFAULT_USER_DIR);
+            adminUser.setHomeDirectory(FileUtils.ROOT_PATH);
             adminUser.setMaxIdleTime(0);
             userManager.save(adminUser);
         }
@@ -122,7 +121,7 @@ public class FTPServer extends DefaultFtplet {
         BaseUser user = new BaseUser();
         user.setName(username);
         user.setPassword(password);
-        user.setHomeDirectory(DEFAULT_USER_DIR);
+        user.setHomeDirectory(FileUtils.ROOT_PATH);
         user.setEnabled(true);
 
         //BaseUser anonuser = new BaseUser();
@@ -144,12 +143,13 @@ public class FTPServer extends DefaultFtplet {
             mFTPServer.stop();
             try {
                 Thread.sleep(1000 * 3);
-            } catch (InterruptedException e) {}
+            } catch (InterruptedException e) {
+            }
             mFTPServer.start();
         }
     }
 
-    public void stopFTP(){
+    public void stopFTP() {
         if (mFTPServer != null) {
             mFTPServer.stop();
         }
@@ -183,9 +183,9 @@ public class FTPServer extends DefaultFtplet {
     @Override
     public FtpletResult onRenameEnd(FtpSession session, FtpRequest request) throws FtpException, IOException {
         LogUtils.log("一个文件名更改:" + request.getArgument());
-        if (!CacheManager.currentWorkMode.equals("2")){  //管控模式忽略ftp的上报
+        if (!CacheManager.currentWorkMode.equals("2")) {  //管控模式忽略ftp的上报
             String uploadFileName = request.getArgument().replaceAll("./", "");
-            LTE_PT_PARAM.processUeidRpt(FTP_DIR+uploadFileName);
+            LTE_PT_PARAM.processUeidRpt(FileUtils.ROOT_PATH + uploadFileName);
         }
 
         return super.onRenameEnd(session, request);

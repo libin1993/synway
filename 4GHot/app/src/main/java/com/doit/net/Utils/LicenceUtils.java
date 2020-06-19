@@ -13,7 +13,6 @@ public class LicenceUtils {
 
     public static String authorizeCode = "";   //授权码，设备id_时间   DES对称加密
     public static String machineID = "";   //设备id
-    public static String LOCAL_LICENCE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/4GHotspot/";
     public static String LICENCE_FILE_NAME = "licence.txt";
 
 

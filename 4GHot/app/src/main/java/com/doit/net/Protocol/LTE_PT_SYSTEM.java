@@ -1,6 +1,7 @@
 package com.doit.net.Protocol;
 
 
+import com.doit.net.Utils.FileUtils;
 import com.doit.net.application.MyApplication;
 import com.doit.net.Data.LTESendManager;
 import com.doit.net.Utils.LogUtils;
@@ -83,27 +84,27 @@ public class LTE_PT_SYSTEM {
                     LogUtils.log("设备正在重启");
 //                    ToastUtils.showMessageLong(MyApplication.mContext,"设备正在重启");
                 }else{
-                    ToastUtils.showMessage(MyApplication.mContext,"设备重启失败");
+                    ToastUtils.showMessage("设备重启失败");
                 }
                 break;
 
             case SYSTEM_UPGRADE_ACK:
                 if (respcContent.charAt(0) == '0') {
                     LogUtils.log("升级包校验成功");
-                    ToastUtils.showMessageLong(MyApplication.mContext, "升级包校验成功，请等待设备加载升级包（完整加载需要8-10分钟）");
+                    ToastUtils.showMessageLong("升级包校验成功，请等待设备加载升级包（完整加载需要8-10分钟）");
                 }else if (respcContent.charAt(0) == '1'){
                     LogUtils.log("升级包校验失败");
-                    ToastUtils.showMessageLong(MyApplication.mContext, "升级包校验错误，请检查安装包");
+                    ToastUtils.showMessageLong("升级包校验错误，请检查安装包");
                 }
                 break;
 
             case SYSTEM_GET_LOG_ACK:
                 if (respcContent.charAt(0) == '0') {
                     LogUtils.log("获取设备日志成功");
-                    ToastUtils.showMessageLong(MyApplication.mContext, "获取设备日志成功，保存在\"手机存储/4GHotspot/log\"目录下");
+                    ToastUtils.showMessageLong("获取设备日志成功，保存在\"手机存储/"+ FileUtils.ROOT_DIRECTORY+"/log\"目录下");
                 }else if (respcContent.charAt(0) == '1'){
                     LogUtils.log("获取设备日志失败");
-                    ToastUtils.showMessageLong(MyApplication.mContext, "获取设备日志失败");
+                    ToastUtils.showMessageLong( "获取设备日志失败");
                 }
                 break;
 

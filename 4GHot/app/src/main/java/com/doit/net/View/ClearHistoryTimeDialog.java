@@ -87,7 +87,7 @@ public class ClearHistoryTimeDialog extends Dialog {
                 final String endTime = etEndTime.getText().toString();
 
                 if ("".equals(startTime) || "".equals(endTime)) {
-                    ToastUtils.showMessage(getContext(), "请确定开始时间和结束时间！");
+                    ToastUtils.showMessage("请确定开始时间和结束时间！");
                     return;
                 }
 
@@ -110,7 +110,7 @@ public class ClearHistoryTimeDialog extends Dialog {
                                         .show();
                             }
 
-                            ToastUtils.showMessage(activity, activity.getString(R.string.clear_success));
+                            ToastUtils.showMessage(R.string.clear_success);
                             sweetAlertDialog.dismiss();
                         }
                     }).show();

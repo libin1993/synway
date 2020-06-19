@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.view.LayoutInflater;
@@ -68,7 +67,7 @@ public class LicenceDialog extends Dialog implements EventAdapter.EventCall{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(mView);
-        EventAdapter.setEvent(EventAdapter.SCAN_CODE, this);
+        EventAdapter.register(EventAdapter.SCAN_CODE, this);
         tvMachineId.setText(LicenceUtils.machineID);
         tvDueTime.setText(LicenceUtils.getDueTime());
         btnCancel.setText(mCancelTxt);
@@ -107,25 +106,25 @@ public class LicenceDialog extends Dialog implements EventAdapter.EventCall{
             public void onClick(View v) {
                 String authorizeCode = etAuthorizeCode.getText().toString().trim();
                 if ("".equals(authorizeCode)){
-                    ToastUtils.showMessage(getContext(), "请输入授权码");
+                    ToastUtils.showMessage("请输入授权码");
                     return;
                 }
 
                 if(LicenceUtils.checkAuthorizeCode(authorizeCode)){
                     LicenceUtils.authorizeCode = authorizeCode;
                     dismiss();
-                    ToastUtils.showMessageLong(getContext(),"授权成功，到期时间："+LicenceUtils.getDueTime()+"。设备即将重启，请耐心等待...");
+                    ToastUtils.showMessageLong("授权成功，到期时间："+LicenceUtils.getDueTime()+"。设备即将重启，请耐心等待...");
                     new Thread() {
                         public void run() {
                             try {
                                 FTPManager.getInstance().connect();
                                 boolean isFinish = FileUtils.getInstance().stringToFile(authorizeCode,
-                                        LicenceUtils.LOCAL_LICENCE_PATH + LicenceUtils.LICENCE_FILE_NAME);
+                                        FileUtils.ROOT_PATH + LicenceUtils.LICENCE_FILE_NAME);
                                 if (isFinish){
-                                    boolean isUploaded = FTPManager.getInstance().uploadFile(LicenceUtils.LOCAL_LICENCE_PATH,
+                                    boolean isUploaded = FTPManager.getInstance().uploadFile(FileUtils.ROOT_PATH,
                                             LicenceUtils.LICENCE_FILE_NAME);
                                     if (isUploaded){
-                                        FileUtils.getInstance().deleteFile(LicenceUtils.LOCAL_LICENCE_PATH
+                                        FileUtils.getInstance().deleteFile(FileUtils.ROOT_PATH
                                                 + LicenceUtils.LICENCE_FILE_NAME);
                                     }
 
@@ -139,7 +138,7 @@ public class LicenceDialog extends Dialog implements EventAdapter.EventCall{
                     }.start();
 
                 }else{
-                    ToastUtils.showMessage(getContext(), "授权码有误，请确认后输入！");
+                    ToastUtils.showMessage("授权码有误，请确认后输入！");
                 }
             }
         });

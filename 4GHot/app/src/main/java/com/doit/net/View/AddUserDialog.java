@@ -65,10 +65,10 @@ public class AddUserDialog extends Dialog {
                 String password = etPassword.getText().toString();
 
                 if ("".equals(name)){
-                    ToastUtils.showMessage(getContext(), "请输入账号！");
+                    ToastUtils.showMessage("请输入账号！");
                     return;
                 }else if ("".equals(password)){
-                    ToastUtils.showMessage(getContext(), "请输入密码！");
+                    ToastUtils.showMessage( "请输入密码！");
                     return;
                 }
 
@@ -98,7 +98,7 @@ public class AddUserDialog extends Dialog {
             long count = dbManager.selector(UserInfo.class)
                     .where("account","=",name).count();
             if(count>0){
-                ToastUtils.showMessage(getContext(), R.string.same_user);
+                ToastUtils.showMessage(R.string.same_user);
                 return -1;
             }
 
@@ -109,7 +109,7 @@ public class AddUserDialog extends Dialog {
             dbManager.save(info);
 
             if (AccountManage.UpdateAccountToDevice()){
-                ToastUtils.showMessage(getContext(),R.string.add_success);
+                ToastUtils.showMessage(R.string.add_success);
                 return 0;
             }else{
                 dbManager.delete(info);

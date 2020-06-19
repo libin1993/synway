@@ -31,40 +31,23 @@ android {
             abortOnError false
         }
 
-//        applicationVariants.all {
-//            variant ->
-//                variant.outputs.all {
-//                    output ->
-//                        def outputFile = output.outputFile
-//                        def fileName
-//                        if (outputFile != null && outputFile.name.endsWith('.apk')) {
-//                            if (variant.buildType.name.equals('release')) {
-//                                fileName = "lte-hotspot-${versionName}-${"release"}.apk"
-//                            } else if (variant.buildType.name.equals('debug')) {
-//                                fileName = "lte-hotspot-${versionName}-${"debug"}.apk"
-//                            }
-//                            outputFileName = fileName
-//                            //output.outputFile = new File(outputFile.parenrt, fileName)
-//                        }
-//                }
-//        }
-
-        applicationVariants.all { variant ->
-            variant.outputs.all {
-
-                //def outputFile = output.outputFile
-                def fileName
-                if (outputFile != null && outputFile.name.endsWith('.apk')) {
-                    if (variant.buildType.name.equals('release')) {
-                        fileName = "lte-hotspot-${versionName}-${"release"}.apk"
-                    } else if (variant.buildType.name.equals('debug')) {
-                        fileName = "lte-hotspot-${versionName}-${"debug"}.apk"
-                    }
+        applicationVariants.all {
+            variant ->
+                variant.outputs.all {
+                    output ->
+                        def outputFile = output.outputFile
+                        def fileName
+                        if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                            if (variant.buildType.name.equals('release')) {
+                                fileName = "lte-hotspot-${versionName}-${"release"}.apk"
+                            } else if (variant.buildType.name.equals('debug')) {
+                                fileName = "lte-hotspot-${versionName}-${"debug"}.apk"
+                            }
+                            outputFileName = fileName
+                        }
                 }
-                outputFileName = fileName
-
-            }
         }
+
     }
 
     dexOptions { //优化dex配置
@@ -77,8 +60,7 @@ android {
     signingConfigs {
         relealse {
             //这样写就得把demo.jk文件放在项目目录
-            //storeFile file("boelink-tdd-android.jks")
-            storeFile file("4GHot.jks")
+            storeFile file("../4GHot.jks")
             storePassword "88861158"
             keyAlias "key"
             keyPassword "88861158"
@@ -109,8 +91,7 @@ android {
             applicationId 'com.synway.lte.hotspot'
             targetSdkVersion 28
             versionCode android.defaultConfig.versionCode
-            versionName android.defaultConfig.versionName + "A" + releaseTime()
-            //versionName android.defaultConfig.versionName+"A"
+            versionName android.defaultConfig.versionName + "A"
             signingConfig signingConfigs.relealse
             buildConfigField "boolean", "SPLASH_SCREEN", "false"//军队版本找不到合适的启动画面，所以暂时不用
             //buildConfigField "boolean", "LOC_MODEL", "false"
@@ -126,8 +107,7 @@ android {
             applicationId 'com.synway.lte.hotspot'
             targetSdkVersion 28
             versionCode android.defaultConfig.versionCode
-            versionName android.defaultConfig.versionName + "P" + releaseTime()
-            //versionName android.defaultConfig.versionName+"P"
+            versionName android.defaultConfig.versionName + "P"
             signingConfig signingConfigs.relealse
             buildConfigField "boolean", "SPLASH_SCREEN", "true"
             resValue("string", "app_name", "便携式侦码")
@@ -144,46 +124,7 @@ android {
     }
 }
 
-def releaseTime() {
-    return ""
-    //return "_"+new Date().format("yyyyMMddHH", TimeZone.getTimeZone("GMT+08:00"))
-}
 
-//build {
-//    doLast {
-//        def fileName = "lte-tiny-hotspot.apk"
-//        def fileNameZM = "lte-tiny-hotspot.apk"
-//        def fromFile = "./build/outputs/apk/" + fileName
-//        def fromFileZm = "./build/outputs/apk/" + fileNameZM
-//        def intoFile = "G:\\Wiker Work\\sanhui\\"
-//        def versionName = android.defaultConfig.versionName
-//
-//        def appName = "LTE_LOC_${versionName}.apk"
-//        def appNameZM = "LTE_ZM_${versionName}.apk"
-//
-//        copy {
-//            from fromFile
-//            into intoFile
-//
-//
-//            rename {
-//                appName
-//            }
-//        }
-//        copy {
-//            from fromFileZm
-//            into intoFile
-//
-//
-//            rename {
-//                appNameZM
-//            }
-//        }
-//        println("Release apk:" + intoFile + appName)
-//        println("Release apk:" + intoFile + appNameZM)
-//        println("=====================build success.=========================")
-//    }
-//}
 repositories {
     maven {
         url "https://jitpack.io"

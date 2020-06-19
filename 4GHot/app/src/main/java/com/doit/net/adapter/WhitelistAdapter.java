@@ -10,10 +10,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
+import com.doit.net.Event.EventAdapter;
 import com.doit.net.Model.CacheManager;
 import com.doit.net.Model.VersionManage;
 import com.doit.net.Model.WhiteListInfo;
-import com.doit.net.Event.UIEventManager;
 import com.doit.net.Model.UCSIDBManager;
 import com.doit.net.View.ModifyWhitelistDialog;
 import com.doit.net.ucsi.R;
@@ -76,9 +76,9 @@ public class WhitelistAdapter extends BaseSwipeAdapter {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
                         if (VersionManage.isPoliceVer()){
-                            UIEventManager.call(UIEventManager.KEY_REFRESH_NAMELIST_LIST);
+                            EventAdapter.call(EventAdapter.REFRESH_BLACKLIST);
                         }else if (VersionManage.isArmyVer()){
-                            UIEventManager.call(UIEventManager.KEY_REFRESH_WHITE_LIST);
+                            EventAdapter.call(EventAdapter.REFRESH_WHITELIST);
                         }
                     }
                 });
@@ -163,9 +163,9 @@ public class WhitelistAdapter extends BaseSwipeAdapter {
                 }
 
                 if (VersionManage.isPoliceVer()){
-                    UIEventManager.call(UIEventManager.KEY_REFRESH_NAMELIST_LIST);
+                    EventAdapter.call(EventAdapter.REFRESH_BLACKLIST);
                 }else if (VersionManage.isArmyVer()){
-                    UIEventManager.call(UIEventManager.KEY_REFRESH_WHITE_LIST);
+                    EventAdapter.call(EventAdapter.REFRESH_WHITELIST);
                 }
 
                 //EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.DELTE_USER+resp.getAccount());

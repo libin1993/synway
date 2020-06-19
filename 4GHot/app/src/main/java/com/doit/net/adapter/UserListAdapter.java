@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
 import com.doit.net.Model.BlackBoxManger;
 import com.doit.net.Event.EventAdapter;
-import com.doit.net.Event.UIEventManager;
 import com.doit.net.Model.AccountManage;
 import com.doit.net.Model.UCSIDBManager;
 import com.doit.net.Model.UserInfo;
@@ -80,7 +79,7 @@ public class UserListAdapter extends BaseSwipeAdapter {
                 modifyUserInfoDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
-                        UIEventManager.call(UIEventManager.KEY_REFRESH_USER_LIST);
+                        EventAdapter.call(EventAdapter.REFRESH_USER_LIST);
                     }
                 });
                 modifyUserInfoDialog.show();
@@ -122,11 +121,11 @@ public class UserListAdapter extends BaseSwipeAdapter {
 
                 UCSIDBManager.getDbManager().delete(resp);
                 if (AccountManage.UpdateAccountToDevice()){
-                    UIEventManager.call(UIEventManager.KEY_REFRESH_USER_LIST);
+                    EventAdapter.call(EventAdapter.REFRESH_USER_LIST);
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX,BlackBoxManger.DELTE_USER+resp.getAccount());
                 }else{
                     UCSIDBManager.getDbManager().save(resp);
-                    ToastUtils.showMessageLong(mContext, R.string.del_user_fail_ftp_error);
+                    ToastUtils.showMessageLong(R.string.del_user_fail_ftp_error);
                 }
 
             } catch (DbException e) {

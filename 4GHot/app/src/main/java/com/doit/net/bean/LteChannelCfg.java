@@ -69,13 +69,6 @@ public class LteChannelCfg {
         this.pa = pa;
     }
 
-    public boolean getState() {
-        return this.RFState;
-    }
-    public void setState(boolean state) {
-        this.RFState = state;
-    }
-
     public String getGa() {
         return this.ga;
     }

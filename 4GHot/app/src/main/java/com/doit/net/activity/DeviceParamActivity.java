@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.os.Bundle;
 
 import com.doit.net.View.ChannelsDialog;
-import com.doit.net.View.CheckStateRunnable;
 import com.doit.net.View.SystemSetupDialog;
 import com.doit.net.adapter.UserChannelListAdapter;
 import com.doit.net.base.BaseActivity;
@@ -31,13 +30,10 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
-import com.doit.net.application.MyApplication;
 import com.doit.net.bean.LteChannelCfg;
 import com.doit.net.Model.BlackBoxManger;
 import com.doit.net.Event.EventAdapter;
-import com.doit.net.Event.IHandlerFinish;
 import com.doit.net.Protocol.ProtocolManager;
-import com.doit.net.Event.UIEventManager;
 import com.doit.net.Model.CacheManager;
 
 import com.doit.net.Utils.LSettingItem;
@@ -53,7 +49,7 @@ import java.util.TimerTask;
 /**
  * 设备参数
  */
-public class DeviceParamActivity extends BaseActivity implements IHandlerFinish {
+public class DeviceParamActivity extends BaseActivity implements EventAdapter.EventCall {
     private final Activity activity = this;
     private LinearLayout layoutChannelList;
 
@@ -102,9 +98,7 @@ public class DeviceParamActivity extends BaseActivity implements IHandlerFinish 
     }
 
     private void initEvent() {
-//        checkHandler.postDelayed(new CheckStateRunnable(checkHandler),0);
-
-        UIEventManager.register(UIEventManager.KEY_REFRESH_DEVICE,this);
+        EventAdapter.register(EventAdapter.REFRESH_DEVICE,this);
     }
 
     private void intView() {
@@ -214,9 +208,9 @@ public class DeviceParamActivity extends BaseActivity implements IHandlerFinish 
             if (currentTime - lastRefreshParamTime > 20*1000) {
                 ProtocolManager.getEquipAndAllChannelConfig();
                 lastRefreshParamTime = currentTime;
-                ToastUtils.showMessage(activity, "下发查询参数成功！");
+                ToastUtils.showMessage("下发查询参数成功！");
             } else {
-                ToastUtils.showMessage(activity, "请勿频繁刷新参数！");
+                ToastUtils.showMessage("请勿频繁刷新参数！");
             }
         }
     };
@@ -236,9 +230,9 @@ public class DeviceParamActivity extends BaseActivity implements IHandlerFinish 
             refreshViewEnable = false;
 
             if (CacheManager.getLocState()){
-                ToastUtils.showMessage(activity, "当前正在搜寻中，请留意功率变动是否对其产生影响！");
+                ToastUtils.showMessage( "当前正在搜寻中，请留意功率变动是否对其产生影响！");
             }else{
-                ToastUtils.showMessageLong(activity, "功率设置已下发，请等待其生效");
+                ToastUtils.showMessageLong( "功率设置已下发，请等待其生效");
             }
 
             switch (checkedId) {
@@ -286,11 +280,11 @@ public class DeviceParamActivity extends BaseActivity implements IHandlerFinish 
             }
 
             if (CacheManager.getLocState()){
-                ToastUtils.showMessage(activity, "当前正在定位中，无法切换侦码制式！");
+                ToastUtils.showMessage("当前正在定位中，无法切换侦码制式！");
                 lastDetectCarrierOperatePress.setChecked(true);
                 return;
             }else{
-                ToastUtils.showMessageLong(activity, "侦码制式设置已下发，请等待其生效");
+                ToastUtils.showMessageLong( "侦码制式设置已下发，请等待其生效");
             }
 
             refreshViewEnable = false;
@@ -349,7 +343,7 @@ public class DeviceParamActivity extends BaseActivity implements IHandlerFinish 
 
             if(isChecked){
                 ProtocolManager.openAllRf();
-                ToastUtils.showMessageLong(activity,R.string.rf_open);
+                ToastUtils.showMessageLong(R.string.rf_open);
                 EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.OPEN_ALL_RF);
                 showProcess(6000);
                 new Timer().schedule(new TimerTask() {
@@ -374,7 +368,7 @@ public class DeviceParamActivity extends BaseActivity implements IHandlerFinish 
                                 public void onClick(MySweetAlertDialog sweetAlertDialog) {
                                     sweetAlertDialog.dismiss();
                                     ProtocolManager.closeAllRf();
-                                    ToastUtils.showMessage(activity,R.string.rf_close);
+                                    ToastUtils.showMessage(R.string.rf_close);
                                     showProcess(6000);
                                     new Timer().schedule(new TimerTask() {
                                         @Override
@@ -385,13 +379,12 @@ public class DeviceParamActivity extends BaseActivity implements IHandlerFinish 
                                         }
                                     },6000);
                                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CLOSE_ALL_RF);
-                                    EventAdapter.call(EventAdapter.RF_ALL_CLOSE, null);
                                 }
                             })
                             .show();
                 }else{
                     ProtocolManager.closeAllRf();
-                    ToastUtils.showMessageLong(activity,R.string.rf_close);
+                    ToastUtils.showMessageLong(R.string.rf_close);
                     showProcess(6000);
                     new Timer().schedule(new TimerTask() {
                         @Override
@@ -500,12 +493,6 @@ public class DeviceParamActivity extends BaseActivity implements IHandlerFinish 
         super.onResume();
     }
 
-    @Override
-    protected void onDestroy() {
-        //移除该事件，防止重复进入页面重复注册事件而重复触发事件。
-        UIEventManager.unRegister(UIEventManager.KEY_REFRESH_DEVICE,this);
-        super.onDestroy();
-    }
 
     private void refreshChannels(){
         if(!CacheManager.isDeviceOk()){
@@ -551,7 +538,7 @@ public class DeviceParamActivity extends BaseActivity implements IHandlerFinish 
                     }
 
                     if(CacheManager.getLocState()){
-                        ToastUtils.showMessageLong(activity, "当前正在搜寻中，请确认通道射频变动是否对其产生影响！");
+                        ToastUtils.showMessageLong("当前正在搜寻中，请确认通道射频变动是否对其产生影响！");
 //                        item.setChecked(!item.isChecked());
 //                        return;
                     }
@@ -588,7 +575,7 @@ public class DeviceParamActivity extends BaseActivity implements IHandlerFinish 
                     @Override public void onItemClick(DialogPlus dialog, Object item, View view, int position) {
                         CacheManager.changeBand(idx, band);
                         dialog.dismiss();
-                        ToastUtils.showMessageLong(MyApplication.mContext,"切换Band命令已下发，请等待生效");
+                        ToastUtils.showMessageLong("切换Band命令已下发，请等待生效");
                         EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CHANGE_BAND+band);
                     }
                 })
@@ -628,10 +615,13 @@ public class DeviceParamActivity extends BaseActivity implements IHandlerFinish 
 
 
 
+
     @Override
-    public void handlerFinish(String key) {
-        if (key.equals(UIEventManager.KEY_REFRESH_DEVICE)){
-            mHandler.sendEmptyMessage(UPDATE_VIEW);
+    public void call(String key, Object val) {
+        switch (key){
+            case EventAdapter.REFRESH_DEVICE:
+                mHandler.sendEmptyMessage(UPDATE_VIEW);
+                break;
         }
     }
 }

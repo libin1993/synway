@@ -10,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 
 import com.doit.net.Event.EventAdapter;
-import com.doit.net.Event.UIEventManager;
 import com.doit.net.Utils.ToastUtils;
 import com.doit.net.Utils.LogUtils;
 
@@ -231,13 +230,13 @@ public class ImsiMsisdnConvert {
                     }
 
                     if (!objs[0].equals(""))
-                        ToastUtils.showMessageLong(context, (String)objs[0]);
+                        ToastUtils.showMessageLong((String)objs[0]);
                 }
             });
 
             return true;
         }else{
-            ToastUtils.showMessageLong(context, "认证失败：获取网络失败");
+            ToastUtils.showMessageLong("认证失败：获取网络失败");
         }
 
         return false;
@@ -342,13 +341,13 @@ public class ImsiMsisdnConvert {
                         LogUtils.log("okHttpClient ok");
                         objs[0] = msisdnToImsi(context, okHttpClient, msisdn);
                     }
-                    ToastUtils.showMessageLong(context, (String)objs[0]);
+                    ToastUtils.showMessageLong((String)objs[0]);
                 }
             });
 
             return true;
         }else{
-            ToastUtils.showMessageLong(context, "认证失败：获取网络失败");
+            ToastUtils.showMessageLong("认证失败：获取网络失败");
         }
 
         return false;
@@ -386,8 +385,7 @@ public class ImsiMsisdnConvert {
                     result = "获取手机号成功："+msisdn+"/"+imsi;
                     LogUtils.log("获取手机号成功："+msisdn+"/"+imsi);
                     updateMsisdnToDB(imsi, msisdn);
-                    UIEventManager.call(UIEventManager.KEY_REFRESH_REALTIME_UEID_LIST);
-                    UIEventManager.call(UIEventManager.KEY_RESEARCH_HISTORY_LIST);
+                    EventAdapter.call(EventAdapter.RESEARCH_HISTORY_LIST);
                 }else if (resultCode == 404){
                     LogUtils.log("还在转换中，2秒后重试！");
                     if (mapConvertTimes.containsKey(convertImsi)){
@@ -465,13 +463,13 @@ public class ImsiMsisdnConvert {
                         LogUtils.log("okHttpClient ok");
                         objs[0] = queryImsiConvert(context, okHttpClient, convertImsi);
                     }
-                    ToastUtils.showMessageLong(context, (String)objs[0]);
+                    ToastUtils.showMessageLong( (String)objs[0]);
                 }
             });
 
             return true;
         }else{
-            ToastUtils.showMessageLong(context, "认证失败：获取网络失败");
+            ToastUtils.showMessageLong("认证失败：获取网络失败");
         }
 
         return false;
@@ -588,13 +586,13 @@ public class ImsiMsisdnConvert {
                         objs[0] = queryMsisdnConvert(context, okHttpClient, Msisdn);
                     }
                     if (!objs[0].equals(""))
-                        ToastUtils.showMessageLong(context, (String)objs[0]);
+                        ToastUtils.showMessageLong( (String)objs[0]);
                 }
             });
 
             return true;
         }else{
-            ToastUtils.showMessageLong(context, "认证失败：获取网络失败");
+            ToastUtils.showMessageLong("认证失败：获取网络失败");
         }
 
         return false;
@@ -728,13 +726,13 @@ public class ImsiMsisdnConvert {
                     }
 
                     if (!objs[0].equals(""))
-                        ToastUtils.showMessageLong(context, (String)objs[0]);
+                        ToastUtils.showMessageLong((String)objs[0]);
                 }
             });
 
             return true;
         }else{
-            ToastUtils.showMessageLong(context, "认证失败：获取网络失败");
+            ToastUtils.showMessageLong( "认证失败：获取网络失败");
         }
 
         return false;

@@ -61,7 +61,7 @@ public class ScanFreqConfigActivity extends BaseActivity implements EventAdapter
             }
         });
 
-        EventAdapter.setEvent(EventAdapter.SCAN_FREQ_RPT,this);
+        EventAdapter.register(EventAdapter.SCAN_FREQ_RPT,this);
     }
 
     View.OnClickListener configSelectedFcnClick = new View.OnClickListener() {
@@ -75,7 +75,7 @@ public class ScanFreqConfigActivity extends BaseActivity implements EventAdapter
             }
 
             if ("".equals(selectedFcn)){
-                ToastUtils.showMessage(activity, "请从一下搜网结果中选择要配置的频点");
+                ToastUtils.showMessage("请从一下搜网结果中选择要配置的频点");
             }
 
             new SweetAlertDialog(activity, WARNING_TYPE)

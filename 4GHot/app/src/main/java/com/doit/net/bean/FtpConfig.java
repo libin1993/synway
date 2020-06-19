@@ -5,7 +5,6 @@ package com.doit.net.bean;
  */
 
 public class FtpConfig {
-    public static String ftpServerIp;
     public static String ftpUser = "sanhui";
     public static String ftpPassword = "123456";
     public static String ftpPort = "2221";

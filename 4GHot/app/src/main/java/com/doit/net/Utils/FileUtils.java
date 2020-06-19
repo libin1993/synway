@@ -1,5 +1,7 @@
 package com.doit.net.Utils;
 
+import android.os.Environment;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -17,6 +19,8 @@ import java.io.StringReader;
  * Describe：文件管理
  */
 public class FileUtils {
+    public final static String ROOT_PATH = Environment.getExternalStorageDirectory().getAbsolutePath()+"/4GHotspot/";
+    public final static String ROOT_DIRECTORY = "4GHotspot";
     private static FileUtils mInstance;
 
     private FileUtils() {
@@ -40,6 +44,7 @@ public class FileUtils {
     public String fileToString(String filePath) {
 
         File file = new File(filePath);
+
         if (!file.exists()) {
             return "";
         }

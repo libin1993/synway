@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,23 +24,19 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.util.Attributes;
-import com.doit.net.Model.WhiteListInfo;
+import com.doit.net.Utils.FileUtils;
 import com.doit.net.Utils.FormatUtils;
 import com.doit.net.Utils.LogUtils;
-import com.doit.net.activity.WhitelistManagerActivity;
 import com.doit.net.adapter.BlacklistAdapter;
 import com.doit.net.View.NameListEditDialog;
 import com.doit.net.base.BaseFragment;
 import com.doit.net.Model.BlackBoxManger;
 import com.doit.net.Event.EventAdapter;
-import com.doit.net.Event.IHandlerFinish;
-import com.doit.net.Event.UIEventManager;
 import com.doit.net.Model.CacheManager;
 import com.doit.net.Model.DBBlackInfo;
 import com.doit.net.Model.UCSIDBManager;
 import com.doit.net.Utils.DateUtils;
 import com.doit.net.Utils.MySweetAlertDialog;
-import com.doit.net.Utils.StringUtils;
 import com.doit.net.bean.FileBean;
 import com.doit.net.ucsi.R;
 import com.doit.net.Utils.ToastUtils;
@@ -59,19 +54,12 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.xutils.DbManager;
 import org.xutils.ex.DbException;
-import org.xutils.view.annotation.Event;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -80,7 +68,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 
-public class NameListFragment extends BaseFragment implements IHandlerFinish {
+public class NameListFragment extends BaseFragment implements EventAdapter.EventCall {
 
     private ListView mListView;
     private BlacklistAdapter blacklistAdapter;
@@ -92,8 +80,7 @@ public class NameListFragment extends BaseFragment implements IHandlerFinish {
     private Button btClearNamelist;
     private DbManager dbManager;
 
-    private final String BLACKLIST_FILE_PATH =  Environment.getExternalStorageDirectory()+"/4GHotspot/Blacklist.xls";
-    private final String FILE_PATH = Environment.getExternalStorageDirectory() + "/4GHotspot/";
+    private final String BLACKLIST_FILE_PATH = FileUtils.ROOT_PATH + "Blacklist.xls";
     private List<DBBlackInfo> dbBlackInfos = new ArrayList<>();
     private int lastOpenSwipePos = 0;
 
@@ -137,7 +124,7 @@ public class NameListFragment extends BaseFragment implements IHandlerFinish {
             }
         });
 
-        UIEventManager.register(UIEventManager.KEY_REFRESH_NAMELIST_LIST,this);
+        EventAdapter.register(EventAdapter.REFRESH_BLACKLIST, this);
         return rootView;
     }
 
@@ -145,7 +132,6 @@ public class NameListFragment extends BaseFragment implements IHandlerFinish {
     public void onFocus() {
         refreshNamelist();
     }
-
 
 
     private void refreshNamelist() {
@@ -164,12 +150,12 @@ public class NameListFragment extends BaseFragment implements IHandlerFinish {
         mHandler.sendEmptyMessage(UPDATE_NAMELIST);
     }
 
-    private void openSwipe(int position){
+    private void openSwipe(int position) {
         ((SwipeLayout) (mListView.getChildAt(position))).open(true);
         ((SwipeLayout) (mListView.getChildAt(position))).setClickToClose(true);
     }
 
-    private void closeSwipe(int position){
+    private void closeSwipe(int position) {
         SwipeLayout swipe = ((SwipeLayout) (mListView.getChildAt(position)));
         if (swipe != null)
             swipe.close(true);
@@ -180,7 +166,7 @@ public class NameListFragment extends BaseFragment implements IHandlerFinish {
         @Override
         public void onClick(View v) {
             String keyword = etSearchKeyword.getText().toString();
-                try {
+            try {
                 dbBlackInfos = dbManager.selector(DBBlackInfo.class)
                         .where("imsi", "like", "%" + keyword + "%")
                         .or("name", "like", "%" + keyword + "%")
@@ -189,7 +175,7 @@ public class NameListFragment extends BaseFragment implements IHandlerFinish {
                         .findAll();
 
                 if (dbBlackInfos == null || dbBlackInfos.size() <= 0) {
-                    ToastUtils.showMessage(getActivity(), R.string.search_not_found);
+                    ToastUtils.showMessage( R.string.search_not_found);
                     return;
                 }
                 blacklistAdapter.setUeidList(dbBlackInfos);
@@ -217,7 +203,7 @@ public class NameListFragment extends BaseFragment implements IHandlerFinish {
     };
 
 
-    View.OnClickListener exportNamelistClick = new View.OnClickListener(){
+    View.OnClickListener exportNamelistClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             try {
@@ -241,13 +227,13 @@ public class NameListFragment extends BaseFragment implements IHandlerFinish {
 
 
                 if (dbBlackInfos == null || dbBlackInfos.size() == 0) {
-                    ToastUtils.showMessageLong(getActivity(), "当前名单为空，此次导出为模板");
+                    ToastUtils.showMessageLong("当前名单为空，此次导出为模板");
                 } else {
                     for (int i = 0; i < dbBlackInfos.size(); i++) {
-                        Row rowi = sheet.createRow(i+1);
-                        rowi.createCell(0).setCellValue(dbBlackInfos.get(i).getImsi()+"");
-                        rowi.createCell(1).setCellValue(dbBlackInfos.get(i).getName()+"");
-                        rowi.createCell(2).setCellValue(dbBlackInfos.get(i).getRemark()+"");
+                        Row rowi = sheet.createRow(i + 1);
+                        rowi.createCell(0).setCellValue(dbBlackInfos.get(i).getImsi() + "");
+                        rowi.createCell(1).setCellValue(dbBlackInfos.get(i).getName() + "");
+                        rowi.createCell(2).setCellValue(dbBlackInfos.get(i).getRemark() + "");
                         rowi.createCell(3).setCellValue(DateUtils.convert2String(dbBlackInfos.get(i).getCreateDate(), DateUtils.LOCAL_DATE));
                     }
                 }
@@ -257,37 +243,39 @@ public class NameListFragment extends BaseFragment implements IHandlerFinish {
                 outputStream.flush();
                 outputStream.close();
 
+
+                EventAdapter.call(EventAdapter.UPDATE_FILE_SYS, BLACKLIST_FILE_PATH);
+                new MySweetAlertDialog(getActivity(), MySweetAlertDialog.TEXT_SUCCESS)
+                        .setTitleText("导出成功")
+                        .setContentText("文件导出在：手机存储/" + FileUtils.ROOT_DIRECTORY + "/" + file.getName())
+                        .show();
+
+                EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.EXPORT_WHITELIST + BLACKLIST_FILE_PATH);
+
             } catch (Exception e) {
                 /* proper exception handling to be here */
                 createExportError("导出名单失败");
             }
 
 
-            EventAdapter.call(EventAdapter.UPDATE_FILE_SYS, BLACKLIST_FILE_PATH);
-            new MySweetAlertDialog(getActivity(), MySweetAlertDialog.TEXT_SUCCESS)
-                    .setTitleText("导出成功")
-                    .setContentText("文件导出在：手机存储" + BLACKLIST_FILE_PATH)
-                    .show();
 
-            EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.EXPORT_WHITELIST + BLACKLIST_FILE_PATH);
-
-            }
+        }
 
     };
 
-    View.OnClickListener importNamelistClick = new View.OnClickListener(){
+    View.OnClickListener importNamelistClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
 
-            File file = new File(FILE_PATH);
+            File file = new File(FileUtils.ROOT_PATH);
             if (!file.exists()) {
-                ToastUtils.showMessageLong("未找到黑名单，请确认已将黑名单放在\"手机存储/4GHotspot\"目录下");
+                ToastUtils.showMessageLong("未找到黑名单，请确认已将黑名单放在\"手机存储/"+FileUtils.ROOT_DIRECTORY+"\"目录下");
                 return;
             }
 
             File[] files = file.listFiles();
             if (files == null || files.length == 0) {
-                ToastUtils.showMessageLong("未找到黑名单，请确认已将白名单放在\"手机存储/4GHotspot\"目录下");
+                ToastUtils.showMessageLong("未找到黑名单，请确认已将黑名单放在\"手机存储/"+FileUtils.ROOT_DIRECTORY+"\"目录下");
                 return;
             }
 
@@ -367,7 +355,7 @@ public class NameListFragment extends BaseFragment implements IHandlerFinish {
                     File file = null;
                     for (FileBean fileBean : fileList) {
                         if (fileBean.isCheck()) {
-                            file = new File(FILE_PATH + fileBean.getFileName());
+                            file = new File(FileUtils.ROOT_PATH + fileBean.getFileName());
                             break;
                         }
                     }
@@ -389,18 +377,13 @@ public class NameListFragment extends BaseFragment implements IHandlerFinish {
                             String name = "";
                             String remark = "";
                             Row row = sheet.getRow(r);
-                            int cellsCount = row.getPhysicalNumberOfCells();
 
-                            if (cellsCount < 3 || cellsCount > 4) {
-                                errorFormatNum++;
-                                continue;
-                            }
 
                             imsi = getCellAsString(row, 0, formulaEvaluator);
                             name = getCellAsString(row, 1, formulaEvaluator);
                             remark = getCellAsString(row, 2, formulaEvaluator);
 
-                            if ("IMSI".equals(imsi) && "姓名".equals(name) ) {
+                            if ("IMSI".equals(imsi) && "姓名".equals(name)) {
                                 continue;
                             }
 
@@ -411,24 +394,22 @@ public class NameListFragment extends BaseFragment implements IHandlerFinish {
                             }
 
 
-                            if (isBlacklistExist(imsi, listValidBlack)){
-                                repeatNum ++;
+                            if (isBlacklistExist(imsi, listValidBlack)) {
+                                repeatNum++;
                                 continue;
                             }
 
-                            if (!TextUtils.isEmpty(name) &&name.length() > 8){
-                                name = name.substring(0,8);
+                            if (!TextUtils.isEmpty(name) && name.length() > 8) {
+                                name = name.substring(0, 8);
                             }
 
-                            if (!TextUtils.isEmpty(remark) &&remark.length() > 8){
-                                remark = remark.substring(0,8);
+                            if (!TextUtils.isEmpty(remark) && remark.length() > 8) {
+                                remark = remark.substring(0, 8);
                             }
 
                             validImportNum++;
                             listValidBlack.add(new DBBlackInfo(imsi, name, remark, new Date()));
 
-
-                            validImportNum++;
                             if (validImportNum > 100)  //黑名单最大100
                                 break;
 
@@ -443,16 +424,21 @@ public class NameListFragment extends BaseFragment implements IHandlerFinish {
 
                     new MySweetAlertDialog(getContext(), MySweetAlertDialog.SUCCESS_TYPE)
                             .setTitleText("导入完成")
-                            .setContentText("成功导入"+ validImportNum +"个名单，忽略"+
-                                    repeatNum +"个重复的名单，忽略"+ errorFormatNum +"行格式或号码错误")
+                            .setContentText("成功导入" + validImportNum + "个名单，忽略" +
+                                    repeatNum + "个重复的名单，忽略" + errorFormatNum + "行格式或号码错误")
                             .show();
                     refreshNamelist();
-                    if (CacheManager.isDeviceOk() && !CacheManager.getLocState()){
+                    if (CacheManager.isDeviceOk() && !CacheManager.getLocState()) {
                         //当导入量相当大时，数据下发是相当慢的，所以放在子线程里发
-                        new Thread() {@Override public void run() {CacheManager.setCurrentBlackList();}}.start();
+                        new Thread() {
+                            @Override
+                            public void run() {
+                                CacheManager.setCurrentBlackList();
+                            }
+                        }.start();
                     }
 
-                    EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.IMPORT_NAMELIST+ BLACKLIST_FILE_PATH);
+                    EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.IMPORT_NAMELIST + BLACKLIST_FILE_PATH);
 
                 }
             });
@@ -500,11 +486,11 @@ public class NameListFragment extends BaseFragment implements IHandlerFinish {
     }
 
 
-    View.OnClickListener clearNamelistClick = new View.OnClickListener(){
+    View.OnClickListener clearNamelistClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (dbBlackInfos.size() == 0){
-                ToastUtils.showMessage(getContext(), "当前名单为空");
+            if (dbBlackInfos.size() == 0) {
+                ToastUtils.showMessage("当前名单为空");
                 return;
             }
 
@@ -520,7 +506,9 @@ public class NameListFragment extends BaseFragment implements IHandlerFinish {
                             CacheManager.clearCurrentBlackList();
                             try {
                                 dbManager.delete(DBBlackInfo.class);
-                            } catch (DbException e) {e.printStackTrace();}
+                            } catch (DbException e) {
+                                e.printStackTrace();
+                            }
 
                             refreshNamelist();
                             sweetAlertDialog.dismiss();
@@ -530,22 +518,21 @@ public class NameListFragment extends BaseFragment implements IHandlerFinish {
     };
 
 
-    public static boolean isNumeric(String str){
-        Pattern pattern=Pattern.compile("[0-9]*");
+    public static boolean isNumeric(String str) {
+        Pattern pattern = Pattern.compile("[0-9]*");
         return pattern.matcher(str).matches();
     }
 
 
-
     private boolean isBlacklistExist(String imsi, List<DBBlackInfo> listFromFile) {
-        if (dbBlackInfos != null){
-            for (DBBlackInfo tmpdbBalckInfo : dbBlackInfos){
-                if(tmpdbBalckInfo.getImsi().equals(imsi))
+        if (dbBlackInfos != null) {
+            for (DBBlackInfo tmpdbBalckInfo : dbBlackInfos) {
+                if (tmpdbBalckInfo.getImsi().equals(imsi))
                     return true;
             }
         }
 
-        if (listFromFile != null){
+        if (listFromFile != null) {
             for (int i = 0; i < listFromFile.size(); i++) {
                 if (listFromFile.get(i).getImsi().equals(imsi))
                     return true;
@@ -555,35 +542,36 @@ public class NameListFragment extends BaseFragment implements IHandlerFinish {
         return false;
     }
 
-    private void createExportError(String obj){
+    private void createExportError(String obj) {
         Message msg = new Message();
         msg.what = EXPORT_ERROR;
-        msg.obj=obj;
+        msg.obj = obj;
         mHandler.sendMessage(msg);
     }
 
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            if (msg.what == UPDATE_NAMELIST){
+            if (msg.what == UPDATE_NAMELIST) {
 
-                if(blacklistAdapter != null) {
+                if (blacklistAdapter != null) {
                     blacklistAdapter.refreshData();
                 }
 
                 closeSwipe(lastOpenSwipePos);
-            }else if(msg.what == EXPORT_ERROR){
+            } else if (msg.what == EXPORT_ERROR) {
                 new MySweetAlertDialog(getContext(), MySweetAlertDialog.ERROR_TYPE)
                         .setTitleText("导出失败")
-                        .setContentText("失败原因："+msg.obj)
+                        .setContentText("失败原因：" + msg.obj)
                         .show();
             }
         }
     };
 
+
     @Override
-    public void handlerFinish(String key) {
-        if (key.equals(UIEventManager.KEY_REFRESH_NAMELIST_LIST)){
+    public void call(String key, Object val) {
+        if (key.equals(EventAdapter.REFRESH_BLACKLIST)) {
             refreshNamelist();
         }
     }

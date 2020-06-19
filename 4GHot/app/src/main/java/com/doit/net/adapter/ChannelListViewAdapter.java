@@ -120,11 +120,11 @@ public class ChannelListViewAdapter extends BaseAdapter {
                 //不为空校验正则，为空不上传
                 if (!TextUtils.isEmpty(fcn)){
                     if (!FormatUtils.getInstance().matchFCN(fcn)){
-                        ToastUtils.showMessage(mContext,"FCN格式输入有误,请检查");
+                        ToastUtils.showMessage("FCN格式输入有误,请检查");
                         return;
                     }else {
                         if (!FormatUtils.getInstance().fcnRange(cfg.getBand(), fcn)){
-                            ToastUtils.showMessage(mContext,"FCN格式输入范围有误,请检查");
+                            ToastUtils.showMessage("FCN格式输入范围有误,请检查");
                             return;
                         }
 
@@ -132,7 +132,7 @@ public class ChannelListViewAdapter extends BaseAdapter {
                 }
 
 
-                ToastUtils.showMessage(mContext, R.string.tip_15);
+                ToastUtils.showMessage(R.string.tip_15);
                 EventAdapter.call(EventAdapter.SHOW_PROGRESS);
 
 

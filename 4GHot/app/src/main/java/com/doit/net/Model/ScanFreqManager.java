@@ -192,7 +192,7 @@ public class ScanFreqManager {
         }
 
         hasSetScanFreqList = true;
-        ToastUtils.showMessageLong(MyApplication.mContext, "已下发配置开机搜网频点列表并存储对应坐标！");
+        ToastUtils.showMessageLong("已下发配置开机搜网频点列表并存储对应坐标！");
     }
 
 
@@ -235,7 +235,7 @@ public class ScanFreqManager {
 
         locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
         if (!locationManager.isProviderEnabled(providerName)) {
-            ToastUtils.showMessage(activity, " GPS被关闭，为优化下次开机初始化时间，建议开启GPS！");
+            ToastUtils.showMessage( "GPS被关闭，为优化下次开机初始化时间，建议开启GPS！");
         }
 
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 1, locationListener);

@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
 import com.doit.net.Event.AddToLocationListener;
-import com.doit.net.Event.UIEventManager;
+import com.doit.net.Event.EventAdapter;
 import com.doit.net.Model.CacheManager;
 import com.doit.net.ucsi.R;
 
@@ -70,7 +70,7 @@ public class RealtimeNamelistRptAdapter extends BaseSwipeAdapter {
             @Override
             public void onClick(View v) {
                 listNamelist.remove(position);
-                UIEventManager.call(UIEventManager.KEY_REFRESH_NAMELIST_RPT_LIST);
+                EventAdapter.call(EventAdapter.REFRESH_NAME_LIST_RPT);
             }
         });
 

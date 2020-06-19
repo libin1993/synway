@@ -72,7 +72,7 @@ public class ModifyUserInfoDialog extends Dialog {
             @Override
             public void onClick(View v) {
             if ("".equals(etUserName.getText().toString()) || "".equals(etPassword.getText().toString())){
-                ToastUtils.showMessage(getContext(),"账号或密码为空，请确认后输入！");
+                ToastUtils.showMessage("账号或密码为空，请确认后输入！");
                 return;
             }
 
@@ -83,7 +83,7 @@ public class ModifyUserInfoDialog extends Dialog {
                         .findFirst();
 
                 if (tmpUserInfo == null){
-                    ToastUtils.showMessage(getContext(),R.string.modify_user_fail);
+                    ToastUtils.showMessage(R.string.modify_user_fail);
                     return;
                 }
 
@@ -92,7 +92,7 @@ public class ModifyUserInfoDialog extends Dialog {
                             .where("account","=",etUserName.getText().toString())
                             .count();
                     if(count>0){
-                        ToastUtils.showMessage(getContext(), R.string.same_user);
+                        ToastUtils.showMessage(R.string.same_user);
                         return;
                     }
                 }
@@ -102,7 +102,7 @@ public class ModifyUserInfoDialog extends Dialog {
                 tmpUserInfo.setPassword(etPassword.getText().toString());
                 UCSIDBManager.getDbManager().update(tmpUserInfo, "account", "password", "remake");
                 if (AccountManage.UpdateAccountToDevice()){
-                    ToastUtils.showMessage(getContext(),R.string.modify_user_success);
+                    ToastUtils.showMessage(R.string.modify_user_success);
 
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX,BlackBoxManger.MODIFY_USER+"修改账户"+modifyName+
                             "为:"+etUserName.getText().toString() + "+" + etPassword.getText().toString() +

@@ -20,6 +20,7 @@ import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
+import com.doit.net.Utils.FileUtils;
 import com.doit.net.adapter.AnalysisResultAdapter;
 import com.doit.net.adapter.CollideTimePeriodAdapter;
 import com.doit.net.View.MyTimePickDialog;
@@ -51,7 +52,6 @@ import java.util.List;
  */
 
 public class CollideAnalysisFragment extends BaseFragment {
-//    private View rootView;
 
     private EditText etCollideStartTime;
     private EditText etCollideEndTime;
@@ -83,8 +83,7 @@ public class CollideAnalysisFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        if (rootView != null)
-//            return rootView;
+
 
         View rootView = inflater.inflate(R.layout.fragment_collide_analysis, null);
         etCollideStartTime = rootView.findViewById(R.id.etCollideStartTime);
@@ -145,16 +144,16 @@ public class CollideAnalysisFragment extends BaseFragment {
                 String startTime = etCollideStartTime.getText().toString();
                 String endTime = etCollideEndTime.getText().toString();
                 if ("".equals(startTime) || "".equals(endTime)){
-                    ToastUtils.showMessage(getContext(), "还未设置开始时间或者结束时间！");
+                    ToastUtils.showMessage("还未设置开始时间或者结束时间！");
                     return;
                 }else if (startTime.equals(endTime)){
-                    ToastUtils.showMessage(getContext(), "开始时间和结束时间一样，请重新设置！");
+                    ToastUtils.showMessage( "开始时间和结束时间一样，请重新设置！");
                     return;
                 }else if (!DateUtils.isStartEndTimeOrderRight(startTime, endTime)){
-                    ToastUtils.showMessage(getContext(), "开始时间比结束时间晚，请重新设置！");
+                    ToastUtils.showMessage( "开始时间比结束时间晚，请重新设置！");
                     return;
                 }else if(checkTimePeriodExist(startTime, endTime)){
-                    ToastUtils.showMessage(getContext(), "此时间段已添加过，请勿重复添加！");
+                    ToastUtils.showMessage( "此时间段已添加过，请勿重复添加！");
                     return;
                 }
 
@@ -170,7 +169,7 @@ public class CollideAnalysisFragment extends BaseFragment {
             @Override
             public void onClick(View view) {
                 if (listCollideTimePeriod.size() < 2){
-                    ToastUtils.showMessage(getContext(), "请至少选择两个时间段！");
+                    ToastUtils.showMessage("请至少选择两个时间段！");
                     return;
                 }
 
@@ -178,7 +177,7 @@ public class CollideAnalysisFragment extends BaseFragment {
                 UpdateCollideResultToList(mapImsiWithTimes);
                 if (listCollideResult.size() == 0){
                     layoutCollideResult.setVisibility(View.GONE);
-                    ToastUtils.showMessage(getContext(), "无碰撞结果！");
+                    ToastUtils.showMessage( "无碰撞结果！");
                 }else {
                     layoutCollideResult.setVisibility(View.VISIBLE);
                     mHandler.sendEmptyMessage(UPDATE_RESULT_LIST);
@@ -194,7 +193,7 @@ public class CollideAnalysisFragment extends BaseFragment {
             @Override
             public void onClick(View view) {
                 if(listCollideResult.size() == 0){
-                    ToastUtils.showMessage(getContext(),"无碰撞结果，导出失败！");
+                    ToastUtils.showMessage("无碰撞结果，导出失败！");
                     return;
                 }
 
@@ -226,7 +225,7 @@ public class CollideAnalysisFragment extends BaseFragment {
 
     private void ExportCollideResult(List<AnalysisResultBean> listCollideResult) {
         boolean isSuccess = true;
-        final String COLLIDE_RES_FILE_PATH =  Environment.getExternalStorageDirectory()+"/4GHotspot/export/";
+        final String COLLIDE_RES_FILE_PATH = FileUtils.ROOT_PATH+"export/";
 
         String fileName = "COLLIDE_"+ DateUtils.getStrOfDate()+".txt";
         String fullPath = COLLIDE_RES_FILE_PATH+fileName;
@@ -263,7 +262,7 @@ public class CollideAnalysisFragment extends BaseFragment {
             EventAdapter.call(EventAdapter.UPDATE_FILE_SYS, fullPath);
             new MySweetAlertDialog(getContext(), MySweetAlertDialog.TEXT_SUCCESS)
                     .setTitleText("导出成功")
-                    .setContentText("文件导出在：手机存储/4GHotspot/"+ fileName)
+                    .setContentText("文件导出在：手机存储/"+FileUtils.ROOT_DIRECTORY+"/"+ fileName)
                     .show();
         }
     }

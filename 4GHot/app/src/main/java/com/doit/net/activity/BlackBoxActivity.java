@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.doit.net.Utils.FileUtils;
 import com.doit.net.base.BaseActivity;
 import com.doit.net.Model.BlackBoxManger;
 import com.doit.net.Event.EventAdapter;
@@ -122,16 +123,16 @@ public class BlackBoxActivity extends BaseActivity {
             clearBlackboxList();
 
             if (("".equals(startTime) && !"".equals(endTime)) || ((!"".equals(startTime) && "".equals(endTime)))){
-                ToastUtils.showMessage(activity, "未设置开始时间及结束时间！");
+                ToastUtils.showMessage("未设置开始时间及结束时间！");
                 return;
             } else if (!"".equals(startTime) && startTime.equals(endTime)){
-                ToastUtils.showMessage(activity, "开始时间和结束时间一样，请重新设置！");
+                ToastUtils.showMessage("开始时间和结束时间一样，请重新设置！");
                 return;
             } else if (!"".equals(startTime) && !"".equals(endTime) && !isStartEndTimeOrderRight(startTime, endTime)){
-                ToastUtils.showMessage(activity, "开始时间比结束时间晚，请重新设置！");
+                ToastUtils.showMessage("开始时间比结束时间晚，请重新设置！");
                 return;
             }else if (!CacheManager.isWifiConnected){
-                ToastUtils.showMessage(activity, "Wifi未连接到设备，黑匣子获取失败");
+                ToastUtils.showMessage("Wifi未连接到设备，黑匣子获取失败");
                 return;
             }
 
@@ -174,7 +175,7 @@ public class BlackBoxActivity extends BaseActivity {
             }
 
             if (searchBlackBox == null || searchBlackBox.size() <= 0) {
-                ToastUtils.showMessage(BlackBoxActivity.this, R.string.search_not_found);
+                ToastUtils.showMessage(R.string.search_not_found);
                 return;
             }
 
@@ -229,12 +230,12 @@ public class BlackBoxActivity extends BaseActivity {
         @Override
         public void onClick(View v) {
             if (listBlackBox == null || listBlackBox.size() <= 0) {
-                ToastUtils.showMessage(BlackBoxActivity.this, R.string.can_not_export_search);
+                ToastUtils.showMessage(R.string.can_not_export_search);
                 return;
             }
 
             String fileName = "BLACKBOX_"+ DateUtils.getStrOfDate()+".csv";
-            String fullPath = BlackBoxManger.EXPORT_FILE_PATH + fileName;
+            String fullPath = FileUtils.ROOT_PATH  + fileName;
             BufferedWriter bufferedWriter = null;
             try {
                 bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fullPath,true)));
@@ -263,10 +264,11 @@ public class BlackBoxActivity extends BaseActivity {
                 }
             }
 
+
             EventAdapter.call(EventAdapter.UPDATE_FILE_SYS, fullPath);
             new SweetAlertDialog(activity, SweetAlertDialog.SUCCESS_TYPE)
                     .setTitleText("导出成功")
-                    .setContentText("文件导出在：手机存储/4GHotspot/"+fileName)
+                    .setContentText("文件导出在：手机存储/" + FileUtils.ROOT_DIRECTORY + "/" + fileName)
                     .show();
 
             EventAdapter.call(EventAdapter.ADD_BLACKBOX,BlackBoxManger.EXPORT_BLACKBOX+fullPath);

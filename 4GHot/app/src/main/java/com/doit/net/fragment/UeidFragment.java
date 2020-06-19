@@ -22,7 +22,7 @@ import java.util.List;
  */
 
 public class UeidFragment extends BaseFragment {
-//    private View rootView;
+
     private TabLayout tabLayout;
     private ViewPager viewPagers;
     private List<Fragment> listFragments;
@@ -33,13 +33,7 @@ public class UeidFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//        if (null != rootView) {
-//            ViewGroup parent = (ViewGroup) rootView.getParent();
-//            if (null != parent) {
-//                parent.removeView(rootView);
-//            }
-//            return rootView;
-//        }
+
 
         View rootView = inflater.inflate(R.layout.layout_ueid_all, container, false);
         tabLayout = rootView.findViewById(R.id.tabLayoutTab);

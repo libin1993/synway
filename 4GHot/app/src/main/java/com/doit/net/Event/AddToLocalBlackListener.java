@@ -23,8 +23,8 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 public class AddToLocalBlackListener implements View.OnClickListener {
     private Context mContext;
     private String imsi;
-    private String name;
-    private String remark;
+    private String name="";
+    private String remark="";
 
     public AddToLocalBlackListener(Context mContext, String name, String imsi, String remark) {
         this.mContext = mContext;
@@ -36,7 +36,6 @@ public class AddToLocalBlackListener implements View.OnClickListener {
     public AddToLocalBlackListener(Context mContext, String imsi) {
         this.mContext = mContext;
         this.imsi = imsi;
-        this.name = "未设置";
     }
 
     @Override
@@ -47,7 +46,7 @@ public class AddToLocalBlackListener implements View.OnClickListener {
             long count = dbManager.selector(DBBlackInfo.class)
                     .where("imsi","=",imsi).count();
             if(count>0){
-                ToastUtils.showMessage(mContext, R.string.tip_17);
+                ToastUtils.showMessage(R.string.tip_17);
                 return;
             }
             DBBlackInfo info = new DBBlackInfo();
@@ -61,7 +60,7 @@ public class AddToLocalBlackListener implements View.OnClickListener {
                 ProtocolManager.setBlackList("2", "#"+imsi);
             }
 
-            ToastUtils.showMessage(mContext,R.string.add_success);
+            ToastUtils.showMessage(R.string.add_success);
         } catch (DbException e) {
             new SweetAlertDialog(mContext, SweetAlertDialog.ERROR_TYPE)
                     .setTitleText(mContext.getString(R.string.add_black_fail))

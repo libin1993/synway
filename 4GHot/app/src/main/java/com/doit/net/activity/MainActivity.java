@@ -10,7 +10,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.speech.tts.TextToSpeech;
@@ -36,7 +35,6 @@ import com.doit.net.Protocol.GSMSendPackage;
 import com.doit.net.Protocol.GSMSubPackage;
 import com.doit.net.Sockets.NetConfig;
 import com.doit.net.Sockets.OnSocketChangedListener;
-import com.doit.net.Sockets.ServerSocketManager;
 import com.doit.net.Sockets.ServerSocketUtils;
 import com.doit.net.Sockets.DatagramSocketUtils;
 import com.doit.net.Sockets.UDPSocketUtils;
@@ -50,8 +48,6 @@ import com.doit.net.bean.TabEntity;
 import com.doit.net.Protocol.ProtocolManager;
 import com.doit.net.Model.BlackBoxManger;
 import com.doit.net.Event.EventAdapter;
-import com.doit.net.Event.IHandlerFinish;
-import com.doit.net.Event.UIEventManager;
 import com.doit.net.Model.AccountManage;
 import com.doit.net.Model.CacheManager;
 import com.doit.net.Utils.FTPManager;
@@ -99,7 +95,7 @@ import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.doit.net.activity.SystemSettingActivity.SET_STATIC_IP;
 
 @SuppressLint("NewApi")
-public class MainActivity extends BaseActivity implements IHandlerFinish, TextToSpeech.OnInitListener, EventAdapter.EventCall {
+public class MainActivity extends BaseActivity implements TextToSpeech.OnInitListener, EventAdapter.EventCall {
     private Activity activity = this;
 
     private ViewPager mViewPager;
@@ -142,7 +138,6 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
     private final int ADD_BLACKBOX = 9;
     private final int CHANGE_TAB = 10;
     private final int POWER_START = 11;
-    private final int DEVICE_INIT_COMPLETE = 12;
     private final int CHECK_LICENCE = 13;
 
     @Override
@@ -225,11 +220,11 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
     }
 
     private void initFTP() {
-        File f = new File(FTPServer.FTP_DIR);
+        File f = new File(FileUtils.ROOT_PATH);
         if (!f.exists())
             f.mkdir();
 
-        ftpServer.copyConfigFile(R.raw.users, FTPServer.FTP_DIR + "users.properties", getBaseContext());
+        ftpServer.copyConfigFile(R.raw.users, FileUtils.ROOT_PATH + "users.properties", getBaseContext());
         ftpServer.init();
         ftpServer.startFTPServer();
     }
@@ -273,29 +268,28 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
 
         initTabs();
         initProgressDialog();
+
     }
 
     private void initEvent() {
-        EventAdapter.setEvent(EventAdapter.FOUND_BLACK_NAME, this);
-        EventAdapter.setEvent("TIP_MSG", this);
-        EventAdapter.setEvent("SYS_RPT", this);
-        EventAdapter.setEvent("SHOW_PROGRESS", this);
-        EventAdapter.setEvent("CLOSE_PROGRESS", this);
-        EventAdapter.setEvent(EventAdapter.SPEAK, this);
-        EventAdapter.setEvent(EventAdapter.UPDATE_FILE_SYS, this);
-        EventAdapter.setEvent(EventAdapter.UPDATE_BATTERY, this);
-        EventAdapter.setEvent(EventAdapter.ADD_BLACKBOX, this);
-        EventAdapter.setEvent(EventAdapter.CHANGE_TAB, this);
-        EventAdapter.setEvent(EventAdapter.WIFI_CHANGE, this);
-        EventAdapter.setEvent(EventAdapter.POWER_START, this);
-        EventAdapter.setEvent(EventAdapter.CHECK_LICENCE, this);
-        //EventAdapter.setEvent(EventAdapter.SYNC_ERROR_RPT,this);
+        EventAdapter.register(EventAdapter.FOUND_BLACK_NAME, this);
+        EventAdapter.register("TIP_MSG", this);
+        EventAdapter.register("SYS_RPT", this);
+        EventAdapter.register("SHOW_PROGRESS", this);
+        EventAdapter.register("CLOSE_PROGRESS", this);
+        EventAdapter.register(EventAdapter.SPEAK, this);
+        EventAdapter.register(EventAdapter.UPDATE_FILE_SYS, this);
+        EventAdapter.register(EventAdapter.UPDATE_BATTERY, this);
+        EventAdapter.register(EventAdapter.ADD_BLACKBOX, this);
+        EventAdapter.register(EventAdapter.CHANGE_TAB, this);
+        EventAdapter.register(EventAdapter.WIFI_CHANGE, this);
+        EventAdapter.register(EventAdapter.POWER_START, this);
+        EventAdapter.register(EventAdapter.HEARTBEAT_RPT, this);
 
-        UIEventManager.register(UIEventManager.KEY_HEARTBEAT_RPT, this);
     }
 
     private void checkDataDir() {
-        String dataDir = Environment.getExternalStorageDirectory() + "/4GHotspot/";
+        String dataDir = FileUtils.ROOT_PATH;
         File file = new File(dataDir);
         if (!file.exists()) {
             file.mkdirs();
@@ -921,55 +915,6 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
         }
     }
 
-    @Override
-    public void handlerFinish(String key) {
-        if (key.equals(UIEventManager.KEY_HEARTBEAT_RPT)) {
-            if (heartbeatCount == 0) {
-                ProtocolManager.setNowTime();
-                LogUtils.log("首次下发查询以获取小区信息：");
-                ProtocolManager.getEquipAndAllChannelConfig();
-                //FtpConfig.setFtpServerIp(NetWorkUtils.getWIFILocalIpAdress(this));
-                //ProtocolManager.setFTPConfig();    //目前ftp设置从网页直接配
-                ProtocolManager.setBlackList("1", "");  //防止上报其他手机设置的黑名单，就查上来删掉
-
-                ProtocolManager.setFTPConfig(); //设置ftp配置
-
-               if (CacheManager.checkLicense){
-                   CacheManager.checkLicense = false;
-                   checkLicence();
-               }
-
-            }
-
-            if (!hasSetDefaultParam && CacheManager.getChannels().size() > 0) {
-
-                setDeviceWorkMode();
-
-                if (VersionManage.isPoliceVer()) {
-                    CacheManager.setCurrentBlackList();
-                }
-                ProtocolManager.setDefaultArfcnsAndPwr();
-                hasSetDefaultParam = true;
-
-                if (CacheManager.hasPressStartButton()) {
-                    new Timer().schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            ProtocolManager.openAllRf();
-                        }
-                    }, 5000);
-                }
-
-                mHandler.sendEmptyMessage(DEVICE_INIT_COMPLETE);
-                //2019.9.12号讨论决定，所有版本一开始不使用celluar设置频点，公安版本下的定位开启才使用cellular的频点
-            }
-
-            heartbeatCount++;
-            if (heartbeatCount >= 1000) {
-                heartbeatCount = 0;
-            }
-        }
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -1027,9 +972,49 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
         } else if (EventAdapter.WIFI_CHANGE.equals(key)) {
             wifiChangeEvent();
         } else if (EventAdapter.POWER_START.equals(key)) {
-            powerStart();
-        } else if (EventAdapter.CHECK_LICENCE.equals(key)) {
-//            checkLicence();
+            mHandler.sendEmptyMessage(POWER_START);
+        }else if (EventAdapter.HEARTBEAT_RPT.equals(key)){
+            if (heartbeatCount == 0) {
+                ProtocolManager.setNowTime();
+                LogUtils.log("首次下发查询以获取小区信息：");
+                ProtocolManager.getEquipAndAllChannelConfig();
+                ProtocolManager.setBlackList("1", "");  //防止上报其他手机设置的黑名单，就查上来删掉
+
+                ProtocolManager.setFTPConfig(); //设置ftp配置
+
+                if (CacheManager.checkLicense){
+                    CacheManager.checkLicense = false;
+                    checkLicence();
+                }
+
+            }
+
+            if (!hasSetDefaultParam && CacheManager.getChannels().size() > 0) {
+
+                setDeviceWorkMode();
+
+                if (VersionManage.isPoliceVer()) {
+                    CacheManager.setCurrentBlackList();
+                }
+                ProtocolManager.setDefaultArfcnsAndPwr();
+                hasSetDefaultParam = true;
+
+                if (CacheManager.hasPressStartButton()) {
+                    new Timer().schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            ProtocolManager.openAllRf();
+                        }
+                    }, 5000);
+                }
+
+                //2019.9.12号讨论决定，所有版本一开始不使用celluar设置频点，公安版本下的定位开启才使用cellular的频点
+            }
+
+            heartbeatCount++;
+            if (heartbeatCount >= 1000) {
+                heartbeatCount = 0;
+            }
         }
     }
 
@@ -1041,26 +1026,26 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
             public void run() {
                 try {
                     FTPManager.getInstance().connect();
-                    boolean isFileExist = FTPManager.getInstance().downloadFile(LicenceUtils.LOCAL_LICENCE_PATH,
+                    boolean isFileExist = FTPManager.getInstance().downloadFile(FileUtils.ROOT_PATH,
                             LicenceUtils.LICENCE_FILE_NAME);
                     if (isFileExist) {
                         //从设备下载证书校验
                         LicenceUtils.authorizeCode = FileUtils.getInstance().fileToString(
-                                LicenceUtils.LOCAL_LICENCE_PATH + LicenceUtils.LICENCE_FILE_NAME);
+                                FileUtils.ROOT_PATH + LicenceUtils.LICENCE_FILE_NAME);
                         mHandler.sendEmptyMessage(CHECK_LICENCE);
-                        FileUtils.getInstance().deleteFile(LicenceUtils.LOCAL_LICENCE_PATH
+                        FileUtils.getInstance().deleteFile(FileUtils.ROOT_PATH
                                 + LicenceUtils.LICENCE_FILE_NAME);
                     } else {
                         //设备无证书，默认生成30天证书上传设备
                         String licence = LicenceUtils.createLicence();
                         LicenceUtils.authorizeCode = licence;
                         boolean isFinish = FileUtils.getInstance().stringToFile(licence,
-                                LicenceUtils.LOCAL_LICENCE_PATH + LicenceUtils.LICENCE_FILE_NAME);
+                                FileUtils.ROOT_PATH + LicenceUtils.LICENCE_FILE_NAME);
                         if (isFinish) {
-                            boolean isUploaded = FTPManager.getInstance().uploadFile(LicenceUtils.LOCAL_LICENCE_PATH,
+                            boolean isUploaded = FTPManager.getInstance().uploadFile(FileUtils.ROOT_PATH,
                                     LicenceUtils.LICENCE_FILE_NAME);
                             if (isUploaded) {
-                                FileUtils.getInstance().deleteFile(LicenceUtils.LOCAL_LICENCE_PATH
+                                FileUtils.getInstance().deleteFile(FileUtils.ROOT_PATH
                                         + LicenceUtils.LICENCE_FILE_NAME);
                             }
 
@@ -1081,7 +1066,7 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
     private boolean checkAuthorize() {
 
         if (TextUtils.isEmpty(LicenceUtils.authorizeCode)) {
-            ToastUtils.showMessageLong(this, "App未授权，请联系管理员。");
+            ToastUtils.showMessageLong("App未授权，请联系管理员。");
             LicenceDialog licenceDialog = new LicenceDialog(this,"退出");
             licenceDialog.setOnCloseListener(new LicenceDialog.OnCloseListener() {
                 @Override
@@ -1098,7 +1083,7 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
         long longDueTime = DateUtils.convert2long(dueTime, DateUtils.LOCAL_DATE_DAY);
         long nowTime = System.currentTimeMillis();
         if (nowTime >= longDueTime) {
-            ToastUtils.showMessageLong(activity, "授权已过期，请联系管理员");
+            ToastUtils.showMessageLong("授权已过期，请联系管理员");
             LicenceDialog licenceDialog = new LicenceDialog(this,"退出");
             licenceDialog.setOnCloseListener(new LicenceDialog.OnCloseListener() {
                 @Override
@@ -1112,7 +1097,7 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
         } else {
             int dueDay = (int) ((longDueTime - nowTime) / (24 * 60 * 60 * 1000L));
             if (dueDay <= 7) {
-                ToastUtils.showMessageLong(activity, "授权码还剩" + dueDay + "天到期，请联系管理员");
+                ToastUtils.showMessageLong("授权码还剩" + dueDay + "天到期，请联系管理员");
             }
 
             return true;
@@ -1125,7 +1110,7 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
         public void handleMessage(Message msg) {
             if (msg.what == TIP_MSG) {
                 String tip = msg.obj.toString();
-                ToastUtils.showMessageLong(MainActivity.this, tip);
+                ToastUtils.showMessageLong( tip);
             } else if (msg.what == SHOW_PROGRESS) {
                 int dialogKeepTime = 5000;
                 if (msg.obj != null) {
@@ -1160,12 +1145,7 @@ public class MainActivity extends BaseActivity implements IHandlerFinish, TextTo
                 mViewPager.setCurrentItem((int) msg.obj, true);
             } else if (msg.what == POWER_START) {
                 powerStart();
-            } else if (msg.what == DEVICE_INIT_COMPLETE) {
-//                new MySweetAlertDialog(activity, MySweetAlertDialog.SUCCESS_TYPE)
-//                        .setTitleText("提示")
-//                        .setContentText("设备初始化已完成！")
-//                        .show();
-            } else if (msg.what == CHECK_LICENCE) {
+            }else if (msg.what == CHECK_LICENCE) {
                 checkAuthorize();
             }
         }

@@ -416,7 +416,7 @@ public class CacheManager {
         //UtilBaseLog.printLog(idx + "    size:" + channels.size() + "    " + rf);
         for(LteChannelCfg channel : channels){
             if (channel.getIdx().equals(idx)){
-                channel.setState(rf);
+                channel.setRFState(rf);
                 return;
             }
         }

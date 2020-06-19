@@ -9,7 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.doit.net.Event.AddToWhitelistListner;
-import com.doit.net.Event.UIEventManager;
+import com.doit.net.Event.EventAdapter;
 import com.doit.net.Model.CacheManager;
 import com.doit.net.Model.UCSIDBManager;
 import com.doit.net.Model.WhiteListInfo;
@@ -66,29 +66,29 @@ public class AddWhitelistDialog extends Dialog {
                 final String remark = etRemark.getText().toString();
 
                 if ("".equals(imsi) && "".equals(msisdn)){
-                    ToastUtils.showMessage(getContext(), "请输入IMSI或手机号");
+                    ToastUtils.showMessage( "请输入IMSI或手机号");
                     return;
                 } else{
                     if (!"".equals(imsi) && imsi.length() != 15){
-                        ToastUtils.showMessage(getContext(), "IMSI长度错误，请确认后输入！");
+                        ToastUtils.showMessage("IMSI长度错误，请确认后输入！");
                         return;
                     }
 
                     if (!"".equals(msisdn) && msisdn.length() != 11){
-                        ToastUtils.showMessage(getContext(), "手机长度错误，请确认后输入！");
+                        ToastUtils.showMessage( "手机长度错误，请确认后输入！");
                         return;
                     }
 
                     new AddToWhitelistListner(getContext(), imsi, msisdn, remark).onClick(null);
                     if (!"".equals(msisdn) && "".equals(imsi)){
-                        ToastUtils.showMessage(mContext, "提示：检测到只输入了手机号，只有翻译成IMSI才可生效！");
+                        ToastUtils.showMessage( "提示：检测到只输入了手机号，只有翻译成IMSI才可生效！");
                     }else{
                         CacheManager.updateWhitelistToDev(mContext);
                     }
                 }
 
                 dismiss();
-                UIEventManager.call(UIEventManager.KEY_REFRESH_WHITE_LIST);
+                EventAdapter.call(EventAdapter.REFRESH_WHITELIST);
             }
         });
 
@@ -113,7 +113,7 @@ public class AddWhitelistDialog extends Dialog {
                 e.printStackTrace();
             }
             if(count>0){
-                ToastUtils.showMessage(mContext, R.string.exist_whitelist);
+                ToastUtils.showMessage( R.string.exist_whitelist);
                 return true;
             }else{
                 return false;
@@ -130,7 +130,7 @@ public class AddWhitelistDialog extends Dialog {
             long count = dbManager.selector(WhiteListInfo.class)
                     .where("imsi","=", imsi).count();
             if(count>0){
-                ToastUtils.showMessage(getContext(), R.string.same_imsi);
+                ToastUtils.showMessage(R.string.same_imsi);
                 return -1;
             }
 

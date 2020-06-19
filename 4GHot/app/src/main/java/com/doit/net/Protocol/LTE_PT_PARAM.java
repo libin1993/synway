@@ -3,7 +3,6 @@ package com.doit.net.Protocol;
 
 import android.text.TextUtils;
 
-import com.doit.net.application.MyApplication;
 import com.doit.net.bean.DeviceState;
 import com.doit.net.bean.LteCellConfig;
 import com.doit.net.bean.Namelist;
@@ -13,7 +12,6 @@ import com.doit.net.bean.BlackNameBean;
 import com.doit.net.bean.LteChannelCfg;
 import com.doit.net.bean.LteEquipConfig;
 import com.doit.net.Event.EventAdapter;
-import com.doit.net.Event.UIEventManager;
 import com.doit.net.Model.CacheManager;
 import com.doit.net.Model.ImsiMsisdnConvert;
 import com.doit.net.Model.ScanFreqManager;
@@ -127,7 +125,6 @@ public class LTE_PT_PARAM {
 
         LteCellConfig lteCellConfig = praseCellConfig(splitStr[0]);
         CacheManager.setCellConfig(lteCellConfig);
-//        UIEventManager.call(UIEventManager.KEY_REFRESH_DEVICE);
 
         //通道级的配置
         for (int i = 1; i < splitStr.length; i++) {
@@ -137,7 +134,8 @@ public class LTE_PT_PARAM {
         }
 
         EventAdapter.call(EventAdapter.UPDATE_BATTERY, Integer.valueOf(CacheManager.getLteEquipConfig().getVoltage12V()));
-        UIEventManager.call(UIEventManager.KEY_REFRESH_DEVICE);
+
+        EventAdapter.call(EventAdapter.REFRESH_DEVICE);
     }
 
     //解析名单查询回复
@@ -251,7 +249,8 @@ public class LTE_PT_PARAM {
         String temperature = heartbeat.split("@TM:")[1].split("@")[0];
         EventAdapter.call(EventAdapter.UPDATE_TMEPRATURE, temperature);
 
-        UIEventManager.call(UIEventManager.KEY_HEARTBEAT_RPT);
+        EventAdapter.call(EventAdapter.HEARTBEAT_RPT);
+        EventAdapter.call(EventAdapter.RF_STATUS);
     }
 
     //处理黑名单中标上报
@@ -436,8 +435,8 @@ public class LTE_PT_PARAM {
                     }
                 }
 
-                UIEventManager.call(UIEventManager.KEY_RF_STATUS);
-                UIEventManager.call(UIEventManager.KEY_REFRESH_DEVICE);
+                EventAdapter.call(EventAdapter.RF_STATUS);
+                EventAdapter.call(EventAdapter.REFRESH_DEVICE);
                 break;
 
             case PARAM_SET_CHANNEL_OFF_ACK:
@@ -450,7 +449,9 @@ public class LTE_PT_PARAM {
                         }
                     }
                 }
-                UIEventManager.call(UIEventManager.KEY_REFRESH_DEVICE);
+
+                EventAdapter.call(EventAdapter.RF_STATUS);
+                EventAdapter.call(EventAdapter.REFRESH_DEVICE);
                 break;
 
             case LTE_PT_PARAM.PARAM_SET_NAMELIST_ACK:
@@ -466,7 +467,7 @@ public class LTE_PT_PARAM {
                 if (respContent.charAt(0) == '0') {
                     LogUtils.log("更新TAC成功");
 
-                    ToastUtils.showMessage(MyApplication.mContext, "更新TAC成功");
+                    ToastUtils.showMessage( "更新TAC成功");
                 } else if (respContent.charAt(0) == 1) {
                     LogUtils.log("更新TAC失败");
                     //ToastUtils.showMessage(GameApplication.appContext,"更新TAC失败");
@@ -516,9 +517,9 @@ public class LTE_PT_PARAM {
 
             case LTE_PT_PARAM.PARAM_SET_ENB_CONFIG_ACK:
                 if (respContent.charAt(0) == '0') {
-                    ToastUtils.showMessageLong(MyApplication.mContext, R.string.set_cell_reboot);
+                    ToastUtils.showMessageLong(R.string.set_cell_reboot);
                 } else if (respContent.charAt(0) == '1') {
-                    ToastUtils.showMessageLong(MyApplication.mContext, R.string.set_cell_fail);
+                    ToastUtils.showMessageLong( R.string.set_cell_fail);
                 }
                 break;
 
@@ -563,13 +564,13 @@ public class LTE_PT_PARAM {
             case LTE_PT_PARAM.PARAM_RPT_UPGRADE_STATUS:
                 if (respContent.charAt(0) == '0') {
                     LogUtils.log("加载升级包成功，设备即将重启");
-                    ToastUtils.showMessageLong(MyApplication.mContext, "加载升级包成功，设备即将（约1分钟后）重启");
+                    ToastUtils.showMessageLong("加载升级包成功，设备即将（约1分钟后）重启");
                 } else if (respContent.charAt(0) == '1') {
                     LogUtils.log("设备获取升级包失败");
-                    ToastUtils.showMessageLong(MyApplication.mContext, "设备获取升级包失败");
+                    ToastUtils.showMessageLong( "设备获取升级包失败");
                 }
 
-                UIEventManager.call(UIEventManager.RPT_UPGRADE_STATUS);
+                EventAdapter.call(EventAdapter.UPGRADE_STATUS);
                 break;
             default:
                 break;

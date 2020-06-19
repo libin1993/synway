@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
+import com.doit.net.Utils.FileUtils;
 import com.doit.net.adapter.AnalysisResultAdapter;
 import com.doit.net.View.MyTimePickDialog;
 import com.doit.net.base.BaseFragment;
@@ -118,26 +119,26 @@ public class GetPartnerAnalysisFragment extends BaseFragment {
                 String targetImsi = etGetPartnerIMSI.getText().toString();
 
                 if ("".equals(etStartTime.getText().toString()) || "".equals(etEndTime.getText().toString())){
-                    ToastUtils.showMessage(getContext(), "还未选择开始和结束时间！");
+                    ToastUtils.showMessage( "还未选择开始和结束时间！");
                     return;
                 }
 
                 if (etStartTime.getText().toString().equals(etEndTime.getText().toString())){
-                    ToastUtils.showMessage(getContext(), "开始时间和结束时间一样，请重新设置！");
+                    ToastUtils.showMessage("开始时间和结束时间一样，请重新设置！");
                     return;
                 }
                 if (!DateUtils.isStartEndTimeOrderRight(etStartTime.getText().toString(), etEndTime.getText().toString())){
-                    ToastUtils.showMessage(getContext(), "开始时间比结束时间晚，请重新设置！");
+                    ToastUtils.showMessage( "开始时间比结束时间晚，请重新设置！");
                     return;
                 }
 
                 if ("".equals(targetImsi)){
-                    ToastUtils.showMessage(getContext(), "请输入伴随目标的IMSI!");
+                    ToastUtils.showMessage("请输入伴随目标的IMSI!");
                     return;
                 }
 
                 if ("".equals(etDeviation.getText().toString())){
-                    ToastUtils.showMessage(getContext(), "请输入伴随的时间偏差!");
+                    ToastUtils.showMessage("请输入伴随的时间偏差!");
                     return;
                 }
 
@@ -146,12 +147,12 @@ public class GetPartnerAnalysisFragment extends BaseFragment {
                 if (mapImsiWithTimes == null){
                     listCollideResult.clear();
                     layoutCollideTarget.setVisibility(View.GONE);
-                    ToastUtils.showMessage(getContext(), "时间段内没有找到目标IMSI！");
+                    ToastUtils.showMessage("时间段内没有找到目标IMSI！");
                     return;
                 }else if (mapImsiWithTimes.size() == 0){
                     listCollideResult.clear();
                     layoutCollideTarget.setVisibility(View.GONE);
-                    ToastUtils.showMessage(getContext(), "无伴随结果！");
+                    ToastUtils.showMessage("无伴随结果！");
                 }else{
                     saveTargetImsi = targetImsi;
                     saveTargetTimes = mapImsiWithTimes.get(targetImsi);
@@ -169,7 +170,7 @@ public class GetPartnerAnalysisFragment extends BaseFragment {
             @Override
             public void onClick(View view) {
                 if(listCollideResult.size() == 0){
-                    ToastUtils.showMessage(getContext(),"无伴随分析结果，导出失败！");
+                    ToastUtils.showMessage("无伴随分析结果，导出失败！");
                     return;
                 }
 
@@ -211,7 +212,7 @@ public class GetPartnerAnalysisFragment extends BaseFragment {
 
     private void exportCollideResult(List<AnalysisResultBean> listCollideResult) {
         boolean isSuccess = true;
-        final String COLLIDE_RES_FILE_PATH =  Environment.getExternalStorageDirectory()+"/4GHotspot/export/";
+        final String COLLIDE_RES_FILE_PATH =  FileUtils.ROOT_PATH+"export/";
 
         String fileName = "PARTNER_"+saveTargetImsi+"_"+ DateUtils.getStrOfDate()+".txt";
         String fullPath = COLLIDE_RES_FILE_PATH+fileName;
@@ -249,7 +250,7 @@ public class GetPartnerAnalysisFragment extends BaseFragment {
             EventAdapter.call(EventAdapter.UPDATE_FILE_SYS, fullPath);
             new MySweetAlertDialog(getContext(), MySweetAlertDialog.TEXT_SUCCESS)
                     .setTitleText("导出成功")
-                    .setContentText("文件导出在：手机存储/4GHotspot/"+ fileName)
+                    .setContentText("文件导出在：手机存储/"+FileUtils.ROOT_DIRECTORY+"/"+ fileName)
                     .show();
         }
 

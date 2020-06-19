@@ -38,7 +38,7 @@ public class LogUtils {
 
     public static void initLog(){
         if (BuildConfig.SAVE_LOG){
-            String logDir = Environment.getExternalStorageDirectory().getAbsolutePath()+"/4GHotspot/log/";
+            String logDir = FileUtils.ROOT_PATH+"log/";
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
             String fileName = df.format(new Date())+".log";// new Date()为获取当前系统时间
 

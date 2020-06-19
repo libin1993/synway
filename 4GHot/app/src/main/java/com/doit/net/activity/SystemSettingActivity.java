@@ -9,6 +9,7 @@ import android.view.View;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.BootstrapEditText;
+import com.doit.net.Utils.FileUtils;
 import com.doit.net.base.BaseActivity;
 import com.doit.net.Model.AccountManage;
 import com.doit.net.bean.LteChannelCfg;
@@ -94,7 +95,7 @@ public class SystemSettingActivity extends BaseActivity {
 
             tvIfAutoOpenRF.setChecked(CacheManager.getChannels().get(0).getAutoOpen().equals("1"));
         }else{
-            ToastUtils.showMessageLong(activity,"设备未连接，当前展示的设置都不准确，请等待设备连接后重新进入该界面");
+            ToastUtils.showMessageLong("设备未连接，当前展示的设置都不准确，请等待设备连接后重新进入该界面");
         }
 
     }
@@ -108,7 +109,7 @@ public class SystemSettingActivity extends BaseActivity {
                 PrefManage.setBoolean(LOC_PREF_KEY, false);
             }
 
-            ToastUtils.showMessage(activity, "设置成功，重新登陆生效。");
+            ToastUtils.showMessage( "设置成功，重新登陆生效。");
         }
     };
 
@@ -122,7 +123,7 @@ public class SystemSettingActivity extends BaseActivity {
 
             ProtocolManager.setAutoRF(tvIfAutoOpenRF.isChecked());
 
-            ToastUtils.showMessage(activity, "下次开机生效");
+            ToastUtils.showMessage( "下次开机生效");
         }
     };
 
@@ -131,10 +132,10 @@ public class SystemSettingActivity extends BaseActivity {
         public void click(LSettingItem item) {
             if (tvStaticIp.isChecked()){
                 PrefManage.setBoolean(SET_STATIC_IP, true);
-                ToastUtils.showMessage(activity, "已开启自动连接，无需配置WIFI静态IP，以后将自动连接设备");
+                ToastUtils.showMessage("已开启自动连接，无需配置WIFI静态IP，以后将自动连接设备");
             }else {
                 PrefManage.setBoolean(SET_STATIC_IP, false);
-                ToastUtils.showMessageLong(activity, "已关闭自动连接，请配置WIFI静态IP，否则将无法连接设备");
+                ToastUtils.showMessageLong("已关闭自动连接，请配置WIFI静态IP，否则将无法连接设备");
             }
 
 
@@ -150,7 +151,7 @@ public class SystemSettingActivity extends BaseActivity {
     };
 
     private void generalAdmin() {
-        final String accountFullPath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/4GHotspot/FtpAccount/";
+        final String accountFullPath = FileUtils.ROOT_PATH+"FtpAccount/";
         final String accountFileName = "account";
 
 
@@ -179,13 +180,13 @@ public class SystemSettingActivity extends BaseActivity {
                 try {
                     FTPManager.getInstance().connect();
                     if (FTPManager.getInstance().uploadFile(accountFullPath, accountFileName)){
-                        ToastUtils.showMessage(getBaseContext(), "生成管理员账号成功");
+                        ToastUtils.showMessage( "生成管理员账号成功");
                     }else {
-                        ToastUtils.showMessage(getBaseContext(), "生成管理员账号出错");
+                        ToastUtils.showMessage("生成管理员账号出错");
                     }
                     AccountManage.deleteAccountFile();
                 } catch (Exception e) {
-                    ToastUtils.showMessage(getBaseContext(), "生成管理员账号出错");
+                    ToastUtils.showMessage("生成管理员账号出错");
                     e.printStackTrace();
                 }
             }

@@ -4,6 +4,7 @@ import android.os.Environment;
 
 import com.doit.net.Utils.DateUtils;
 import com.doit.net.Utils.FTPManager;
+import com.doit.net.Utils.FileUtils;
 import com.doit.net.Utils.LogUtils;
 
 import org.apache.commons.net.ftp.FTPFile;
@@ -65,8 +66,7 @@ public class BlackBoxManger {
     public final static String EXPORT_BLACKBOX = "导出黑匣子信息，文件为:";
 
     private static String currentAccount = "";
-    public final static String EXPORT_FILE_PATH = Environment.getExternalStorageDirectory()+"/4GHotspot/";
-    private static final String LOCAL_FTP_BLX_PATH = Environment.getExternalStorageDirectory().getAbsolutePath()+"/4GHotspot/FtpBlx/";
+    private static final String LOCAL_FTP_BLX_PATH = FileUtils.ROOT_PATH+"FtpBlx/";
     private static String currentBlxFileName;
 
     public static void setCurrentAccount(String account){
@@ -79,6 +79,7 @@ public class BlackBoxManger {
             return;
 
         recordOprToFile(currentAccount, operation);
+        LogUtils.log("黑匣子:"+currentAccount+"，"+operation);
     }
 
     private static void saveOperationToDB(String operation){
@@ -250,13 +251,12 @@ public class BlackBoxManger {
         if (files == null) {
             LogUtils.log("目录下没文件");
         } else {
-            //UtilBaseLog.printLog("所有文件：");
             String tmpFileName = "";
-
+            LogUtils.log("服务器黑匣子文件数量："+files.length);
             if ("".equals(startTime) && "".equals(endTime)){
                 for (int i = 0; i < files.length; i++) {
                     tmpFileName = files[i].getName();
-                    //UtilBaseLog.printLog(tmpFileName);
+                    LogUtils.log("文件名："+tmpFileName);
                     if (tmpFileName.endsWith(".blx")) {
                         if ("".equals(startTime) && "".equals(endTime)) {
                             try {

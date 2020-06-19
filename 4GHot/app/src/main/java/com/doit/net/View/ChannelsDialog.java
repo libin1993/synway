@@ -90,7 +90,7 @@ public class ChannelsDialog extends Dialog {
                 //ProtocolManager.setChannelConfig(cfg.getIdx(),null,tmpCfg.getPlmn(),tmpCfg.getPa(),tmpCfg.getGa(),null,null);
             }
 
-            ToastUtils.showMessage(getContext(), R.string.tip_15);
+            ToastUtils.showMessage(R.string.tip_15);
 //            dismiss();
         } catch (NumberFormatException e) {
             new MySweetAlertDialog(getContext(), MySweetAlertDialog.ERROR_TYPE)

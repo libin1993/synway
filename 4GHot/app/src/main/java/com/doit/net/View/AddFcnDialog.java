@@ -88,7 +88,7 @@ public class AddFcnDialog extends Dialog {
                 String fcn3 = etFcn3.getText().toString().trim();
 
                 if (TextUtils.isEmpty(fcn1) && TextUtils.isEmpty(fcn2) && TextUtils.isEmpty(fcn3)){
-                    ToastUtils.showMessage(mContext,"请输入有效内容");
+                    ToastUtils.showMessage("请输入有效内容");
                     return;
                 }
 

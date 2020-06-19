@@ -2,7 +2,6 @@ package com.doit.net.adapter;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +13,6 @@ import com.doit.net.Event.AddToLocationListener;
 import com.doit.net.Model.BlackBoxManger;
 import com.doit.net.Event.EventAdapter;
 import com.doit.net.Protocol.ProtocolManager;
-import com.doit.net.Event.UIEventManager;
 import com.doit.net.Model.CacheManager;
 import com.doit.net.Model.DBBlackInfo;
 import com.doit.net.Model.UCSIDBManager;
@@ -92,7 +90,7 @@ public class BlacklistAdapter extends BaseSwipeAdapter {
                 ueidList.remove(position);
                 UCSIDBManager.getDbManager().delete(resp);
                 ProtocolManager.setBlackList("3", "#"+resp.getImsi());
-                UIEventManager.call(UIEventManager.KEY_REFRESH_NAMELIST_LIST);
+                EventAdapter.call(EventAdapter.REFRESH_BLACKLIST);
                 EventAdapter.call(EventAdapter.ADD_BLACKBOX,BlackBoxManger.DELTE_NAMELIST+resp.getImsi()+"+"+resp.getName());
             } catch (DbException e) {
                 LogUtils.log("删除名单失败"+e.getMessage());
@@ -133,7 +131,7 @@ public class BlacklistAdapter extends BaseSwipeAdapter {
                 modifyNamelistDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
-                        UIEventManager.call(UIEventManager.KEY_REFRESH_NAMELIST_LIST);
+                      EventAdapter.call(EventAdapter.REFRESH_BLACKLIST);
                     }
                 });
                 modifyNamelistDialog.show();

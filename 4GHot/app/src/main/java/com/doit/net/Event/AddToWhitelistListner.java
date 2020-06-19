@@ -46,7 +46,7 @@ public class AddToWhitelistListner implements View.OnClickListener {
                         .count();
                 if(count>0){
 
-                    ToastUtils.showMessage(mContext, R.string.exist_whitelist);
+                    ToastUtils.showMessage( R.string.exist_whitelist);
                     return;
                 }
             }else{
@@ -54,7 +54,7 @@ public class AddToWhitelistListner implements View.OnClickListener {
                         .where("msisdn","=",msisdn)
                         .count();
                 if(count>0){
-                    ToastUtils.showMessage(mContext, R.string.exist_whitelist);
+                    ToastUtils.showMessage( R.string.exist_whitelist);
                     return;
                 }
             }
@@ -65,7 +65,7 @@ public class AddToWhitelistListner implements View.OnClickListener {
             info.setMsisdn(msisdn);
             dbManager.save(info);
 
-            ToastUtils.showMessage(mContext,R.string.add_success);
+            ToastUtils.showMessage(R.string.add_success);
         } catch (DbException e) {
             e.printStackTrace();
             new SweetAlertDialog(mContext, SweetAlertDialog.ERROR_TYPE)

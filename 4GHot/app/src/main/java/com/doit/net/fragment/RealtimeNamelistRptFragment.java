@@ -18,8 +18,6 @@ import com.doit.net.adapter.RealtimeNamelistRptAdapter;
 import com.doit.net.base.BaseFragment;
 import com.doit.net.bean.BlackNameBean;
 import com.doit.net.Event.EventAdapter;
-import com.doit.net.Event.IHandlerFinish;
-import com.doit.net.Event.UIEventManager;
 import com.doit.net.Model.CacheManager;
 import com.doit.net.Model.DBBlackInfo;
 import com.doit.net.Model.UCSIDBManager;
@@ -31,8 +29,8 @@ import org.xutils.ex.DbException;
  * Created by Zxc on 2018/11/21.
  */
 
-public class RealtimeNamelistRptFragment extends BaseFragment implements IHandlerFinish, EventAdapter.EventCall {
-    private View rootView = null;
+public class RealtimeNamelistRptFragment extends BaseFragment implements  EventAdapter.EventCall {
+
     private ListView lvRealTimeNum;
     private RealtimeNamelistRptAdapter mAdapter;
     private BootstrapButton btClear;
@@ -50,10 +48,8 @@ public class RealtimeNamelistRptFragment extends BaseFragment implements IHandle
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (rootView != null)
-            return rootView;
 
-        rootView = inflater.inflate(R.layout.fragment_namelist_rpt, null);
+        View rootView = inflater.inflate(R.layout.fragment_namelist_rpt, null);
         lvRealTimeNum = rootView.findViewById(R.id.lvRealTimeNum);
         btClear = rootView.findViewById(R.id.btClear);
         tvRealTimeNum = rootView.findViewById(R.id.tvRealTimeNum);
@@ -70,8 +66,8 @@ public class RealtimeNamelistRptFragment extends BaseFragment implements IHandle
             }
         });
 
-        EventAdapter.setEvent(EventAdapter.BLACK_NAME_RPT,this);
-        UIEventManager.register(UIEventManager.KEY_REFRESH_NAMELIST_RPT_LIST,this);
+        EventAdapter.register(EventAdapter.BLACK_NAME_RPT,this);
+        EventAdapter.register(EventAdapter.REFRESH_NAME_LIST_RPT,this);
 
         return rootView;
     }
@@ -145,21 +141,21 @@ public class RealtimeNamelistRptFragment extends BaseFragment implements IHandle
         }
     };
 
-    @Override
-    public void handlerFinish(String key) {
-        if (key.equals(UIEventManager.KEY_REFRESH_NAMELIST_RPT_LIST)) {
-            mHandler.sendEmptyMessage(UPDATE_LIST);
-        }
-    }
 
     @Override
     public void call(String key, Object val) {
-        if (key.equals(EventAdapter.BLACK_NAME_RPT)) {
-            Message msg = new Message();
-            msg.what = NAMLELIST_RPT;
-            msg.obj = val;
-            mHandler.sendMessage(msg);
+        switch (key){
+            case EventAdapter.REFRESH_NAME_LIST_RPT:
+                mHandler.sendEmptyMessage(UPDATE_LIST);
+                break;
+            case EventAdapter.BLACK_NAME_RPT:
+                Message msg = new Message();
+                msg.what = NAMLELIST_RPT;
+                msg.obj = val;
+                mHandler.sendMessage(msg);
+                break;
         }
+
     }
 
 }

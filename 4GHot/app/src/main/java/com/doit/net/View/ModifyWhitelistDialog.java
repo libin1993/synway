@@ -76,12 +76,12 @@ public class ModifyWhitelistDialog extends Dialog {
                 String remark = etRemark.getText().toString();
 
                 if (!"".equals(imsi) && imsi.length() != 15){
-                    ToastUtils.showMessage(getContext(), "IMSI长度错误！");
+                    ToastUtils.showMessage( "IMSI长度错误！");
                     return;
                 }
 
                 if (!"".equals(msisdn) && msisdn.length() != 11){
-                    ToastUtils.showMessage(getContext(), "手机号长度错误！");
+                    ToastUtils.showMessage( "手机号长度错误！");
                     return;
                 }
 
@@ -95,7 +95,7 @@ public class ModifyWhitelistDialog extends Dialog {
                                 .findFirst();
 
                         if (whiteListInfo == null){
-                            ToastUtils.showMessage(getContext(),R.string.modify_whitelist_fail);
+                            ToastUtils.showMessage(R.string.modify_whitelist_fail);
                             return;
                         }
 
@@ -113,7 +113,7 @@ public class ModifyWhitelistDialog extends Dialog {
                                 .findFirst();
 
                         if (whiteListInfo == null){
-                            ToastUtils.showMessage(getContext(),R.string.modify_whitelist_fail);
+                            ToastUtils.showMessage(R.string.modify_whitelist_fail);
                             return;
                         }
 

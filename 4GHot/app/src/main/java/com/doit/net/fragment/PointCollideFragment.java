@@ -48,7 +48,7 @@ import java.util.List;
  */
 
 public class PointCollideFragment extends BaseFragment {
-    private View rootView;
+
 
     private BootstrapButton btAddTimePoint;
     private BootstrapButton btStartCollide;
@@ -78,10 +78,15 @@ public class PointCollideFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (rootView != null)
-            return rootView;
 
-        rootView = inflater.inflate(R.layout.fragment_point_collide, null);
+
+        View rootView = inflater.inflate(R.layout.fragment_point_collide, null);
+        lvCollideTimePoint = rootView.findViewById(R.id.lvCollideTimePoint);
+        etDeviation = rootView.findViewById(R.id.etDeviation);
+        btAddTimePoint = rootView.findViewById(R.id.btAddTimePoint);
+        btStartCollide = rootView.findViewById(R.id.btStartCollide);
+        lvCollideResult = rootView.findViewById(R.id.lvAnalysisResult);
+        layoutCollideResult = rootView.findViewById(R.id.layoutCollideResult);
         initWidget();
         dbManager = UCSIDBManager.getDbManager();
 
@@ -90,7 +95,7 @@ public class PointCollideFragment extends BaseFragment {
 
     private void initWidget() {
         collideTimePointAdapter = new CollideTimePointAdapter(getContext(), listCollideTimePoint);
-        lvCollideTimePoint = rootView.findViewById(R.id.lvCollideTimePoint);
+
         lvCollideTimePoint.setAdapter(collideTimePointAdapter);
         lvCollideTimePoint.setMenuCreator(timePointCreator);
         lvCollideTimePoint.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
@@ -117,8 +122,7 @@ public class PointCollideFragment extends BaseFragment {
             }
         });
 
-        etDeviation = rootView.findViewById(R.id.etDeviation);
-        btAddTimePoint = rootView.findViewById(R.id.btAddTimePoint);
+
         btAddTimePoint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -136,17 +140,16 @@ public class PointCollideFragment extends BaseFragment {
         });
 
 
-        btStartCollide = rootView.findViewById(R.id.btStartCollide);
         btStartCollide.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
                 if (listCollideTimePoint.size() < 2){
-                    ToastUtils.showMessage(getContext(), "请至少选择两个时间点！");
+                    ToastUtils.showMessage("请至少选择两个时间点！");
                     return;
                 }
 
                 if ("".equals(etDeviation.getText().toString())){
-                    ToastUtils.showMessage(getContext(), "请请输入时间偏差！");
+                    ToastUtils.showMessage( "请请输入时间偏差！");
                     return;
                 }
 
@@ -155,7 +158,7 @@ public class PointCollideFragment extends BaseFragment {
                 UpdateCollideResultToList(mapImsiWithTimes);
                 if (listCollideResult.size() == 0){
                     layoutCollideResult.setVisibility(View.GONE);
-                    ToastUtils.showMessage(getContext(), "无碰撞结果！");
+                    ToastUtils.showMessage("无碰撞结果！");
                 }else {
                     layoutCollideResult.setVisibility(View.VISIBLE);
                     mHandler.sendEmptyMessage(UPDATE_COLLIDE_RESULT);
@@ -165,7 +168,7 @@ public class PointCollideFragment extends BaseFragment {
             }});
 
         analysisResultAdapter = new AnalysisResultAdapter(getContext(), R.layout.analysis_result_item, listCollideResult);
-        lvCollideResult = rootView.findViewById(R.id.lvAnalysisResult);
+
         lvCollideResult.setAdapter(analysisResultAdapter);
         lvCollideResult.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -176,7 +179,7 @@ public class PointCollideFragment extends BaseFragment {
             }
         });
 
-        layoutCollideResult = rootView.findViewById(R.id.layoutCollideResult);
+
     }
 
     private void showCollideDetailDialog(String imsi, List<String> listAllDetectTime) {

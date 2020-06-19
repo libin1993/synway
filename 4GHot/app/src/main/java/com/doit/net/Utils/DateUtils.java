@@ -274,6 +274,15 @@ public class DateUtils {
         String dateString = formatter.format(currentTime);
         return dateString;
     }
+
+    /**
+     * 返回时间：yyyy-MM-dd格式
+     */
+    public static String getCurrentDate() {
+        Date currentTime = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return formatter.format(currentTime);
+    }
     
     public static String getLastDay(int day) {
         java.util.Date yestoday = new java.util.Date(new java.util.Date().getTime() - 1000 * 60

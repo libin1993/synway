@@ -3,6 +3,7 @@ package com.doit.net.Model;
 import android.os.Environment;
 
 import com.doit.net.Utils.FTPManager;
+import com.doit.net.Utils.FileUtils;
 import com.doit.net.Utils.LogUtils;
 
 import org.xutils.DbManager;
@@ -30,7 +31,7 @@ public class AccountManage {
     private static final String ADMIN_REMARK = "administrator88861158";  //存储在账号文件用于鉴定管理员账户
     private static String currentLoginAccount = "";
 
-    private static String LOCAL_FTP_ACCOUNT_PATH = Environment.getExternalStorageDirectory().getAbsolutePath()+"/4GHotspot/FtpAccount/";
+    private static String LOCAL_FTP_ACCOUNT_PATH = FileUtils.ROOT_PATH + "FtpAccount/";
     private static String ACCOUNT_FILE_NAME = "account";
 
     private static DbManager dbManager = UCSIDBManager.getDbManager();
@@ -80,18 +81,18 @@ public class AccountManage {
         AccountManage.currentLoginAccount = currentLoginAccount;
     }
 
-    public static void saveAccoutToPref(String account, String password){
+    public static void saveAccoutToPref(String account, String password) {
         adminAccount = account;
         adminPassword = password;
         PrefManage.setString("admin_account", account);
         PrefManage.setString("admin_password", password);
     }
 
-    public static  void getAdminAccoutFromPref(){
+    public static void getAdminAccoutFromPref() {
         adminAccount = PrefManage.getString("admin_account", "");
         adminPassword = PrefManage.getString("admin_password", "");
 
-        if ("".equals(adminAccount) || "".equals(adminPassword)){
+        if ("".equals(adminAccount) || "".equals(adminPassword)) {
             adminAccount = "admin";
             adminPassword = "admin";
             PrefManage.setString("admin_account", "admin");
@@ -99,7 +100,7 @@ public class AccountManage {
         }
     }
 
-    public static  void updateAdminAccoutToPref(String account, String password){
+    public static void updateAdminAccoutToPref(String account, String password) {
         PrefManage.setString("admin_account", account);
         PrefManage.setString("admin_password", password);
     }
@@ -112,20 +113,20 @@ public class AccountManage {
         }
     }
 
-    public static boolean checkAccount(String inputAccount, String inputPassword){
-        if (inputAccount.equals(SUPER_ACCOUNT) && inputPassword.equals(SUPER_PASSWORD)){
+    public static boolean checkAccount(String inputAccount, String inputPassword) {
+        if (inputAccount.equals(SUPER_ACCOUNT) && inputPassword.equals(SUPER_PASSWORD)) {
             setCurrentPerLevel(PERMISSION_LEVEL3);
             return true;
-        } else if (inputAccount.equals(adminAccount) && inputPassword.equals(adminPassword)){
+        } else if (inputAccount.equals(adminAccount) && inputPassword.equals(adminPassword)) {
             //setAdminLogin(true);
             setCurrentPerLevel(PERMISSION_LEVEL2);
             return true;
-        }else{
+        } else {
             try {
                 UserInfo userInfo = dbManager.selector(UserInfo.class)
-                        .where("account","=", inputAccount).findFirst();
+                        .where("account", "=", inputAccount).findFirst();
 
-                if (userInfo != null && userInfo.getAccount().equals(inputAccount) && userInfo.getPassword().equals(inputPassword)){
+                if (userInfo != null && userInfo.getAccount().equals(inputAccount) && userInfo.getPassword().equals(inputPassword)) {
                     setCurrentPerLevel(PERMISSION_LEVEL1);
                     return true;
                 }
@@ -143,7 +144,7 @@ public class AccountManage {
 
 
     /**************** 以下为账户文件上下载相关方法 ****************/
-    public static boolean UpdateAccountToDevice(){
+    public static boolean UpdateAccountToDevice() {
         List<UserInfo> listUserInfo = null;
         boolean result = true;
 
@@ -154,33 +155,34 @@ public class AccountManage {
             e.printStackTrace();
         }
 
-        final File namelistFile = new File(LOCAL_FTP_ACCOUNT_PATH +ACCOUNT_FILE_NAME);
-        if (namelistFile.exists()){
+        final File namelistFile = new File(LOCAL_FTP_ACCOUNT_PATH + ACCOUNT_FILE_NAME);
+        if (namelistFile.exists()) {
             namelistFile.delete();
         }
 
         BufferedWriter bufferedWriter = null;
         try {
-            bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(LOCAL_FTP_ACCOUNT_PATH +ACCOUNT_FILE_NAME,true), StandardCharsets.UTF_8));
-            if (listUserInfo != null){
+            bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(LOCAL_FTP_ACCOUNT_PATH + ACCOUNT_FILE_NAME, true), StandardCharsets.UTF_8));
+            if (listUserInfo != null) {
                 //bufferedWriter.write(AccountManage.getAdminAcount()+","+AccountManage.getAdminPassword()+ "," + AccountManage.getAdminRemark()+"\n");
-                for (UserInfo info: listUserInfo) {
+                for (UserInfo info : listUserInfo) {
                     //bufferedWriter.write(DateUtil.getDateByFormat(info.getCreateDate(),DateUtil.LOCAL_DATE)+",");
-                    bufferedWriter.write(info.getAccount()+",");
-                    bufferedWriter.write(info.getPassword()+",");
+                    bufferedWriter.write(info.getAccount() + ",");
+                    bufferedWriter.write(info.getPassword() + ",");
                     bufferedWriter.write(info.getRemake());
                     bufferedWriter.write("\n");
                 }
             }
-        } catch (IOException e){
+        } catch (IOException e) {
             result = false;
             e.printStackTrace();
             //log.error("File Error",e);
         } finally {
-            if(bufferedWriter != null){
+            if (bufferedWriter != null) {
                 try {
                     bufferedWriter.close();
-                } catch (IOException e) {}
+                } catch (IOException e) {
+                }
             }
         }
 
@@ -197,16 +199,15 @@ public class AccountManage {
         }.start();
 
 
-
         return result;
     }
 
-    public static void downloadAccountFile(){
+    public static void downloadAccountFile() {
         FTPManager.getInstance().downloadFile(LOCAL_FTP_ACCOUNT_PATH, ACCOUNT_FILE_NAME);
     }
 
 
-    public static boolean UpdateAccountFromFileToDB(){
+    public static boolean UpdateAccountFromFileToDB() {
         boolean result = true;
 
         try {
@@ -215,8 +216,8 @@ public class AccountManage {
             e.printStackTrace();
         }
 
-        File file = new File(LOCAL_FTP_ACCOUNT_PATH +ACCOUNT_FILE_NAME);
-        if (!file.exists()){
+        File file = new File(LOCAL_FTP_ACCOUNT_PATH + ACCOUNT_FILE_NAME);
+        if (!file.exists()) {
             return false;
         }
 
@@ -233,42 +234,43 @@ public class AccountManage {
                 UserInfo info = new UserInfo();
                 info.setAccount(split[0]);
                 info.setPassword(split[1]);
-                if (split.length == 3){
+                if (split.length == 3) {
                     info.setRemake(split[2]);
-                }else{
+                } else {
                     info.setRemake("");
                 }
                 dbManager.save(info);
             }
-        } catch (IOException e){
+        } catch (IOException e) {
             result = false;
             e.printStackTrace();
         } finally {
-            if(bufferedReader != null){
+            if (bufferedReader != null) {
                 try {
                     bufferedReader.close();
-                } catch (IOException e) {}
+                } catch (IOException e) {
+                }
             }
         }
 
         return result;
     }
 
-    public static void checkAccountDir(){
+    public static void checkAccountDir() {
         File dir = new File(LOCAL_FTP_ACCOUNT_PATH);
         if (!dir.exists() && !dir.isDirectory()) {
             dir.mkdir();
         }
     }
 
-    public static void deleteAccountFile(){
+    public static void deleteAccountFile() {
         File file = new File(LOCAL_FTP_ACCOUNT_PATH);
-        if(!file.exists()){//判断是否待删除目录是否存在
+        if (!file.exists()) {//判断是否待删除目录是否存在
             return;
         }
 
         String[] content = file.list();
-        for(String name : content){
+        for (String name : content) {
             File temp = new File(LOCAL_FTP_ACCOUNT_PATH, name);
             temp.delete();
         }

@@ -2,7 +2,7 @@ package com.doit.net.View;
 
 import android.os.Handler;
 
-import com.doit.net.Event.UIEventManager;
+import com.doit.net.Event.EventAdapter;
 import com.doit.net.Model.CacheManager;
 import com.doit.net.Utils.LogUtils;
 import com.doit.net.udp.g4.server.G4UDPServerManager;
@@ -33,7 +33,7 @@ public class CheckStateRunnable implements Runnable {
                 LogUtils.log(CHECK_TIME+" 毫秒秒无心跳响应");
                 CacheManager.resetState();
 //                G4UDPServerManager.stop();
-                UIEventManager.call(UIEventManager.KEY_REFRESH_DEVICE);
+                EventAdapter.call(EventAdapter.REFRESH_DEVICE);
             }
             mHandler.postDelayed(this,10*1000);
         } catch (Exception e) {

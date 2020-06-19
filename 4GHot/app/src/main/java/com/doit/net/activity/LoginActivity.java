@@ -13,6 +13,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.doit.net.Utils.FileUtils;
 import com.doit.net.base.BaseActivity;
 import com.doit.net.Model.AccountManage;
 import com.doit.net.Model.BlackBoxManger;
@@ -33,7 +34,6 @@ import static com.doit.net.activity.SystemSettingActivity.LOC_PREF_KEY;
 public class LoginActivity extends BaseActivity {
     private Activity activity = this;
 
-    private View view;
     private CheckBox ckRememberPass;
     private EditText etUserName;
     private EditText etPassword;
@@ -51,14 +51,15 @@ public class LoginActivity extends BaseActivity {
 
         getWindow ().setFlags (WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        view = View.inflate(this, R.layout.activity_login, null);
-        setContentView(view);
+
+        setContentView(R.layout.activity_login);
 
 //        checkTimeDatum();
 //        checkAuthorize();
         initView();
         checkLocalDir();
         initLog();
+
     }
 
 //    private boolean checkAuthorize() {
@@ -90,7 +91,7 @@ public class LoginActivity extends BaseActivity {
 //    }
 
     private void checkLocalDir() {
-        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/4GHotspot/");
+        File dir = new File(FileUtils.ROOT_PATH);
         if (!dir.exists() && !dir.isDirectory()) {
             dir.mkdir();
         }
@@ -114,15 +115,15 @@ public class LoginActivity extends BaseActivity {
                             //AccountManage.getAdminAccoutFromPref();
                             AccountManage.setGetAccountFromDevFlag(true);
                         }else{
-                            ToastUtils.showMessageLong(getBaseContext(), "从设备获取用户信息失败");
+                            ToastUtils.showMessageLong("从设备获取用户信息失败");
                             AccountManage.setGetAccountFromDevFlag(false);
                         }
                         AccountManage.deleteAccountFile();
                     }else{
-                        ToastUtils.showMessageLong(getBaseContext(), "从设备获取用户信息失败");
+                        ToastUtils.showMessageLong( "从设备获取用户信息失败");
                     }
                 } catch (Exception e) {
-                    ToastUtils.showMessageLong(getBaseContext(), "从设备获取用户信息失败，请确保与设备网络连接畅通");
+                    ToastUtils.showMessageLong("从设备获取用户信息失败，请确保与设备网络连接畅通");
                     e.printStackTrace();
                 }
             }};
@@ -205,13 +206,13 @@ public class LoginActivity extends BaseActivity {
                 String password = etPassword.getText().toString();
 
                 if ("".equals(userName) || "".equals(password)){
-                    ToastUtils.showMessage(LoginActivity.this, "密码或账号为空，请重新输入");
+                    ToastUtils.showMessage("密码或账号为空，请重新输入");
                     return;
                 }
 
                 AccountManage.getAdminAccoutFromPref();
                 if (!userName.equals(AccountManage.getSuperAccount()) && !userName.equals(AccountManage.getAdminAcount())){
-                    //clearLocalUserInfo();
+
                     getAccountInfoFormDevice();
                     if (!AccountManage.hasGetAccountFromDev()){
                         return;
@@ -236,7 +237,7 @@ public class LoginActivity extends BaseActivity {
                     startActivity(intent);
                     finish();
                 } else {
-                    ToastUtils.showMessage(LoginActivity.this, "密码或账号错误,请联系管理员！");
+                    ToastUtils.showMessage("密码或账号错误,请联系管理员！");
                 }
             }
         });

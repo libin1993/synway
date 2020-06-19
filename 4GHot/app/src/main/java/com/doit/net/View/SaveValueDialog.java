@@ -82,7 +82,7 @@ public class SaveValueDialog extends Dialog {
     private void saveClick(View v){
         String url = uploadUrl.getText().toString();
         PrefManage.setString(key,url);
-        ToastUtils.showMessageLong(getContext(),"设置成功！");
+        ToastUtils.showMessageLong("设置成功！");
         dismiss();
     }
 

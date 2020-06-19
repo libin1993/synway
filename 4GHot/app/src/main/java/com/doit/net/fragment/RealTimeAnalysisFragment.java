@@ -46,7 +46,6 @@ import static cn.pedant.SweetAlert.SweetAlertDialog.WARNING_TYPE;
  */
 
 public class RealTimeAnalysisFragment extends BaseFragment {
-    private View rootView;
 
     private BootstrapButton btStartStop;
     private BootstrapButton btRestart;
@@ -72,23 +71,24 @@ public class RealTimeAnalysisFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (rootView != null)
-            return rootView;
 
-        rootView = inflater.inflate(R.layout.fragment_realtime_analysis, null);
+        View rootView = inflater.inflate(R.layout.fragment_realtime_analysis, null);
+        btStartStop = rootView.findViewById(R.id.btStartStop);
+        lvRealtimeAnalysisResult = rootView.findViewById(R.id.lvAnalysisResult);
+        btRestart = rootView.findViewById(R.id.btRestart);
         initWidget();
         return rootView;
     }
 
 
     private void initWidget() {
-        btStartStop = rootView.findViewById(R.id.btStartStop);
+
         btStartStop.setOnClickListener(startStopListener);
-        btRestart = rootView.findViewById(R.id.btRestart);
+
         btRestart.setOnClickListener(restartListener);
 
         analysisResultAdapter = new AnalysisResultAdapter(getContext(), R.layout.analysis_result_item, listAnalysisResult);
-        lvRealtimeAnalysisResult = rootView.findViewById(R.id.lvAnalysisResult);
+
         lvRealtimeAnalysisResult.setAdapter(analysisResultAdapter);
         lvRealtimeAnalysisResult.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -173,7 +173,7 @@ public class RealTimeAnalysisFragment extends BaseFragment {
         @Override
         public synchronized void onClick(View v) {
             if(threadRealtimeCollide == null){
-                ToastUtils.showMessage(getContext(), "跟踪未开始");
+                ToastUtils.showMessage("跟踪未开始");
                 return;
             }else {
                 new SweetAlertDialog(getActivity(), WARNING_TYPE)
@@ -213,7 +213,7 @@ public class RealTimeAnalysisFragment extends BaseFragment {
                             UpdateCollideResultToList();
                             ProtocolManager.changeTac();
                             mHandler.sendEmptyMessage(UPDATE_COLLIDE_RESULT);
-                            ToastUtils.showMessage(getContext(), "跟踪结果已刷新");
+                            ToastUtils.showMessage("跟踪结果已刷新");
                             UtilDelay.delayMilis(COLLIED_TIME_PERIOD - 5000);
                         }
                         UtilDelay.delayMilis(5000);

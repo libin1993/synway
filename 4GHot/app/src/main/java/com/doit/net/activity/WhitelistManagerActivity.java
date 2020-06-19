@@ -1,23 +1,14 @@
 package com.doit.net.activity;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
-import android.support.v4.content.FileProvider;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -39,21 +30,19 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.util.Attributes;
+import com.doit.net.Utils.FileUtils;
 import com.doit.net.Utils.FormatUtils;
 import com.doit.net.View.AddWhitelistDialog;
 import com.doit.net.adapter.HistoryListViewAdapter;
 import com.doit.net.adapter.WhitelistAdapter;
 import com.doit.net.base.BaseActivity;
 import com.doit.net.Event.EventAdapter;
-import com.doit.net.Event.IHandlerFinish;
-import com.doit.net.Event.UIEventManager;
 import com.doit.net.Model.BlackBoxManger;
 import com.doit.net.Model.CacheManager;
 import com.doit.net.Model.ImsiMsisdnConvert;
 import com.doit.net.Model.UCSIDBManager;
 import com.doit.net.Model.WhiteListInfo;
 import com.doit.net.Utils.MySweetAlertDialog;
-import com.doit.net.Utils.StringUtils;
 import com.doit.net.Utils.ToastUtils;
 import com.doit.net.Utils.LogUtils;
 import com.doit.net.bean.FileBean;
@@ -83,18 +72,11 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.xutils.DbManager;
 import org.xutils.ex.DbException;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -103,7 +85,7 @@ import java.util.regex.Pattern;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-public class WhitelistManagerActivity extends BaseActivity implements IHandlerFinish, EventAdapter.EventCall {
+public class WhitelistManagerActivity extends BaseActivity implements EventAdapter.EventCall {
     private final Activity activity = this;
     private ListView lvWhitelistInfo;
     private WhitelistAdapter mAdapter;
@@ -122,8 +104,7 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
 
     private int lastOpenSwipePos = -1;
 
-    private final String WHITELIST_FILE_PATH = Environment.getExternalStorageDirectory() + "/4GHotspot/Whitelist.xls";
-    private final String FILE_PATH = Environment.getExternalStorageDirectory() + "/4GHotspot/";
+    private final String WHITELIST_FILE_PATH = FileUtils.ROOT_PATH + "Whitelist.xls";
 
     //handler消息
     private final int REFRESH_LIST = 0;
@@ -141,8 +122,8 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
         initView();
 
         updateListFromDB();
-        UIEventManager.register(UIEventManager.KEY_REFRESH_WHITE_LIST, this);
-        EventAdapter.setEvent(EventAdapter.UPDATE_WHITELIST, this);
+        EventAdapter.register(EventAdapter.UPDATE_WHITELIST, this);
+        EventAdapter.register(EventAdapter.REFRESH_WHITELIST, this);
     }
 
     private void initView() {
@@ -190,18 +171,18 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
                 String msisdn = selectedWhitelistItem.getMsisdn();
                 String imsi = selectedWhitelistItem.getImsi();
                 if (!"".equals(imsi)) {
-                    ToastUtils.showMessage(activity, "已知IMSI，无需翻译！");
+                    ToastUtils.showMessage("已知IMSI，无需翻译！");
                     return;
                 }
 
                 if ("".equals(msisdn)) {
-                    ToastUtils.showMessage(activity, "手机号为空，请确认后点击！");
+                    ToastUtils.showMessage( "手机号为空，请确认后点击！");
                     return;
                 }
 
                 LogUtils.log("点击了：" + msisdn);
                 if (!ImsiMsisdnConvert.isAuthenticated()) {
-                    ToastUtils.showMessageLong(activity, "尚未通过认证，请先进入“号码翻译设置”进行认证");
+                    ToastUtils.showMessageLong("尚未通过认证，请先进入“号码翻译设置”进行认证");
                     whitelistItemPop.dismiss();
                     return;
                 }
@@ -315,15 +296,15 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
     View.OnClickListener importWhitelistClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            File file = new File(FILE_PATH);
+            File file = new File(FileUtils.ROOT_PATH);
             if (!file.exists()) {
-                ToastUtils.showMessageLong(WhitelistManagerActivity.this, "未找到白名单，请确认已将白名单放在\"手机存储/4GHotspot\"目录下");
+                ToastUtils.showMessageLong("未找到白名单，请确认已将白名单放在\"手机存储/"+FileUtils.ROOT_DIRECTORY+"\"目录下");
                 return;
             }
 
             File[] files = file.listFiles();
             if (files == null || files.length == 0) {
-                ToastUtils.showMessageLong(WhitelistManagerActivity.this, "未找到白名单，请确认已将白名单放在\"手机存储/4GHotspot\"目录下");
+                ToastUtils.showMessageLong("未找到白名单，请确认已将白名单放在\"手机存储/"+FileUtils.ROOT_DIRECTORY+"\"目录下");
                 return;
             }
 
@@ -340,7 +321,7 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
             }
 
             if (fileList.size() == 0) {
-                ToastUtils.showMessageLong(WhitelistManagerActivity.this, "未找到白名单，白名单必须是以\".xls\"或\".xlsx\"为后缀的文件");
+                ToastUtils.showMessageLong("未找到白名单，白名单必须是以\".xls\"或\".xlsx\"为后缀的文件");
                 return;
             }
 
@@ -403,7 +384,7 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
                     File file = null;
                     for (FileBean fileBean : fileList) {
                         if (fileBean.isCheck()) {
-                            file = new File(FILE_PATH + fileBean.getFileName());
+                            file = new File(FileUtils.ROOT_PATH + fileBean.getFileName());
                             break;
                         }
                     }
@@ -427,16 +408,10 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
                             Row row = sheet.getRow(r);
                             int cellsCount = row.getPhysicalNumberOfCells();
 
-                            if (cellsCount < 2 || cellsCount > 3) {
-                                errorFormatNum++;
-                                continue;
-                            }
 
                             imsiInLine = getCellAsString(row, 0, formulaEvaluator);
                             msisdnInLine = getCellAsString(row, 1, formulaEvaluator);
-                            if (cellsCount == 3) {
-                                remark = getCellAsString(row, 2, formulaEvaluator);
-                            }
+                            remark = getCellAsString(row, 2, formulaEvaluator);
 
                             if ("IMSI".equals(imsiInLine) && msisdnInLine.equals("手机号") && "备注".equals(remark)) {
                                 continue;
@@ -560,7 +535,7 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
 
 
                 if (listWhitelistInfo == null || listWhitelistInfo.size() == 0) {
-                    ToastUtils.showMessageLong(activity, "当前名单为空，此次导出为模板");
+                    ToastUtils.showMessageLong("当前名单为空，此次导出为模板");
                 } else {
                     for (int i = 0; i < listWhitelistInfo.size(); i++) {
                         Row rowi = sheet.createRow(i+1);
@@ -575,19 +550,18 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
                 outputStream.flush();
                 outputStream.close();
 
+                EventAdapter.call(EventAdapter.UPDATE_FILE_SYS, WHITELIST_FILE_PATH);
+                new MySweetAlertDialog(activity, MySweetAlertDialog.TEXT_SUCCESS)
+                        .setTitleText("导出成功")
+                        .setContentText("文件导出在：手机存储/"+FileUtils.ROOT_DIRECTORY+"/"+ file.getName())
+                        .show();
+
+                EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.EXPORT_WHITELIST + WHITELIST_FILE_PATH);
+
             } catch (Exception e) {
                 /* proper exception handling to be here */
                 createExportError("导出名单失败");
             }
-
-
-            EventAdapter.call(EventAdapter.UPDATE_FILE_SYS, WHITELIST_FILE_PATH);
-            new MySweetAlertDialog(activity, MySweetAlertDialog.TEXT_SUCCESS)
-                    .setTitleText("导出成功")
-                    .setContentText("文件导出在：手机存储" + WHITELIST_FILE_PATH)
-                    .show();
-
-            EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.EXPORT_WHITELIST + WHITELIST_FILE_PATH);
 
         }
     };
@@ -640,12 +614,6 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
     }
 
     @Override
-    protected void onDestroy() {
-        UIEventManager.unRegister(UIEventManager.KEY_REFRESH_WHITE_LIST, this);
-        super.onDestroy();
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -688,24 +656,19 @@ public class WhitelistManagerActivity extends BaseActivity implements IHandlerFi
     };
 
 
-    @Override
-    public void handlerFinish(String key) {
-        if (key.equals(UIEventManager.KEY_REFRESH_WHITE_LIST)) {
-            mHandler.sendEmptyMessage(UPDATE_LIST);
-        }
-    }
 
     @Override
     public void call(String key, Object val) {
-        if (key.equals(EventAdapter.UPDATE_WHITELIST)) {
-            try {
+        switch (key){
+            case EventAdapter.UPDATE_WHITELIST:
                 Message msg = new Message();
                 msg.what = UPDATE_WHITELIST;
                 msg.obj = val;
                 mHandler.sendMessage(msg);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+                break;
+            case EventAdapter.REFRESH_WHITELIST:
+                mHandler.sendEmptyMessage(UPDATE_LIST);
+                break;
         }
     }
 }

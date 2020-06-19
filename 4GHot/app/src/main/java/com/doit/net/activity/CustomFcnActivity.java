@@ -178,7 +178,7 @@ public class CustomFcnActivity extends BaseActivity {
                 dbManager.update(dbChannel);
             }
 
-            ToastUtils.showMessage(CustomFcnActivity.this, "设置成功，下次启动APP生效");
+            ToastUtils.showMessage("设置成功，下次启动APP生效");
         } catch (DbException e) {
             e.printStackTrace();
         }
@@ -194,7 +194,7 @@ public class CustomFcnActivity extends BaseActivity {
         for (int i = 0; i < dataList.size(); i++) {
             SectionBean sectionBean = dataList.get(i);
             if (!sectionBean.isHeader && band.equals(sectionBean.t.getBand()) && fcn.equals(sectionBean.t.getFcn())) {
-                ToastUtils.showMessage(CustomFcnActivity.this, "已存在相同频点");
+                ToastUtils.showMessage( "已存在相同频点");
                 return;
             }
         }
@@ -210,7 +210,7 @@ public class CustomFcnActivity extends BaseActivity {
             if (dbChannel != null) {
                 dbChannel.setFcn(fcn);
                 dbManager.update(dbChannel);
-                ToastUtils.showMessage(CustomFcnActivity.this, "修改成功，下次启动APP生效");
+                ToastUtils.showMessage( "修改成功，下次启动APP生效");
             }
 
         } catch (DbException e) {
@@ -273,7 +273,7 @@ public class CustomFcnActivity extends BaseActivity {
         for (int i = position; i < dataList.size(); i++) {
             SectionBean sectionBean = dataList.get(i);
             if (!sectionBean.isHeader && band.equals(sectionBean.t.getBand()) && fcn.equals(sectionBean.t.getFcn())) {
-                ToastUtils.showMessage(CustomFcnActivity.this, "已存在相同频点");
+                ToastUtils.showMessage( "已存在相同频点");
                 return;
             }
 
