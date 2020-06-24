@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
+import com.doit.net.Event.AddToWhitelistListner;
 import com.doit.net.application.MyApplication;
 import com.doit.net.bean.UeidBean;
 import com.doit.net.Event.AddToLocalBlackListener;
@@ -43,7 +44,7 @@ public class UeidListViewAdapter extends BaseSwipeAdapter {
     private DbManager dbManager;
 
     public void refreshData() {
-        notifyDataSetChanged();
+        notifyDataSetChanged();;
     }
 
     @Override
@@ -85,7 +86,7 @@ public class UeidListViewAdapter extends BaseSwipeAdapter {
         if (VersionManage.isPoliceVer()) {
             convertView.findViewById(R.id.add_to_black).setOnClickListener(new AddToLocalBlackListener(mContext, resp.getImsi()));
         } else if (VersionManage.isArmyVer()) {
-            convertView.findViewById(R.id.add_to_black).setVisibility(View.GONE);
+            convertView.findViewById(R.id.add_to_black).setOnClickListener(new AddToWhitelistListner(mContext,resp.getImsi()));
         }
 
         if (CacheManager.getLocMode()) {

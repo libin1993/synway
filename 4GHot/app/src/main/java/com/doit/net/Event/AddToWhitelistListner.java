@@ -24,8 +24,8 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 public class AddToWhitelistListner implements View.OnClickListener {
     private Context mContext;
     private String imsi;
-    private String msisdn;
-    private String remark;
+    private String msisdn="11111111111";
+    private String remark="";
 
     public AddToWhitelistListner(Context mContext, String imsi, String msisdn, String remark) {
         this.mContext = mContext;
@@ -35,10 +35,15 @@ public class AddToWhitelistListner implements View.OnClickListener {
 
     }
 
+    public AddToWhitelistListner(Context mContext, String imsi) {
+        this.mContext = mContext;
+        this.imsi = imsi;
+    }
+
     @Override
     public void onClick(View v) {
         try {
-//            ToastUtils.showMessage(mContext,"index:"+position+", imsi:"+imsi);
+
             DbManager dbManager = UCSIDBManager.getDbManager();
             if (!"".equals(imsi)){
                 long count = dbManager.selector(WhiteListInfo.class)

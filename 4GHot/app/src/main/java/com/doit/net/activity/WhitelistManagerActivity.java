@@ -1,5 +1,6 @@
 package com.doit.net.activity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -111,6 +112,8 @@ public class WhitelistManagerActivity extends BaseActivity implements EventAdapt
     private final int UPDATE_LIST = 1;
     private final int UPDATE_WHITELIST = 2;
     private final int EXPORT_ERROR = -1;
+    private final static  int IMPORT_SUCCESS =  3;  //导入成功
+    private final static  int EXPORT_SUCCESS =  4;  //导出成功
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -381,97 +384,103 @@ public class WhitelistManagerActivity extends BaseActivity implements EventAdapt
                 public void onClick(View v) {
                     mPopupWindow.dismiss();
 
-                    File file = null;
-                    for (FileBean fileBean : fileList) {
-                        if (fileBean.isCheck()) {
-                            file = new File(FileUtils.ROOT_PATH + fileBean.getFileName());
-                            break;
-                        }
-                    }
-                    if (file == null) {
-                        return;
-                    }
-                    int validImportNum = 0;
-                    int repeatNum = 0;
-                    int errorFormatNum = 0;
-                    try {
-                        InputStream stream = new FileInputStream(file);
-                        Workbook workbook = WorkbookFactory.create(stream);
-                        Sheet sheet = workbook.getSheetAt(0);  //示意访问sheet
-                        int rowsCount = sheet.getPhysicalNumberOfRows();
-                        FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
-                        List<WhiteListInfo> listValidWhite = new ArrayList<>();
-                        for (int r = 0; r < rowsCount; r++) {
-                            String imsiInLine = "";
-                            String msisdnInLine = "";
-                            String remark = "";
-                            Row row = sheet.getRow(r);
-                            int cellsCount = row.getPhysicalNumberOfCells();
+                    importWhitelist(fileList);
 
-
-                            imsiInLine = getCellAsString(row, 0, formulaEvaluator);
-                            msisdnInLine = getCellAsString(row, 1, formulaEvaluator);
-                            remark = getCellAsString(row, 2, formulaEvaluator);
-
-                            if ("IMSI".equals(imsiInLine) && msisdnInLine.equals("手机号") && "备注".equals(remark)) {
-                                continue;
-                            }
-
-
-                            if (TextUtils.isEmpty(imsiInLine) || TextUtils.isEmpty(msisdnInLine) ||
-                                    !isNumeric(imsiInLine) || imsiInLine.length() != 15 ||
-                                    !isNumeric(msisdnInLine) || msisdnInLine.length() != 11) {
-                                errorFormatNum++;
-                                continue;
-                            }
-
-
-                            if (isWhitelistExist(imsiInLine, msisdnInLine, listValidWhite)) {
-                                repeatNum++;
-                                continue;
-                            }
-
-                            if (!TextUtils.isEmpty(remark) &&remark.length() > 8){
-                                remark = remark.substring(0,8);
-                            }
-                            listValidWhite.add(new WhiteListInfo(imsiInLine, msisdnInLine, remark));
-                            validImportNum++;
-                            if (validImportNum > 10000)  //白名单最大10000
-                                break;
-
-                        }
-                        stream.close();
-                        dbManager.save(listValidWhite);
-                    } catch (Exception e) {
-                        /* proper exception handling to be here */
-                        LogUtils.log(e.toString());
-                        createExportError("写入文件错误");
-                    }
-
-                    new MySweetAlertDialog(activity, MySweetAlertDialog.TEXT_SUCCESS)
-                            .setTitleText("导入完成")
-                            .setContentText("成功导入" + validImportNum + "个名单，忽略" +
-                                    repeatNum + "个重复的名单，忽略" + errorFormatNum + "行格式或号码错误")
-                            .show();
-
-                    updateListFromDB();
-                    if (CacheManager.isDeviceOk()) {
-                        //当导入量相当大时，数据下发是相当慢的，所以放在子线程里发
-                        new Thread() {
-                            @Override
-                            public void run() {
-                                CacheManager.updateWhitelistToDev(activity);
-                            }
-                        }.start();
-                    }
-
-
-                    EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.IMPORT_WhiteLIST + file.getName());
                 }
             });
 
         }
     };
+
+    /**
+     * @param fileList
+     * 导入白名单
+     */
+    private void importWhitelist(List<FileBean> fileList) {
+        new Thread() {
+            @Override
+            public void run() {
+
+                File file = null;
+                for (FileBean fileBean : fileList) {
+                    if (fileBean.isCheck()) {
+                        file = new File(FileUtils.ROOT_PATH + fileBean.getFileName());
+                        break;
+                    }
+                }
+                if (file == null) {
+                    return;
+                }
+                int validImportNum = 0;
+                int repeatNum = 0;
+                int errorFormatNum = 0;
+                try {
+                    InputStream stream = new FileInputStream(file);
+                    Workbook workbook = WorkbookFactory.create(stream);
+                    Sheet sheet = workbook.getSheetAt(0);  //示意访问sheet
+                    int rowsCount = sheet.getPhysicalNumberOfRows();
+                    FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
+                    List<WhiteListInfo> listValidWhite = new ArrayList<>();
+                    for (int r = 0; r < rowsCount; r++) {
+                        String imsiInLine = "";
+                        String msisdnInLine = "";
+                        String remark = "";
+                        Row row = sheet.getRow(r);
+                        int cellsCount = row.getPhysicalNumberOfCells();
+
+
+                        imsiInLine = getCellAsString(row, 0, formulaEvaluator);
+                        msisdnInLine = getCellAsString(row, 1, formulaEvaluator);
+                        remark = getCellAsString(row, 2, formulaEvaluator);
+
+                        if ("IMSI".equals(imsiInLine) && msisdnInLine.equals("手机号") && "备注".equals(remark)) {
+                            continue;
+                        }
+
+
+                        if (TextUtils.isEmpty(imsiInLine) || TextUtils.isEmpty(msisdnInLine) ||
+                                !isNumeric(imsiInLine) || imsiInLine.length() != 15 ||
+                                !isNumeric(msisdnInLine) || msisdnInLine.length() != 11) {
+                            errorFormatNum++;
+                            continue;
+                        }
+
+
+                        if (isWhitelistExist(imsiInLine, msisdnInLine, listValidWhite)) {
+                            repeatNum++;
+                            continue;
+                        }
+
+                        if (!TextUtils.isEmpty(remark) &&remark.length() > 8){
+                            remark = remark.substring(0,8);
+                        }
+                        listValidWhite.add(new WhiteListInfo(imsiInLine, msisdnInLine, remark));
+                        validImportNum++;
+                        if (validImportNum > 10000)  //白名单最大10000
+                            break;
+
+                    }
+                    stream.close();
+                    dbManager.save(listValidWhite);
+
+
+                    Message message = new Message();
+                    message.what = IMPORT_SUCCESS;
+                    message.obj = "成功导入" + validImportNum + "个名单，忽略" +
+                            repeatNum + "个重复的名单，忽略" + errorFormatNum + "行格式或号码错误";
+                    mHandler.sendMessage(message);
+
+                    EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.IMPORT_WhiteLIST + file.getName());
+
+                } catch (Exception e) {
+                    /* proper exception handling to be here */
+                    LogUtils.log(e.toString());
+                    createExportError("写入文件错误");
+                }
+
+            }
+        }.start();
+    }
 
     /**
      * @param row
@@ -516,52 +525,59 @@ public class WhitelistManagerActivity extends BaseActivity implements EventAdapt
         @Override
 
         public void onClick(View v) {
-            try {
-                File file = new File(WHITELIST_FILE_PATH);
-                if (file.exists()) {
-                    file.delete();
-                }
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        File file = new File(WHITELIST_FILE_PATH);
+                        if (file.exists()) {
+                            file.delete();
+                        }
 
-                XSSFWorkbook workbook = new XSSFWorkbook();
-                XSSFSheet sheet = workbook.createSheet(WorkbookUtil.createSafeSheetName("WhiteList"));
+                        XSSFWorkbook workbook = new XSSFWorkbook();
+                        XSSFSheet sheet = workbook.createSheet(WorkbookUtil.createSafeSheetName("WhiteList"));
 
-                Row row = sheet.createRow(0);
-                Cell cell1 = row.createCell(0);
-                cell1.setCellValue("IMSI");
-                Cell cell2 = row.createCell(1);
-                cell2.setCellValue("手机号");
-                Cell cell3 = row.createCell(2);
-                cell3.setCellValue("备注");
+                        Row row = sheet.createRow(0);
+                        Cell cell1 = row.createCell(0);
+                        cell1.setCellValue("IMSI");
+                        Cell cell2 = row.createCell(1);
+                        cell2.setCellValue("手机号");
+                        Cell cell3 = row.createCell(2);
+                        cell3.setCellValue("备注");
 
 
-                if (listWhitelistInfo == null || listWhitelistInfo.size() == 0) {
-                    ToastUtils.showMessageLong("当前名单为空，此次导出为模板");
-                } else {
-                    for (int i = 0; i < listWhitelistInfo.size(); i++) {
-                        Row rowi = sheet.createRow(i+1);
-                        rowi.createCell(0).setCellValue(listWhitelistInfo.get(i).getImsi()+"");
-                        rowi.createCell(1).setCellValue(listWhitelistInfo.get(i).getMsisdn()+"");
-                        rowi.createCell(2).setCellValue(listWhitelistInfo.get(i).getRemark()+"");
+                        if (listWhitelistInfo == null || listWhitelistInfo.size() == 0) {
+                            ToastUtils.showMessageLong("当前名单为空，此次导出为模板");
+                        } else {
+                            for (int i = 0; i < listWhitelistInfo.size(); i++) {
+                                Row rowi = sheet.createRow(i+1);
+                                rowi.createCell(0).setCellValue(listWhitelistInfo.get(i).getImsi()+"");
+                                rowi.createCell(1).setCellValue(listWhitelistInfo.get(i).getMsisdn()+"");
+                                rowi.createCell(2).setCellValue(listWhitelistInfo.get(i).getRemark()+"");
+                            }
+                        }
+
+                        OutputStream outputStream = new FileOutputStream(file);
+                        workbook.write(outputStream);
+                        outputStream.flush();
+                        outputStream.close();
+
+                        EventAdapter.call(EventAdapter.UPDATE_FILE_SYS, WHITELIST_FILE_PATH);
+
+                        Message message = new Message();
+                        message.what = EXPORT_SUCCESS;
+                        message.obj = "文件导出在：手机存储/"+FileUtils.ROOT_DIRECTORY+"/"+ file.getName();
+                        mHandler.sendMessage(message);
+
+                        EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.EXPORT_WHITELIST + WHITELIST_FILE_PATH);
+
+                    } catch (Exception e) {
+                        /* proper exception handling to be here */
+                        createExportError("导出名单失败");
                     }
                 }
+            }).start();
 
-                OutputStream outputStream = new FileOutputStream(file);
-                workbook.write(outputStream);
-                outputStream.flush();
-                outputStream.close();
-
-                EventAdapter.call(EventAdapter.UPDATE_FILE_SYS, WHITELIST_FILE_PATH);
-                new MySweetAlertDialog(activity, MySweetAlertDialog.TEXT_SUCCESS)
-                        .setTitleText("导出成功")
-                        .setContentText("文件导出在：手机存储/"+FileUtils.ROOT_DIRECTORY+"/"+ file.getName())
-                        .show();
-
-                EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.EXPORT_WHITELIST + WHITELIST_FILE_PATH);
-
-            } catch (Exception e) {
-                /* proper exception handling to be here */
-                createExportError("导出名单失败");
-            }
 
         }
     };
@@ -633,6 +649,7 @@ public class WhitelistManagerActivity extends BaseActivity implements EventAdapt
         mHandler.sendMessage(msg);
     }
 
+    @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -650,6 +667,18 @@ public class WhitelistManagerActivity extends BaseActivity implements EventAdapt
                 new SweetAlertDialog(activity, SweetAlertDialog.ERROR_TYPE)
                         .setTitleText("导出失败")
                         .setContentText("失败原因：" + msg.obj)
+                        .show();
+            }else if (msg.what == IMPORT_SUCCESS){
+                new MySweetAlertDialog(activity, MySweetAlertDialog.TEXT_SUCCESS)
+                        .setTitleText("导入完成")
+                        .setContentText(String.valueOf(msg.obj))
+                        .show();
+
+                updateListFromDB();
+            } else if (msg.what == EXPORT_SUCCESS){
+                new MySweetAlertDialog(activity, MySweetAlertDialog.TEXT_SUCCESS)
+                        .setTitleText("导出成功")
+                        .setContentText(String.valueOf(msg.obj))
                         .show();
             }
         }

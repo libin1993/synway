@@ -81,6 +81,7 @@ public class UeidFragment extends BaseFragment {
 //            tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
 //        }
 
+        viewPagers.setOffscreenPageLimit(listTitles.size());
         viewPagers.setAdapter(new UeidTabLayoutAdapter(getChildFragmentManager(), listFragments, listTitles));
         tabLayout.setupWithViewPager(viewPagers);
 

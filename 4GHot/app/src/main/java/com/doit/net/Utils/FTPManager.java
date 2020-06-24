@@ -90,7 +90,6 @@ public class FTPManager {
      */
     // 创建文件夹
     public boolean checkRemoteDir() throws Exception {
-        //分割路径
         if (ftpClient.changeWorkingDirectory("/")) {
             LogUtils.log("切换到根目录");
 

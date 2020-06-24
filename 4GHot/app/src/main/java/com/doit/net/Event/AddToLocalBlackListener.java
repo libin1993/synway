@@ -41,7 +41,6 @@ public class AddToLocalBlackListener implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         try {
-//            ToastUtils.showMessage(mContext,"index:"+position+", imsi:"+imsi);
             DbManager dbManager = UCSIDBManager.getDbManager();
             long count = dbManager.selector(DBBlackInfo.class)
                     .where("imsi","=",imsi).count();

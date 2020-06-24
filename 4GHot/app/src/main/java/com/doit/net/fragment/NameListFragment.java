@@ -87,6 +87,8 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
     //handler消息
     private final int UPDATE_NAMELIST = 1;
     private final int EXPORT_ERROR = -1;
+    private final static  int IMPORT_SUCCESS = 2;  //导入成功
+    private final static  int EXPORT_SUCCESS =  3;  //导出成功
 
     public NameListFragment() {
     }
@@ -206,58 +208,64 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
     View.OnClickListener exportNamelistClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            try {
-                File file = new File(BLACKLIST_FILE_PATH);
-                if (file.exists()) {
-                    file.delete();
-                }
 
-                XSSFWorkbook workbook = new XSSFWorkbook();
-                XSSFSheet sheet = workbook.createSheet(WorkbookUtil.createSafeSheetName("BlackList"));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        File file = new File(BLACKLIST_FILE_PATH);
+                        if (file.exists()) {
+                            file.delete();
+                        }
 
-                Row row = sheet.createRow(0);
-                Cell cell1 = row.createCell(0);
-                cell1.setCellValue("IMSI");
-                Cell cell2 = row.createCell(1);
-                cell2.setCellValue("姓名");
-                Cell cell3 = row.createCell(2);
-                cell3.setCellValue("备注");
-                Cell cell4 = row.createCell(3);
-                cell4.setCellValue("创建时间");
+                        XSSFWorkbook workbook = new XSSFWorkbook();
+                        XSSFSheet sheet = workbook.createSheet(WorkbookUtil.createSafeSheetName("BlackList"));
+
+                        Row row = sheet.createRow(0);
+                        Cell cell1 = row.createCell(0);
+                        cell1.setCellValue("IMSI");
+                        Cell cell2 = row.createCell(1);
+                        cell2.setCellValue("姓名");
+                        Cell cell3 = row.createCell(2);
+                        cell3.setCellValue("备注");
+                        Cell cell4 = row.createCell(3);
+                        cell4.setCellValue("创建时间");
 
 
-                if (dbBlackInfos == null || dbBlackInfos.size() == 0) {
-                    ToastUtils.showMessageLong("当前名单为空，此次导出为模板");
-                } else {
-                    for (int i = 0; i < dbBlackInfos.size(); i++) {
-                        Row rowi = sheet.createRow(i + 1);
-                        rowi.createCell(0).setCellValue(dbBlackInfos.get(i).getImsi() + "");
-                        rowi.createCell(1).setCellValue(dbBlackInfos.get(i).getName() + "");
-                        rowi.createCell(2).setCellValue(dbBlackInfos.get(i).getRemark() + "");
-                        rowi.createCell(3).setCellValue(DateUtils.convert2String(dbBlackInfos.get(i).getCreateDate(), DateUtils.LOCAL_DATE));
+                        if (dbBlackInfos == null || dbBlackInfos.size() == 0) {
+                            ToastUtils.showMessageLong("当前名单为空，此次导出为模板");
+                        } else {
+                            for (int i = 0; i < dbBlackInfos.size(); i++) {
+                                Row rowi = sheet.createRow(i + 1);
+                                rowi.createCell(0).setCellValue(dbBlackInfos.get(i).getImsi() + "");
+                                rowi.createCell(1).setCellValue(dbBlackInfos.get(i).getName() + "");
+                                rowi.createCell(2).setCellValue(dbBlackInfos.get(i).getRemark() + "");
+                                rowi.createCell(3).setCellValue(DateUtils.convert2String(dbBlackInfos.get(i).getCreateDate(), DateUtils.LOCAL_DATE));
+                            }
+                        }
+
+                        OutputStream outputStream = new FileOutputStream(file);
+                        workbook.write(outputStream);
+                        outputStream.flush();
+                        outputStream.close();
+
+
+                        EventAdapter.call(EventAdapter.UPDATE_FILE_SYS, BLACKLIST_FILE_PATH);
+
+                        Message message = new Message();
+                        message.what = EXPORT_SUCCESS;
+                        message.obj = "文件导出在：手机存储/"+FileUtils.ROOT_DIRECTORY+"/"+ file.getName();
+                        mHandler.sendMessage(message);
+
+
+                        EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.EXPORT_WHITELIST + BLACKLIST_FILE_PATH);
+
+                    } catch (Exception e) {
+                        /* proper exception handling to be here */
+                        createExportError("导出名单失败");
                     }
                 }
-
-                OutputStream outputStream = new FileOutputStream(file);
-                workbook.write(outputStream);
-                outputStream.flush();
-                outputStream.close();
-
-
-                EventAdapter.call(EventAdapter.UPDATE_FILE_SYS, BLACKLIST_FILE_PATH);
-                new MySweetAlertDialog(getActivity(), MySweetAlertDialog.TEXT_SUCCESS)
-                        .setTitleText("导出成功")
-                        .setContentText("文件导出在：手机存储/" + FileUtils.ROOT_DIRECTORY + "/" + file.getName())
-                        .show();
-
-                EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.EXPORT_WHITELIST + BLACKLIST_FILE_PATH);
-
-            } catch (Exception e) {
-                /* proper exception handling to be here */
-                createExportError("导出名单失败");
-            }
-
-
+            }).start();
 
         }
 
@@ -352,99 +360,109 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
                 public void onClick(View v) {
                     mPopupWindow.dismiss();
 
-                    File file = null;
-                    for (FileBean fileBean : fileList) {
-                        if (fileBean.isCheck()) {
-                            file = new File(FileUtils.ROOT_PATH + fileBean.getFileName());
-                            break;
-                        }
-                    }
-                    if (file == null) {
-                        return;
-                    }
-                    int validImportNum = 0;
-                    int repeatNum = 0;
-                    int errorFormatNum = 0;
-                    try {
-                        InputStream stream = new FileInputStream(file);
-                        Workbook workbook = WorkbookFactory.create(stream);
-                        Sheet sheet = workbook.getSheetAt(0);  //示意访问sheet
-                        int rowsCount = sheet.getPhysicalNumberOfRows();
-                        FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
-                        List<DBBlackInfo> listValidBlack = new ArrayList<>();
-                        for (int r = 0; r < rowsCount; r++) {
-                            String imsi = "";
-                            String name = "";
-                            String remark = "";
-                            Row row = sheet.getRow(r);
+                    importBlackList(fileList);
 
 
-                            imsi = getCellAsString(row, 0, formulaEvaluator);
-                            name = getCellAsString(row, 1, formulaEvaluator);
-                            remark = getCellAsString(row, 2, formulaEvaluator);
-
-                            if ("IMSI".equals(imsi) && "姓名".equals(name)) {
-                                continue;
-                            }
-
-
-                            if (TextUtils.isEmpty(imsi) || !isNumeric(imsi) || imsi.length() != 15) {
-                                errorFormatNum++;
-                                continue;
-                            }
-
-
-                            if (isBlacklistExist(imsi, listValidBlack)) {
-                                repeatNum++;
-                                continue;
-                            }
-
-                            if (!TextUtils.isEmpty(name) && name.length() > 8) {
-                                name = name.substring(0, 8);
-                            }
-
-                            if (!TextUtils.isEmpty(remark) && remark.length() > 8) {
-                                remark = remark.substring(0, 8);
-                            }
-
-                            validImportNum++;
-                            listValidBlack.add(new DBBlackInfo(imsi, name, remark, new Date()));
-
-                            if (validImportNum > 100)  //黑名单最大100
-                                break;
-
-                        }
-                        stream.close();
-                        dbManager.save(listValidBlack);
-                    } catch (Exception e) {
-                        /* proper exception handling to be here */
-                        LogUtils.log(e.toString());
-                        createExportError("写入文件错误");
-                    }
-
-                    new MySweetAlertDialog(getContext(), MySweetAlertDialog.SUCCESS_TYPE)
-                            .setTitleText("导入完成")
-                            .setContentText("成功导入" + validImportNum + "个名单，忽略" +
-                                    repeatNum + "个重复的名单，忽略" + errorFormatNum + "行格式或号码错误")
-                            .show();
-                    refreshNamelist();
-                    if (CacheManager.isDeviceOk() && !CacheManager.getLocState()) {
-                        //当导入量相当大时，数据下发是相当慢的，所以放在子线程里发
-                        new Thread() {
-                            @Override
-                            public void run() {
-                                CacheManager.setCurrentBlackList();
-                            }
-                        }.start();
-                    }
-
-                    EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.IMPORT_NAMELIST + BLACKLIST_FILE_PATH);
 
                 }
             });
 
         }
     };
+
+    /**
+     * @param fileList 导入黑名单
+     */
+    private void importBlackList(List<FileBean> fileList) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                File file = null;
+                for (FileBean fileBean : fileList) {
+                    if (fileBean.isCheck()) {
+                        file = new File(FileUtils.ROOT_PATH + fileBean.getFileName());
+                        break;
+                    }
+                }
+                if (file == null) {
+                    return;
+                }
+                int validImportNum = 0;
+                int repeatNum = 0;
+                int errorFormatNum = 0;
+                try {
+                    InputStream stream = new FileInputStream(file);
+                    Workbook workbook = WorkbookFactory.create(stream);
+                    Sheet sheet = workbook.getSheetAt(0);  //示意访问sheet
+                    int rowsCount = sheet.getPhysicalNumberOfRows();
+                    FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
+                    List<DBBlackInfo> listValidBlack = new ArrayList<>();
+                    for (int r = 0; r < rowsCount; r++) {
+                        String imsi = "";
+                        String name = "";
+                        String remark = "";
+                        Row row = sheet.getRow(r);
+
+
+                        imsi = getCellAsString(row, 0, formulaEvaluator);
+                        name = getCellAsString(row, 1, formulaEvaluator);
+                        remark = getCellAsString(row, 2, formulaEvaluator);
+
+                        if ("IMSI".equals(imsi) && "姓名".equals(name)) {
+                            continue;
+                        }
+
+
+                        if (TextUtils.isEmpty(imsi) || !isNumeric(imsi) || imsi.length() != 15) {
+                            errorFormatNum++;
+                            continue;
+                        }
+
+
+                        if (isBlacklistExist(imsi, listValidBlack)) {
+                            repeatNum++;
+                            continue;
+                        }
+
+                        if (!TextUtils.isEmpty(name) && name.length() > 8) {
+                            name = name.substring(0, 8);
+                        }
+
+                        if (!TextUtils.isEmpty(remark) && remark.length() > 8) {
+                            remark = remark.substring(0, 8);
+                        }
+
+                        validImportNum++;
+                        listValidBlack.add(new DBBlackInfo(imsi, name, remark, new Date()));
+
+                        if (validImportNum > 100)  //黑名单最大100
+                            break;
+
+                    }
+                    stream.close();
+                    dbManager.save(listValidBlack);
+
+                    Message message = new Message();
+                    message.what = IMPORT_SUCCESS;
+                    message.obj = "成功导入" + validImportNum + "个名单，忽略" +
+                            repeatNum + "个重复的名单，忽略" + errorFormatNum + "行格式或号码错误";
+                    mHandler.sendMessage(message);
+
+                    if (CacheManager.isDeviceOk() && !CacheManager.getLocState()) {
+                        //当导入量相当大时，数据下发是相当慢的，所以放在子线程里发
+                        CacheManager.setCurrentBlackList();
+                    }
+
+                    EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.IMPORT_NAMELIST + BLACKLIST_FILE_PATH);
+                } catch (Exception e) {
+                    /* proper exception handling to be here */
+                    LogUtils.log(e.toString());
+                    createExportError("写入文件错误");
+                }
+            }
+        }).start();
+    }
 
     /**
      * @param row
@@ -563,6 +581,17 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
                 new MySweetAlertDialog(getContext(), MySweetAlertDialog.ERROR_TYPE)
                         .setTitleText("导出失败")
                         .setContentText("失败原因：" + msg.obj)
+                        .show();
+            }else if (msg.what == IMPORT_SUCCESS){
+                new MySweetAlertDialog(getContext(), MySweetAlertDialog.SUCCESS_TYPE)
+                        .setTitleText("导入完成")
+                        .setContentText(String.valueOf(msg.obj))
+                        .show();
+                refreshNamelist();
+            }else if (msg.what == EXPORT_SUCCESS){
+                new MySweetAlertDialog(getActivity(), MySweetAlertDialog.TEXT_SUCCESS)
+                        .setTitleText("导出成功")
+                        .setContentText(String.valueOf(msg.obj))
                         .show();
             }
         }

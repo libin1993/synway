@@ -57,7 +57,7 @@ import com.doit.net.Model.VersionManage;
 import com.doit.net.Sockets.IServerSocketChange;
 import com.doit.net.Sockets.UtilServerSocketSub;
 import com.doit.net.Utils.DateUtils;
-import com.doit.net.Utils.FTPServer;
+import com.doit.net.Utils.FTPServerUtils;
 import com.doit.net.Utils.FileUtils;
 import com.doit.net.Utils.MySweetAlertDialog;
 import com.doit.net.Utils.NetWorkUtils;
@@ -102,7 +102,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     private List<BaseFragment> mTabs = new ArrayList<BaseFragment>();
     private CommonTabLayout tabLayout;
     private MainTabLayoutAdapter adapter;
-//    boolean[] fragmentsUpdateFlag = {false, false, false};
+
     private List<String> listTitles = new ArrayList<>();
     private ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
 
@@ -114,7 +114,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     private boolean hasSetDefaultParam = false;   //开始全部打开射频标志
     private int heartbeatCount = 0;
     private boolean isCheckDeviceStateThreadRun = true;
-    private FTPServer ftpServer = new FTPServer();
 
     private ImageView ivDeviceState;
     Animation viewAnit = new AlphaAnimation(0, 1);
@@ -224,9 +223,8 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
         if (!f.exists())
             f.mkdir();
 
-        ftpServer.copyConfigFile(R.raw.users, FileUtils.ROOT_PATH + "users.properties", getBaseContext());
-        ftpServer.init();
-        ftpServer.startFTPServer();
+        FTPServerUtils.getInstance().copyConfigFile(R.raw.users, FileUtils.ROOT_PATH + "users.properties", getBaseContext());
+        FTPServerUtils.getInstance().startFTPServer();
     }
 
     private void initProgressDialog() {
@@ -401,6 +399,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
         }
 
         adapter = new MainTabLayoutAdapter(getSupportFragmentManager(), mTabs, listTitles);
+        mViewPager.setOffscreenPageLimit(mTabEntities.size());
         mViewPager.setAdapter(adapter);
 
         tabLayout.setTabData(mTabEntities);
@@ -485,6 +484,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
         }
 
         isCheckDeviceStateThreadRun = false;
+        FTPServerUtils.getInstance().stopFTP();
         FTPManager.getInstance().closeFTP();
         LogUtils.unInitLog();
         finish();
