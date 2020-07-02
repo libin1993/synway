@@ -3,6 +3,7 @@ package com.doit.net.Protocol;
 
 import android.text.TextUtils;
 
+import com.doit.net.bean.BatteryBean;
 import com.doit.net.bean.DeviceState;
 import com.doit.net.bean.LteCellConfig;
 import com.doit.net.bean.Namelist;
@@ -231,7 +232,7 @@ public class LTE_PT_PARAM {
                 lastRptSyncErrorTime = System.currentTimeMillis();
                 //EventAdapter.call(EventAdapter.SYNC_ERROR_RPT);
             }
-            //CacheManager.deviceState.setDeviceState(DeviceState.SYNC_ERROR);
+
         }
 
         CacheManager.deviceState.setDeviceState(DeviceState.NORMAL);
@@ -245,12 +246,36 @@ public class LTE_PT_PARAM {
             }
         }
 
-        //更新温度
-        String temperature = heartbeat.split("@TM:")[1].split("@")[0];
-        EventAdapter.call(EventAdapter.UPDATE_TMEPRATURE, temperature);
+        BatteryBean batteryBean = new BatteryBean();
+        String[] split = heartbeat.split("@");
+        boolean isReportBattery = false;  //是否上报电量
+        for (String s : split) {
+            String[] key = s.split(":");
+            switch (key[0]){
+                case "TM":   //温度
+                    String temperature = key[1];
+                    EventAdapter.call(EventAdapter.UPDATE_TMEPRATURE, temperature);
+                    break;
+                case "COU_STATE":   //是否正在充电
+                    batteryBean.setCharging("1".equals(key[1]));
+                    break;
+                case "COU_LEFT":   //剩余电量
+                    batteryBean.setBatteryQuantity(Integer.parseInt(key[1].split("%")[0]));
+                    isReportBattery = true;
+                    break;
+                case "COU_USE_MIN":   //剩余电量可用分钟
+                    batteryBean.setUseTime(Integer.parseInt(key[1]));
+                    break;
+            }
+        }
+
+        if (isReportBattery){
+            EventAdapter.call(EventAdapter.BATTERY_STATE, batteryBean);
+        }
 
         EventAdapter.call(EventAdapter.HEARTBEAT_RPT);
-        EventAdapter.call(EventAdapter.RF_STATUS);
+        EventAdapter.call(EventAdapter.RF_STATUS_LOC);
+        EventAdapter.call(EventAdapter.RF_STATUS_RPT);
     }
 
     //处理黑名单中标上报
@@ -435,7 +460,8 @@ public class LTE_PT_PARAM {
                     }
                 }
 
-                EventAdapter.call(EventAdapter.RF_STATUS);
+                EventAdapter.call(EventAdapter.RF_STATUS_LOC);
+                EventAdapter.call(EventAdapter.RF_STATUS_RPT);
                 EventAdapter.call(EventAdapter.REFRESH_DEVICE);
                 break;
 
@@ -450,7 +476,8 @@ public class LTE_PT_PARAM {
                     }
                 }
 
-                EventAdapter.call(EventAdapter.RF_STATUS);
+                EventAdapter.call(EventAdapter.RF_STATUS_LOC);
+                EventAdapter.call(EventAdapter.RF_STATUS_RPT);
                 EventAdapter.call(EventAdapter.REFRESH_DEVICE);
                 break;
 

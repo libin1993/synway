@@ -24,7 +24,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 public class AddToWhitelistListner implements View.OnClickListener {
     private Context mContext;
     private String imsi;
-    private String msisdn="11111111111";
+    private String msisdn="";
     private String remark="";
 
     public AddToWhitelistListner(Context mContext, String imsi, String msisdn, String remark) {

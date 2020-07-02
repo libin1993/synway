@@ -64,7 +64,7 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
     private final int LOC_REPORT = 1;
     private final int STOP_LOC = 3;
     private final int REFRESH_DEVICE = 4;
-    private final int RF_STATUS = 5;
+    private final int RF_STATUS_LOC = 5;
     private final int ADD_LOCATION = 6;
 
     public LocationFragment() {
@@ -98,7 +98,7 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
         EventAdapter.register(EventAdapter.LOCATION_RPT, this);
         EventAdapter.register(EventAdapter.ADD_LOCATION, this);
         EventAdapter.register(EventAdapter.STOP_LOC, this);
-        EventAdapter.register(EventAdapter.RF_STATUS, this);
+        EventAdapter.register(EventAdapter.RF_STATUS_LOC, this);
 
     }
 
@@ -467,8 +467,8 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
             case EventAdapter.REFRESH_DEVICE:
                 mHandler.sendEmptyMessage(REFRESH_DEVICE);
                 break;
-            case EventAdapter.RF_STATUS:
-                mHandler.sendEmptyMessage(RF_STATUS);
+            case EventAdapter.RF_STATUS_LOC:
+                mHandler.sendEmptyMessage(RF_STATUS_LOC);
                 break;
         }
     }
@@ -525,7 +525,7 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
                         cbGainSwitch.setOnCheckedChangeListener(gainSwitchListener);
                     }
                     break;
-                case RF_STATUS:
+                case RF_STATUS_LOC:
                     isRFOpen();
                     break;
 

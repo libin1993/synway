@@ -3,6 +3,7 @@ package com.doit.net.View;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -37,10 +38,11 @@ public class ModifyWhitelistDialog extends Dialog {
     private EditText etRemark;
     private Button btSave;
     private Button btCancel;
+    private boolean imsiEditable = true; //imsi是否可编辑
 
     private Context mContext;
 
-    public ModifyWhitelistDialog(Context context, String imsi,String msisdn, String remark ) {
+    public ModifyWhitelistDialog(Context context, String imsi, String msisdn, String remark) {
         super(context, R.style.Theme_dialog);
         modifyIMSI = imsi;
         modifyMsisdn = msisdn;
@@ -49,15 +51,24 @@ public class ModifyWhitelistDialog extends Dialog {
         initView();
     }
 
+    public ModifyWhitelistDialog(Context context, String imsi, String msisdn, String remark, boolean editable) {
+        super(context, R.style.Theme_dialog);
+        modifyIMSI = imsi;
+        modifyMsisdn = msisdn;
+        modifyRemark = remark;
+        mContext = context;
+        imsiEditable = editable;
+        initView();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(mView);
-        x.view().inject(this,mView);
     }
 
-    private void initView(){
-        LayoutInflater inflater= LayoutInflater.from(getContext());
+    private void initView() {
+        LayoutInflater inflater = LayoutInflater.from(getContext());
         mView = inflater.inflate(R.layout.layout_modify_whitelist_info, null);
         setCancelable(false);
 
@@ -65,28 +76,41 @@ public class ModifyWhitelistDialog extends Dialog {
         etMsisdn.setText(modifyMsisdn);
         etIMSI = mView.findViewById(R.id.etImsi);
         etIMSI.setText(modifyIMSI);
+        etIMSI.setEnabled(imsiEditable);
         etRemark = mView.findViewById(R.id.etRemark);
         etRemark.setText(modifyRemark);
         btSave = mView.findViewById(R.id.btSave);
-        btSave.setOnClickListener(new View.OnClickListener(){
+        btSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String imsi = etIMSI.getText().toString();
                 String msisdn = etMsisdn.getText().toString();
                 String remark = etRemark.getText().toString();
 
-                if (!"".equals(imsi) && imsi.length() != 15){
-                    ToastUtils.showMessage( "IMSI长度错误！");
+                if (TextUtils.isEmpty(imsi)) {
+                    ToastUtils.showMessage("请输入IMSI");
                     return;
                 }
 
-                if (!"".equals(msisdn) && msisdn.length() != 11){
-                    ToastUtils.showMessage( "手机号长度错误！");
+                if (TextUtils.isEmpty(msisdn)) {
+                    ToastUtils.showMessage("请输入手机号");
                     return;
                 }
+
+
+                if (imsi.length() != 15) {
+                    ToastUtils.showMessage("IMSI长度错误，请确认后输入！");
+                    return;
+                }
+
+                if (msisdn.length() != 11) {
+                    ToastUtils.showMessage("手机长度错误，请确认后输入！");
+                    return;
+                }
+
 
                 //如果修改了imsi
-                if (!imsi.equals(modifyIMSI)){
+                if (!imsi.equals(modifyIMSI)) {
                     DbManager db = UCSIDBManager.getDbManager();
                     WhiteListInfo whiteListInfo = null;
                     try {
@@ -94,7 +118,7 @@ public class ModifyWhitelistDialog extends Dialog {
                                 .where("imsi", "=", modifyIMSI)
                                 .findFirst();
 
-                        if (whiteListInfo == null){
+                        if (whiteListInfo == null) {
                             ToastUtils.showMessage(R.string.modify_whitelist_fail);
                             return;
                         }
@@ -106,13 +130,13 @@ public class ModifyWhitelistDialog extends Dialog {
 
                     new AddToWhitelistListner(mContext, imsi, msisdn, remark).onClick(null);
                     CacheManager.updateWhitelistToDev(mContext);
-                }else{
+                } else {
                     try {
                         WhiteListInfo whiteListInfo = UCSIDBManager.getDbManager().selector(WhiteListInfo.class)
                                 .where("imsi", "=", modifyIMSI)
                                 .findFirst();
 
-                        if (whiteListInfo == null){
+                        if (whiteListInfo == null) {
                             ToastUtils.showMessage(R.string.modify_whitelist_fail);
                             return;
                         }
@@ -132,7 +156,7 @@ public class ModifyWhitelistDialog extends Dialog {
         });
 
         btCancel = mView.findViewById(R.id.btCancel);
-        btCancel.setOnClickListener(new View.OnClickListener(){
+        btCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dismiss();

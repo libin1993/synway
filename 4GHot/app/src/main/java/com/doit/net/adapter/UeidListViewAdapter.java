@@ -2,6 +2,7 @@ package com.doit.net.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -12,6 +13,9 @@ import android.widget.TextView;
 
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
 import com.doit.net.Event.AddToWhitelistListner;
+import com.doit.net.Event.EventAdapter;
+import com.doit.net.View.AddWhitelistDialog;
+import com.doit.net.View.ModifyWhitelistDialog;
 import com.doit.net.application.MyApplication;
 import com.doit.net.bean.UeidBean;
 import com.doit.net.Event.AddToLocalBlackListener;
@@ -44,7 +48,8 @@ public class UeidListViewAdapter extends BaseSwipeAdapter {
     private DbManager dbManager;
 
     public void refreshData() {
-        notifyDataSetChanged();;
+        notifyDataSetChanged();
+        ;
     }
 
     @Override
@@ -86,7 +91,37 @@ public class UeidListViewAdapter extends BaseSwipeAdapter {
         if (VersionManage.isPoliceVer()) {
             convertView.findViewById(R.id.add_to_black).setOnClickListener(new AddToLocalBlackListener(mContext, resp.getImsi()));
         } else if (VersionManage.isArmyVer()) {
-            convertView.findViewById(R.id.add_to_black).setOnClickListener(new AddToWhitelistListner(mContext,resp.getImsi()));
+            convertView.findViewById(R.id.add_to_black).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    try {
+                        WhiteListInfo info = dbManager.selector(WhiteListInfo.class).where("imsi", "=", resp.getImsi()).findFirst();
+                        if (info != null) {
+                            ModifyWhitelistDialog modifyWhitelistDialog = new ModifyWhitelistDialog(mContext,
+                                    resp.getImsi(), info.getMsisdn(), info.getRemark(),false);
+                            modifyWhitelistDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog) {
+                                    notifyDataSetChanged();
+                                }
+                            });
+                            modifyWhitelistDialog.show();
+                        }else {
+                            AddWhitelistDialog addWhitelistDialog = new AddWhitelistDialog(mContext, resp.getImsi());
+                            addWhitelistDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog) {
+                                    notifyDataSetChanged();
+                                }
+                            });
+                            addWhitelistDialog.show();
+                        }
+                    } catch (DbException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
 
         if (CacheManager.getLocMode()) {
@@ -127,11 +162,11 @@ public class UeidListViewAdapter extends BaseSwipeAdapter {
 //            });
 //        }
 
-        checkBlackWhiteList(resp,tvContent);
+        checkBlackWhiteList(resp, tvContent);
 
     }
 
-    private void checkBlackWhiteList(UeidBean resp,TextView tvContent) {
+    private void checkBlackWhiteList(UeidBean resp, TextView tvContent) {
 
         String content = "IMSI：" + resp.getImsi() + "                " + "制式: " + UtilOperator.getOperatorNameCH(resp.getImsi()) + "\n";
 
@@ -150,19 +185,19 @@ public class UeidListViewAdapter extends BaseSwipeAdapter {
                 String remark = dbBlackInfo.getRemark();
 
                 if (!TextUtils.isEmpty(name)) {
-                    content += "\n"+mContext.getString(R.string.lab_name)+name + "         ";
+                    content += "\n" + mContext.getString(R.string.lab_name) + name + "         ";
                 }
 
-                if (!TextUtils.isEmpty(remark)){
-                    if (!TextUtils.isEmpty(name)){
+                if (!TextUtils.isEmpty(remark)) {
+                    if (!TextUtils.isEmpty(name)) {
                         content += remark;
-                    }else {
-                        content += "\n"+remark;
+                    } else {
+                        content += "\n" + remark;
                     }
                 }
 
                 tvContent.setTextColor(MyApplication.mContext.getResources().getColor(R.color.red));
-            }else {
+            } else {
                 tvContent.setTextColor(MyApplication.mContext.getResources().getColor(R.color.white));
             }
             tvContent.setText(content);
@@ -181,20 +216,20 @@ public class UeidListViewAdapter extends BaseSwipeAdapter {
                         String msisdn = info.getMsisdn();
                         String remark = info.getRemark();
                         if (!TextUtils.isEmpty(msisdn)) {
-                            content += "\n"+"手机号："+msisdn + "           ";
+                            content += "\n" + "手机号：" + msisdn + "           ";
                         }
 
-                        if (!TextUtils.isEmpty(remark)){
-                            if (!TextUtils.isEmpty(msisdn)){
+                        if (!TextUtils.isEmpty(remark)) {
+                            if (!TextUtils.isEmpty(msisdn)) {
                                 content += remark;
-                            }else {
-                                content += "\n"+remark;
+                            } else {
+                                content += "\n" + remark;
                             }
                         }
 
                         tvContent.setTextColor(MyApplication.mContext.getResources().getColor(R.color.forestgreen));
 
-                    }else {
+                    } else {
                         tvContent.setTextColor(MyApplication.mContext.getResources().getColor(R.color.white));
                     }
                     tvContent.setText(content);

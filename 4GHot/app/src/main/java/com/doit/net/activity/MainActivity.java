@@ -27,8 +27,10 @@ import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.doit.net.Protocol.GSMSendPackage;
@@ -39,10 +41,12 @@ import com.doit.net.Sockets.ServerSocketUtils;
 import com.doit.net.Sockets.DatagramSocketUtils;
 import com.doit.net.Sockets.UDPSocketUtils;
 import com.doit.net.Utils.PermissionUtils;
+import com.doit.net.View.BatteryView;
 import com.doit.net.adapter.MainTabLayoutAdapter;
 import com.doit.net.application.MyApplication;
 import com.doit.net.base.BaseActivity;
 import com.doit.net.base.BaseFragment;
+import com.doit.net.bean.BatteryBean;
 import com.doit.net.bean.DeviceState;
 import com.doit.net.bean.TabEntity;
 import com.doit.net.Protocol.ProtocolManager;
@@ -114,12 +118,17 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     private boolean hasSetDefaultParam = false;   //开始全部打开射频标志
     private int heartbeatCount = 0;
     private boolean isCheckDeviceStateThreadRun = true;
+    private boolean lowBatteryWarn = true;  //低电量提醒
 
     private ImageView ivDeviceState;
     Animation viewAnit = new AlphaAnimation(0, 1);
     private ImageView ivWifiState;
     private ImageView ivBatteryLevel;
     private ImageView ivSyncError;
+    private BatteryView batteryView;
+    private TextView tvBattery;
+    private ImageView ivCharging;
+    private FrameLayout flBattery;
     private MySweetAlertDialog batteryWarningDialog = null;
     Animation batteryViewAnit = new AlphaAnimation(0, 1);
 
@@ -138,6 +147,8 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     private final int CHANGE_TAB = 10;
     private final int POWER_START = 11;
     private final int CHECK_LICENCE = 13;
+    private final int BATTERY_STATE = 14;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,8 +178,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                 initSpeech();
                 initFTP();
                 initBlackBox();
-
-
             }
         }.start();
     }
@@ -263,6 +272,13 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
         ivSyncError = findViewById(R.id.ivSyncError);
 
         ivBatteryLevel = findViewById(R.id.ivBatteryLevel);
+        batteryView = findViewById(R.id.battery_view);
+        tvBattery = findViewById(R.id.tv_battery);
+        ivCharging = findViewById(R.id.iv_charging);
+        flBattery = findViewById(R.id.fl_battery);
+
+//        ivBatteryLevel.setImageDrawable(getResources().getDrawable(R.drawable.battery_level6));
+//        ivBatteryLevel.setVisibility(View.VISIBLE);
 
         initTabs();
         initProgressDialog();
@@ -283,6 +299,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
         EventAdapter.register(EventAdapter.WIFI_CHANGE, this);
         EventAdapter.register(EventAdapter.POWER_START, this);
         EventAdapter.register(EventAdapter.HEARTBEAT_RPT, this);
+        EventAdapter.register(EventAdapter.BATTERY_STATE, this);
 
     }
 
@@ -342,52 +359,52 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
         if (VersionManage.isArmyVer()) {
             listTitles.add("侦码");
-            if (CacheManager.getLocMode()){
+            if (CacheManager.getLocMode()) {
                 listTitles.add("搜寻");
             }
             listTitles.add("设置");
 
             listSelectIcon.add(R.drawable.detect_lable_select);
-            if (CacheManager.getLocMode()){
+            if (CacheManager.getLocMode()) {
                 listSelectIcon.add(R.drawable.location_lable_select);
             }
             listSelectIcon.add(R.drawable.setting_lable_select);
 
             listUnselectIcon.add(R.drawable.detect_lable_unselect);
-            if (CacheManager.getLocMode()){
+            if (CacheManager.getLocMode()) {
                 listUnselectIcon.add(R.drawable.location_lable_unselect);
             }
             listUnselectIcon.add(R.drawable.setting_lable_unselect);
 
             mTabs.add(new StartPageFragment());
-            if (CacheManager.getLocMode()){
+            if (CacheManager.getLocMode()) {
                 mTabs.add(new LocationFragment());
             }
             mTabs.add(new AppFragment());
         } else if (VersionManage.isPoliceVer()) {
             listTitles.add("侦码");
-            if (CacheManager.getLocMode()){
+            if (CacheManager.getLocMode()) {
                 listTitles.add("搜寻");
             }
             listTitles.add("名单");
             listTitles.add("设置");
 
             listSelectIcon.add(R.drawable.detect_lable_select);
-            if (CacheManager.getLocMode()){
+            if (CacheManager.getLocMode()) {
                 listSelectIcon.add(R.drawable.location_lable_select);
             }
             listSelectIcon.add(R.mipmap.name_lable_select);
             listSelectIcon.add(R.drawable.setting_lable_select);
 
             listUnselectIcon.add(R.drawable.detect_lable_unselect);
-            if (CacheManager.getLocMode()){
+            if (CacheManager.getLocMode()) {
                 listUnselectIcon.add(R.drawable.location_lable_unselect);
             }
             listUnselectIcon.add(R.mipmap.name_lable_unselect);
             listUnselectIcon.add(R.drawable.setting_lable_unselect);
 
             mTabs.add(new StartPageFragment());
-            if (CacheManager.getLocMode()){
+            if (CacheManager.getLocMode()) {
                 mTabs.add(new LocationFragment());
             }
             mTabs.add(new NameListFragment());
@@ -658,7 +675,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     /**
      * 创建DatagramSocket
      */
-    private void initGSM(){
+    private void initGSM() {
 
         Timer timer = new Timer();
         TimerTask timerTask = new TimerTask() {
@@ -666,8 +683,8 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             public void run() {
                 GSMSendPackage sendPackage = new GSMSendPackage();
                 sendPackage.setMsgNumber((byte) 0x01);
-                sendPackage.setCarrierInstruction((byte)0x00);
-                sendPackage.setMsgParameter((byte)0x00);
+                sendPackage.setCarrierInstruction((byte) 0x00);
+                sendPackage.setMsgParameter((byte) 0x00);
 
                 GSMSubPackage subPackage = new GSMSubPackage();
 
@@ -691,8 +708,8 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     /**
      * 创建DatagramSocket
      */
-    private void initUDP(){
-        if (!PrefManage.getBoolean(SET_STATIC_IP,false)){     //是否设置自动连接
+    private void initUDP() {
+        if (!PrefManage.getBoolean(SET_STATIC_IP, false)) {     //是否设置自动连接
             return;
         }
 
@@ -702,7 +719,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             public void run() {
                 if (!CacheManager.deviceState.getDeviceState().equals(DeviceState.NORMAL)) {
                     sendData();
-                }else {
+                } else {
                     DatagramSocketUtils.getInstance().closeSocket();
                     timer.cancel();
                 }
@@ -716,7 +733,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     }
 
     /**
-     *  发送数据
+     * 发送数据
      */
     public void sendData() {
         try {
@@ -736,8 +753,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     }
 
 
-
-
     private void setDeviceWorkMode() {
         String workMode = "";
         if (VersionManage.isPoliceVer()) {
@@ -748,9 +763,9 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
         ProtocolManager.setActiveMode(workMode);
 
-        if (workMode.equals("2")){
+        if (workMode.equals("2")) {
             CacheManager.setLocalWhiteList("on");
-        }else {
+        } else {
             CacheManager.setLocalWhiteList("off");
         }
 
@@ -767,6 +782,9 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                 batteryViewAnit.cancel();
                 ivBatteryLevel.setVisibility(View.GONE);
 
+                flBattery.setVisibility(View.GONE);
+                tvBattery.setVisibility(View.GONE);
+
                 viewAnit.cancel();
                 ivDeviceState.clearAnimation();
                 ivDeviceState.setVisibility(View.GONE);
@@ -779,6 +797,9 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                 batteryViewAnit.cancel();
                 ivBatteryLevel.setVisibility(View.GONE);
 
+                flBattery.setVisibility(View.GONE);
+                tvBattery.setVisibility(View.GONE);
+
                 viewAnit.cancel();
                 ivDeviceState.clearAnimation();
                 ivDeviceState.setVisibility(View.GONE);
@@ -789,6 +810,9 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             case DeviceState.ON_INIT:
                 ivWifiState.setImageDrawable(getDrawable(R.drawable.wifi_connect));
                 ivBatteryLevel.setVisibility(View.GONE);
+
+                flBattery.setVisibility(View.GONE);
+                tvBattery.setVisibility(View.GONE);
 
                 ivDeviceState.setImageDrawable(getDrawable(R.drawable.small_device_icon));
                 ivDeviceState.setVisibility(View.VISIBLE);
@@ -805,6 +829,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             case DeviceState.NORMAL:
                 ivWifiState.setImageDrawable(getDrawable(R.drawable.wifi_connect));
                 ivBatteryLevel.setVisibility(View.VISIBLE);
+
                 ivDeviceState.setVisibility(View.VISIBLE);
                 viewAnit.cancel();
                 ivDeviceState.setImageDrawable(getDrawable(R.drawable.small_device_icon));
@@ -816,11 +841,11 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
         }
     }
 
-    private void lowBatteryWarnning() {
+    private void lowBatteryWarnning(String content) {
         if (batteryWarningDialog == null) {
             batteryWarningDialog = new MySweetAlertDialog(this, MySweetAlertDialog.WARNING_TYPE)
                     .setTitleText(getString(R.string.low_power))
-                    .setContentText(getString(R.string.low_power_warning))
+                    .setContentText(content)
                     .setConfirmClickListener(new MySweetAlertDialog.OnSweetClickListener() {
                         @Override
                         public void onClick(MySweetAlertDialog mySweetAlertDialog) {
@@ -879,7 +904,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                 ivBatteryLevel.startAnimation(batteryViewAnit);
             }
 
-            lowBatteryWarnning();
+            lowBatteryWarnning(getString(R.string.low_power_warning));
         }
     }
 
@@ -973,7 +998,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             wifiChangeEvent();
         } else if (EventAdapter.POWER_START.equals(key)) {
             mHandler.sendEmptyMessage(POWER_START);
-        }else if (EventAdapter.HEARTBEAT_RPT.equals(key)){
+        } else if (EventAdapter.HEARTBEAT_RPT.equals(key)) {
             if (heartbeatCount == 0) {
                 ProtocolManager.setNowTime();
                 LogUtils.log("首次下发查询以获取小区信息：");
@@ -982,7 +1007,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
                 ProtocolManager.setFTPConfig(); //设置ftp配置
 
-                if (CacheManager.checkLicense){
+                if (CacheManager.checkLicense) {
                     CacheManager.checkLicense = false;
                     checkLicence();
                 }
@@ -1015,6 +1040,11 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             if (heartbeatCount >= 1000) {
                 heartbeatCount = 0;
             }
+        } else if (EventAdapter.BATTERY_STATE.equals(key)) {
+            Message msg = new Message();
+            msg.what = BATTERY_STATE;
+            msg.obj = val;
+            mHandler.sendMessage(msg);
         }
     }
 
@@ -1067,7 +1097,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
         if (TextUtils.isEmpty(LicenceUtils.authorizeCode)) {
             ToastUtils.showMessageLong("App未授权，请联系管理员。");
-            LicenceDialog licenceDialog = new LicenceDialog(this,"退出");
+            LicenceDialog licenceDialog = new LicenceDialog(this, "退出");
             licenceDialog.setOnCloseListener(new LicenceDialog.OnCloseListener() {
                 @Override
                 public void onClose() {
@@ -1084,7 +1114,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
         long nowTime = System.currentTimeMillis();
         if (nowTime >= longDueTime) {
             ToastUtils.showMessageLong("授权已过期，请联系管理员");
-            LicenceDialog licenceDialog = new LicenceDialog(this,"退出");
+            LicenceDialog licenceDialog = new LicenceDialog(this, "退出");
             licenceDialog.setOnCloseListener(new LicenceDialog.OnCloseListener() {
                 @Override
                 public void onClose() {
@@ -1110,7 +1140,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
         public void handleMessage(Message msg) {
             if (msg.what == TIP_MSG) {
                 String tip = msg.obj.toString();
-                ToastUtils.showMessageLong( tip);
+                ToastUtils.showMessageLong(tip);
             } else if (msg.what == SHOW_PROGRESS) {
                 int dialogKeepTime = 5000;
                 if (msg.obj != null) {
@@ -1145,8 +1175,26 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                 mViewPager.setCurrentItem((int) msg.obj, true);
             } else if (msg.what == POWER_START) {
                 powerStart();
-            }else if (msg.what == CHECK_LICENCE) {
+            } else if (msg.what == CHECK_LICENCE) {
                 checkAuthorize();
+            } else if (msg.what == BATTERY_STATE) {
+                BatteryBean batteryBean = (BatteryBean) msg.obj;
+                flBattery.setVisibility(View.VISIBLE);
+                tvBattery.setVisibility(View.VISIBLE);
+                tvBattery.setText(batteryBean.getBatteryQuantity() + "%");
+                batteryView.setPower(batteryBean.getBatteryQuantity());
+                if (batteryBean.isCharging()) {
+                    ivCharging.setVisibility(View.VISIBLE);
+                } else {
+                    ivCharging.setVisibility(View.GONE);
+                }
+
+                if (batteryBean.getBatteryQuantity() <= 20 && lowBatteryWarn) {
+                    lowBatteryWarn = false;
+                    lowBatteryWarnning("当前电池电量过低，预计可用" + batteryBean.getUseTime()
+                            + "分钟，已无法保证正常工作，请及时更换电池！");
+                }
+
             }
         }
     };

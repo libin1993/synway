@@ -3,6 +3,7 @@ package com.doit.net.View;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -33,6 +34,8 @@ public class AddWhitelistDialog extends Dialog {
     private EditText etRemark;
     private Button btWhitelist;
     private Button btCancel;
+    private String currentImsi=""; //不可编辑
+
 
     private Context mContext;
 
@@ -41,12 +44,18 @@ public class AddWhitelistDialog extends Dialog {
         mContext = context;
         initView();
     }
+    public AddWhitelistDialog(Context context,String imsi) {
+        super(context, R.style.Theme_dialog);
+        mContext = context;
+        this.currentImsi = imsi;
+
+        initView();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(mView);
-        x.view().inject(this,mView);
     }
 
     private void initView(){
@@ -58,37 +67,47 @@ public class AddWhitelistDialog extends Dialog {
         etMsisdn = mView.findViewById(R.id.etMsisdn);
         etRemark = mView.findViewById(R.id.etRemark);
         btWhitelist = mView.findViewById(R.id.btWhitelist);
+
+        if (!TextUtils.isEmpty(currentImsi)){
+            etIMSI.setText(currentImsi);
+            etIMSI.setEnabled(false);
+        }
+
         btWhitelist.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                final String imsi = etIMSI.getText().toString();
-                final String msisdn = etMsisdn.getText().toString();
-                final String remark = etRemark.getText().toString();
+                String imsi = etIMSI.getText().toString();
+                String msisdn = etMsisdn.getText().toString();
+                String remark = etRemark.getText().toString();
 
-                if ("".equals(imsi) && "".equals(msisdn)){
-                    ToastUtils.showMessage( "请输入IMSI或手机号");
+                if (TextUtils.isEmpty(imsi)){
+                    ToastUtils.showMessage( "请输入IMSI");
                     return;
-                } else{
-                    if (!"".equals(imsi) && imsi.length() != 15){
-                        ToastUtils.showMessage("IMSI长度错误，请确认后输入！");
-                        return;
-                    }
-
-                    if (!"".equals(msisdn) && msisdn.length() != 11){
-                        ToastUtils.showMessage( "手机长度错误，请确认后输入！");
-                        return;
-                    }
-
-                    new AddToWhitelistListner(getContext(), imsi, msisdn, remark).onClick(null);
-                    if (!"".equals(msisdn) && "".equals(imsi)){
-                        ToastUtils.showMessage( "提示：检测到只输入了手机号，只有翻译成IMSI才可生效！");
-                    }else{
-                        CacheManager.updateWhitelistToDev(mContext);
-                    }
                 }
 
-                dismiss();
+                if (TextUtils.isEmpty(msisdn)){
+                    ToastUtils.showMessage( "请输入手机号");
+                    return;
+                }
+
+
+                if (imsi.length() != 15){
+                    ToastUtils.showMessage("IMSI长度错误，请确认后输入！");
+                    return;
+                }
+
+                if (msisdn.length() != 11){
+                    ToastUtils.showMessage( "手机长度错误，请确认后输入！");
+                    return;
+                }
+
+
+                new AddToWhitelistListner(getContext(), imsi, msisdn, remark).onClick(null);
+
+
                 EventAdapter.call(EventAdapter.REFRESH_WHITELIST);
+                dismiss();
+
             }
         });
 

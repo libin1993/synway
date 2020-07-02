@@ -69,7 +69,7 @@ public class RealTimeUeidRptFragment extends BaseFragment implements EventAdapte
     //handler消息
     private final int UEID_RPT = 1;
     private final int SHIELD_RPT = 2;
-    private final int RF_STATUS = 3;
+    private final int RF_STATUS_RPT = 3;
 
 
     public RealTimeUeidRptFragment() {
@@ -90,7 +90,7 @@ public class RealTimeUeidRptFragment extends BaseFragment implements EventAdapte
         cbDetectSwitch = rootView.findViewById(R.id.cbDetectSwitch);
         initView();
 
-        EventAdapter.register(EventAdapter.RF_STATUS, this);
+        EventAdapter.register(EventAdapter.RF_STATUS_RPT, this);
         EventAdapter.register(EventAdapter.UEID_RPT, this);
         EventAdapter.register(EventAdapter.SHIELD_RPT, this);
 
@@ -343,7 +343,7 @@ public class RealTimeUeidRptFragment extends BaseFragment implements EventAdapte
                     sortRealtimeRpt();
                     updateView();
                     break;
-                case RF_STATUS:
+                case RF_STATUS_RPT:
                     isRFOpen();
                     break;
 
@@ -421,8 +421,8 @@ public class RealTimeUeidRptFragment extends BaseFragment implements EventAdapte
                 message.obj = val;
                 mHandler.sendMessage(message);
                 break;
-            case EventAdapter.RF_STATUS:
-                mHandler.sendEmptyMessage(RF_STATUS);
+            case EventAdapter.RF_STATUS_RPT:
+                mHandler.sendEmptyMessage(RF_STATUS_RPT);
                 break;
         }
 
