@@ -2,6 +2,7 @@ package com.doit.net.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,15 +16,23 @@ import com.doit.net.Event.AddToWhitelistListner;
 import com.doit.net.Model.CacheManager;
 import com.doit.net.Model.DBUeidInfo;
 import com.doit.net.Model.ImsiMsisdnConvert;
+import com.doit.net.Model.UCSIDBManager;
 import com.doit.net.Model.VersionManage;
+import com.doit.net.Model.WhiteListInfo;
+import com.doit.net.View.AddWhitelistDialog;
+import com.doit.net.View.ModifyWhitelistDialog;
 import com.doit.net.ucsi.R;
 import com.doit.net.Utils.DateUtils;
+
+import org.xutils.DbManager;
+import org.xutils.ex.DbException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class HistoryListViewAdapter extends BaseSwipeAdapter {
 
+    private DbManager dbManager;
     private Context mContext;
 //    private HistoryListViewAdapter.onItemLongClickListener mOnItemLongClickListener;
     private MotionEvent motionEvent;
@@ -31,6 +40,7 @@ public class HistoryListViewAdapter extends BaseSwipeAdapter {
 
     public HistoryListViewAdapter(Context mContext) {
         this.mContext = mContext;
+        dbManager = UCSIDBManager.getDbManager();
     }
 
     public void refreshData(){
@@ -84,7 +94,37 @@ public class HistoryListViewAdapter extends BaseSwipeAdapter {
         if (VersionManage.isPoliceVer()){
             convertView.findViewById(R.id.add_to_black).setOnClickListener(new AddToLocalBlackListener(mContext,resp.getImsi()));
         }else if(VersionManage.isArmyVer()){
-            convertView.findViewById(R.id.add_to_black).setOnClickListener(new AddToWhitelistListner(mContext,resp.getImsi()));;
+            convertView.findViewById(R.id.add_to_black).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    try {
+                        WhiteListInfo info = dbManager.selector(WhiteListInfo.class).where("imsi", "=", resp.getImsi()).findFirst();
+                        if (info != null) {
+                            ModifyWhitelistDialog modifyWhitelistDialog = new ModifyWhitelistDialog(mContext,
+                                    resp.getImsi(), info.getMsisdn(), info.getRemark(),false);
+                            modifyWhitelistDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog) {
+                                    notifyDataSetChanged();
+                                }
+                            });
+                            modifyWhitelistDialog.show();
+                        }else {
+                            AddWhitelistDialog addWhitelistDialog = new AddWhitelistDialog(mContext, resp.getImsi());
+                            addWhitelistDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog) {
+                                    notifyDataSetChanged();
+                                }
+                            });
+                            addWhitelistDialog.show();
+                        }
+                    } catch (DbException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
 
         //if(BuildConfig.LOC_MODEL){
