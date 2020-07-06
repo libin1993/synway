@@ -49,7 +49,7 @@ public class FTPServerUtils extends DefaultFtplet {
     private static FtpServerFactory mFTPServerFactory;
 
     private FTPServerUtils() {
-        init();
+
     }
 
     public static FTPServerUtils getInstance() {
@@ -104,6 +104,7 @@ public class FTPServerUtils extends DefaultFtplet {
     }
 
     public void startFTPServer() {
+        init();
         try {
             mFTPServer.start();
         } catch (FtpException e) {
