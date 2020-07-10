@@ -67,7 +67,7 @@ public class UserListAdapter extends BaseSwipeAdapter {
 
         final UserInfo userInfo = listUserInfo.get(position);
         tvIndex.setText(" " +(position + 1) + ".");
-        tvUserInfo.setText("姓名："+userInfo.getAccount()  + "            密码：" + userInfo.getPassword() + "\n" +
+        tvUserInfo.setText("账号："+userInfo.getAccount()  + "            密码：" + userInfo.getPassword() + "\n" +
                             "备注："+userInfo.getRemake());
         tvUserInfo.setTag(position);
 

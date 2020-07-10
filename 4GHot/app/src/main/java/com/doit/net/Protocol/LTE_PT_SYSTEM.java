@@ -42,6 +42,7 @@ public class LTE_PT_SYSTEM {
 
         //获取整体的包
         byte[] tempSendBytes=sendPackage.getPackageContent();
+        LogUtils.log1("TCP发送：Type:" + sendPackage.getPackageMainType() + ";  SubType:" + Integer.toHexString(sendPackage.getPackageSubType()) + ";  Content:" + UtilDataFormatChange.bytesToString(sendPackage.getByteSubContent(), 0));
         return LTESendManager.sendData(tempSendBytes);
     }
 
@@ -66,6 +67,8 @@ public class LTE_PT_SYSTEM {
 
         //获取整体的包
         byte[] tempSendBytes=sendPackage.getPackageContent();
+
+        LogUtils.log1("TCP发送：Type:" + sendPackage.getPackageMainType() + ";  SubType:" + Integer.toHexString(sendPackage.getPackageSubType()) + ";  Content:" + UtilDataFormatChange.bytesToString(sendPackage.getByteSubContent(), 0));
         return LTESendManager.sendData(tempSendBytes);
     }
 
@@ -79,10 +82,8 @@ public class LTE_PT_SYSTEM {
                 break;
 
             case LTE_PT_SYSTEM.SYSTEM_REBOOT_ACK:
-                LogUtils.log("parseSystemReboot:" + respcContent);
                 if (respcContent.charAt(0) == '0'){
                     LogUtils.log("设备正在重启");
-//                    ToastUtils.showMessageLong(MyApplication.mContext,"设备正在重启");
                 }else{
                     ToastUtils.showMessage("设备重启失败");
                 }

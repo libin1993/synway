@@ -415,7 +415,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
             gaConfig = tmpGa +",";
             gaConfig += gaConfig;
             gaConfig += tmpGa;
-            LogUtils.log("下发功率设置："+"IDX:"+channel.getIdx()+"@"+"PA:"+gaConfig);
+            LogUtils.log("设置功率："+"IDX:"+channel.getIdx()+"@"+"PA:"+gaConfig);
             LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_CHANNEL_CONFIG,
                     "IDX:"+channel.getIdx()+"@"+"PA:"+gaConfig);
         }

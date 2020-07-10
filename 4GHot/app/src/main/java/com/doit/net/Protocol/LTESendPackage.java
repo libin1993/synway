@@ -126,7 +126,7 @@ public class LTESendPackage
 			byteArray.append(this.byteSubContent,0,this.byteSubContent.length);
 		}
 
-		LogUtils.log("发送主类型："+packageMainType+";发送子类型："+packageSubType);
+		LogUtils.log("TCP接收：Type:"+packageMainType+";SubType："+packageSubType);
 		
 		return byteArray.toByteArray();
 	}

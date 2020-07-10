@@ -77,7 +77,7 @@ public class AddUserDialog extends Dialog {
                 }
 
                 dismiss();
-                EventAdapter.call(EventAdapter.ADD_BLACKBOX,BlackBoxManger.ADD_USER+name+"+"+password);
+                EventAdapter.call(EventAdapter.ADD_BLACKBOX,BlackBoxManger.ADD_USER+"账号："+name+"密码："+password+"备注："+remark);
             }
         });
 

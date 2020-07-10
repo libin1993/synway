@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.doit.net.Event.EventAdapter;
 import com.doit.net.Model.DBChannel;
 import com.doit.net.Model.UCSIDBManager;
+import com.doit.net.Model.VersionManage;
 import com.doit.net.Utils.NetWorkUtils;
 import com.doit.net.application.MyApplication;
 import com.doit.net.bean.FtpConfig;
@@ -41,10 +42,13 @@ public class ProtocolManager {
 
         String namelist = "MODE:"+mode;
 
-//        namelist += "@REDIRECT_CONFIG:";
-//        if (!"".equals(redirectConfig)) {
-//            namelist += redirectConfig;
-//        }
+
+        if (VersionManage.isPoliceVer()){
+            namelist += "@REDIRECT_CONFIG:";
+            if (!"".equals(redirectConfig)) {
+                namelist += redirectConfig;
+            }
+        }
 
         namelist += "@NAMELIST_REJECT:";
         if (!"".equals(nameListReject)) {
@@ -71,17 +75,20 @@ public class ProtocolManager {
             namelist += nameListRelease;
         }
 
-//        namelist += "@NAMELIST_FILE:";
-//        if (!"".equals(nameListFile)) {
-//            namelist += nameListFile;
-//        }
+        if (VersionManage.isPoliceVer()){
+            namelist += "@NAMELIST_FILE:";
+            if (!"".equals(nameListFile)) {
+                namelist += nameListFile;
+            }
+        }
 
-        LogUtils.log("设置白名单："+namelist);
+
+        LogUtils.log("设置名单："+namelist);
         LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_NAMELIST, namelist);
     }
 
     public static void getEquipAndAllChannelConfig() {
-        LogUtils.log("获取设备配置");
+        LogUtils.log("查询设备配置");
         LTE_PT_PARAM.queryCommonParam(LTE_PT_PARAM.PARAM_GET_ENB_CONFIG);
     }
 
@@ -89,14 +96,14 @@ public class ProtocolManager {
      * 获取白名单
      */
     public static void getNameList() {
-        LogUtils.log("获取白名单");
+        LogUtils.log("查询名单");
         LTE_PT_PARAM.queryCommonParam(LTE_PT_PARAM.PARAM_GET_NAMELIST);
     }
 
     public static void setNowTime() {
         Date d = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd-HH:mm:ss");
-        LogUtils.log("当前时间：" + sdf.format(d));
+        LogUtils.log("设置固件时间：" + sdf.format(d));
 
         LTE_PT_SYSTEM.setSystemParam(LTE_PT_SYSTEM.SYSTEM_SET_DATETIME, sdf.format(d));
     }
@@ -106,7 +113,7 @@ public class ProtocolManager {
             return;
         }
 
-        //UtilBaseLog.printLog("下发更新TAC");
+        LogUtils.log("更新TAC");
 
         LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_CHANGE_TAG, "");
     }
@@ -139,7 +146,7 @@ public class ProtocolManager {
         //删掉最开始的@
         configContent = configContent.replaceFirst("@", "");
 
-        LogUtils.log("set cell config:" + configContent);
+        LogUtils.log("设置小区:" + configContent);
         LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_ENB_CONFIG, configContent);
         //EventAdapter.call(EventAdapter.ADD_BLACKBOX,BlackBoxManger.SET_CELL_CONFIG + configContent);
     }
@@ -149,6 +156,7 @@ public class ProtocolManager {
             return;
         }
 
+        LogUtils.log("重启设备");
         LTE_PT_SYSTEM.commonSystemMsg(LTE_PT_SYSTEM.SYSTEM_REBOOT);
         EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.REBOOT_DEVICE);
     }
@@ -330,7 +338,7 @@ public class ProtocolManager {
     }
 
     public static void openRf(String idx) {
-        //UtilBaseLog.printLog("打开射频："+idx);
+        LogUtils.log("开启射频："+idx);
         //LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_CHANNEL_ON, idx+"@HOLD:"+HOLD_VALUE);
         LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_CHANNEL_ON, idx);
         //setChannelConfig(idx,null,null,null,null, FlagConstant.RF_OPEN,null);
@@ -356,7 +364,7 @@ public class ProtocolManager {
             return;
         }
 
-        LogUtils.log("下发开始定位：" + imsi);
+        LogUtils.log("设置定位IMSI：" + imsi);
 
         LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_LOC_IMSI, imsi);
     }
@@ -366,7 +374,7 @@ public class ProtocolManager {
         if (!CacheManager.isDeviceOk()) {
             return;
         }
-
+        LogUtils.log("设置模式：" + mode);
         LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_ACTIVE_MODE, mode);
     }
 
@@ -698,6 +706,7 @@ public class ProtocolManager {
             return;
         }
 
+        LogUtils.log("固件升级:"+upgradeCommand);
         LTE_PT_SYSTEM.setSystemParam(LTE_PT_SYSTEM.SYSTEM_UPGRADE, upgradeCommand);
     }
 }

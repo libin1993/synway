@@ -122,7 +122,6 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
                         currentSRSP = 0;
                         resetLocateChartValue();
                         refreshPage();
-                        //lastLocRptTime = new Date().getTime();
                     }
 
                     if (currentSRSP == 0) {
@@ -192,8 +191,18 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
         return srsp;
     }
 
+    void startLoc() {
+        if (!CacheManager.getLocState()) {
+            startSpeechBroadcastLoop();
+
+            CacheManager.startLoc(CacheManager.getCurrentLoction().getImsi());
+            textContent = "正在搜寻："+CacheManager.currentLoction.getImsi();
+            refreshPage();
+        }
+    }
+
     void addLocation(String imsi) {
-        LogUtils.log("##########  addLocation:" + imsi + "  ###########");
+        LogUtils.log("开始定位,IMSI:"+imsi);
         if ("".equals(lastLocateIMSI)) {
             if (VersionManage.isPoliceVer()) {
                 startUpdateArfcn();
@@ -220,13 +229,14 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
         speech("搜寻目标更换");
         currentSRSP = 0;
         lastRptSRSP = 0;
+        textContent = "正在搜寻：" + CacheManager.getCurrentLoction().getImsi();
         resetLocateChartValue();
         refreshPage();
         startSpeechBroadcastLoop();  //从停止定位的状态添加定位，故语音手动再次开启
     }
 
     private void stopLoc() {
-        LogUtils.log("call stopLoc() in locationFragment... ...");
+        LogUtils.log("停止定位");
         if (CacheManager.getLocState()) {
             CacheManager.stopCurrentLoc();
             stopSpeechBroadcastLoop();
@@ -250,6 +260,41 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
         if (isOpenVoice)
             EventAdapter.call(EventAdapter.SPEAK, content);
     }
+
+
+    CompoundButton.OnCheckedChangeListener rfLocSwitchListener = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+            if (!compoundButton.isPressed()) {
+                return;
+            }
+
+            if (!CacheManager.checkDevice(getContext())) {
+                cbLocSwitch.setChecked(!isChecked);
+                return;
+            }
+
+            if (!isChecked) {
+                ProtocolManager.closeAllRf();
+                stopLoc();
+                EventAdapter.call(EventAdapter.SHOW_PROGRESS, 8000);
+                if (CacheManager.currentLoction != null && !CacheManager.currentLoction.getImsi().equals("")) {
+                    EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.STOP_LOCALTE + CacheManager.currentLoction.getImsi());
+                }
+            } else {
+                if (CacheManager.currentLoction == null || CacheManager.currentLoction.getImsi().equals("")) {
+                    ToastUtils.showMessage(R.string.button_loc_unstart);
+                } else {
+                    ProtocolManager.openAllRf();
+                    startLoc();
+                    EventAdapter.call(EventAdapter.SHOW_PROGRESS, 8000);
+                    EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.START_LOCALTE + CacheManager.currentLoction.getImsi());
+                }
+            }
+        }
+    };
+
+
 
     CompoundButton.OnCheckedChangeListener voiceSwitchListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
@@ -369,43 +414,7 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
         }
     }
 
-    CompoundButton.OnCheckedChangeListener rfLocSwitchListener = new CompoundButton.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-            if (!compoundButton.isPressed()) {
-                return;
-            }
 
-            if (!CacheManager.checkDevice(getContext())) {
-                cbLocSwitch.setChecked(!isChecked);
-                return;
-            }
-
-            if (!isChecked) {
-                stopLoc();
-                EventAdapter.call(EventAdapter.SHOW_PROGRESS, 8000);
-                if (CacheManager.currentLoction != null && !CacheManager.currentLoction.getImsi().equals("")) {
-                    EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.STOP_LOCALTE + CacheManager.currentLoction.getImsi());
-                }
-            } else {
-                if (CacheManager.currentLoction == null || CacheManager.currentLoction.getImsi().equals("")) {
-                    ToastUtils.showMessage(R.string.button_loc_unstart);
-                } else {
-                    startLoc();
-                    EventAdapter.call(EventAdapter.SHOW_PROGRESS, 8000);
-                    EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.START_LOCALTE + CacheManager.currentLoction.getImsi());
-                }
-            }
-        }
-    };
-
-    void startLoc() {
-        if (!CacheManager.getLocState()) {
-            startSpeechBroadcastLoop();
-            CacheManager.startLoc(CacheManager.getCurrentLoction().getImsi());
-            //setArfcnPowerByTargetOpr();
-        }
-    }
 
     @Override
     public void onFocus() {
@@ -483,11 +492,13 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
                     vLocateCircle.setValue(currentSRSP);
                     updateLocateChart();
 
-                    if (CacheManager.getCurrentLoction().isLocateStart()) {
+                    cbLocSwitch.setOnCheckedChangeListener(null);
+                    if (CacheManager.getLocState()) {
                         cbLocSwitch.setChecked(true);
                     } else {
                         cbLocSwitch.setChecked(false);
                     }
+                    cbLocSwitch.setOnCheckedChangeListener(rfLocSwitchListener);
                     break;
                 case LOC_REPORT:
                     if (CacheManager.getCurrentLoction() != null && CacheManager.getCurrentLoction().isLocateStart()) {

@@ -129,6 +129,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     private TextView tvBattery;
     private ImageView ivCharging;
     private FrameLayout flBattery;
+    private TextView tvRemainTime;
     private MySweetAlertDialog batteryWarningDialog = null;
     Animation batteryViewAnit = new AlphaAnimation(0, 1);
 
@@ -186,14 +187,14 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     private void setData() {
         NetworkInfo wifiNetInfo = ((ConnectivityManager) activity.
                 getSystemService(Context.CONNECTIVITY_SERVICE)).getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        String ssid = NetWorkUtils.getWifiSSID(activity);
+//        String ssid = NetWorkUtils.getWifiSSID(activity);
 
         if (wifiNetInfo.isConnected()) {
-            LogUtils.log("wifi state change——connected");
+            LogUtils.log("wifi连接成功");
             if (CacheManager.deviceState.getDeviceState().equals(DeviceState.WIFI_DISCONNECT))  //只有从wifi未连接到连接才出现这种状态
                 CacheManager.deviceState.setDeviceState(DeviceState.WAIT_SOCKET);
         } else {
-            LogUtils.log("wifi state change——disconnected");
+            LogUtils.log("wifi断开连接");
         }
     }
 
@@ -204,7 +205,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
         BlackBoxManger.setCurrentAccount(AccountManage.getCurrentLoginAccount());
         BlackBoxManger.initBlx();
-        BlackBoxManger.recordOperation(BlackBoxManger.LOGIN + AccountManage.getCurrentLoginAccount());
+
     }
 
     private void initNetWork() {
@@ -218,11 +219,13 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                 //设备重启（重连）后需要重新检查设置默认参数
                 hasSetDefaultParam = false;
                 CacheManager.resetState();
+
             }
 
             @Override
             public void onDisconnect() {
                 CacheManager.deviceState.setDeviceState(DeviceState.ON_INIT);
+
             }
         });
     }
@@ -273,12 +276,11 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
         ivBatteryLevel = findViewById(R.id.ivBatteryLevel);
         batteryView = findViewById(R.id.battery_view);
+        tvRemainTime = findViewById(R.id.tv_remain_time);
         tvBattery = findViewById(R.id.tv_battery);
         ivCharging = findViewById(R.id.iv_charging);
         flBattery = findViewById(R.id.fl_battery);
 
-//        ivBatteryLevel.setImageDrawable(getResources().getDrawable(R.drawable.battery_level6));
-//        ivBatteryLevel.setVisibility(View.VISIBLE);
 
         initTabs();
         initProgressDialog();
@@ -350,7 +352,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
     private void clearDataDir() {
         AccountManage.deleteAccountFile();
-        BlackBoxManger.clearBlxData();
     }
 
     private void initTabs() {
@@ -656,7 +657,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 //        String ssid = NetWorkUtils.getWifiSSID(activity);
 
         if (wifiNetInfo.isConnected()) {
-            LogUtils.log("wifi state change——connected");
             CacheManager.isWifiConnected = true;
             if (CacheManager.deviceState.getDeviceState().equals(DeviceState.WIFI_DISCONNECT)) {
                 CacheManager.deviceState.setDeviceState(DeviceState.WAIT_SOCKET);
@@ -666,7 +666,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
         } else {
             CacheManager.isWifiConnected = false;
-            LogUtils.log("wifi state change——disconnected");
             CacheManager.deviceState.setDeviceState(DeviceState.WIFI_DISCONNECT);
             CacheManager.resetState();
         }
@@ -753,25 +752,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     }
 
 
-    private void setDeviceWorkMode() {
-        String workMode = "";
-        if (VersionManage.isPoliceVer()) {
-            workMode = "0";
-        } else if (VersionManage.isArmyVer()) {
-            workMode = "2";
-        }
-
-        ProtocolManager.setActiveMode(workMode);
-
-        if (workMode.equals("2")) {
-            CacheManager.setLocalWhiteList("on");
-        } else {
-            CacheManager.setLocalWhiteList("off");
-        }
-
-        LogUtils.log("设置默认工作模式：" + workMode);
-        CacheManager.currentWorkMode = workMode;
-    }
 
     private void updateStatusBar(String deviceState) {
         switch (deviceState) {
@@ -784,6 +764,8 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
                 flBattery.setVisibility(View.GONE);
                 tvBattery.setVisibility(View.GONE);
+                tvRemainTime.setVisibility(View.GONE);
+                CacheManager.isReportBattery = false;
 
                 viewAnit.cancel();
                 ivDeviceState.clearAnimation();
@@ -799,6 +781,8 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
                 flBattery.setVisibility(View.GONE);
                 tvBattery.setVisibility(View.GONE);
+                tvRemainTime.setVisibility(View.GONE);
+                CacheManager.isReportBattery = false;
 
                 viewAnit.cancel();
                 ivDeviceState.clearAnimation();
@@ -810,9 +794,11 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             case DeviceState.ON_INIT:
                 ivWifiState.setImageDrawable(getDrawable(R.drawable.wifi_connect));
                 ivBatteryLevel.setVisibility(View.GONE);
+                CacheManager.isReportBattery = false;
 
                 flBattery.setVisibility(View.GONE);
                 tvBattery.setVisibility(View.GONE);
+                tvRemainTime.setVisibility(View.GONE);
 
                 ivDeviceState.setImageDrawable(getDrawable(R.drawable.small_device_icon));
                 ivDeviceState.setVisibility(View.VISIBLE);
@@ -828,7 +814,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
             case DeviceState.NORMAL:
                 ivWifiState.setImageDrawable(getDrawable(R.drawable.wifi_connect));
-                ivBatteryLevel.setVisibility(View.VISIBLE);
 
                 ivDeviceState.setVisibility(View.VISIBLE);
                 viewAnit.cancel();
@@ -863,6 +848,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     }
 
     private void processBattery(int voltage) {
+        ivBatteryLevel.setVisibility(View.VISIBLE);
         final int LEVEL1 = 9112;
         final int LEVEL2 = 9800;
         final int LEVEL3 = 10380;
@@ -1003,7 +989,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                 ProtocolManager.setNowTime();
                 LogUtils.log("首次下发查询以获取小区信息：");
                 ProtocolManager.getEquipAndAllChannelConfig();
-                ProtocolManager.setBlackList("1", "");  //防止上报其他手机设置的黑名单，就查上来删掉
+//                ProtocolManager.setBlackList("1", "");  //防止上报其他手机设置的黑名单，就查上来删掉
 
                 ProtocolManager.setFTPConfig(); //设置ftp配置
 
@@ -1018,9 +1004,9 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
                 setDeviceWorkMode();
 
-                if (VersionManage.isPoliceVer()) {
-                    CacheManager.setCurrentBlackList();
-                }
+//                if (VersionManage.isPoliceVer() && !CacheManager.getLocState()) {
+//                    CacheManager.setCurrentBlackList();
+//                }
                 ProtocolManager.setDefaultArfcnsAndPwr();
                 hasSetDefaultParam = true;
 
@@ -1046,6 +1032,45 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             msg.obj = val;
             mHandler.sendMessage(msg);
         }
+    }
+
+
+
+    private void setDeviceWorkMode() {
+
+        String workMode = "";
+        if (VersionManage.isPoliceVer()) {
+            workMode = "0";
+        } else if (VersionManage.isArmyVer()) {
+            workMode = "2";
+        }
+
+
+        LogUtils.log("设置默认工作模式：" + workMode);
+        CacheManager.currentWorkMode = workMode;
+        if (VersionManage.isArmyVer()) {
+            CacheManager.setLocalWhiteList("on");
+        } else {
+            CacheManager.setLocalWhiteList("off");
+        }
+
+
+        if (!CacheManager.getLocState()){     //已设置定位模式，不能设置别的模式
+            ProtocolManager.setActiveMode(workMode);
+        }
+
+
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (VersionManage.isArmyVer()) {
+                    CacheManager.setLocalWhiteList("on");
+                } else {
+                    CacheManager.setLocalWhiteList("off");
+                }
+            }
+        },2000);
+
     }
 
     /**
@@ -1179,8 +1204,15 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                 checkAuthorize();
             } else if (msg.what == BATTERY_STATE) {
                 BatteryBean batteryBean = (BatteryBean) msg.obj;
+                if (batteryBean.getBatteryQuantity() == 0){
+                    flBattery.setVisibility(View.GONE);
+                    tvBattery.setVisibility(View.GONE);
+                    tvRemainTime.setVisibility(View.GONE);
+                    return;
+                }
                 flBattery.setVisibility(View.VISIBLE);
                 tvBattery.setVisibility(View.VISIBLE);
+                tvRemainTime.setVisibility(View.VISIBLE);
                 tvBattery.setText(batteryBean.getBatteryQuantity() + "%");
                 batteryView.setPower(batteryBean.getBatteryQuantity());
                 if (batteryBean.isCharging()) {
@@ -1188,6 +1220,8 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                 } else {
                     ivCharging.setVisibility(View.GONE);
                 }
+
+                tvRemainTime.setText(batteryBean.getUseTime()+"分钟");
 
                 if (batteryBean.getBatteryQuantity() <= 20 && lowBatteryWarn) {
                     lowBatteryWarn = false;

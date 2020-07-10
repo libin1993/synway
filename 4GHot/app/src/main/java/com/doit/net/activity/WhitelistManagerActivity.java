@@ -474,7 +474,7 @@ public class WhitelistManagerActivity extends BaseActivity implements EventAdapt
 
                 } catch (Exception e) {
                     /* proper exception handling to be here */
-                    LogUtils.log(e.toString());
+                    LogUtils.log("导入白名单错误"+e.toString());
                     createExportError("写入文件错误");
                 }
 
@@ -516,7 +516,7 @@ public class WhitelistManagerActivity extends BaseActivity implements EventAdapt
             }
         } catch (NullPointerException e) {
             /* proper error handling should be here */
-            LogUtils.log(e.toString());
+            LogUtils.log("白名单解析异常："+e.toString());
         }
         return value;
     }

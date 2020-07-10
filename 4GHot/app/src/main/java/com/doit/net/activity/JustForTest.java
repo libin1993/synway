@@ -27,6 +27,7 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
     private Button test5;
     private Button test6;
     private Button test7;
+    private Button test8;
     private Button btGetDeviceLog;
     private TextView tvTemperature;
     private TextView tvArfcns;
@@ -45,6 +46,7 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
         test5 = findViewById(R.id.test5);
         test6 = findViewById(R.id.test6);
         test7 = findViewById(R.id.test7);
+        test8 = findViewById(R.id.test8);
         btGetDeviceLog = findViewById(R.id.btGetDeviceLog);
         tvTemperature = findViewById(R.id.tvTemperature);
         tvArfcns = findViewById(R.id.tvArfcns);
@@ -119,6 +121,15 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
             @Override
             public void onClick(View v) {
                 ProtocolManager.getNameList();
+
+            }
+        });
+
+        test8.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ProtocolManager.setNameList("off", "46000,2,6#46002,2,6", "",
+                        "", "", "block","","");
 
             }
         });

@@ -6,6 +6,7 @@ import com.doit.net.Data.LTESendManager;
 import com.doit.net.Event.EventAdapter;
 import com.doit.net.Model.CacheManager;
 import com.doit.net.Utils.LicenceUtils;
+import com.doit.net.Utils.LogUtils;
 import com.doit.net.Utils.UtilDataFormatChange;
 
 /**
@@ -54,6 +55,9 @@ public class LTE_PT_LOGIN {
 
 		//获取整体的包
 		byte[] tempSendBytes=sendPackage.getPackageContent();
+		LogUtils.log("登录回复");
+
+		LogUtils.log1("TCP发送：Type:" + sendPackage.getPackageMainType() + ";  SubType:" + Integer.toHexString(receivePackage.getPackageSubType())+ ";  Content:" + UtilDataFormatChange.bytesToString(sendPackage.getByteSubContent(), 0));
 		return LTESendManager.sendData(tempSendBytes);
 	}
 }

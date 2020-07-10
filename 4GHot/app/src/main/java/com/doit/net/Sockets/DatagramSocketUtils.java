@@ -84,12 +84,12 @@ public class DatagramSocketUtils {
 //                        }
 
                     //tcp有设备连接,关闭socket
-                    LogUtils.log("udp来自ip为：" + remoteIP + " 端口为：" + remotePort + "的信息为：" + receiveData);
+                    LogUtils.log("UDP接收数据：ip：" + remoteIP + ";端口：" + remotePort + ";内容：" + receiveData);
                 }
 
             } catch (Exception e) {
                 e.printStackTrace();
-                LogUtils.log("udp接收失败: " + e.toString());
+                LogUtils.log("UDP接收失败: " + e.toString());
             }
 
 
@@ -130,15 +130,14 @@ public class DatagramSocketUtils {
         public void run() {
             super.run();
             try {
-                LogUtils.log("UDP开始发送");
 
                 InetAddress inetAddress = InetAddress.getByName(BOALINK_LTE_IP);
                 DatagramPacket packet = new DatagramPacket(data.getBytes(), data.getBytes().length,
                         inetAddress, UDP_PORT); //创建要发送的数据包，然后用套接字发送
                 mSocket.send(packet); //用套接字发送数据包
-                LogUtils.log("udp发送：" + data);
+                LogUtils.log("UDP发送：" + data);
             } catch (Exception e) {
-                LogUtils.log("udp发送失败： " + e.toString());
+                LogUtils.log("UDP发送失败： " + e.toString());
             }
         }
     }

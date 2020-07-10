@@ -405,9 +405,7 @@ public class AppFragment extends BaseFragment implements EventAdapter.EventCall 
                                         ToastUtils.showMessage("文件校验失败，升级取消！");
                                         sweetAlertDialog.dismiss();
                                     } else {
-                                        LogUtils.log("MD5：" + md5);
                                         String command = UPGRADE_PACKAGE_PATH + choosePackage + "#" + md5;
-                                        LogUtils.log(command);
                                         ProtocolManager.systemUpgrade(command);
                                         mProgressDialog.show();
                                         sweetAlertDialog.dismiss();

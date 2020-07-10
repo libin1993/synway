@@ -21,19 +21,6 @@ public class LTESendManager {
 	 */
 	public static boolean sendData(byte[] tempByte) {
 
-//		String sendStr="";
-//		for(int i=0;i<tempByte.length;i++) {
-//			int v=tempByte[i] & 0xFF;
-//			String hv= Integer.toHexString(v);
-//			sendStr+=hv+",";
-//		}
-//		LogUtils.log("sendStr:"+sendStr);
-//
-//		UtilServerSocketSub clientSocket=getClientSocket(NetConfig.MONITOR_PORT);
-//		if(clientSocket!=null) {
-//			return clientSocket.sendData(tempByte);
-//		}
-
 
 		ServerSocketUtils.getInstance().sendData(tempByte);
 

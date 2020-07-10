@@ -42,13 +42,13 @@ import java.util.TimerTask;
 
 /**
  * @author 杨维(wiker)
- * @date 2016-4-26 下午3:37:39
  * @version 1.0
+ * @date 2016-4-26 下午3:37:39
  */
 public class CacheManager {
     public static String DEVICE_IP = "192.168.4.100";
 
-    public  static List<UeidBean> realtimeUeidList = new ArrayList<>();
+    public static List<UeidBean> realtimeUeidList = new ArrayList<>();
     public static final int MAX_REALTIME_LIST_SIZE = 300;
 
 
@@ -61,6 +61,7 @@ public class CacheManager {
     public static long last_heart_time;
 
     public static String currentWorkMode = "2";   //0公安侦码  2军队管控
+    public static boolean isReportBattery = false;  //是否上报电量
 
     public static DeviceState deviceState = new DeviceState();
 
@@ -72,17 +73,21 @@ public class CacheManager {
 
     private static boolean hasPressStartButton = false;  //是否已经在主页面点击开始按钮
 
-    public static boolean checkLicense= false; //连接成功后校验证书
+    public static boolean checkLicense = false; //连接成功后校验证书
 
     public static boolean getLocMode() {
         return loc_mode;
     }
 
+    public static LteChannelCfg b3Fcn= new LteChannelCfg();  //b3 移动定位时，强制设置1300
+
     public static void setLocMode(boolean locMode) {
         loc_mode = locMode;
     }
 
-    public synchronized static void addRealtimeUeidList(List<UeidBean> listUeid){
+
+
+    public synchronized static void addRealtimeUeidList(List<UeidBean> listUeid) {
         addToList(listUeid);
 
         /* 如果实时上报界面没加载就有数据上传，就会丢失数据
@@ -104,9 +109,9 @@ public class CacheManager {
 //        }
     }
 
-    public synchronized static void addToList(List<UeidBean> listUeid){
-        if((realtimeUeidList.size()+listUeid.size()) >= MAX_REALTIME_LIST_SIZE){
-            for (int i = 0; i < (realtimeUeidList.size()+listUeid.size()-MAX_REALTIME_LIST_SIZE); i++)
+    public synchronized static void addToList(List<UeidBean> listUeid) {
+        if ((realtimeUeidList.size() + listUeid.size()) >= MAX_REALTIME_LIST_SIZE) {
+            for (int i = 0; i < (realtimeUeidList.size() + listUeid.size() - MAX_REALTIME_LIST_SIZE); i++)
                 //realtimeUeidList.remove(realtimeUeidList.size()-1);
                 realtimeUeidList.remove(0);
         }
@@ -116,16 +121,16 @@ public class CacheManager {
         realtimeUeidList.addAll(0, listUeid);
     }
 
-    public static boolean hasPressStartButton(){
+    public static boolean hasPressStartButton() {
         return hasPressStartButton;
     }
 
-    public static void setPressStartButtonFlag(boolean flag){
+    public static void setPressStartButtonFlag(boolean flag) {
         hasPressStartButton = flag;
     }
 
-    public static void updateLoc(String imsi){
-        if(currentLoction == null){
+    public static void updateLoc(String imsi) {
+        if (currentLoction == null) {
             currentLoction = new LocationBean();
         }
         PrefManage.setImsi(imsi);
@@ -153,46 +158,24 @@ public class CacheManager {
     }
 
 
-    public static void startLoc(String imsi){
-        if(VersionManage.isPoliceVer()){
-            clearCurrentBlackList(); //从黑名单里删除防止不断上报
-        }
-
-        ProtocolManager.setLocImsi(imsi);
+    public static void startLoc(String imsi) {
         ProtocolManager.setActiveMode("1");
-
-        if (VersionManage.isPoliceVer()){
-            setLocalWhiteList("off");
-        }
+        ProtocolManager.setLocImsi(imsi);
 
         CacheManager.getCurrentLoction().setLocateStart(true);
     }
 
-    public static void changeLocTarget(final String imsi){
-        ProtocolManager.setLocImsi("0000");
-        ProtocolManager.setActiveMode(CacheManager.currentWorkMode);  //BL设备的问题，不停止直接切换会有问题
-
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                ProtocolManager.setLocImsi(imsi);
-                ProtocolManager.setActiveMode("1");
-
-                if (VersionManage.isPoliceVer()){
-                    setLocalWhiteList("off");
-                }
-
-            }
-        },4000);
+    public static void changeLocTarget(String imsi) {
+        ProtocolManager.setLocImsi(imsi);
 
     }
 
     /**
-     * 关闭管控模式
+     * 开关管控模式
      */
-    public  static void setLocalWhiteList(String mode) {
+    public static void setLocalWhiteList(String mode) {
         String imsi0 = getSimIMSI(0);
-        String imsi1 = getSimIMSI( 1);
+        String imsi1 = getSimIMSI(1);
 
         if (imsi0 == null || imsi0.equals("000000000000000"))
             imsi0 = "";
@@ -205,7 +188,7 @@ public class CacheManager {
 
         if ("".equals(imsi0) && "".equals(imsi1)) {
             whitelistContent = "";
-        } else if(!"".equals(imsi0) && "".equals(imsi1)) {
+        } else if (!"".equals(imsi0) && "".equals(imsi1)) {
             whitelistContent = imsi0;
         } else if ("".equals(imsi0) && !"".equals(imsi1)) {
             whitelistContent = imsi1;
@@ -215,7 +198,7 @@ public class CacheManager {
 
 
         ProtocolManager.setNameList(mode, "", whitelistContent,
-                "", "", "block","","");
+                "", "", "block", "", "");
 
     }
 
@@ -293,47 +276,49 @@ public class CacheManager {
         ProtocolManager.setBlackList("3", content);
     }
 
-    public static void stopCurrentLoc(){
+    public static void stopCurrentLoc() {
         ProtocolManager.setLocImsi("0000");
         ProtocolManager.setActiveMode(CacheManager.currentWorkMode);
 
 
+        ProtocolManager.setDetectCarrierOpetation("detect_all");
+        ProtocolManager.setChannelConfig(CacheManager.b3Fcn.getIdx(), CacheManager.b3Fcn.getFcn(),
+                "", "", "", "", "", "");
+
         if (CacheManager.getCurrentLoction() != null)
             CacheManager.getCurrentLoction().setLocateStart(false);
-        if (VersionManage.isPoliceVer()){
-            setCurrentBlackList();   //如果定位结束后短时间内黑名单连续上报，尝试延时下发
-        }
     }
 
-    public static boolean getLocState(){
+    public static boolean getLocState() {
         if (currentLoction == null)
             return false;
 
         return currentLoction.isLocateStart();
     }
 
-    public static LocationBean getCurrentLoction(){
+    public static LocationBean getCurrentLoction() {
         return currentLoction;
     }
 
-    public static LocationRptBean getCurrentLocRptBean(){
-        if(locationRpts == null){
+    public static LocationRptBean getCurrentLocRptBean() {
+        if (locationRpts == null) {
             return null;
         }
-        if(locationRpts.size()-1 < 0){
+        if (locationRpts.size() - 1 < 0) {
             return null;
         }
-        return locationRpts.get(locationRpts.size()-1);
+        return locationRpts.get(locationRpts.size() - 1);
     }
 
 
     /**
      * 检查设备是否连接，并提示
+     *
      * @param context
      * @return
      */
-    public static boolean checkDevice(Context context){
-        if(!isDeviceOk()){
+    public static boolean checkDevice(Context context) {
+        if (!isDeviceOk()) {
             new MySweetAlertDialog(context, MySweetAlertDialog.ERROR_TYPE)
                     .setTitleText("错误")
                     .setContentText("设备未就绪")
@@ -343,20 +328,18 @@ public class CacheManager {
         return true;
     }
 
-    public static boolean isDeviceOk(){
+    public static boolean isDeviceOk() {
         return cellConfig != null && channels.size() != 0 && equipConfig != null;
     }
 
     /**
      * 重置一下状态，一般设备需要重启时调用
      */
-    public static void resetState(){
+    public static void resetState() {
         LogUtils.log("reset state.");
         cellConfig = null;
-        //deviceInfo = null;
         channels.clear();
         equipConfig = null;
-
     }
 
     private static LteCellConfig cellConfig;
@@ -364,20 +347,23 @@ public class CacheManager {
     public static List<LteChannelCfg> channels = new ArrayList<>();
 
 
-
     public static LteCellConfig getCellConfig() {
         return cellConfig;
     }
-    public static LteEquipConfig getLteEquipConfig() {return equipConfig;}
+
+    public static LteEquipConfig getLteEquipConfig() {
+        return equipConfig;
+    }
+
     public static List<LteChannelCfg> getChannels() {
         return channels;
     }
 
-    public static void setCellConfig(LteCellConfig cellConfig){
+    public static void setCellConfig(LteCellConfig cellConfig) {
         CacheManager.cellConfig = cellConfig;
     }
 
-    public static void setEquipConfig(LteEquipConfig equipConfig){
+    public static void setEquipConfig(LteEquipConfig equipConfig) {
         CacheManager.equipConfig = equipConfig;
     }
 
@@ -412,33 +398,34 @@ public class CacheManager {
     }
 
     //将RF状态更新到内存
-    public synchronized static void updateRFState(String idx, boolean rf){
+    public synchronized static void updateRFState(String idx, boolean rf) {
         //UtilBaseLog.printLog(idx + "    size:" + channels.size() + "    " + rf);
-        for(LteChannelCfg channel : channels){
-            if (channel.getIdx().equals(idx)){
+        for (LteChannelCfg channel : channels) {
+            if (channel.getIdx().equals(idx)) {
                 channel.setRFState(rf);
                 return;
             }
         }
     }
 
-    public static LteChannelCfg getChannelByIdx(String idx){
-        for(LteChannelCfg channel : channels){
-            if (channel.getIdx().equals(idx)){
+    public static LteChannelCfg getChannelByIdx(String idx) {
+        for (LteChannelCfg channel : channels) {
+            if (channel.getIdx().equals(idx)) {
                 return channel;
             }
         }
         return null;
     }
 
-    private static Map<String,List<G4MsgChannelCfg>> userChannels = new HashMap<>();
-    public static void addUserChannel(G4MsgChannelCfg cfg){
-        if(userChannels.containsKey(cfg.getIdx())){
+    private static Map<String, List<G4MsgChannelCfg>> userChannels = new HashMap<>();
+
+    public static void addUserChannel(G4MsgChannelCfg cfg) {
+        if (userChannels.containsKey(cfg.getIdx())) {
             userChannels.get(cfg.getIdx()).add(cfg);
-        }else{
+        } else {
             List<G4MsgChannelCfg> list = new ArrayList<>();
             list.add(cfg);
-            userChannels.put(cfg.getIdx(),list);
+            userChannels.put(cfg.getIdx(), list);
         }
     }
 
@@ -482,16 +469,16 @@ public class CacheManager {
     }
 
     public static void setHighGa(boolean on_off) {
-        if (on_off){
-            for(LteChannelCfg channel : channels){
-                if (Integer.parseInt(channel.getGa()) <= 10){
-                    ProtocolManager.setChannelConfig(channel.getIdx(), "","", "",String.valueOf(Integer.parseInt(channel.getGa())*5),"","","");
+        if (on_off) {
+            for (LteChannelCfg channel : channels) {
+                if (Integer.parseInt(channel.getGa()) <= 10) {
+                    ProtocolManager.setChannelConfig(channel.getIdx(), "", "", "", String.valueOf(Integer.parseInt(channel.getGa()) * 5), "", "", "");
                 }
             }
-        }else{
-            for(LteChannelCfg channel : channels){
-                if (Integer.parseInt(channel.getGa()) > 10){
-                    ProtocolManager.setChannelConfig(channel.getIdx(), "","", "",String.valueOf(Integer.parseInt(channel.getGa())/5),"","","");
+        } else {
+            for (LteChannelCfg channel : channels) {
+                if (Integer.parseInt(channel.getGa()) > 10) {
+                    ProtocolManager.setChannelConfig(channel.getIdx(), "", "", "", String.valueOf(Integer.parseInt(channel.getGa()) / 5), "", "", "");
                 }
             }
         }
@@ -502,14 +489,14 @@ public class CacheManager {
             return true;    //默认高
 
         int allGa = 0;
-        for(LteChannelCfg channel : channels){
+        for (LteChannelCfg channel : channels) {
             allGa += Integer.parseInt(channel.getGa());
         }
 
-        return allGa>32;
+        return allGa > 32;
     }
 
-    public static void changeBand(final String idx, final String changeBand){
+    public static void changeBand(final String idx, final String changeBand) {
         ProtocolManager.changeBand(idx, changeBand);
 
         //下发切换之后，等待生效，设置默认频点
@@ -519,20 +506,20 @@ public class CacheManager {
                 String band38Fcns = "37900,38098,38200";
                 String band40Fcns = "38950,39148,39300";
 
-                switch (changeBand){
+                switch (changeBand) {
                     case "38":
-                        ProtocolManager.setChannelConfig(idx, band38Fcns,"","","","","","");
+                        ProtocolManager.setChannelConfig(idx, band38Fcns, "", "", "", "", "", "");
                         break;
 
                     case "40":
-                        ProtocolManager.setChannelConfig(idx, band40Fcns,"","","","","","");
+                        ProtocolManager.setChannelConfig(idx, band40Fcns, "", "", "", "", "", "");
                         break;
 
-                     default:
-                         break;
+                    default:
+                        break;
                 }
             }
-        },5000);
+        }, 5000);
 
         //设置完频点，更新参数和界面
         new Timer().schedule(new TimerTask() {
@@ -540,7 +527,7 @@ public class CacheManager {
             public void run() {
                 ProtocolManager.getEquipAndAllChannelConfig();
             }
-        },12000);
+        }, 12000);
 
         EventAdapter.call(EventAdapter.SHOW_PROGRESS, 13000);
     }
@@ -552,7 +539,7 @@ public class CacheManager {
      */
     public static synchronized boolean removeExistUeidInRealtimeList(String imsi) {
         for (int i = 0; i < realtimeUeidList.size(); i++) {
-            if (realtimeUeidList.get(i).getImsi().equals(imsi)){
+            if (realtimeUeidList.get(i).getImsi().equals(imsi)) {
                 realtimeUeidList.remove(i);
                 return true;
             }
@@ -563,7 +550,7 @@ public class CacheManager {
 
     public static void clearUeidWhithoutSrsp() {
         for (int i = 0; i < realtimeUeidList.size(); i++) {
-            if (realtimeUeidList.get(i).getSrsp().equals("")){
+            if (realtimeUeidList.get(i).getSrsp().equals("")) {
                 realtimeUeidList.remove(i);
                 i--;
             }

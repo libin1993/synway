@@ -304,7 +304,6 @@ public class CustomFcnActivity extends BaseActivity {
             UCSIDBManager.getDbManager().save(dbChannel);
         } catch (DbException e) {
             e.printStackTrace();
-            LogUtils.log("");
         }
 
     }

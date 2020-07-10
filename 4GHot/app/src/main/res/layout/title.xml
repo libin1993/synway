@@ -85,4 +85,14 @@
         android:textSize="12sp"
         android:layout_marginRight="10dp"
         android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/tv_remain_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:layout_marginRight="10dp"
+        android:visibility="gone"/>
 </LinearLayout>

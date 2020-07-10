@@ -48,21 +48,26 @@ public class FTPManager {
     // 连接到ftp服务器
     public synchronized boolean connect() throws Exception {
         boolean bool = false;
-        if (ftpClient.isConnected()) {//判断是否已登陆
-            ftpClient.disconnect();
-            //return true;
-        }
-        ftpClient.setDataTimeout(5000);//设置连接超时时间
-        ftpClient.setControlEncoding("UTF-8");
-        ftpClient.connect(HOST, PORT);
-        ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-        if (FTPReply.isPositiveCompletion(ftpClient.getReplyCode())) {
-            if (ftpClient.login(USERNAME, PASSWORD)) {
+
+        try {
+            if (ftpClient.isConnected()) {//判断是否已登陆
+                ftpClient.disconnect();
+            }
+            ftpClient.setDataTimeout(5000);//设置连接超时时间
+            ftpClient.setControlEncoding("UTF-8");
+            ftpClient.connect(HOST, PORT);
+            ftpClient.login(USERNAME, PASSWORD);
+            ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+            if (FTPReply.isPositiveCompletion(ftpClient.getReplyCode())) {
                 bool = true;
                 boolean changeDirectory = checkRemoteDir();
-                LogUtils.log("ftp连接成功，切换目录结果：" + changeDirectory);
+                LogUtils.log("FTP连接成功，切换目录结果：" + changeDirectory);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            LogUtils.log("FTP连接失败："+e.getMessage());
         }
+
         return bool;
     }
 

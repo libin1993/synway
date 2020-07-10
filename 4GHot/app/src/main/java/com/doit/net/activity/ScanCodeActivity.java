@@ -68,7 +68,7 @@ public class ScanCodeActivity extends BaseActivity implements ScanCallback {
                 ViewGroup.LayoutParams layoutParams = cpScan.getLayoutParams();
                 layoutParams.width = ScreenUtils.getInstance().getScreenWidth(this);
                 layoutParams.height = ScreenUtils.getInstance().getScreenWidth(this) * bestPreviewSizeValue.x / bestPreviewSizeValue.y;
-                LogUtils.log("sss"+layoutParams.width+","+layoutParams.height);
+                LogUtils.log("屏幕："+layoutParams.width+","+layoutParams.height);
                 cpScan.setLayoutParams(layoutParams);
             }catch (Exception ignored){
                 LogUtils.log(ignored.getMessage());

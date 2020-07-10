@@ -83,7 +83,11 @@ public class UtilDataFormatChange {
      */
     public static String bytesToString(byte[] tempValue, int index) {
         StringBuffer result = new StringBuffer();
+        if (tempValue == null || tempValue.length == 0){
+            return "";
+        }
         int length = tempValue.length;
+
         for (int i = index; i < length; i++) {
             result.append((char) (tempValue[i] & 0xff));
         }
@@ -213,8 +217,6 @@ public class UtilDataFormatChange {
 
     /**
      * 将int类型的值转换为字节序颠倒过来对应的int值
-     *
-     * @param i int
      * @return int
      */
     public static long reverseInt(long tempValue) {

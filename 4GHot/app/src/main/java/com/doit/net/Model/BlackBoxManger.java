@@ -54,10 +54,10 @@ public class BlackBoxManger {
     public final static String START_LOCALTE = "开始搜寻，号码为:";
     public final static String STOP_LOCALTE = "停止搜寻，号码为:";
     public final static String EXPORT_HISTORT_DATA = "导出历史数据,文件名为:";
-    public final static String EXPORT_NAMELIST = "导出名单,文件名为:";
+    public final static String EXPORT_NAMELIST = "导出黑名单,文件名为:";
     public final static String EXPORT_WHITELIST = "导出白名单,文件名为:";
     public final static String CLEAR_WHITELIST = "清空白名单";
-    public final static String IMPORT_NAMELIST = "导入名单,文件名为:";
+    public final static String IMPORT_NAMELIST = "导入黑名单,文件名为:";
     public final static String IMPORT_WhiteLIST = "导入白名单,文件名为:";
     public final static String ADD_USER = "添加了一个用户:";
     public final static String DELTE_USER = "删除了一个用户:";
@@ -66,8 +66,8 @@ public class BlackBoxManger {
     public final static String EXPORT_BLACKBOX = "导出黑匣子信息，文件为:";
 
     private static String currentAccount = "";
-    private static final String LOCAL_FTP_BLX_PATH = FileUtils.ROOT_PATH+"FtpBlx/";
-    private static String currentBlxFileName;
+    public static final String LOCAL_FTP_BLX_PATH = FileUtils.ROOT_PATH+"FtpBlx/";
+    public static String currentBlxFileName;
 
     public static void setCurrentAccount(String account){
         currentAccount = account;
@@ -82,7 +82,7 @@ public class BlackBoxManger {
         LogUtils.log("黑匣子:"+currentAccount+"，"+operation);
     }
 
-    private static void saveOperationToDB(String operation){
+    public static void saveOperationToDB(String operation){
         try {
             UCSIDBManager.getDbManager().save(new BlackBoxBean(operation.split(",")[0],
                     operation.split(",")[1],
@@ -125,7 +125,6 @@ public class BlackBoxManger {
             if (!isTheSameDay(new Date(), new SimpleDateFormat("yyyy-MM-dd").parse(currentBlxFileName.split("\\.")[0]))){
                 LogUtils.log("重新生成新的黑匣子文件");
                 uploadCurrentBlxFile();
-                deleteFile(LOCAL_FTP_BLX_PATH, currentBlxFileName);
                 checkBlackBoxFile();
             }
         } catch (ParseException e) {
@@ -196,6 +195,7 @@ public class BlackBoxManger {
             return;
         }
 
+
         Thread uploadCurrentThread = new Thread() {
             public void run() {
                 try {
@@ -225,8 +225,13 @@ public class BlackBoxManger {
             public void run() {
                 try {
                     if (FTPManager.getInstance().connect()) {
-                        FTPManager.getInstance().downloadFile(LOCAL_FTP_BLX_PATH, currentBlxFileName);
+                        boolean isDownloaded = FTPManager.getInstance().downloadFile(LOCAL_FTP_BLX_PATH, currentBlxFileName);
+                        if (isDownloaded){
+                            recordOperation(BlackBoxManger.LOGIN + AccountManage.getCurrentLoginAccount());
+                        }
                     }
+
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -234,107 +239,19 @@ public class BlackBoxManger {
         };
 
         downloadIntradayBlxThread.start();
-        try {
-            downloadIntradayBlxThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void getBlxFromDevice(String startTime, String endTime) {
-        if (!CacheManager.isWifiConnected){
-            LogUtils.log("wifi not connected, get black box from device error.");
-            return;
-        }
-
-        FTPFile[] files = FTPManager.getInstance().listFiles(".");
-        if (files == null) {
-            LogUtils.log("目录下没文件");
-        } else {
-            String tmpFileName = "";
-            LogUtils.log("服务器黑匣子文件数量："+files.length);
-            if ("".equals(startTime) && "".equals(endTime)){
-                for (int i = 0; i < files.length; i++) {
-                    tmpFileName = files[i].getName();
-                    LogUtils.log("文件名："+tmpFileName);
-                    if (tmpFileName.endsWith(".blx")) {
-                        if ("".equals(startTime) && "".equals(endTime)) {
-                            try {
-                                FTPManager.getInstance().downloadFile(LOCAL_FTP_BLX_PATH, tmpFileName);
-                                praseBlxFile(tmpFileName);
-                                if (!tmpFileName.equals(currentBlxFileName)){
-                                    deleteFile(LOCAL_FTP_BLX_PATH, tmpFileName);
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                }
-            }else{
-                for (int i = 0; i < files.length; i++) {
-                    tmpFileName = files[i].getName();
-                    LogUtils.log(tmpFileName);
-                    if (tmpFileName.endsWith(".blx")) {
-                        if (DateUtils.convert2long(getDateByFileName(tmpFileName), DateUtils.LOCAL_DATE_DAY) >= DateUtils.convert2long(startTime, DateUtils.LOCAL_DATE_DAY) &&
-                                DateUtils.convert2long(getDateByFileName(tmpFileName), DateUtils.LOCAL_DATE_DAY) <= DateUtils.convert2long(endTime, DateUtils.LOCAL_DATE)) {
-                            try {
-                                LogUtils.log("满足条件，下载该文件：" + tmpFileName);
-                                FTPManager.getInstance().downloadFile(LOCAL_FTP_BLX_PATH, tmpFileName);
-                                praseBlxFile(tmpFileName);
-                                if (!tmpFileName.equals(currentBlxFileName)){
-                                    deleteFile(LOCAL_FTP_BLX_PATH, tmpFileName);
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 
 
-    private static String getDateByFileName(String fileName){
-        String[] date = fileName.split("\\.");
-        return date==null?"":date[0];
-    }
-
-    private static void praseBlxFile(String tmpFileName) {
-        File file = new File(LOCAL_FTP_BLX_PATH +tmpFileName);
-        if (!file.exists())
-            return;
-
-        BufferedReader bufferedReader = null;
-        try {
-            bufferedReader = new BufferedReader(new FileReader(file));
-            String readline = "";
-            while ((readline = bufferedReader.readLine()) != null) {
-                //UtilBaseLog.printLog("解析黑匣子——"+readline);
-                BlackBoxManger.saveOperationToDB(readline);
-            }
-        } catch (IOException e){
-            e.printStackTrace();
-        } finally {
-            if(bufferedReader != null){
-                try {
-                    bufferedReader.close();
-                } catch (IOException e) {}
-            }
-        }
-    }
-
-    public static void clearBlxData(){
-        File file = new File(LOCAL_FTP_BLX_PATH);
-        if(!file.exists()){//判断是否待删除目录是否存在
-            return;
-        }
-
-        String[] content = file.list();//取得当前目录下所有文件和文件夹
-        for(String name : content){
-            File temp = new File(LOCAL_FTP_BLX_PATH, name);
-            temp.delete();
-        }
-    }
+//    public static void clearBlxData(){
+//        File file = new File(LOCAL_FTP_BLX_PATH);
+//        if(!file.exists()){//判断是否待删除目录是否存在
+//            return;
+//        }
+//
+//        String[] content = file.list();//取得当前目录下所有文件和文件夹
+//        for(String name : content){
+//            File temp = new File(LOCAL_FTP_BLX_PATH, name);
+//            temp.delete();
+//        }
+//    }
 }

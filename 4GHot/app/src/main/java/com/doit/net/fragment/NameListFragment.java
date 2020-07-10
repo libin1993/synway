@@ -258,7 +258,7 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
                         mHandler.sendMessage(message);
 
 
-                        EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.EXPORT_WHITELIST + BLACKLIST_FILE_PATH);
+                        EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.EXPORT_NAMELIST + BLACKLIST_FILE_PATH);
 
                     } catch (Exception e) {
                         /* proper exception handling to be here */
@@ -457,7 +457,7 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.IMPORT_NAMELIST + BLACKLIST_FILE_PATH);
                 } catch (Exception e) {
                     /* proper exception handling to be here */
-                    LogUtils.log(e.toString());
+                    LogUtils.log("导入黑名单错误："+e.toString());
                     createExportError("写入文件错误");
                 }
             }
@@ -498,7 +498,7 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
             }
         } catch (NullPointerException e) {
             /* proper error handling should be here */
-            LogUtils.log(e.toString());
+            LogUtils.log("黑名单解析异常："+e.toString());
         }
         return value;
     }

@@ -83,12 +83,14 @@ public class LTE_PT_PARAM {
     public static final byte PARAM_SET_ACTIVE_MODE_ACK = 0x3b;    //设置工作模式回复
     public static final byte PARAM_SET_LOC_IMSI = 0x3c;    //设置定位
     public static final byte PPARAM_SET_LOC_IMSI_ACK = 0x3d;    //设置定位回复
-
+    public static final byte SET_IMSI_TRANS_OPTIONS = 0x45;    //设置定IMSI翻译
+//    public static final byte SET_IMSI_TRANS_OPTIONS_ACK = 0xc5;    //设置IMSI翻译回复
 
     private static long lastRptSyncErrorTime = 0; //记录每次上报同步状态异常的时间
 
     //查询参数
     public static boolean queryCommonParam(byte queryType) {
+
         LTESendPackage sendPackage = new LTESendPackage();
         //设置Sequence ID
         sendPackage.setPackageSequence(LTEProtocol.getSequenceID());
@@ -108,6 +110,8 @@ public class LTE_PT_PARAM {
         sendPackage.setPackageCheckNum(sendPackage.getCheckNum());
         //获取整体的包
         byte[] tempSendBytes = sendPackage.getPackageContent();
+
+        LogUtils.log1("TCP发送：Type:" + sendPackage.getPackageMainType() + ";  SubType:" + Integer.toHexString(sendPackage.getPackageSubType()) + "" + ";  Content:" + UtilDataFormatChange.bytesToString(sendPackage.getByteSubContent(), 0));
         return LTESendManager.sendData(tempSendBytes);
     }
 
@@ -131,10 +135,18 @@ public class LTE_PT_PARAM {
         for (int i = 1; i < splitStr.length; i++) {
             LogUtils.log(splitStr[i]);
             LteChannelCfg lteChannelCfg = praseChannelConfig(splitStr[i]);
+
+            if (TextUtils.isEmpty(CacheManager.b3Fcn.getBand()) && lteChannelCfg.getBand().equals("3")) {
+                CacheManager.b3Fcn.setIdx(lteChannelCfg.getIdx());
+                CacheManager.b3Fcn.setBand("3");
+                CacheManager.b3Fcn.setFcn(lteChannelCfg.getFcn());
+            }
             CacheManager.addChannel(lteChannelCfg);
         }
 
-        EventAdapter.call(EventAdapter.UPDATE_BATTERY, Integer.valueOf(CacheManager.getLteEquipConfig().getVoltage12V()));
+        if (!CacheManager.isReportBattery) {
+            EventAdapter.call(EventAdapter.UPDATE_BATTERY, Integer.valueOf(CacheManager.getLteEquipConfig().getVoltage12V()));
+        }
 
         EventAdapter.call(EventAdapter.REFRESH_DEVICE);
     }
@@ -157,7 +169,7 @@ public class LTE_PT_PARAM {
 
         for (String s : splitStr) {
             String[] split = s.split(":");
-            String value = split.length>1 ? split[1]:"";
+            String value = split.length > 1 ? split[1] : "";
             switch (split[0]) {
                 case "MODE":
                     namelist.setMode(value);
@@ -213,6 +225,7 @@ public class LTE_PT_PARAM {
 
         //获取整体的包
         byte[] tempSendBytes = sendPackage.getPackageContent();
+        LogUtils.log1("TCP发送：Type:" + sendPackage.getPackageMainType() + ";  SubType:" + Integer.toHexString(sendPackage.getPackageSubType()) + ";  Content:" + UtilDataFormatChange.bytesToString(sendPackage.getByteSubContent(), 0));
         return LTESendManager.sendData(tempSendBytes);
     }
 
@@ -248,10 +261,10 @@ public class LTE_PT_PARAM {
 
         BatteryBean batteryBean = new BatteryBean();
         String[] split = heartbeat.split("@");
-        boolean isReportBattery = false;  //是否上报电量
+
         for (String s : split) {
             String[] key = s.split(":");
-            switch (key[0]){
+            switch (key[0]) {
                 case "TM":   //温度
                     String temperature = key[1];
                     EventAdapter.call(EventAdapter.UPDATE_TMEPRATURE, temperature);
@@ -261,17 +274,15 @@ public class LTE_PT_PARAM {
                     break;
                 case "COU_LEFT":   //剩余电量
                     batteryBean.setBatteryQuantity(Integer.parseInt(key[1].split("%")[0]));
-                    isReportBattery = true;
+
                     break;
                 case "COU_USE_MIN":   //剩余电量可用分钟
                     batteryBean.setUseTime(Integer.parseInt(key[1]));
                     break;
             }
         }
-
-        if (isReportBattery){
-            EventAdapter.call(EventAdapter.BATTERY_STATE, batteryBean);
-        }
+        CacheManager.isReportBattery = batteryBean.getBatteryQuantity() > 0;
+        EventAdapter.call(EventAdapter.BATTERY_STATE, batteryBean);
 
         EventAdapter.call(EventAdapter.HEARTBEAT_RPT);
         EventAdapter.call(EventAdapter.RF_STATUS_LOC);
@@ -293,7 +304,7 @@ public class LTE_PT_PARAM {
             blackName.setLatitude(splitStr[3]);
         }
 
-        LogUtils.log("##################  中标：" + blackName.getIMSI() + "  #########################");
+//        LogUtils.log("##################  中标：" + blackName.getIMSI() + "  #########################");
         EventAdapter.call(EventAdapter.BLACK_NAME_RPT, blackName);
     }
 
@@ -484,9 +495,9 @@ public class LTE_PT_PARAM {
             case LTE_PT_PARAM.PARAM_SET_NAMELIST_ACK:
                 String setNameListAsk = respContent;
                 if (setNameListAsk.charAt(0) == '0') {
-                    LogUtils.log("设置白名单成功");
+                    LogUtils.log("设置名单成功");
                 } else if (setNameListAsk.charAt(0) == '1') {
-                    LogUtils.log("设置白名单失败");
+                    LogUtils.log("设置名单失败");
                 }
                 break;
 
@@ -494,7 +505,7 @@ public class LTE_PT_PARAM {
                 if (respContent.charAt(0) == '0') {
                     LogUtils.log("更新TAC成功");
 
-                    ToastUtils.showMessage( "更新TAC成功");
+                    ToastUtils.showMessage("更新TAC成功");
                 } else if (respContent.charAt(0) == 1) {
                     LogUtils.log("更新TAC失败");
                     //ToastUtils.showMessage(GameApplication.appContext,"更新TAC失败");
@@ -546,7 +557,7 @@ public class LTE_PT_PARAM {
                 if (respContent.charAt(0) == '0') {
                     ToastUtils.showMessageLong(R.string.set_cell_reboot);
                 } else if (respContent.charAt(0) == '1') {
-                    ToastUtils.showMessageLong( R.string.set_cell_fail);
+                    ToastUtils.showMessageLong(R.string.set_cell_fail);
                 }
                 break;
 
@@ -555,6 +566,7 @@ public class LTE_PT_PARAM {
                     LogUtils.log("设置ftp成功");
                 } else if (respContent.charAt(0) == '1') {
                     LogUtils.log("设置ftp失败");
+                    ToastUtils.showMessage("FTP设置失败，请检查设备");
                 }
                 break;
 
@@ -594,7 +606,7 @@ public class LTE_PT_PARAM {
                     ToastUtils.showMessageLong("加载升级包成功，设备即将（约1分钟后）重启");
                 } else if (respContent.charAt(0) == '1') {
                     LogUtils.log("设备获取升级包失败");
-                    ToastUtils.showMessageLong( "设备获取升级包失败");
+                    ToastUtils.showMessageLong("设备获取升级包失败");
                 }
 
                 EventAdapter.call(EventAdapter.UPGRADE_STATUS);
@@ -733,15 +745,16 @@ public class LTE_PT_PARAM {
     public static void processLocRpt(LTEReceivePackage receivePackage) {
         /* 1.定位过程中app异常重启的后，会有持续定位上报，其中包括了大量的设置的黑名单imsi,此代码块为解决此问题而加
            2.管控模式的号码强度也是从这里上报，要加以区分 */
+        String locRpt = UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(), 0);
+        LogUtils.log("定位上报:" + locRpt);
         if (CacheManager.currentWorkMode.equals("0") && !CacheManager.getLocState()) {
-            String locRpt = UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(), 0);
+
             LogUtils.log("忽略此次srsp上报:" + locRpt);
             //CacheManager.stopCurrentLoc();
             return;
         }
 
-        String locRpt = UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(), 0);
-        LogUtils.log("processLocRpt:" + locRpt);
+
         if ("".equals(locRpt))
             return;
 
@@ -753,16 +766,16 @@ public class LTE_PT_PARAM {
                     List<UeidBean> listRpt = new ArrayList<>();
                     for (int i = 0; i < splitStr.length; i++) {
                         String[] split = splitStr[i].split(":");
-                        if (split.length>1){
+                        if (split.length > 1) {
                             SRSP = split[1];
                             if (SRSP.equals(""))
                                 continue;
-                        }else {
-                            SRSP="";
+                        } else {
+                            SRSP = "";
                         }
 
                         String tmpImsi = splitStr[i].split(":")[0];
-                        if (tmpImsi.equals(CacheManager.getCurrentLoction().getImsi())&& !TextUtils.isEmpty(SRSP)) {
+                        if (tmpImsi.equals(CacheManager.getCurrentLoction().getImsi()) && !TextUtils.isEmpty(SRSP)) {
                             EventAdapter.call(EventAdapter.LOCATION_RPT, SRSP);
                             //break;
                         }
@@ -788,7 +801,7 @@ public class LTE_PT_PARAM {
                 String[] splitStr = locRpt.split("#");
                 for (int i = 0; i < splitStr.length; i++) {
                     String[] split = splitStr[i].split(":");
-                    if (split.length>1){
+                    if (split.length > 1) {
                         SRSP = split[1];
                         if (SRSP.equals(""))
                             continue;

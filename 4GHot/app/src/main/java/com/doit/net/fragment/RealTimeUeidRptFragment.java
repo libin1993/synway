@@ -238,7 +238,7 @@ public class RealTimeUeidRptFragment extends BaseFragment implements EventAdapte
 //            return;
 //        }
 
-        LogUtils.log("IMSI：" + imsi + "强度：" + srsp);
+        LogUtils.log("侦码上报: IMSI：" + imsi + "强度：" + srsp);
         for (int i = 0; i < CacheManager.realtimeUeidList.size(); i++) {
             if (CacheManager.realtimeUeidList.get(i).getImsi().equals(imsi)) {
                 int times = CacheManager.realtimeUeidList.get(i).getRptTimes();

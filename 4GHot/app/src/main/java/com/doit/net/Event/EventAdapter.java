@@ -22,7 +22,7 @@ public class EventAdapter {
     public final static String CLEAR_REALTIME_NAMELIST_RPT = "CLEAR_REALTIME_NAMELIST_RPT";
     public final static String SPEAK = "SPEAK";
     public final static String UPDATE_BATTERY = "UPDATE_BATTERY";
-    public final static String BATTERY_STATE = "BATTERY_STATE";
+    public final static String BATTERY_STATE = "BATTERY_STATE";  //电量
     public final static String UPDATE_TMEPRATURE = "UPDATE_TMEPRATURE";
     public final static String RF_ALL_CLOSE = "RF_ALL_CLOSE";
     public final static String ADD_LOCATION = "ADD_LOCATION";

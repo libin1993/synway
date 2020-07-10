@@ -9,8 +9,10 @@ import org.apache.commons.net.SocketClient;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,7 +76,7 @@ public class ServerSocketUtils {
                             onSocketChangedListener.onConnect();
                         }
 
-                        LogUtils.log("设备连接ip：" + remoteIP + ":" + remotePort);
+                        LogUtils.log("TCP收到设备连接,ip：" + remoteIP + "；端口：" + remotePort);
 
 
                         ReceiveThread receiveThread = new ReceiveThread(remoteIP, remotePort, onSocketChangedListener);
@@ -128,9 +130,8 @@ public class ServerSocketUtils {
                 while (true) {
                     //读取服务端发送给客户端的数据
                     receiveCount = inputStream.read(bytesReceived);
-                    LogUtils.log(receiveCount + "");
                     if (receiveCount <= -1) {
-                        LogUtils.log("break read!");
+                        LogUtils.log("TCP读取错误");
                         onSocketChangedListener.onDisconnect();
                         closeSocket(remoteIP + ":" + remotePort);  //关闭socket
                         DataCenterManager.clearDataBuffer(remoteIP);
@@ -143,7 +144,7 @@ public class ServerSocketUtils {
                     //收到数据
                 }
             } catch (IOException ex) {
-                LogUtils.log("读取错误:" + ex.toString());
+                LogUtils.log("TCP异常:" + ex.toString());
                 onSocketChangedListener.onDisconnect();
                 closeSocket(remoteIP + ":" + remotePort);  //关闭socket
                 DataCenterManager.clearDataBuffer(remoteIP);
@@ -175,13 +176,7 @@ public class ServerSocketUtils {
      * @return
      */
     public void sendData(byte[] tempByte) {
-        StringBuffer sb = new StringBuffer();
-        for (byte b : tempByte) {
-            int v = b & 0xFF;
-            String hv = Integer.toHexString(v);
-            sb.append(hv).append(",");
-        }
-        LogUtils.log("sendStr:" + sb.toString());
+        LogUtils.log("TCP发送:" + Arrays.toString(tempByte));
 
         Socket socket = map.get(currentRemoteAddress);
         if (socket != null) {
