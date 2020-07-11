@@ -115,10 +115,11 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     private SoundUtils soundUtils = null;
 
     private MySweetAlertDialog mProgressDialog;
-    private boolean hasSetDefaultParam = false;   //开始全部打开射频标志
+
     private int heartbeatCount = 0;
     private boolean isCheckDeviceStateThreadRun = true;
     private boolean lowBatteryWarn = true;  //低电量提醒
+    public  boolean hasSetDefaultParam = false;   //开始全部打开射频标志
 
     private ImageView ivDeviceState;
     Animation viewAnit = new AlphaAnimation(0, 1);
@@ -997,7 +998,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                     CacheManager.checkLicense = false;
                     checkLicence();
                 }
-
             }
 
             if (!hasSetDefaultParam && CacheManager.getChannels().size() > 0) {
@@ -1007,8 +1007,14 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 //                if (VersionManage.isPoliceVer() && !CacheManager.getLocState()) {
 //                    CacheManager.setCurrentBlackList();
 //                }
-                ProtocolManager.setDefaultArfcnsAndPwr();
+
+                if (!CacheManager.getLocState()){     //已开始定位，不设置默认频点
+                    ProtocolManager.setDefaultArfcnsAndPwr();
+                }
+
+
                 hasSetDefaultParam = true;
+
 
                 if (CacheManager.hasPressStartButton()) {
                     new Timer().schedule(new TimerTask() {
@@ -1022,11 +1028,12 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                 //2019.9.12号讨论决定，所有版本一开始不使用celluar设置频点，公安版本下的定位开启才使用cellular的频点
             }
 
+
             heartbeatCount++;
             if (heartbeatCount >= 1000) {
                 heartbeatCount = 0;
             }
-        } else if (EventAdapter.BATTERY_STATE.equals(key)) {
+        }else if (EventAdapter.BATTERY_STATE.equals(key)) {
             Message msg = new Message();
             msg.what = BATTERY_STATE;
             msg.obj = val;

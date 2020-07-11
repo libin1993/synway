@@ -69,6 +69,8 @@ public class CacheManager {
 
     public static boolean loc_mode = false;  //是否开启搜寻功能
 
+
+
     public static boolean isWifiConnected = false;
 
     private static boolean hasPressStartButton = false;  //是否已经在主页面点击开始按钮
@@ -315,7 +317,7 @@ public class CacheManager {
      * @return
      */
     public static boolean checkDevice(Context context) {
-        if (!isDeviceOk()) {
+        if (!isDeviceOk() ) {
             new MySweetAlertDialog(context, MySweetAlertDialog.ERROR_TYPE)
                     .setTitleText("错误")
                     .setContentText("设备未就绪")
