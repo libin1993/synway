@@ -426,16 +426,20 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
      * 射频是否开启
      */
     private void isRFOpen(){
-        if (!CacheManager.getLocState()) {
-            return;
-        }
+
+        boolean rfState = false;
+
         for (LteChannelCfg channel : CacheManager.getChannels()) {
             if (channel.getRFState()) {
-                return;
+                rfState = true;
+                break;
             }
         }
 
-        stopLoc();
+        cbLocSwitch.setOnCheckedChangeListener(null);
+        cbLocSwitch.setChecked(rfState);
+        cbLocSwitch.setOnCheckedChangeListener(rfLocSwitchListener);
+
     }
 
 
@@ -492,13 +496,11 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
                     vLocateCircle.setValue(currentSRSP);
                     updateLocateChart();
 
-                    cbLocSwitch.setOnCheckedChangeListener(null);
                     if (CacheManager.getLocState()) {
                         cbLocSwitch.setChecked(true);
                     } else {
                         cbLocSwitch.setChecked(false);
                     }
-                    cbLocSwitch.setOnCheckedChangeListener(rfLocSwitchListener);
                     break;
                 case LOC_REPORT:
                     if (CacheManager.getCurrentLoction() != null && CacheManager.getCurrentLoction().isLocateStart()) {

@@ -167,7 +167,6 @@ public class CacheManager {
 
     public static void changeLocTarget(String imsi) {
         ProtocolManager.setLocImsi(imsi);
-
     }
 
     /**
@@ -280,10 +279,8 @@ public class CacheManager {
         ProtocolManager.setLocImsi("0000");
         ProtocolManager.setActiveMode(CacheManager.currentWorkMode);
 
-
-        ProtocolManager.setDetectCarrierOpetation("detect_all");
         ProtocolManager.setChannelConfig(CacheManager.b3Fcn.getIdx(), CacheManager.b3Fcn.getFcn(),
-                "", "", "", "", "", "");
+                CacheManager.b3Fcn.getPlmn(), "", "", "", "", "");
 
         if (CacheManager.getCurrentLoction() != null)
             CacheManager.getCurrentLoction().setLocateStart(false);

@@ -122,7 +122,7 @@ public class LTE_PT_PARAM {
         //IDX:12@BAND:3@FCN:1650,1506,1825@ALT_FCN:@PLMN:46000,46001,46011@PA:-7,-7,-7@GA:35@PW:43.0@RLM:-100@AUTO_OPEN:0@MAX:-5
         //IDX:13@BAND:39@FCN:38544,38400,38300@ALT_FCN:@PLMN:46000,46001,46011@PA:-13,-13,-13@GA:40@PW:43.0@RLM:-90@AUTO_OPEN:0@MAX:-10
         String enbConfigAck = UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(), 0);
-        LogUtils.log("设备配置回复:" + enbConfigAck);
+        LogUtils.log("查询配置回复:" + enbConfigAck);
         String[] splitStr = enbConfigAck.split("#");
 
         LteEquipConfig lteEquipConfig = praseEquipConfig(splitStr[0]);
@@ -140,6 +140,7 @@ public class LTE_PT_PARAM {
                 CacheManager.b3Fcn.setIdx(lteChannelCfg.getIdx());
                 CacheManager.b3Fcn.setBand("3");
                 CacheManager.b3Fcn.setFcn(lteChannelCfg.getFcn());
+                CacheManager.b3Fcn.setPlmn(lteChannelCfg.getPlmn());
             }
             CacheManager.addChannel(lteChannelCfg);
         }
@@ -566,7 +567,6 @@ public class LTE_PT_PARAM {
                     LogUtils.log("设置ftp成功");
                 } else if (respContent.charAt(0) == '1') {
                     LogUtils.log("设置ftp失败");
-                    ToastUtils.showMessage("FTP设置失败，请检查设备");
                 }
                 break;
 

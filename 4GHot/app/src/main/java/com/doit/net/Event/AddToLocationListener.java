@@ -90,8 +90,6 @@ public class AddToLocationListener implements View.OnClickListener
     private void exchangeFcn(){
 
         if ("CTJ".equals(UtilOperator.getOperatorName(imsi))){
-            ProtocolManager.setDetectCarrierOpetation("detect_ctj");
-
 
             String[] split = CacheManager.b3Fcn.getFcn().split(",");
             boolean hasExchange = false; //是否已更换
@@ -128,11 +126,10 @@ public class AddToLocationListener implements View.OnClickListener
             }
 
             LogUtils.log("更换的频点："+fcn);
-            ProtocolManager.setChannelConfig(CacheManager.b3Fcn.getIdx(), fcn, "", "", "", "", "", "");
+            ProtocolManager.setChannelConfig(CacheManager.b3Fcn.getIdx(), fcn, "46000", "", "", "", "", "");
         }else {
-            ProtocolManager.setDetectCarrierOpetation("detect_all");
             ProtocolManager.setChannelConfig(CacheManager.b3Fcn.getIdx(), CacheManager.b3Fcn.getFcn(),
-                    "", "", "", "", "", "");
+                    CacheManager.b3Fcn.getPlmn(), "", "", "", "", "");
         }
 
     }
