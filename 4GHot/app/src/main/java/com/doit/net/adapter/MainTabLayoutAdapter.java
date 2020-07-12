@@ -61,7 +61,7 @@ public class MainTabLayoutAdapter extends FragmentPagerAdapter {
             //添加新fragment时必须用前面获得的tag，这点很重要
             ft.add(container.getId(), fragment, fragmentTag == null ? fragment.getClass().getName() + position : fragmentTag);
             ft.attach(fragment);
-            ft.commit();
+            ft.commitAllowingStateLoss();
 
         } else {
             fragment = mList.get(position);
@@ -75,7 +75,6 @@ public class MainTabLayoutAdapter extends FragmentPagerAdapter {
      */
     public void exchangeFragment() {
         exchangeFragment = true;
-//        mList.set(0, new UeidFragment());
         notifyDataSetChanged();
     }
 }

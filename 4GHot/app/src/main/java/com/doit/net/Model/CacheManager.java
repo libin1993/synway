@@ -69,7 +69,7 @@ public class CacheManager {
 
     public static boolean loc_mode = false;  //是否开启搜寻功能
 
-
+    public  static boolean hasSetDefaultParam = false;   //开始全部打开射频标志
 
     public static boolean isWifiConnected = false;
 
@@ -328,7 +328,7 @@ public class CacheManager {
     }
 
     public static boolean isDeviceOk() {
-        return cellConfig != null && channels.size() != 0 && equipConfig != null;
+        return hasSetDefaultParam && cellConfig != null && channels.size() != 0 && equipConfig != null;
     }
 
     /**

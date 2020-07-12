@@ -84,7 +84,7 @@ public class SystemSettingActivity extends BaseActivity {
         }
 
         tvStaticIp = findViewById(R.id.tv_static_ip);
-        tvStaticIp.setChecked(PrefManage.getBoolean(SET_STATIC_IP,false));
+        tvStaticIp.setChecked(PrefManage.getBoolean(SET_STATIC_IP,true));
         tvStaticIp.setOnLSettingCheckedChange(setStaticIpSwitch);
         tvStaticIp.setmOnLSettingItemClick(setStaticIpSwitch);
 

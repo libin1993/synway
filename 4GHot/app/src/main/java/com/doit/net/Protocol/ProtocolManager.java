@@ -331,9 +331,7 @@ public class ProtocolManager {
 
     public static void openAllRf() {
         for (LteChannelCfg channel : CacheManager.getChannels()) {
-            if (!channel.getRFState()) {
-                openRf(channel.getIdx());
-            }
+            openRf(channel.getIdx());
         }
     }
 
@@ -352,10 +350,7 @@ public class ProtocolManager {
 
     public static void closeAllRf() {
         for (LteChannelCfg channel : CacheManager.getChannels()) {
-            if (channel.getRFState()) {
-                closeRf(channel.getIdx());
-            }
-
+            closeRf(channel.getIdx());
         }
     }
 

@@ -35,6 +35,7 @@ public class EventAdapter {
     public final static String SCAN_CODE = "SCAN_CODE"; //扫码结果
     public final static String GET_NAME_LIST = "GET_NAME_LIST"; //获取白名单
     public final static String REFRESH_DEVICE = "REFRESH_DEVICE";  //通道设置
+    public final static String INIT_SUCCESS = "INIT_SUCCESS";  //通道初始化成功
     public final static String RF_STATUS_RPT = "RF_STATUS_RPT";  //射频状态,是否停止侦码
     public final static String RF_STATUS_LOC = "RF_STATUS_LOC";  //射频状态,是否关闭定位
     public final static String HEARTBEAT_RPT = "HEARTBEAT_RPT"; //设备心跳

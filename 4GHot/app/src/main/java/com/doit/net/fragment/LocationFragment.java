@@ -209,6 +209,10 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
             }
         }
 
+        cbLocSwitch.setOnCheckedChangeListener(null);
+        cbLocSwitch.setChecked(true);
+        cbLocSwitch.setOnCheckedChangeListener(rfLocSwitchListener);
+
         textContent = "正在搜寻" + imsi;
 
         if (!"".equals(lastLocateIMSI) && !lastLocateIMSI.equals(imsi)) {   //更换目标
@@ -221,6 +225,7 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
         startSpeechBroadcastLoop();
 
         lastLocateIMSI = CacheManager.getCurrentLoction().getImsi();
+
 
         refreshPage();
     }
@@ -244,6 +249,10 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
             currentSRSP = 0;
             resetLocateChartValue();
         }
+
+        cbLocSwitch.setOnCheckedChangeListener(null);
+        cbLocSwitch.setChecked(false);
+        cbLocSwitch.setOnCheckedChangeListener(rfLocSwitchListener);
 
         refreshPage();
     }
@@ -437,7 +446,21 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
         }
 
         cbLocSwitch.setOnCheckedChangeListener(null);
-        cbLocSwitch.setChecked(rfState);
+
+        if (!CacheManager.getLocState()){
+            if (!rfState){
+                cbLocSwitch.setChecked(false);
+            }
+        }else {
+            cbLocSwitch.setChecked(rfState);
+            if (!rfState){
+                LogUtils.log("射频全关了，停止定位");
+                stopLoc();
+            }
+
+        }
+
+
         cbLocSwitch.setOnCheckedChangeListener(rfLocSwitchListener);
 
     }
@@ -496,11 +519,11 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
                     vLocateCircle.setValue(currentSRSP);
                     updateLocateChart();
 
-                    if (CacheManager.getLocState()) {
-                        cbLocSwitch.setChecked(true);
-                    } else {
-                        cbLocSwitch.setChecked(false);
-                    }
+//                    if (CacheManager.getLocState()) {
+//                        cbLocSwitch.setChecked(true);
+//                    } else {
+//                        cbLocSwitch.setChecked(false);
+//                    }
                     break;
                 case LOC_REPORT:
                     if (CacheManager.getCurrentLoction() != null && CacheManager.getCurrentLoction().isLocateStart()) {
@@ -541,7 +564,6 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
                 case RF_STATUS_LOC:
                     isRFOpen();
                     break;
-
             }
 
         }

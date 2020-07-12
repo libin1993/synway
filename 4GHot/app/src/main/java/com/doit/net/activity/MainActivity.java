@@ -48,6 +48,7 @@ import com.doit.net.base.BaseActivity;
 import com.doit.net.base.BaseFragment;
 import com.doit.net.bean.BatteryBean;
 import com.doit.net.bean.DeviceState;
+import com.doit.net.bean.LteChannelCfg;
 import com.doit.net.bean.TabEntity;
 import com.doit.net.Protocol.ProtocolManager;
 import com.doit.net.Model.BlackBoxManger;
@@ -116,10 +117,10 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
     private MySweetAlertDialog mProgressDialog;
 
-    private int heartbeatCount = 0;
+    private boolean heartbeatCount = false;
     private boolean isCheckDeviceStateThreadRun = true;
     private boolean lowBatteryWarn = true;  //低电量提醒
-    public  boolean hasSetDefaultParam = false;   //开始全部打开射频标志
+
 
     private ImageView ivDeviceState;
     Animation viewAnit = new AlphaAnimation(0, 1);
@@ -150,6 +151,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     private final int POWER_START = 11;
     private final int CHECK_LICENCE = 13;
     private final int BATTERY_STATE = 14;
+    private final int HEARTBEAT_RPT = 15;
 
 
     @Override
@@ -216,9 +218,9 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             public void onConnect() {
                 CacheManager.deviceState.setDeviceState(DeviceState.ON_INIT);
 
-                heartbeatCount = 0;    //一旦发现是连接就重置此标志以设置所有配置
+                heartbeatCount = false;    //一旦发现是连接就重置此标志以设置所有配置
                 //设备重启（重连）后需要重新检查设置默认参数
-                hasSetDefaultParam = false;
+                CacheManager.hasSetDefaultParam = false;
                 CacheManager.resetState();
 
             }
@@ -303,6 +305,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
         EventAdapter.register(EventAdapter.POWER_START, this);
         EventAdapter.register(EventAdapter.HEARTBEAT_RPT, this);
         EventAdapter.register(EventAdapter.BATTERY_STATE, this);
+        EventAdapter.register(EventAdapter.INIT_SUCCESS, this);
 
     }
 
@@ -616,9 +619,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 //        }
 //    }
 
-    private void powerStart() {
-        turnToUeidPage();
-    }
+
 
     private void turnToUeidPage() {
         mTabs.set(0, new UeidFragment());
@@ -709,7 +710,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
      * 创建DatagramSocket
      */
     private void initUDP() {
-        if (!PrefManage.getBoolean(SET_STATIC_IP, false)) {     //是否设置自动连接
+        if (!PrefManage.getBoolean(SET_STATIC_IP, true)) {     //是否设置自动连接
             return;
         }
 
@@ -751,7 +752,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
         }
 
     }
-
 
 
     private void updateStatusBar(String deviceState) {
@@ -849,7 +849,14 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     }
 
     private void processBattery(int voltage) {
-        ivBatteryLevel.setVisibility(View.VISIBLE);
+        if (CacheManager.isReportBattery) {
+            ivBatteryLevel.setVisibility(View.GONE);
+            return;
+        }else {
+            ivBatteryLevel.setVisibility(View.VISIBLE);
+        }
+
+
         final int LEVEL1 = 9112;
         final int LEVEL2 = 9800;
         final int LEVEL3 = 10380;
@@ -892,38 +899,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             }
 
             lowBatteryWarnning(getString(R.string.low_power_warning));
-        }
-    }
-
-    private class ServerSocketChange implements IServerSocketChange {
-        @Override
-        public void onServerStartListener(String mainSocketTag) {
-        }
-
-        @Override
-        public void onServerReceiveNewLink(String subSocketTag, UtilServerSocketSub utilSocket) {
-            LogUtils.log("call onServerReceiveNewLink on main activity.");
-            CacheManager.deviceState.setDeviceState(DeviceState.ON_INIT);
-
-            heartbeatCount = 0;    //一旦发现是连接就重置此标志以设置所有配置
-            //设备重启（重连）后需要重新检查设置默认参数
-            hasSetDefaultParam = false;
-            CacheManager.resetState();
-
-            CacheManager.DEVICE_IP = utilSocket.remoteIP;
-        }
-
-        @Override
-        public void onServerReceiveError(String errorMsg) {
-            LogUtils.log("call onServerReceiveError");
-            CacheManager.deviceState.setDeviceState(DeviceState.ON_INIT);
-            // TODO Auto-generated method stub
-        }
-
-        @Override
-        public void onServerStopLink(String mainSocketTag) {
-            LogUtils.log("call onServerStopLink");
-            // TODO Auto-generated method stub
         }
     }
 
@@ -986,7 +961,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
         } else if (EventAdapter.POWER_START.equals(key)) {
             mHandler.sendEmptyMessage(POWER_START);
         } else if (EventAdapter.HEARTBEAT_RPT.equals(key)) {
-            if (heartbeatCount == 0) {
+            if (!heartbeatCount) {
                 ProtocolManager.setNowTime();
                 LogUtils.log("首次下发查询以获取小区信息：");
                 ProtocolManager.getEquipAndAllChannelConfig();
@@ -994,13 +969,21 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
                 ProtocolManager.setFTPConfig(); //设置ftp配置
 
+
                 if (CacheManager.checkLicense) {
                     CacheManager.checkLicense = false;
                     checkLicence();
                 }
+                heartbeatCount = true;
             }
 
-            if (!hasSetDefaultParam && CacheManager.getChannels().size() > 0) {
+            if (!CacheManager.hasPressStartButton()){
+                mHandler.sendEmptyMessage(HEARTBEAT_RPT);
+            }
+
+
+        } else if (EventAdapter.INIT_SUCCESS.equals(key)) {
+            if (!CacheManager.hasSetDefaultParam && CacheManager.getChannels().size() > 0) {
 
                 setDeviceWorkMode();
 
@@ -1008,12 +991,15 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 //                    CacheManager.setCurrentBlackList();
 //                }
 
-                if (!CacheManager.getLocState()){     //已开始定位，不设置默认频点
+                if (!CacheManager.getLocState()) {     //已开始定位，不设置默认频点
+                    LogUtils.log("当前没有定位，停止定位");
+                    ProtocolManager.setLocImsi("0000");
                     ProtocolManager.setDefaultArfcnsAndPwr();
                 }
 
 
-                hasSetDefaultParam = true;
+                CacheManager.hasSetDefaultParam = true;
+                CacheManager.deviceState.setDeviceState(DeviceState.NORMAL);
 
 
                 if (CacheManager.hasPressStartButton()) {
@@ -1028,19 +1014,13 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                 //2019.9.12号讨论决定，所有版本一开始不使用celluar设置频点，公安版本下的定位开启才使用cellular的频点
             }
 
-
-            heartbeatCount++;
-            if (heartbeatCount >= 1000) {
-                heartbeatCount = 0;
-            }
-        }else if (EventAdapter.BATTERY_STATE.equals(key)) {
+        } else if (EventAdapter.BATTERY_STATE.equals(key)) {
             Message msg = new Message();
             msg.what = BATTERY_STATE;
             msg.obj = val;
             mHandler.sendMessage(msg);
         }
     }
-
 
 
     private void setDeviceWorkMode() {
@@ -1062,7 +1042,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
         }
 
 
-        if (!CacheManager.getLocState()){     //已设置定位模式，不能设置别的模式
+        if (!CacheManager.getLocState()) {     //已设置定位模式，不能设置别的模式
             ProtocolManager.setActiveMode(workMode);
         }
 
@@ -1076,7 +1056,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                     CacheManager.setLocalWhiteList("off");
                 }
             }
-        },2000);
+        }, 2000);
 
     }
 
@@ -1173,6 +1153,20 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             if (msg.what == TIP_MSG) {
                 String tip = msg.obj.toString();
                 ToastUtils.showMessageLong(tip);
+            } else if (msg.what == HEARTBEAT_RPT) {
+                boolean rfState = false;
+
+                for (LteChannelCfg channel : CacheManager.getChannels()) {
+                    if (channel.getRFState()) {
+                        rfState = true;
+                        break;
+                    }
+                }
+                if (rfState && !CacheManager.hasPressStartButton()){
+                    CacheManager.setPressStartButtonFlag(true);
+                    turnToUeidPage();
+                }
+
             } else if (msg.what == SHOW_PROGRESS) {
                 int dialogKeepTime = 5000;
                 if (msg.obj != null) {
@@ -1206,12 +1200,12 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             } else if (msg.what == CHANGE_TAB) {
                 mViewPager.setCurrentItem((int) msg.obj, true);
             } else if (msg.what == POWER_START) {
-                powerStart();
+                turnToUeidPage();
             } else if (msg.what == CHECK_LICENCE) {
                 checkAuthorize();
             } else if (msg.what == BATTERY_STATE) {
                 BatteryBean batteryBean = (BatteryBean) msg.obj;
-                if (batteryBean.getBatteryQuantity() == 0){
+                if (batteryBean.getBatteryQuantity() == 0) {
                     flBattery.setVisibility(View.GONE);
                     tvBattery.setVisibility(View.GONE);
                     tvRemainTime.setVisibility(View.GONE);
@@ -1228,7 +1222,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                     ivCharging.setVisibility(View.GONE);
                 }
 
-                tvRemainTime.setText(batteryBean.getUseTime()+"分钟");
+                tvRemainTime.setText(batteryBean.getUseTime() + "分钟");
 
                 if (batteryBean.getBatteryQuantity() <= 20 && lowBatteryWarn) {
                     lowBatteryWarn = false;

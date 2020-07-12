@@ -65,7 +65,7 @@ public class AddToLocationListener implements View.OnClickListener
                     ToastUtils.showMessage( "开始新的搜寻");
                 }
             }else{
-
+                EventAdapter.call(EventAdapter.SHOW_PROGRESS,5000);  //防止快速频繁更换定位目标
                 exchangeFcn();
 
                 CacheManager.updateLoc(imsi);

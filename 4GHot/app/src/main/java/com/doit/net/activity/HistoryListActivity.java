@@ -168,58 +168,6 @@ public class HistoryListActivity extends BaseActivity implements EventAdapter.Ev
         EventAdapter.register(EventAdapter.RESEARCH_HISTORY_LIST,this);
     }
 
-    private void test() {
-        List<UeidBean> listUeid = new ArrayList<>();
-
-
-        DBUeidInfo info = new DBUeidInfo();
-        info.setImsi("460003980334783");
-        info.setTmsi("");
-        info.setMsisdn("还没获取");
-        //info.setCreateDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(listUeid.get(i).getRptTime()));
-        info.setCreateDate(new Date().getTime());
-        info.setLongitude("");
-        info.setLatitude("");
-        try {
-            UCSIDBManager.getDbManager().save(info);
-        } catch (DbException e) {
-            e.printStackTrace();
-        }
-
-
-        info = new DBUeidInfo();
-        info.setImsi("460001041462714");
-        info.setTmsi("");
-        info.setMsisdn("还没获取");
-        //info.setCreateDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(listUeid.get(i).getRptTime()));
-        info.setCreateDate(new Date().getTime());
-        info.setLongitude("");
-        info.setLatitude("");
-        try {
-            UCSIDBManager.getDbManager().save(info);
-        } catch (DbException e) {
-            e.printStackTrace();
-        }
-
-        info = new DBUeidInfo();
-        info.setImsi("460027100158111");
-        info.setTmsi("");
-        info.setMsisdn("还没获取");
-        //info.setCreateDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(listUeid.get(i).getRptTime()));
-        info.setCreateDate(new Date().getTime());
-        info.setLongitude("");
-        info.setLatitude("");
-        try {
-            UCSIDBManager.getDbManager().save(info);
-        } catch (DbException e) {
-            e.printStackTrace();
-        }
-
-        listUeid.add(new UeidBean("460003980334783", "", "","", "2019", "", ""));
-        listUeid.add(new UeidBean("460001041462714", "", "","", "2019", "", ""));
-        listUeid.add(new UeidBean("460027100158111", "", "","", "2019", "", ""));
-        EventAdapter.call(EventAdapter.UEID_RPT, listUeid);
-    }
 
     private void showListPopWindow(View anchorView, int posX, int posY) {
         ueidItemPop.showAtLocation(anchorView, Gravity.TOP | Gravity.START, posX, posY);

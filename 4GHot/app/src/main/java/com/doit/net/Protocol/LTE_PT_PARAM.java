@@ -145,11 +145,12 @@ public class LTE_PT_PARAM {
             CacheManager.addChannel(lteChannelCfg);
         }
 
-        if (!CacheManager.isReportBattery) {
-            EventAdapter.call(EventAdapter.UPDATE_BATTERY, Integer.valueOf(CacheManager.getLteEquipConfig().getVoltage12V()));
-        }
+
+
+        EventAdapter.call(EventAdapter.UPDATE_BATTERY, Integer.valueOf(CacheManager.getLteEquipConfig().getVoltage12V()));
 
         EventAdapter.call(EventAdapter.REFRESH_DEVICE);
+        EventAdapter.call(EventAdapter.INIT_SUCCESS);
     }
 
     //解析名单查询回复
@@ -249,7 +250,6 @@ public class LTE_PT_PARAM {
 
         }
 
-        CacheManager.deviceState.setDeviceState(DeviceState.NORMAL);
 
         //更新射频状态
         String[] splitStr = heartbeat.split("#");
@@ -286,7 +286,6 @@ public class LTE_PT_PARAM {
         EventAdapter.call(EventAdapter.BATTERY_STATE, batteryBean);
 
         EventAdapter.call(EventAdapter.HEARTBEAT_RPT);
-        EventAdapter.call(EventAdapter.RF_STATUS_LOC);
         EventAdapter.call(EventAdapter.RF_STATUS_RPT);
     }
 
@@ -462,11 +461,11 @@ public class LTE_PT_PARAM {
         String respContent = UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(), 0);
         switch (receivePackage.getPackageSubType()) {
             case PARAM_SET_CHANNEL_ON_ACK:
-                //UtilBaseLog.printLog("开");
                 String[] onAsk = respContent.split("#");
                 if (onAsk[0].charAt(0) == '0') {
                     for (LteChannelCfg channel : CacheManager.getChannels()) {
                         if (channel.getIdx().equals(onAsk[1])) {
+                            LogUtils.log(onAsk[1]+"：射频开启成功");
                             channel.setRFState(true);
                         }
                     }
@@ -483,6 +482,7 @@ public class LTE_PT_PARAM {
                 if (offAsk[0].charAt(0) == '0') {
                     for (LteChannelCfg channel : CacheManager.getChannels()) {
                         if (channel.getIdx().equals(offAsk[1])) {
+                            LogUtils.log(offAsk[1]+"：射频关闭成功");
                             channel.setRFState(false);
                         }
                     }
