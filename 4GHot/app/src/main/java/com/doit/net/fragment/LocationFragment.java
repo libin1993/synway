@@ -466,7 +466,6 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
     }
 
 
-
     @Override
     public void call(String key, Object val) {
         switch (key) {

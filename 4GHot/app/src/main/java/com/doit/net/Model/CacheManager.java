@@ -10,6 +10,7 @@ import android.os.Build;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
 
+import com.doit.net.Utils.UtilOperator;
 import com.doit.net.application.MyApplication;
 import com.doit.net.bean.DeviceState;
 import com.doit.net.bean.LocationBean;
@@ -27,6 +28,7 @@ import com.doit.net.Utils.LogUtils;
 import com.doit.net.udp.g4.bean.G4MsgChannelCfg;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.xutils.DbManager;
 import org.xutils.ex.DbException;
 
 import java.lang.reflect.InvocationTargetException;
@@ -81,7 +83,6 @@ public class CacheManager {
         return loc_mode;
     }
 
-    public static LteChannelCfg b3Fcn= new LteChannelCfg();  //b3 移动定位时，强制设置1300
 
     public static void setLocMode(boolean locMode) {
         loc_mode = locMode;
@@ -281,8 +282,21 @@ public class CacheManager {
         ProtocolManager.setLocImsi("0000");
         ProtocolManager.setActiveMode(CacheManager.currentWorkMode);
 
-        ProtocolManager.setChannelConfig(CacheManager.b3Fcn.getIdx(), CacheManager.b3Fcn.getFcn(),
-                CacheManager.b3Fcn.getPlmn(), "", "", "", "", "");
+        try {
+            DbManager dbManager = UCSIDBManager.getDbManager();
+            DBChannel dbChannel = dbManager.selector(DBChannel.class)
+                    .where("band", "=", "3")
+                    .and("is_check","=","1")
+                    .findFirst();
+            if (dbChannel !=null){
+                ProtocolManager.setChannelConfig(dbChannel.getIdx(), dbChannel.getFcn(),
+                        "46001,46011", "", "", "", "", "");
+            }
+
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+
 
         if (CacheManager.getCurrentLoction() != null)
             CacheManager.getCurrentLoction().setLocateStart(false);

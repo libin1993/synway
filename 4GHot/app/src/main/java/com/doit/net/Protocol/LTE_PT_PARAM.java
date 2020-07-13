@@ -136,12 +136,6 @@ public class LTE_PT_PARAM {
             LogUtils.log(splitStr[i]);
             LteChannelCfg lteChannelCfg = praseChannelConfig(splitStr[i]);
 
-            if (TextUtils.isEmpty(CacheManager.b3Fcn.getBand()) && lteChannelCfg.getBand().equals("3")) {
-                CacheManager.b3Fcn.setIdx(lteChannelCfg.getIdx());
-                CacheManager.b3Fcn.setBand("3");
-                CacheManager.b3Fcn.setFcn(lteChannelCfg.getFcn());
-                CacheManager.b3Fcn.setPlmn(lteChannelCfg.getPlmn());
-            }
             CacheManager.addChannel(lteChannelCfg);
         }
 
