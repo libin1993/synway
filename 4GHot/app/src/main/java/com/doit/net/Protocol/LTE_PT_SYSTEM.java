@@ -1,9 +1,8 @@
 package com.doit.net.Protocol;
 
 
+import com.doit.net.Sockets.ServerSocketUtils;
 import com.doit.net.Utils.FileUtils;
-import com.doit.net.application.MyApplication;
-import com.doit.net.Data.LTESendManager;
 import com.doit.net.Utils.LogUtils;
 import com.doit.net.Utils.UtilDataFormatChange;
 import com.doit.net.Utils.ToastUtils;
@@ -23,7 +22,7 @@ public class LTE_PT_SYSTEM {
     public static final byte SYSTEM_SET_DATETIME = 0x0d;  //设置时间
     public static final byte SYSTEM_SET_DATETIME_ASK = 0x0e;
 
-    public static boolean commonSystemMsg(byte sysSubType) {
+    public static void commonSystemMsg(byte sysSubType) {
         com.doit.net.Protocol.LTESendPackage sendPackage = new com.doit.net.Protocol.LTESendPackage();
         //设置Sequence ID
         sendPackage.setPackageSequence(com.doit.net.Protocol.LTEProtocol.getSequenceID());
@@ -42,11 +41,11 @@ public class LTE_PT_SYSTEM {
 
         //获取整体的包
         byte[] tempSendBytes=sendPackage.getPackageContent();
-        LogUtils.log1("TCP发送：Type:" + sendPackage.getPackageMainType() + ";  SubType:" + Integer.toHexString(sendPackage.getPackageSubType()) + ";  Content:" + UtilDataFormatChange.bytesToString(sendPackage.getByteSubContent(), 0));
-        return LTESendManager.sendData(tempSendBytes);
+        LogUtils.log1("TCP发送：Type:" + sendPackage.getPackageMainType() + ";  SubType:0x" + Integer.toHexString(sendPackage.getPackageSubType()) + ";  子协议:" + UtilDataFormatChange.bytesToString(sendPackage.getByteSubContent(), 0));
+        ServerSocketUtils.getInstance().sendData(tempSendBytes);
     }
 
-    public static boolean setSystemParam(byte sysSubType, String paramContent) {
+    public static void setSystemParam(byte sysSubType, String paramContent) {
         LTESendPackage sendPackage=new LTESendPackage();
         //设置Sequence ID
         sendPackage.setPackageSequence(LTEProtocol.getSequenceID());
@@ -68,8 +67,8 @@ public class LTE_PT_SYSTEM {
         //获取整体的包
         byte[] tempSendBytes=sendPackage.getPackageContent();
 
-        LogUtils.log1("TCP发送：Type:" + sendPackage.getPackageMainType() + ";  SubType:" + Integer.toHexString(sendPackage.getPackageSubType()) + ";  Content:" + UtilDataFormatChange.bytesToString(sendPackage.getByteSubContent(), 0));
-        return LTESendManager.sendData(tempSendBytes);
+        LogUtils.log1("TCP发送：Type:" + sendPackage.getPackageMainType() + ";  SubType:0x" + Integer.toHexString(sendPackage.getPackageSubType()) + ";  子协议:" + UtilDataFormatChange.bytesToString(sendPackage.getByteSubContent(), 0));
+        ServerSocketUtils.getInstance().sendData(tempSendBytes);
     }
 
 

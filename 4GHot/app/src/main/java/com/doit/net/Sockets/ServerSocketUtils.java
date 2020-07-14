@@ -1,6 +1,6 @@
 package com.doit.net.Sockets;
 
-import com.doit.net.Data.DataCenterManager;
+import com.doit.net.Data.LTEDataParse;
 import com.doit.net.Model.CacheManager;
 import com.doit.net.Utils.LogUtils;
 
@@ -84,7 +84,7 @@ public class ServerSocketUtils {
 
                     } catch (IOException e) {
                         e.printStackTrace();
-                        LogUtils.log("tcp错误："+e.getMessage());
+                        LogUtils.log("tcp错误：" + e.getMessage());
 
                     }
                 }
@@ -115,7 +115,8 @@ public class ServerSocketUtils {
             byte[] bytesReceived = new byte[1024];
             //接收到流的数量
             int receiveCount;
-            Socket socket = null;
+            LTEDataParse lteDataParse = new LTEDataParse();
+            Socket socket;
             try {
                 //获取当前socket
                 socket = map.get(remoteIP + ":" + remotePort);
@@ -127,28 +128,19 @@ public class ServerSocketUtils {
                 InputStream inputStream = socket.getInputStream();
 
                 //循环接收数据
-                while (true) {
-                    //读取服务端发送给客户端的数据
-                    receiveCount = inputStream.read(bytesReceived);
-                    if (receiveCount <= -1) {
-                        LogUtils.log("socket被关闭，读取长度："+receiveCount);
-                        onSocketChangedListener.onDisconnect();
-                        closeSocket(remoteIP + ":" + remotePort);  //关闭socket
-                        DataCenterManager.clearDataBuffer(remoteIP);
-                        break;
-                    }
-
-                    //将数据交给数据中心管理员处理
-                    DataCenterManager.parseData(remoteIP, String.valueOf(remotePort),
-                            bytesReceived, receiveCount);
-                    //收到数据
+                while ((receiveCount = inputStream.read(bytesReceived)) != -1) {
+                    lteDataParse.parseData(bytesReceived, receiveCount);
                 }
+
+                LogUtils.log("socket被关闭，读取长度：" + receiveCount);
+
             } catch (IOException ex) {
                 LogUtils.log("socket异常:" + ex.toString());
-                onSocketChangedListener.onDisconnect();
-                closeSocket(remoteIP + ":" + remotePort);  //关闭socket
-                DataCenterManager.clearDataBuffer(remoteIP);
             }
+
+            onSocketChangedListener.onDisconnect();
+            closeSocket(remoteIP + ":" + remotePort);  //关闭socket
+            lteDataParse.clearReceiveBuffer();
         }
     }
 
@@ -176,7 +168,6 @@ public class ServerSocketUtils {
      * @return
      */
     public void sendData(byte[] tempByte) {
-        LogUtils.log("TCP发送:" + Arrays.toString(tempByte));
 
         Socket socket = map.get(currentRemoteAddress);
         if (socket != null) {
@@ -186,8 +177,9 @@ public class ServerSocketUtils {
                     try {
                         OutputStream outputStream = socket.getOutputStream();
                         outputStream.write(tempByte);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        LogUtils.log("socket发送失败："+e.getMessage());
                     }
                 }
             }.start();

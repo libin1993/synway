@@ -6,10 +6,15 @@ import android.view.View;
 import com.doit.net.Model.BlackBoxManger;
 import com.doit.net.Model.CacheManager;
 import com.doit.net.Model.DBBlackInfo;
+import com.doit.net.Model.DBChannel;
+import com.doit.net.Model.UCSIDBManager;
 import com.doit.net.Protocol.ProtocolManager;
 import com.doit.net.Utils.LogUtils;
 import com.doit.net.Utils.ToastUtils;
 import com.doit.net.Utils.UtilOperator;
+
+import org.xutils.DbManager;
+import org.xutils.ex.DbException;
 
 /**
  * Created by wiker on 2016/4/27.
@@ -89,48 +94,25 @@ public class AddToLocationListener implements View.OnClickListener
      */
     private void exchangeFcn(){
 
-        if ("CTJ".equals(UtilOperator.getOperatorName(imsi))){
-
-            String[] split = CacheManager.b3Fcn.getFcn().split(",");
-            boolean hasExchange = false; //是否已更换
-            String fcn="";
-            for (int i = 0; i < split.length; i++) {
-                if (split[i].equals("1825") || split[i].equals("1850")){
-                    split[i] = "1300";
-                    hasExchange = true;
-                    break;
-                }
-            }
-
-            if (split.length == 3){
-                if (!hasExchange){
-                    split[0] = "1300";
-                }
-
-                fcn = split[0] +","+split[1]+","+split[2];
-            }
-
-            if (split.length < 3){
-                if (!hasExchange){
-                    fcn ="1300,"+CacheManager.b3Fcn.getFcn();
+        try {
+            DbManager dbManager = UCSIDBManager.getDbManager();
+            DBChannel dbChannel = dbManager.selector(DBChannel.class)
+                    .where("band", "=", "3")
+                    .and("is_check","=","1")
+                    .findFirst();
+            if (dbChannel !=null){
+                if ("CTJ".equals(UtilOperator.getOperatorName(imsi))){
+                    ProtocolManager.setChannelConfig(dbChannel.getIdx(), "1300,1506,1650", "46000", "", "", "", "", "");
                 }else {
-                    for (int i = 0; i < split.length; i++) {
-                        if (i == split.length -1){
-                            fcn += split[i];
-                        }else {
-                            fcn += split[i]+",";
-                        }
-                    }
+                    ProtocolManager.setChannelConfig(dbChannel.getIdx(), dbChannel.getFcn(),
+                            "46001,46011", "", "", "", "", "");
                 }
-
             }
 
-            LogUtils.log("更换的频点："+fcn);
-            ProtocolManager.setChannelConfig(CacheManager.b3Fcn.getIdx(), fcn, "46000", "", "", "", "", "");
-        }else {
-            ProtocolManager.setChannelConfig(CacheManager.b3Fcn.getIdx(), CacheManager.b3Fcn.getFcn(),
-                    CacheManager.b3Fcn.getPlmn(), "", "", "", "", "");
+        } catch (DbException e) {
+            e.printStackTrace();
         }
+
 
     }
 

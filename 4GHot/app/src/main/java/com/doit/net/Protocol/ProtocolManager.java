@@ -434,7 +434,6 @@ public class ProtocolManager {
 
                     tmpArfcnConfig = band1Fcns;
 
-                    saveDefaultFcn(channel.getIdx(), channel.getBand(), band1Fcns);
                     String fcn1 = getCheckedFcn(channel.getBand());
                     if (!TextUtils.isEmpty(fcn1)) {
                         tmpArfcnConfig = fcn1;
@@ -464,7 +463,7 @@ public class ProtocolManager {
 
                     //tmpArfcnConfig = tmpArfcnConfig.substring(0, tmpArfcnConfig.length()-1);
                     tmpArfcnConfig = band3Fcns;
-                    saveDefaultFcn(channel.getIdx(), channel.getBand(), band3Fcns);
+
                     String fcn3 = getCheckedFcn(channel.getBand());
                     if (!TextUtils.isEmpty(fcn3)) {
                         tmpArfcnConfig = fcn3;
@@ -493,7 +492,7 @@ public class ProtocolManager {
 
                     //tmpArfcnConfig = tmpArfcnConfig.substring(0, tmpArfcnConfig.length()-1);
                     tmpArfcnConfig = band38Fcns;
-                    saveDefaultFcn(channel.getIdx(), channel.getBand(), band38Fcns);
+
                     String fcn38 = getCheckedFcn(channel.getBand());
                     if (!TextUtils.isEmpty(fcn38)) {
                         tmpArfcnConfig = fcn38;
@@ -522,7 +521,7 @@ public class ProtocolManager {
 
                     //tmpArfcnConfig = tmpArfcnConfig.substring(0, tmpArfcnConfig.length()-1);
                     tmpArfcnConfig = band39Fcns;
-                    saveDefaultFcn(channel.getIdx(), channel.getBand(), band39Fcns);
+
                     String fcn39 = getCheckedFcn(channel.getBand());
                     if (!TextUtils.isEmpty(fcn39)) {
                         tmpArfcnConfig = fcn39;
@@ -550,7 +549,7 @@ public class ProtocolManager {
                     }
                     ///tmpArfcnConfig = tmpArfcnConfig.substring(0, tmpArfcnConfig.length()-1);
                     tmpArfcnConfig = band40Fcns;
-                    saveDefaultFcn(channel.getIdx(), channel.getBand(), band40Fcns);
+
                     String fcn40 = getCheckedFcn(channel.getBand());
                     if (!TextUtils.isEmpty(fcn40)) {
                         tmpArfcnConfig = fcn40;
@@ -580,7 +579,7 @@ public class ProtocolManager {
 
                     //tmpArfcnConfig = tmpArfcnConfig.substring(0, tmpArfcnConfig.length()-1);
                     tmpArfcnConfig = band41Fcns;
-                    saveDefaultFcn(channel.getIdx(), channel.getBand(), band41Fcns);
+
                     String fcn41 = getCheckedFcn(channel.getBand());
                     if (!TextUtils.isEmpty(fcn41)) {
                         tmpArfcnConfig = fcn41;
@@ -594,6 +593,10 @@ public class ProtocolManager {
                     break;
             }
 
+            if ("3".equals(channel.getBand()) && CacheManager.getLocState()){
+                LogUtils.log("当前正在定位且是band3，不设置band3频点");
+                return;
+            }
             if ("".equals(tmpArfcnConfig)) {
                 setChannelConfig(channel.getIdx(), "", "", defaultPower, defaultGa, "", "", "");
             } else {
@@ -631,23 +634,56 @@ public class ProtocolManager {
     }
 
     /**
-     * @param band
-     * @param fcn  存入默认fcn
+     * @param
+     * @param
      */
-    private static void saveDefaultFcn(String idx, String band, String fcn) {
-        try {
-            DbManager dbManager = UCSIDBManager.getDbManager();
-            DBChannel channel = dbManager.selector(DBChannel.class)
-                    .where("band", "=", band)
-                    .and("fcn", "=", fcn)
-                    .findFirst();
-            if (channel == null) {
-                dbManager.save(new DBChannel(idx, band, fcn, 1, 1));
-            }
+    public static void saveDefaultFcn() {
+        String fcn="";
+        String band1Fcns = "100,375,400";
+        String band3Fcns = "1825,1650,1506";//1300
+        String band38Fcns = "37900,38098,38200";
+        String band39Fcns = "38400,38544,38300";
+        String band40Fcns = "38950,39148,39300";
+        String band41Fcns = "37900,38098,38200";
+        for (LteChannelCfg channel : CacheManager.channels) {
+            switch (channel.getBand()) {
+                case "1":
+                    fcn = band1Fcns;
+                    break;
+                case "3":
+                    fcn = band3Fcns;
+                    break;
+                case "38":
+                    fcn = band38Fcns;
+                    break;
+                case "39":
+                    fcn = band39Fcns;
+                    break;
+                case "40":
+                    fcn = band40Fcns;
+                    break;
+                case "41":
+                    fcn = band41Fcns;
+                    break;
 
-        } catch (DbException e) {
-            e.printStackTrace();
+            }
+            if (!TextUtils.isEmpty(fcn)){
+                try {
+                    DbManager dbManager = UCSIDBManager.getDbManager();
+                    DBChannel channel1 = dbManager.selector(DBChannel.class)
+                            .where("band", "=", channel.getBand())
+                            .and("fcn", "=", fcn)
+                            .findFirst();
+                    if (channel1 == null) {
+                        dbManager.save(new DBChannel(channel.getIdx(), channel.getBand(), fcn, 1, 1));
+                    }
+
+                } catch (DbException e) {
+                    e.printStackTrace();
+                }
+            }
         }
+
     }
 
     public static void setFancontrol(String maxFanSpeed, String minFanSpeed, String tempThreshold) {

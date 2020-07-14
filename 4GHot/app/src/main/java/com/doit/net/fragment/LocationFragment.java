@@ -244,6 +244,7 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
         LogUtils.log("停止定位");
         if (CacheManager.getLocState()) {
             CacheManager.stopCurrentLoc();
+
             stopSpeechBroadcastLoop();
             textContent = "搜寻暂停：" + CacheManager.getCurrentLoction().getImsi();
             currentSRSP = 0;
@@ -464,7 +465,6 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
         cbLocSwitch.setOnCheckedChangeListener(rfLocSwitchListener);
 
     }
-
 
 
     @Override

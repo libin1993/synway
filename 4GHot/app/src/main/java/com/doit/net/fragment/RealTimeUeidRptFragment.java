@@ -304,7 +304,7 @@ public class RealTimeUeidRptFragment extends BaseFragment implements EventAdapte
 
     private void updateView() {
         if (mAdapter != null) {
-            mAdapter.refreshData();
+            mAdapter.notifyDataSetChanged();
         }
 
         updateUeidCntInOperator(CacheManager.realtimeUeidList);

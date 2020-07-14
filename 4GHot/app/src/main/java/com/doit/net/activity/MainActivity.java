@@ -59,8 +59,6 @@ import com.doit.net.Utils.FTPManager;
 import com.doit.net.Utils.LicenceUtils;
 import com.doit.net.Model.PrefManage;
 import com.doit.net.Model.VersionManage;
-import com.doit.net.Sockets.IServerSocketChange;
-import com.doit.net.Sockets.UtilServerSocketSub;
 import com.doit.net.Utils.DateUtils;
 import com.doit.net.Utils.FTPServerUtils;
 import com.doit.net.Utils.FileUtils;
@@ -565,66 +563,14 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
     private NetworkChangeReceiver networkChangeReceiver;
 
-//    public class MainTabLayoutAdapter1 extends FragmentPagerAdapter {
-//        private List<BaseFragment> mList;
-//        private List<String> mTitles;
-//        private FragmentManager fm;
-//
-//        public MainTabLayoutAdapter1(FragmentManager fm, List<BaseFragment> list, List<String> titles) {
-//            super(fm);
-//            this.mList = list;
-//            this.mTitles = titles;
-//            this.fm = fm;
-//        }
-//
-//        @Override
-//        public Fragment getItem(int position) {
-//            return mList.get(position);
-//        }
-//
-//        @Override
-//        public int getItemPosition(Object object) {
-//            return POSITION_NONE;
-//        }
-//
-//        @Override
-//        public int getCount() {
-//            return mList.size();
-//        }
-//
-//        @Override
-//        public CharSequence getPageTitle(int position) {
-//            return mTitles == null ? super.getPageTitle(position) : mTitles.get(position);
-//        }
-//
-//        @Override
-//        public Object instantiateItem(ViewGroup container, int position) {
-//            Fragment fragment = (Fragment) super.instantiateItem(container, position);
-//            String fragmentTag = fragment.getTag();
-//            if (fragmentsUpdateFlag[position % fragmentsUpdateFlag.length]) {
-//                FragmentTransaction ft = fm.beginTransaction();
-//                ft.remove(fragment);
-//                fragment = mTabs.get(position % mTabs.size());
-//                //添加新fragment时必须用前面获得的tag，这点很重要
-//                ft.add(container.getId(), fragment, fragmentTag == null ? fragment.getClass().getName() + position : fragmentTag);
-//                ft.attach(fragment);
-//                ft.commit();
-//
-//                fragmentsUpdateFlag[position % fragmentsUpdateFlag.length] = false;
-//            } else {
-//                fragment = mTabs.get(position);
-//
-//            }
-//            return fragment;
-//        }
-//    }
+
 
 
 
     private void turnToUeidPage() {
+        LogUtils.log("开启侦码页面");
         mTabs.set(0, new UeidFragment());
         adapter.exchangeFragment();
-
     }
 
     @Override
@@ -695,6 +641,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                 subPackage.setSubMsgContent(a);
 
                 sendPackage.setMsgSubContent(subPackage.getMsgContent());
+
                 UDPSocketUtils.getInstance().sendData(sendPackage.getMsgContent());
             }
         };
@@ -989,14 +936,15 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 //                if (VersionManage.isPoliceVer() && !CacheManager.getLocState()) {
 //                    CacheManager.setCurrentBlackList();
 //                }
-
-                if (!CacheManager.getLocState()) {     //已开始定位，不设置默认频点
-                    LogUtils.log("当前没有定位，停止定位");
-                    ProtocolManager.setDefaultArfcnsAndPwr();
-                }
-
-
                 CacheManager.hasSetDefaultParam = true;
+
+                ProtocolManager.saveDefaultFcn();
+
+
+                ProtocolManager.setDefaultArfcnsAndPwr();
+
+
+
                 CacheManager.deviceState.setDeviceState(DeviceState.NORMAL);
 
 
@@ -1009,7 +957,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                     }, 5000);
                 }
 
-                //2019.9.12号讨论决定，所有版本一开始不使用celluar设置频点，公安版本下的定位开启才使用cellular的频点
             }
 
         } else if (EventAdapter.BATTERY_STATE.equals(key)) {
@@ -1030,19 +977,31 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             workMode = "2";
         }
 
-
-        if (!CacheManager.getLocState()) {     //已设置定位模式，不能设置别的模式
-            ProtocolManager.setActiveMode(workMode);
-        }
-
-        LogUtils.log("设置默认工作模式：" + workMode);
         CacheManager.currentWorkMode = workMode;
-        if (VersionManage.isArmyVer()) {
-            CacheManager.setLocalWhiteList("on");
-        } else {
-            CacheManager.setLocalWhiteList("off");
-        }
 
+
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (!CacheManager.getLocState()) {     //已设置定位模式，不能设置别的模式
+                    LogUtils.log("设置默认工作模式：" +   CacheManager.currentWorkMode);
+                    ProtocolManager.setActiveMode(  CacheManager.currentWorkMode);
+                }
+
+            }
+        },1000);
+
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (VersionManage.isArmyVer()) {
+                    CacheManager.setLocalWhiteList("on");
+                } else {
+                    CacheManager.setLocalWhiteList("off");
+                }
+
+            }
+        },2000);
 
     }
 

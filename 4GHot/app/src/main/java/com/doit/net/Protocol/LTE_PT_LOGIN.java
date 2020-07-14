@@ -2,9 +2,8 @@ package com.doit.net.Protocol;
 
 import android.text.TextUtils;
 
-import com.doit.net.Data.LTESendManager;
-import com.doit.net.Event.EventAdapter;
 import com.doit.net.Model.CacheManager;
+import com.doit.net.Sockets.ServerSocketUtils;
 import com.doit.net.Utils.LicenceUtils;
 import com.doit.net.Utils.LogUtils;
 import com.doit.net.Utils.UtilDataFormatChange;
@@ -21,7 +20,7 @@ public class LTE_PT_LOGIN {
 
 
 	//回复登录协议
-	public static boolean loginResp(LTEReceivePackage receivePackage) {
+	public static void loginResp(LTEReceivePackage receivePackage) {
 		LTESendPackage sendPackage = new LTESendPackage();
 		
 		//设置Sequence ID
@@ -57,7 +56,8 @@ public class LTE_PT_LOGIN {
 		byte[] tempSendBytes=sendPackage.getPackageContent();
 		LogUtils.log("登录回复");
 
-		LogUtils.log1("TCP发送：Type:" + sendPackage.getPackageMainType() + ";  SubType:" + Integer.toHexString(receivePackage.getPackageSubType())+ ";  Content:" + UtilDataFormatChange.bytesToString(sendPackage.getByteSubContent(), 0));
-		return LTESendManager.sendData(tempSendBytes);
+		LogUtils.log1("TCP发送：Type:" + sendPackage.getPackageMainType() + ";  SubType:0x" + Integer.toHexString(receivePackage.getPackageSubType())+ ";  子协议:" + UtilDataFormatChange.bytesToString(sendPackage.getByteSubContent(), 0));
+
+		ServerSocketUtils.getInstance().sendData(tempSendBytes);
 	}
 }

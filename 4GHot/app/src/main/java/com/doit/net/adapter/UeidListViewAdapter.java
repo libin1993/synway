@@ -47,10 +47,6 @@ public class UeidListViewAdapter extends BaseSwipeAdapter {
 
     private DbManager dbManager;
 
-    public void refreshData() {
-        notifyDataSetChanged();
-        ;
-    }
 
     @Override
     public int getSwipeLayoutResourceId(int position) {

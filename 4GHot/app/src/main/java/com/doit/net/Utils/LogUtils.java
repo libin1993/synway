@@ -38,10 +38,10 @@ public class LogUtils {
 
     //将日志打印到调试界面
     public static void log1(String msg) {
-//        Log.d("aaa",msg);
-//        if (BuildConfig.SAVE_LOG){
-//            saveLog(msg);
-//        }
+        Log.d("aaa",msg);
+        if (BuildConfig.SAVE_LOG){
+            saveLog(msg);
+        }
     }
 
     public static void initLog(){

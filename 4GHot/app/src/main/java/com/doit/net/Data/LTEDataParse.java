@@ -15,74 +15,60 @@ import java.util.Arrays;
 
 public class LTEDataParse {
     //将字节数暂存
-    ArrayList<Byte> listReceiveBuffer = new ArrayList<Byte>();
+    private ArrayList<Byte> listReceiveBuffer = new ArrayList<Byte>();
     //包头的长度
     short packageHeadLength = 12;
 
+
     //解析数据
-    public void parseData(String IP, String port, byte[] bytesReceived, int receiveCount) {
+    public synchronized void parseData(byte[] bytesReceived, int receiveCount) {
         //将接收到数据存放在列表中
         for (int i = 0; i < receiveCount; i++) {
             listReceiveBuffer.add(bytesReceived[i]);
         }
-        //得到当前缓存中的长度
-        int listReceiveCount = listReceiveBuffer.size();
 
-        //如果缓存长度小于12说明最小包都没有收完整
-        if (listReceiveCount >= packageHeadLength) {
-            parseData(listReceiveCount);
-        }
+        while (true) {
+            //得到当前缓存中的长度
+            int listReceiveCount = listReceiveBuffer.size();
 
-    }
-
-    //将收到的字节数解析并且组成一个整包
-    private void parseData(int listReceiveCount) {
-        //循环读取包
-        for (int i = 0; i < listReceiveCount; i++) {
-            if (listReceiveBuffer.size() < 10) {
-                LogUtils.log("GTW丢包-丢字节");
+            //如果缓存长度小于12说明最小包都没有收完整
+            if (listReceiveCount < packageHeadLength) {
                 break;
             }
+
             //取出长度
-            byte[] byteLength = {listReceiveBuffer.get(i), listReceiveBuffer.get(i + 1)};
-            short packageLength = getShortData(byteLength[0], byteLength[1]);
-            LogUtils.log("分包大小：" + listReceiveBuffer.size() + "," + packageLength);
+            byte[] contentLength = {listReceiveBuffer.get(0), listReceiveBuffer.get(1)};
+            int contentLen = getShortData(contentLength[0], contentLength[1]);
+
+
+            LogUtils.log("分包大小：" + listReceiveBuffer.size() + "," + contentLen);
             //判断缓存列表中的数据是否达到一个包的数据
-            if (listReceiveBuffer.size() < packageLength) {
+            if (listReceiveBuffer.size() < contentLen) {
                 LogUtils.log("LTE没有达到整包数:");
                 break;
             }
 
-            byte[] tempPackage = new byte[packageLength];
+            byte[] tempPackage = new byte[contentLen];
             //取出一个整包
-            for (int j = 0; j < packageLength; j++) {
+            for (int j = 0; j < contentLen; j++) {
                 tempPackage[j] = listReceiveBuffer.get(j);
             }
 
             //删除内存列表中的数据
-            for (int j = 0; j < packageLength; j++) {
-                listReceiveBuffer.remove(0);
+            if (contentLen > 0) {
+                listReceiveBuffer.subList(0, contentLen).clear();
             }
 
             //解析包
             parsePackageData(tempPackage);
-
-            //获取缓存列表中的数据
-            listReceiveCount = listReceiveBuffer.size();
-            //如果有余下的字节数,则说明有余包
-            if (listReceiveCount >= packageHeadLength) {
-                LogUtils.log("LTE余下的字节数:" + listReceiveCount);
-                i = -1;
-            } else {
-                break;
-            }
         }
+
     }
 
 
     //解析成包数据
     private void parsePackageData(byte[] tempPackage) {
-        if (tempPackage.length < 11)
+        if (tempPackage.length < 12)
             return;
 
         LTEReceivePackage receivePackage = new LTEReceivePackage();
@@ -140,7 +126,7 @@ public class LTEDataParse {
         receivePackage.setByteSubContent(byteSubContent);
 
 
-        LogUtils.log1("TCP接收：Type:" + packageMainType + ";  SubType:" + Integer.toHexString(receivePackage.getPackageSubType()) + ";  Content:" + UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(), 0));
+        LogUtils.log1("TCP接收：Type:" + packageMainType + ";  SubType:0x" + Integer.toHexString(receivePackage.getPackageSubType()) + ";  子协议:" + UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(), 0));
         //实时解析协议
         realTimeResponse(receivePackage);
     }

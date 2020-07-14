@@ -8,13 +8,18 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.doit.net.Model.CacheManager;
+import com.doit.net.Model.VersionManage;
 import com.doit.net.Protocol.ProtocolManager;
+import com.doit.net.Utils.LogUtils;
 import com.doit.net.base.BaseActivity;
 import com.doit.net.Event.EventAdapter;
 import com.doit.net.Protocol.LTE_PT_SYSTEM;
 import com.doit.net.Utils.Cellular;
 import com.doit.net.Utils.ToastUtils;
 import com.doit.net.ucsi.R;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.doit.net.Event.EventAdapter.GET_NAME_LIST;
 import static com.doit.net.Event.EventAdapter.UPDATE_TMEPRATURE;
@@ -97,7 +102,15 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
             @Override
             public void onClick(View v) {
                 ProtocolManager.setActiveMode("0");
-                CacheManager.setLocalWhiteList("off");
+
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        CacheManager.setLocalWhiteList("off");
+
+                    }
+                },1000);
+
             }
         });
 
@@ -105,7 +118,14 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
             @Override
             public void onClick(View v) {
                 ProtocolManager.setActiveMode("1");
-                CacheManager.setLocalWhiteList("off");
+
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        CacheManager.setLocalWhiteList("off");
+
+                    }
+                },1000);
             }
         });
 
@@ -113,7 +133,13 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
             @Override
             public void onClick(View v) {
                 ProtocolManager.setActiveMode("2");
-                CacheManager.setLocalWhiteList("on");
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        CacheManager.setLocalWhiteList("on");
+
+                    }
+                },1000);
             }
         });
 

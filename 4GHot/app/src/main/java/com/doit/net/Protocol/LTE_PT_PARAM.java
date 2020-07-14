@@ -3,12 +3,12 @@ package com.doit.net.Protocol;
 
 import android.text.TextUtils;
 
+import com.doit.net.Sockets.ServerSocketUtils;
 import com.doit.net.bean.BatteryBean;
 import com.doit.net.bean.DeviceState;
 import com.doit.net.bean.LteCellConfig;
 import com.doit.net.bean.Namelist;
 import com.doit.net.bean.UeidBean;
-import com.doit.net.Data.LTESendManager;
 import com.doit.net.bean.BlackNameBean;
 import com.doit.net.bean.LteChannelCfg;
 import com.doit.net.bean.LteEquipConfig;
@@ -80,7 +80,7 @@ public class LTE_PT_PARAM {
     public static final byte PARAM_CHANGE_BAND = 0x36;    //更换band
     public static final byte PARAM_CHANGE_BAND_ACK = 0x37;    //更换band
     public static final byte PARAM_SET_FAN = 0x38;    //设置风扇
-    public static final byte PARAM_SET_FAN_ACK = 0x39;    //设置风扇
+    public static final byte PARAM_SET_FAN_ACK = 0x39;    //设置风扇回复
     public static final byte PARAM_SET_ACTIVE_MODE = 0x3a;    //设置工作模式
     public static final byte PARAM_SET_ACTIVE_MODE_ACK = 0x3b;    //设置工作模式回复
     public static final byte PARAM_SET_LOC_IMSI = 0x3c;    //设置定位
@@ -90,8 +90,9 @@ public class LTE_PT_PARAM {
 
     private static long lastRptSyncErrorTime = 0; //记录每次上报同步状态异常的时间
 
+
     //查询参数
-    public static boolean queryCommonParam(byte queryType) {
+    public static void queryCommonParam(byte queryType) {
 
         LTESendPackage sendPackage = new LTESendPackage();
         //设置Sequence ID
@@ -113,8 +114,9 @@ public class LTE_PT_PARAM {
         //获取整体的包
         byte[] tempSendBytes = sendPackage.getPackageContent();
 
-        LogUtils.log1("TCP发送：Type:" + sendPackage.getPackageMainType() + ";  SubType:" + Integer.toHexString(sendPackage.getPackageSubType()) + "" + ";  Content:" + UtilDataFormatChange.bytesToString(sendPackage.getByteSubContent(), 0));
-        return LTESendManager.sendData(tempSendBytes);
+        LogUtils.log1("TCP发送：Type:" + sendPackage.getPackageMainType() + ";  SubType:0x" + Integer.toHexString(sendPackage.getPackageSubType()) + "" + ";  子协议:" + UtilDataFormatChange.bytesToString(sendPackage.getByteSubContent(), 0));
+
+        ServerSocketUtils.getInstance().sendData(tempSendBytes);
     }
 
     //解析设备配置查询回复
@@ -138,12 +140,6 @@ public class LTE_PT_PARAM {
             LogUtils.log(splitStr[i]);
             LteChannelCfg lteChannelCfg = praseChannelConfig(splitStr[i]);
 
-            if (TextUtils.isEmpty(CacheManager.b3Fcn.getBand()) && lteChannelCfg.getBand().equals("3")) {
-                CacheManager.b3Fcn.setIdx(lteChannelCfg.getIdx());
-                CacheManager.b3Fcn.setBand("3");
-                CacheManager.b3Fcn.setFcn(lteChannelCfg.getFcn());
-                CacheManager.b3Fcn.setPlmn(lteChannelCfg.getPlmn());
-            }
             CacheManager.addChannel(lteChannelCfg);
         }
 
@@ -208,7 +204,7 @@ public class LTE_PT_PARAM {
 
 
     //通用设置配置
-    public static boolean setCommonParam(byte paramSubType, String paramContent) {
+    public static void setCommonParam(byte paramSubType, String paramContent) {
         LTESendPackage sendPackage = new LTESendPackage();
         //设置Sequence ID
         sendPackage.setPackageSequence(LTEProtocol.getSequenceID());
@@ -229,8 +225,8 @@ public class LTE_PT_PARAM {
 
         //获取整体的包
         byte[] tempSendBytes = sendPackage.getPackageContent();
-        LogUtils.log1("TCP发送：Type:" + sendPackage.getPackageMainType() + ";  SubType:" + Integer.toHexString(sendPackage.getPackageSubType()) + ";  Content:" + UtilDataFormatChange.bytesToString(sendPackage.getByteSubContent(), 0));
-        return LTESendManager.sendData(tempSendBytes);
+        LogUtils.log1("TCP发送：Type:" + sendPackage.getPackageMainType() + ";  SubType:0x" + Integer.toHexString(sendPackage.getPackageSubType()) + ";  子协议:" + UtilDataFormatChange.bytesToString(sendPackage.getByteSubContent(), 0));
+        ServerSocketUtils.getInstance().sendData(tempSendBytes);
     }
 
 
@@ -324,6 +320,9 @@ public class LTE_PT_PARAM {
             return;
         }
 
+
+
+
         File file = new File(filePath);
         if (file.exists() && !file.isDirectory()) {
 
@@ -383,6 +382,8 @@ public class LTE_PT_PARAM {
                     for (Map.Entry<String, UeidBean> entry : ueidMap.entrySet()) {
                         listUeid.add(entry.getValue());
                     }
+
+                    LogUtils.log("ftp采号上传："+listUeid.size());
                     EventAdapter.call(EventAdapter.UEID_RPT, listUeid);
                 }
 
@@ -825,103 +826,5 @@ public class LTE_PT_PARAM {
             }
         }
 
-
-
-
-
-
-
-//        if (locRpt.contains("#")) {  /* 一条上报中含有多个IMSI */
-//            if (CacheManager.currentWorkMode.equals("0")) {
-//                if (CacheManager.getLocState()) {
-//                    String[] splitStr = locRpt.split("#");
-//                    List<UeidBean> listRpt = new ArrayList<>();
-//                    for (int i = 0; i < splitStr.length; i++) {
-//                        String[] split = splitStr[i].split(":");
-//                        if (split.length > 1) {
-//                            SRSP = split[1];
-//                            if (SRSP.equals(""))
-//                                continue;
-//                        } else {
-//                            SRSP = "";
-//                        }
-//
-//                        String tmpImsi = splitStr[i].split(":")[0];
-//                        if (tmpImsi.equals(CacheManager.getCurrentLoction().getImsi()) && !TextUtils.isEmpty(SRSP)) {
-//                            EventAdapter.call(EventAdapter.LOCATION_RPT, SRSP);
-//                            //break;
-//                        }
-//
-//                        if (isImsiExistInSimpleRpt(tmpImsi, listRpt)) {
-//                            continue;
-//                        }
-//
-//                        listRpt.add(new UeidBean(tmpImsi, "", "", "",
-//                                DateUtils.convert2String(new Date(), DateUtils.LOCAL_DATE), "", ""));
-//
-//                        if (!CacheManager.removeExistUeidInRealtimeList(tmpImsi)) {
-//                            UCSIDBManager.saveUeidToDB(tmpImsi, ImsiMsisdnConvert.getMsisdnFromLocal(tmpImsi), "",
-//                                    new Date().getTime(), "", "");
-//                        }
-//                    }
-//
-//                    if (listRpt.size() > 0) {
-//                        EventAdapter.call(EventAdapter.UEID_RPT, listRpt);
-//                    }
-//                }
-//            } else if (CacheManager.currentWorkMode.equals("2")) {
-//                String[] splitStr = locRpt.split("#");
-//                for (int i = 0; i < splitStr.length; i++) {
-//                    String[] split = splitStr[i].split(":");
-//                    if (split.length > 1) {
-//                        SRSP = split[1];
-//                        if (SRSP.equals(""))
-//                            continue;
-//
-//                        if (CacheManager.getLocState()) {
-//                            if (splitStr[i].split(":")[0].equals(CacheManager.getCurrentLoction().getImsi())) {
-//                                EventAdapter.call(EventAdapter.LOCATION_RPT, SRSP);
-//                                //break;
-//                            }
-//                        }
-//                    }
-//
-//
-//                    EventAdapter.call(EventAdapter.SHIELD_RPT, splitStr[i]);
-//                }
-//            }
-//        } else { /* 一条上报中只有一个IMSI */
-//            SRSP = locRpt.split(":")[1];
-//            if (SRSP.equals(""))
-//                return;
-//
-//            if (CacheManager.currentWorkMode.equals("0")) {
-//                if (CacheManager.getLocState()) {
-//                    String imsi = locRpt.split(":")[0];
-//
-//
-//                    if (imsi.equals(CacheManager.getCurrentLoction().getImsi())) {
-//                        EventAdapter.call(EventAdapter.LOCATION_RPT, SRSP);
-//                    }
-//
-//                    if (!CacheManager.removeExistUeidInRealtimeList(imsi)) {
-//                        UCSIDBManager.saveUeidToDB(imsi, ImsiMsisdnConvert.getMsisdnFromLocal(imsi), "",
-//                                new Date().getTime(), "", "");
-//                    }
-//
-//                    EventAdapter.call(EventAdapter.UEID_RPT,
-//                            Arrays.asList(new UeidBean(imsi, "", "", "",
-//                                    DateUtils.convert2String(new Date(), DateUtils.LOCAL_DATE), "", "")));
-//                }
-//            } else if (CacheManager.currentWorkMode.equals("2")) {
-//                if (CacheManager.getLocState()) {
-//                    if (locRpt.split(":")[0].equals(CacheManager.getCurrentLoction().getImsi())) {
-//                        EventAdapter.call(EventAdapter.LOCATION_RPT, SRSP);
-//                    }
-//                }
-//
-//                EventAdapter.call(EventAdapter.SHIELD_RPT, locRpt);
-//            }
-//        }
     }
 }

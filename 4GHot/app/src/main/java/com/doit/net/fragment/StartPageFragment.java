@@ -47,6 +47,7 @@ public class StartPageFragment extends BaseFragment {
                     ivPowerStart.setImageResource(R.drawable.start_button);
 
                     if (CacheManager.isDeviceOk()){
+                        CacheManager.setPressStartButtonFlag(true);
                         turnToDetectPage();
                         ProtocolManager.openAllRf();
                     }else{
