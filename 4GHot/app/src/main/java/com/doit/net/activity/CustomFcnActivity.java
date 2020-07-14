@@ -46,12 +46,14 @@ public class CustomFcnActivity extends BaseActivity {
     private BaseSectionQuickAdapter<SectionBean, BaseViewHolder> adapter;
     private List<SectionBean> dataList = new ArrayList<>();
 
+    private DbManager dbManager;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_custom_fcn);
         ButterKnife.bind(this);
-
+        dbManager = UCSIDBManager.getDbManager();
         initView();
         initData();
     }
@@ -165,7 +167,6 @@ public class CustomFcnActivity extends BaseActivity {
         adapter.notifyDataSetChanged();
 
         try {
-            DbManager dbManager = UCSIDBManager.getDbManager();
             List<DBChannel> dbChannel = dbManager.selector(DBChannel.class)
                     .where("band", "=", band)
                     .findAll();
@@ -203,7 +204,7 @@ public class CustomFcnActivity extends BaseActivity {
         adapter.notifyItemChanged(position);
 
         try {
-            DbManager dbManager = UCSIDBManager.getDbManager();
+
             DBChannel dbChannel = dbManager.selector(DBChannel.class)
                     .where("id", "=", id)
                     .findFirst();
@@ -227,7 +228,7 @@ public class CustomFcnActivity extends BaseActivity {
             WhereBuilder whereBuilder = WhereBuilder.b();
             whereBuilder.and("band", "=", band)
                     .and("fcn","=",fcn);
-            UCSIDBManager.getDbManager().delete(DBChannel.class,whereBuilder);
+            dbManager.delete(DBChannel.class,whereBuilder);
         } catch (DbException e) {
             e.printStackTrace();
             LogUtils.log("删除频点失败："+e.getMessage());
@@ -240,7 +241,6 @@ public class CustomFcnActivity extends BaseActivity {
                     if (sectionBean.t.isDefault() == 1) {
                         dataList.get(i).t.setCheck(1);
                         try {
-                            DbManager dbManager = UCSIDBManager.getDbManager();
                             DBChannel dbChannel = dbManager.selector(DBChannel.class)
                                     .where("id", "=", dataList.get(i).t.getId())
                                     .findFirst();
@@ -301,7 +301,7 @@ public class CustomFcnActivity extends BaseActivity {
         adapter.notifyDataSetChanged();
 
         try {
-            UCSIDBManager.getDbManager().save(dbChannel);
+            dbManager.save(dbChannel);
         } catch (DbException e) {
             e.printStackTrace();
         }
@@ -312,7 +312,6 @@ public class CustomFcnActivity extends BaseActivity {
         for (LteChannelCfg channel : CacheManager.channels) {
             dataList.add(new SectionBean(true, channel.getIdx() + "," + channel.getBand()));
             try {
-                DbManager dbManager = UCSIDBManager.getDbManager();
                 List<DBChannel> channelList = dbManager.selector(DBChannel.class)
                         .where("band", "=", channel.getBand())
                         .findAll();

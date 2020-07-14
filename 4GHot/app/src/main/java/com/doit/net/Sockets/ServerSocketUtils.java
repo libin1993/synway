@@ -131,7 +131,7 @@ public class ServerSocketUtils {
                     //读取服务端发送给客户端的数据
                     receiveCount = inputStream.read(bytesReceived);
                     if (receiveCount <= -1) {
-                        LogUtils.log("TCP读取错误");
+                        LogUtils.log("socket被关闭，读取长度："+receiveCount);
                         onSocketChangedListener.onDisconnect();
                         closeSocket(remoteIP + ":" + remotePort);  //关闭socket
                         DataCenterManager.clearDataBuffer(remoteIP);
@@ -144,7 +144,7 @@ public class ServerSocketUtils {
                     //收到数据
                 }
             } catch (IOException ex) {
-                LogUtils.log("TCP异常:" + ex.toString());
+                LogUtils.log("socket异常:" + ex.toString());
                 onSocketChangedListener.onDisconnect();
                 closeSocket(remoteIP + ":" + remotePort);  //关闭socket
                 DataCenterManager.clearDataBuffer(remoteIP);

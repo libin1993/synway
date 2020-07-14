@@ -981,7 +981,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                 mHandler.sendEmptyMessage(HEARTBEAT_RPT);
             }
 
-
         } else if (EventAdapter.INIT_SUCCESS.equals(key)) {
             if (!CacheManager.hasSetDefaultParam && CacheManager.getChannels().size() > 0) {
 
@@ -993,7 +992,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
                 if (!CacheManager.getLocState()) {     //已开始定位，不设置默认频点
                     LogUtils.log("当前没有定位，停止定位");
-                    ProtocolManager.setLocImsi("0000");
                     ProtocolManager.setDefaultArfcnsAndPwr();
                 }
 
@@ -1033,6 +1031,10 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
         }
 
 
+        if (!CacheManager.getLocState()) {     //已设置定位模式，不能设置别的模式
+            ProtocolManager.setActiveMode(workMode);
+        }
+
         LogUtils.log("设置默认工作模式：" + workMode);
         CacheManager.currentWorkMode = workMode;
         if (VersionManage.isArmyVer()) {
@@ -1041,22 +1043,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             CacheManager.setLocalWhiteList("off");
         }
 
-
-        if (!CacheManager.getLocState()) {     //已设置定位模式，不能设置别的模式
-            ProtocolManager.setActiveMode(workMode);
-        }
-
-
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (VersionManage.isArmyVer()) {
-                    CacheManager.setLocalWhiteList("on");
-                } else {
-                    CacheManager.setLocalWhiteList("off");
-                }
-            }
-        }, 2000);
 
     }
 

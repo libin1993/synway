@@ -33,7 +33,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Zxc on 2018/10/18.
@@ -324,7 +326,8 @@ public class LTE_PT_PARAM {
 
         File file = new File(filePath);
         if (file.exists() && !file.isDirectory()) {
-            List<UeidBean> listUeid = new ArrayList<>();
+
+            Map<String,UeidBean>  ueidMap = new HashMap<>();
             String[] splitUeid;
 
             try {
@@ -354,11 +357,12 @@ public class LTE_PT_PARAM {
                     longitude = splitUeid[4];
                     latitude = splitUeid[5];
 
-                    if (isImsiExistInSimpleRpt(tmpImsi, listUeid)) {
-                        continue;
-                    }
+//                    if (isImsiExistInSimpleRpt(tmpImsi, listUeid)) {
+//                        continue;
+//                    }
 
-                    listUeid.add(new UeidBean(tmpImsi, "未获取", tmpTmsi, band, tmpRptTime, longitude, latitude));
+                    ueidMap.put(tmpImsi,new UeidBean(tmpImsi, "", tmpTmsi, band, tmpRptTime, longitude, latitude));
+//                    listUeid.add(new UeidBean(tmpImsi, "", tmpTmsi, band, tmpRptTime, longitude, latitude));
 //                        UtilBaseLog.printLog(splitUeid[0]+"  "+splitUeid[1]+"  "+splitUeid[2]+"  "+splitUeid[3]+"  "+splitUeid[4]+"  "+
 //                                splitUeid[5]);
 
@@ -374,7 +378,14 @@ public class LTE_PT_PARAM {
                 bufferedReader.close();
                 file.delete();   //处理完删除
 
-                EventAdapter.call(EventAdapter.UEID_RPT, listUeid);
+                if (ueidMap.size() > 0){
+                    List<UeidBean> listUeid = new ArrayList<>();
+                    for (Map.Entry<String, UeidBean> entry : ueidMap.entrySet()) {
+                        listUeid.add(entry.getValue());
+                    }
+                    EventAdapter.call(EventAdapter.UEID_RPT, listUeid);
+                }
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -750,7 +761,6 @@ public class LTE_PT_PARAM {
         if (CacheManager.currentWorkMode.equals("0") && !CacheManager.getLocState()) {
 
             LogUtils.log("忽略此次srsp上报:" + locRpt);
-            //CacheManager.stopCurrentLoc();
             return;
         }
 
@@ -759,97 +769,159 @@ public class LTE_PT_PARAM {
             return;
 
         String SRSP = "";
-        if (locRpt.contains("#")) {  /* 一条上报中含有多个IMSI */
-            if (CacheManager.currentWorkMode.equals("0")) {
-                if (CacheManager.getLocState()) {
-                    String[] splitStr = locRpt.split("#");
-                    List<UeidBean> listRpt = new ArrayList<>();
-                    for (int i = 0; i < splitStr.length; i++) {
-                        String[] split = splitStr[i].split(":");
-                        if (split.length > 1) {
-                            SRSP = split[1];
-                            if (SRSP.equals(""))
-                                continue;
-                        } else {
-                            SRSP = "";
-                        }
 
-                        String tmpImsi = splitStr[i].split(":")[0];
-                        if (tmpImsi.equals(CacheManager.getCurrentLoction().getImsi()) && !TextUtils.isEmpty(SRSP)) {
-                            EventAdapter.call(EventAdapter.LOCATION_RPT, SRSP);
-                            //break;
-                        }
-
-                        if (isImsiExistInSimpleRpt(tmpImsi, listRpt)) {
-                            continue;
-                        }
-
-                        listRpt.add(new UeidBean(tmpImsi, "", "", "",
-                                DateUtils.convert2String(new Date(), DateUtils.LOCAL_DATE), "", ""));
-
-                        if (!CacheManager.removeExistUeidInRealtimeList(tmpImsi)) {
-                            UCSIDBManager.saveUeidToDB(tmpImsi, ImsiMsisdnConvert.getMsisdnFromLocal(tmpImsi), "",
-                                    new Date().getTime(), "", "");
-                        }
-                    }
-
-                    if (listRpt.size() > 0) {
-                        EventAdapter.call(EventAdapter.UEID_RPT, listRpt);
-                    }
+        if (CacheManager.currentWorkMode.equals("0")) {
+            String[] splitStr = locRpt.split("#");
+            Map<String,UeidBean>  ueidMap = new HashMap<>();
+            for (int i = 0; i < splitStr.length; i++) {
+                String[] split = splitStr[i].split(":");
+                if (split.length > 1) {
+                    SRSP = split[1];
+                } else {
+                    SRSP = "";
                 }
-            } else if (CacheManager.currentWorkMode.equals("2")) {
-                String[] splitStr = locRpt.split("#");
-                for (int i = 0; i < splitStr.length; i++) {
-                    String[] split = splitStr[i].split(":");
-                    if (split.length > 1) {
-                        SRSP = split[1];
-                        if (SRSP.equals(""))
-                            continue;
 
-                        if (CacheManager.getLocState()) {
-                            if (splitStr[i].split(":")[0].equals(CacheManager.getCurrentLoction().getImsi())) {
-                                EventAdapter.call(EventAdapter.LOCATION_RPT, SRSP);
-                                //break;
-                            }
-                        }
-                    }
+                String tmpImsi = split[0];
+                if (tmpImsi.equals(CacheManager.getCurrentLoction().getImsi()) && !TextUtils.isEmpty(SRSP)) {
+                    EventAdapter.call(EventAdapter.LOCATION_RPT, SRSP);
 
+                }
 
-                    EventAdapter.call(EventAdapter.SHIELD_RPT, splitStr[i]);
+                ueidMap.put(tmpImsi,new UeidBean(tmpImsi, "", "", "",
+                        DateUtils.convert2String(new Date(), DateUtils.LOCAL_DATE), "", ""));
+
+                if (!CacheManager.removeExistUeidInRealtimeList(tmpImsi)) {
+                    UCSIDBManager.saveUeidToDB(tmpImsi, ImsiMsisdnConvert.getMsisdnFromLocal(tmpImsi), "",
+                            new Date().getTime(), "", "");
                 }
             }
-        } else { /* 一条上报中只有一个IMSI */
-            SRSP = locRpt.split(":")[1];
-            if (SRSP.equals(""))
-                return;
 
-            if (CacheManager.currentWorkMode.equals("0")) {
-                if (CacheManager.getLocState()) {
-                    String imsi = locRpt.split(":")[0];
-
-
-                    if (imsi.equals(CacheManager.getCurrentLoction().getImsi())) {
-                        EventAdapter.call(EventAdapter.LOCATION_RPT, SRSP);
-                    }
-
-                    if (!CacheManager.removeExistUeidInRealtimeList(imsi)) {
-                        UCSIDBManager.saveUeidToDB(imsi, ImsiMsisdnConvert.getMsisdnFromLocal(imsi), "",
-                                new Date().getTime(), "", "");
-                    }
-
-                    EventAdapter.call(EventAdapter.UEID_RPT,
-                            Arrays.asList(new UeidBean(imsi, "", "", "",
-                                    DateUtils.convert2String(new Date(), DateUtils.LOCAL_DATE), "", "")));
+            if (ueidMap.size() > 0){
+                List<UeidBean> listUeid = new ArrayList<>();
+                for (Map.Entry<String, UeidBean> entry : ueidMap.entrySet()) {
+                    listUeid.add(entry.getValue());
                 }
-            } else if (CacheManager.currentWorkMode.equals("2")) {
-                if (CacheManager.getLocState()) {
-                    if (locRpt.split(":")[0].equals(CacheManager.getCurrentLoction().getImsi())) {
-                        EventAdapter.call(EventAdapter.LOCATION_RPT, SRSP);
+                EventAdapter.call(EventAdapter.UEID_RPT, listUeid);
+            }
+
+        } else if (CacheManager.currentWorkMode.equals("2")) {
+            String[] splitStr = locRpt.split("#");
+            for (int i = 0; i < splitStr.length; i++) {
+                String[] split = splitStr[i].split(":");
+                if (split.length > 1) {
+                    SRSP = split[1];
+                    if (SRSP.equals(""))
+                        continue;
+
+                    if (CacheManager.getLocState()) {
+                        if (splitStr[i].split(":")[0].equals(CacheManager.getCurrentLoction().getImsi())) {
+                            EventAdapter.call(EventAdapter.LOCATION_RPT, SRSP);
+                        }
                     }
                 }
 
-                EventAdapter.call(EventAdapter.SHIELD_RPT, locRpt);
+
+                EventAdapter.call(EventAdapter.SHIELD_RPT, splitStr[i]);
             }
         }
+
+
+
+
+
+
+
+//        if (locRpt.contains("#")) {  /* 一条上报中含有多个IMSI */
+//            if (CacheManager.currentWorkMode.equals("0")) {
+//                if (CacheManager.getLocState()) {
+//                    String[] splitStr = locRpt.split("#");
+//                    List<UeidBean> listRpt = new ArrayList<>();
+//                    for (int i = 0; i < splitStr.length; i++) {
+//                        String[] split = splitStr[i].split(":");
+//                        if (split.length > 1) {
+//                            SRSP = split[1];
+//                            if (SRSP.equals(""))
+//                                continue;
+//                        } else {
+//                            SRSP = "";
+//                        }
+//
+//                        String tmpImsi = splitStr[i].split(":")[0];
+//                        if (tmpImsi.equals(CacheManager.getCurrentLoction().getImsi()) && !TextUtils.isEmpty(SRSP)) {
+//                            EventAdapter.call(EventAdapter.LOCATION_RPT, SRSP);
+//                            //break;
+//                        }
+//
+//                        if (isImsiExistInSimpleRpt(tmpImsi, listRpt)) {
+//                            continue;
+//                        }
+//
+//                        listRpt.add(new UeidBean(tmpImsi, "", "", "",
+//                                DateUtils.convert2String(new Date(), DateUtils.LOCAL_DATE), "", ""));
+//
+//                        if (!CacheManager.removeExistUeidInRealtimeList(tmpImsi)) {
+//                            UCSIDBManager.saveUeidToDB(tmpImsi, ImsiMsisdnConvert.getMsisdnFromLocal(tmpImsi), "",
+//                                    new Date().getTime(), "", "");
+//                        }
+//                    }
+//
+//                    if (listRpt.size() > 0) {
+//                        EventAdapter.call(EventAdapter.UEID_RPT, listRpt);
+//                    }
+//                }
+//            } else if (CacheManager.currentWorkMode.equals("2")) {
+//                String[] splitStr = locRpt.split("#");
+//                for (int i = 0; i < splitStr.length; i++) {
+//                    String[] split = splitStr[i].split(":");
+//                    if (split.length > 1) {
+//                        SRSP = split[1];
+//                        if (SRSP.equals(""))
+//                            continue;
+//
+//                        if (CacheManager.getLocState()) {
+//                            if (splitStr[i].split(":")[0].equals(CacheManager.getCurrentLoction().getImsi())) {
+//                                EventAdapter.call(EventAdapter.LOCATION_RPT, SRSP);
+//                                //break;
+//                            }
+//                        }
+//                    }
+//
+//
+//                    EventAdapter.call(EventAdapter.SHIELD_RPT, splitStr[i]);
+//                }
+//            }
+//        } else { /* 一条上报中只有一个IMSI */
+//            SRSP = locRpt.split(":")[1];
+//            if (SRSP.equals(""))
+//                return;
+//
+//            if (CacheManager.currentWorkMode.equals("0")) {
+//                if (CacheManager.getLocState()) {
+//                    String imsi = locRpt.split(":")[0];
+//
+//
+//                    if (imsi.equals(CacheManager.getCurrentLoction().getImsi())) {
+//                        EventAdapter.call(EventAdapter.LOCATION_RPT, SRSP);
+//                    }
+//
+//                    if (!CacheManager.removeExistUeidInRealtimeList(imsi)) {
+//                        UCSIDBManager.saveUeidToDB(imsi, ImsiMsisdnConvert.getMsisdnFromLocal(imsi), "",
+//                                new Date().getTime(), "", "");
+//                    }
+//
+//                    EventAdapter.call(EventAdapter.UEID_RPT,
+//                            Arrays.asList(new UeidBean(imsi, "", "", "",
+//                                    DateUtils.convert2String(new Date(), DateUtils.LOCAL_DATE), "", "")));
+//                }
+//            } else if (CacheManager.currentWorkMode.equals("2")) {
+//                if (CacheManager.getLocState()) {
+//                    if (locRpt.split(":")[0].equals(CacheManager.getCurrentLoction().getImsi())) {
+//                        EventAdapter.call(EventAdapter.LOCATION_RPT, SRSP);
+//                    }
+//                }
+//
+//                EventAdapter.call(EventAdapter.SHIELD_RPT, locRpt);
+//            }
+//        }
     }
 }
