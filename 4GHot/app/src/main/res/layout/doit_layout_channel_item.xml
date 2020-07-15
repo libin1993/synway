@@ -5,38 +5,20 @@
     android:orientation="vertical"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    android:paddingBottom="3dp"
-    android:paddingTop="5dp"
     android:paddingLeft="10dp"
     android:scrollbars="vertical"
     android:id="@+id/device_layout"
     android:paddingRight="10dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_height="30dp"
-            android:layout_width="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_weight="2.5"
-            android:id="@+id/title_text"
-            android:text="通道：" />
-
-        <com.suke.widget.SwitchButton
-            android:id="@+id/id_switch_rf"
-            android:layout_width="70dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="20dp"
-            android:gravity="right"
-            android:visibility="gone"
-            app:sb_checked="false"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
+    <TextView
+        android:id="@+id/title_text"
+        android:layout_height="40dp"
+        android:layout_width="wrap_content"
+        android:text="通道："
+        android:textColor="@android:color/white"
+        android:gravity="center_vertical"
+        android:textSize="14sp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -52,7 +34,8 @@
                     android:layout_marginTop="7dp"
                     android:gravity="right"
                     android:textColor="@color/white"
-                    android:text="PLMN：" />
+                    android:text="PLMN："
+                    android:textSize="14sp"/>
 
                 <EditText
                     android:id="@+id/editText_plmn"
@@ -68,7 +51,8 @@
                     android:layout_marginTop="7dp"
                     android:gravity="right"
                     android:textColor="@color/white"
-                    android:text="FCN：" />
+                    android:text="FCN："
+                    android:textSize="14sp"/>
 
                 <EditText
                     android:id="@+id/editText_fcn"
@@ -85,7 +69,8 @@
                     android:layout_marginTop="7dp"
                     android:gravity="right"
                     android:textColor="@color/white"
-                    android:text="下行功率：" />
+                    android:text="下行功率："
+                    android:textSize="14sp"/>
                 <EditText
                     android:id="@+id/editText_pa"
                     style="@style/dialog_edit"
@@ -100,7 +85,8 @@
                     android:layout_marginTop="7dp"
                     android:gravity="right"
                     android:textColor="@color/white"
-                    android:text="上行增益：" />
+                    android:text="上行增益："
+                    android:textSize="14sp"/>
                 <EditText
                     android:id="@+id/editText_ga"
                     style="@style/dialog_edit"
@@ -115,7 +101,8 @@
                     android:layout_marginTop="7dp"
                     android:gravity="right"
                     android:textColor="@color/white"
-                    android:text="最小接收电平：" />
+                    android:text="最小接收电平："
+                    android:textSize="14sp"/>
                 <EditText
                     android:id="@+id/etRLM"
                     style="@style/dialog_edit"
@@ -130,7 +117,8 @@
                     android:layout_marginTop="7dp"
                     android:gravity="right"
                     android:textColor="@color/white"
-                    android:text="开机搜网列表：" />
+                    android:text="开机搜网列表："
+                    android:textSize="14sp"/>
                 <EditText
                     android:id="@+id/etAltFcn"
                     style="@style/dialog_edit"

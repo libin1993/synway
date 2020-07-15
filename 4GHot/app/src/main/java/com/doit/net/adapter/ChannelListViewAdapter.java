@@ -38,8 +38,7 @@ public class ChannelListViewAdapter extends BaseAdapter {
 
     static class ViewHolder{
         TextView title;
-        SwitchButton rfButton;
-//        BootstrapEditText reLevelMin;
+
         EditText fcn;
         EditText plmn;
         EditText pa;
@@ -56,8 +55,7 @@ public class ChannelListViewAdapter extends BaseAdapter {
             holder = new ViewHolder();
             convertView = LayoutInflater.from(mContext).inflate(R.layout.doit_layout_channel_item, null);
             holder.title = convertView.findViewById(R.id.title_text);
-            holder.rfButton = convertView.findViewById(R.id.id_switch_rf);
-//            holder.reLevelMin = (BootstrapEditText)convertView.findViewById(R.id.editText_rxlevmin);
+
             holder.fcn = convertView.findViewById(R.id.editText_fcn);
             holder.plmn = convertView.findViewById(R.id.editText_plmn);
             holder.pa = convertView.findViewById(R.id.editText_pa);
@@ -76,36 +74,19 @@ public class ChannelListViewAdapter extends BaseAdapter {
 
 
     public void fillValues(int position, final ViewHolder holder) {
-         LteChannelCfg cfg = CacheManager.channels.get(position);
+        LteChannelCfg cfg = CacheManager.channels.get(position);
         if(cfg == null){
             return;
         }
         holder.title.setText("通道："+cfg.getIdx()+"    "+ "频段:" + cfg.getBand());
-        holder.rfButton.setChecked(cfg.isRfOpen());
-//        holder.reLevelMin.setText(cfg.getRxlevmin()==null?"":""+cfg.getRxlevmin().intValue());
+
         holder.fcn.setText(cfg.getFcn()==null?"":""+cfg.getFcn());
         holder.plmn.setText(cfg.getPlmn());
         holder.ga.setText(cfg.getGa()==null?"":""+cfg.getGa());
         holder.pa.setText(cfg.getPa()==null?"":""+cfg.getPa());
         holder.rlm.setText(cfg.getRlm()==null?"":""+cfg.getRlm());
         holder.etAltFcn.setText(cfg.getAltFcn()==null?"":""+cfg.getAltFcn());
-        holder.rfButton.setOnClickListener(new SwitchButton.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                if (CacheManager.checkDevice(MyApplication.mContext)){
-                    return;
-                }
 
-                SwitchButton button = (SwitchButton)v;
-                if(button.isChecked()){
-                    ProtocolManager.openRf(cfg.getIdx());
-                    button.setChecked(false);
-                }else{
-                    ProtocolManager.closeRf(cfg.getIdx());
-                    button.setChecked(true);
-                }
-            }
-        });
 
         holder.saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,20 +116,7 @@ public class ChannelListViewAdapter extends BaseAdapter {
                 ToastUtils.showMessage(R.string.tip_15);
                 EventAdapter.call(EventAdapter.SHOW_PROGRESS);
 
-
-
-
                 ProtocolManager.setChannelConfig(cfg.getIdx(), fcn, plmn, pa, ga,rlm,"",alt_fcn);
-            }
-        });
-        holder.rfButton.setOnCheckedChangeListener(new SwitchButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(SwitchButton view, boolean isChecked) {
-//                if(isChecked){
-//                    ProtocolManager.openRf(cfg.getIdx());
-//                }else{
-//                    ProtocolManager.closeRf(cfg.getIdx());
-//                }
             }
         });
     }
@@ -168,5 +136,6 @@ public class ChannelListViewAdapter extends BaseAdapter {
     public long getItemId(int position) {
         return position;
     }
+
 
 }

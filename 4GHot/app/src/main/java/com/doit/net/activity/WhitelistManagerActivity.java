@@ -338,7 +338,7 @@ public class WhitelistManagerActivity extends BaseActivity implements EventAdapt
             RecyclerView rvFile = dialogView.findViewById(R.id.rv_file);
             Button btnCancel = dialogView.findViewById(R.id.btn_cancel_import);
             Button btnConfirm = dialogView.findViewById(R.id.btn_confirm_import);
-            TextView tvTitle = dialogView.findViewById(R.id.tv_name_list);
+            TextView tvTitle = dialogView.findViewById(R.id.tv_import_whitelist);
             tvTitle.setText("请选择白名单文件");
 
 

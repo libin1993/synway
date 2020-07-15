@@ -57,9 +57,9 @@ public class ChannelsDialog extends Dialog {
         LayoutInflater inflater= LayoutInflater.from(getContext());
         mView = inflater.inflate(R.layout.doit_layout_channels_dialog, null);
 
-        channelListView = mView.findViewById(R.id.listview);
-        channelListViewAdapter = new ChannelListViewAdapter(getContext());
-        channelListView.setAdapter(channelListViewAdapter);
+//        channelListView = mView.findViewById(R.id.listview);
+//        channelListViewAdapter = new ChannelListViewAdapter(getContext());
+//        channelListView.setAdapter(channelListViewAdapter);
     }
 
     @Event(value = R.id.button_cancel)
@@ -67,42 +67,6 @@ public class ChannelsDialog extends Dialog {
         dismiss();
     }
 
-    //@Event(value = R.id.button_save)
-    private void saveClick(View v){
-        try {
-            ListAdapter listAdapter = channelListView.getAdapter();
-            for (int i = 0; i < listAdapter.getCount(); i++) {
-                LteChannelCfg cfg = CacheManager.channels.get(i);
-//                LinearLayout layout = (LinearLayout)listAdapter.getView(i,null,null);
-//                BootstrapEditText tv_rxlevmin = (BootstrapEditText)layout.findViewById(R.id.editText_rxlevmin);
-//                BootstrapEditText tv_fcn = (BootstrapEditText)layout.findViewById(R.id.editText_fcn);
-//                BootstrapEditText tv_plmn = (BootstrapEditText)layout.findViewById(R.id.editText_plmn);
-//                BootstrapEditText tv_pa = (BootstrapEditText)layout.findViewById(R.id.editText_pa);
-//                BootstrapEditText tv_ga = (BootstrapEditText)layout.findViewById(R.id.editText_ga);
-//                int fcn = StringUtils.toInt(tv_fcn.getText().toString());
-//                int rxlevmin = StringUtils.toInt(tv_rxlevmin.getText().toString());
-//                String plmn = tv_plmn.getText().toString();
-//                int pa = StringUtils.toInt(tv_pa.getText().toString());
-//                int ga = StringUtils.toInt(tv_ga.getText().toString());
-//                tv_plmn.setText("22222");
-
-                //G4MsgChannelCfg tmpCfg = (G4MsgChannelCfg)tmpObj;
-                //ProtocolManager.setChannelConfig(cfg.getIdx(),null,tmpCfg.getPlmn(),tmpCfg.getPa(),tmpCfg.getGa(),null,null);
-            }
-
-            ToastUtils.showMessage(R.string.tip_15);
-//            dismiss();
-        } catch (NumberFormatException e) {
-            new MySweetAlertDialog(getContext(), MySweetAlertDialog.ERROR_TYPE)
-                    .setTitleText(getContext().getString(R.string.tip_16))
-                    .show();
-        } catch (Exception e){
-            log.error("set channels error",e);
-//            new SweetAlertDialog(getContext(), SweetAlertDialog.ERROR_TYPE)
-//                    .setTitleText(e.getMessage())
-//                    .show();
-        }
-    }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {

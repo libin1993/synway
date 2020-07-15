@@ -7,6 +7,7 @@ import com.doit.net.Model.DBChannel;
 import com.doit.net.Model.UCSIDBManager;
 import com.doit.net.Model.VersionManage;
 import com.doit.net.Utils.NetWorkUtils;
+import com.doit.net.Utils.UtilOperator;
 import com.doit.net.application.MyApplication;
 import com.doit.net.bean.FtpConfig;
 import com.doit.net.bean.LteChannelCfg;
@@ -394,6 +395,33 @@ public class ProtocolManager {
         LogUtils.log("设置ftp:"+configContent);
 
         LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_FTP_CONFIG, configContent);
+    }
+
+    /**
+     * 更换fcn
+     */
+    public static void exchangeFcn(String imsi){
+
+        try {
+            DbManager dbManager = UCSIDBManager.getDbManager();
+            DBChannel dbChannel = dbManager.selector(DBChannel.class)
+                    .where("band", "=", "3")
+                    .and("is_check","=","1")
+                    .findFirst();
+            if (dbChannel !=null){
+                if ("CTJ".equals(UtilOperator.getOperatorName(imsi))){
+                    ProtocolManager.setChannelConfig(dbChannel.getIdx(), "1300,1506,1650", "46000", "", "", "", "", "");
+                }else {
+                    ProtocolManager.setChannelConfig(dbChannel.getIdx(), dbChannel.getFcn(),
+                            "46001,46011", "", "", "", "", "");
+                }
+            }
+
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     /**

@@ -1,10 +1,13 @@
 package com.doit.net.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.doit.net.Model.CacheManager;
@@ -154,8 +157,19 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
         test8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ProtocolManager.setNameList("off", "46000,2,6#46002,2,6", "",
-                        "", "", "block","","");
+                ProtocolManager.setActiveMode("2");
+
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        ProtocolManager.setNameList("on", "46000,2,49#46002,49,6#46007,2,49#46001,2,120", "",
+                                "", "", "redirect","","");
+
+                    }
+                },1000);
+
+
+
 
             }
         });

@@ -63,7 +63,7 @@ public class AddToLocationListener implements View.OnClickListener
                 }else{
                     EventAdapter.call(EventAdapter.SHOW_PROGRESS,8000);  //防止快速频繁更换定位目标
 
-                    exchangeFcn();
+                    ProtocolManager.exchangeFcn(imsi);
 
                     CacheManager.updateLoc(imsi);
                     CacheManager.changeLocTarget(imsi);
@@ -71,7 +71,7 @@ public class AddToLocationListener implements View.OnClickListener
                 }
             }else{
                 EventAdapter.call(EventAdapter.SHOW_PROGRESS,5000);  //防止快速频繁更换定位目标
-                exchangeFcn();
+                ProtocolManager.exchangeFcn(imsi);
 
                 CacheManager.updateLoc(imsi);
                 CacheManager.startLoc(imsi);
@@ -89,32 +89,7 @@ public class AddToLocationListener implements View.OnClickListener
 
     }
 
-    /**
-     * 更换fcn
-     */
-    private void exchangeFcn(){
 
-        try {
-            DbManager dbManager = UCSIDBManager.getDbManager();
-            DBChannel dbChannel = dbManager.selector(DBChannel.class)
-                    .where("band", "=", "3")
-                    .and("is_check","=","1")
-                    .findFirst();
-            if (dbChannel !=null){
-                if ("CTJ".equals(UtilOperator.getOperatorName(imsi))){
-                    ProtocolManager.setChannelConfig(dbChannel.getIdx(), "1300,1506,1650", "46000", "", "", "", "", "");
-                }else {
-                    ProtocolManager.setChannelConfig(dbChannel.getIdx(), dbChannel.getFcn(),
-                            "46001,46011", "", "", "", "", "");
-                }
-            }
-
-        } catch (DbException e) {
-            e.printStackTrace();
-        }
-
-
-    }
 
     private void TurnToLocInterface() {
         EventAdapter.call(EventAdapter.CHANGE_TAB, 1);

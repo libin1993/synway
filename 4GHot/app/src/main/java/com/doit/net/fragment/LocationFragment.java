@@ -194,7 +194,7 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
     void startLoc() {
         if (!CacheManager.getLocState()) {
             startSpeechBroadcastLoop();
-
+            ProtocolManager.exchangeFcn(CacheManager.getCurrentLoction().getImsi());
             CacheManager.startLoc(CacheManager.getCurrentLoction().getImsi());
             textContent = "正在搜寻："+CacheManager.currentLoction.getImsi();
             refreshPage();
