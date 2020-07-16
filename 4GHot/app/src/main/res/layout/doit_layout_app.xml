@@ -355,7 +355,7 @@
             app:isShowRightText="true"
             app:rightStyle="iconHide"
             app:leftText="测试按钮"
-            app:rightText="just4test"
+            app:rightText="测试"
             android:visibility="gone"
             app:rightTextColor="@color/colorPrimary" />
 

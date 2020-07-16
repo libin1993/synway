@@ -487,6 +487,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
         //程序退出停止掉定位
         if (CacheManager.getLocState()) {
             CacheManager.stopCurrentLoc();
+            CacheManager.resetState();
         }
 
         //BlackBoxManger.uploadCurrentBlxFile(); //会卡顿一段时间，体验很差
@@ -562,9 +563,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     }
 
     private NetworkChangeReceiver networkChangeReceiver;
-
-
-
 
 
     private void turnToUeidPage() {
@@ -799,7 +797,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
         if (CacheManager.isReportBattery) {
             ivBatteryLevel.setVisibility(View.GONE);
             return;
-        }else {
+        } else {
             ivBatteryLevel.setVisibility(View.VISIBLE);
         }
 
@@ -924,7 +922,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                 heartbeatCount = true;
             }
 
-            if (!CacheManager.hasPressStartButton()){
+            if (!CacheManager.hasPressStartButton()) {
                 mHandler.sendEmptyMessage(HEARTBEAT_RPT);
             }
 
@@ -942,7 +940,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
 
                 ProtocolManager.setDefaultArfcnsAndPwr();
-
 
 
                 CacheManager.deviceState.setDeviceState(DeviceState.NORMAL);
@@ -984,12 +981,12 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             @Override
             public void run() {
                 if (!CacheManager.getLocState()) {     //已设置定位模式，不能设置别的模式
-                    LogUtils.log("设置默认工作模式：" +   CacheManager.currentWorkMode);
-                    ProtocolManager.setActiveMode(  CacheManager.currentWorkMode);
+                    LogUtils.log("设置默认工作模式：" + CacheManager.currentWorkMode);
+                    ProtocolManager.setActiveMode(CacheManager.currentWorkMode);
                 }
 
             }
-        },1000);
+        }, 1000);
 
         new Timer().schedule(new TimerTask() {
             @Override
@@ -1001,7 +998,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                 }
 
             }
-        },2000);
+        }, 2000);
 
     }
 
@@ -1107,7 +1104,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                         break;
                     }
                 }
-                if (rfState && !CacheManager.hasPressStartButton()){
+                if (rfState && !CacheManager.hasPressStartButton()) {
                     CacheManager.setPressStartButtonFlag(true);
                     turnToUeidPage();
                 }

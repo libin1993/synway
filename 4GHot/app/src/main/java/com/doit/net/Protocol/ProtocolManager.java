@@ -44,11 +44,9 @@ public class ProtocolManager {
         String namelist = "MODE:"+mode;
 
 
-        if (VersionManage.isPoliceVer()){
-            namelist += "@REDIRECT_CONFIG:";
-            if (!"".equals(redirectConfig)) {
-                namelist += redirectConfig;
-            }
+        namelist += "@REDIRECT_CONFIG:";
+        if (!"".equals(redirectConfig)) {
+            namelist += redirectConfig;
         }
 
         namelist += "@NAMELIST_REJECT:";
@@ -76,11 +74,9 @@ public class ProtocolManager {
             namelist += nameListRelease;
         }
 
-        if (VersionManage.isPoliceVer()){
-            namelist += "@NAMELIST_FILE:";
-            if (!"".equals(nameListFile)) {
-                namelist += nameListFile;
-            }
+        namelist += "@NAMELIST_FILE:";
+        if (!"".equals(nameListFile)) {
+            namelist += nameListFile;
         }
 
 
@@ -672,7 +668,7 @@ public class ProtocolManager {
         String band38Fcns = "37900,38098,38200";
         String band39Fcns = "38400,38544,38300";
         String band40Fcns = "38950,39148,39300";
-        String band41Fcns = "37900,38098,38200";
+        String band41Fcns = "40540,40936,41134";
         for (LteChannelCfg channel : CacheManager.channels) {
             switch (channel.getBand()) {
                 case "1":

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.doit.net.activity.JustForTest">
+    tools:context="com.doit.net.activity.TestActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -88,7 +88,26 @@
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_marginStart="5dp"
-            android:text="设置名单" />
+            android:text="指派" />
+
+
+        <EditText
+            android:id="@+id/et_imsi"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:hint="IMSI"
+            android:layout_marginLeft="12dp"
+            android:singleLine="true"
+            android:maxLength="15"
+            android:inputType="number"
+            android:digits="@string/number_rule"/>
+
+        <Button
+            android:id="@+id/btn_loc"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginStart="5dp"
+            android:text="定位" />
 
 
     </LinearLayout>

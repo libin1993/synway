@@ -6,7 +6,7 @@ import com.doit.net.View.ClearHistoryTimeDialog;
 import com.doit.net.activity.CustomFcnActivity;
 import com.doit.net.activity.DeviceParamActivity;
 import com.doit.net.activity.HistoryListActivity;
-import com.doit.net.activity.JustForTest;
+import com.doit.net.activity.TestActivity;
 import com.doit.net.View.LicenceDialog;
 import com.doit.net.activity.SystemSettingActivity;
 import com.doit.net.activity.UserManageActivity;
@@ -238,7 +238,7 @@ public class AppFragment extends BaseFragment implements EventAdapter.EventCall 
         just4Test.setmOnLSettingItemClick(new LSettingItem.OnLSettingItemClick() {
             @Override
             public void click(LSettingItem item) {
-                startActivity(new Intent(getActivity(), JustForTest.class));
+                startActivity(new Intent(getActivity(), TestActivity.class));
             }
         });
 

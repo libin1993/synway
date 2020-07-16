@@ -287,6 +287,8 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
             if (!isChecked) {
                 ProtocolManager.closeAllRf();
                 stopLoc();
+                CacheManager.resetMode();
+
                 EventAdapter.call(EventAdapter.SHOW_PROGRESS, 8000);
                 if (CacheManager.currentLoction != null && !CacheManager.currentLoction.getImsi().equals("")) {
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.STOP_LOCALTE + CacheManager.currentLoction.getImsi());
@@ -457,6 +459,7 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
             if (!rfState){
                 LogUtils.log("射频全关了，停止定位");
                 stopLoc();
+                CacheManager.resetMode();
             }
 
         }

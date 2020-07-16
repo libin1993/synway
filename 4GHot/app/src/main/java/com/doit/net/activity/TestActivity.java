@@ -5,11 +5,14 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.doit.net.Model.BlackBoxManger;
 import com.doit.net.Model.CacheManager;
 import com.doit.net.Model.VersionManage;
 import com.doit.net.Protocol.ProtocolManager;
@@ -27,7 +30,7 @@ import java.util.TimerTask;
 import static com.doit.net.Event.EventAdapter.GET_NAME_LIST;
 import static com.doit.net.Event.EventAdapter.UPDATE_TMEPRATURE;
 
-public class JustForTest extends BaseActivity implements EventAdapter.EventCall {
+public class TestActivity extends BaseActivity implements EventAdapter.EventCall {
     private Button test1;
     private Button test2;
     private Button test3;
@@ -40,6 +43,8 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
     private TextView tvTemperature;
     private TextView tvArfcns;
     private TextView tvNameList;
+    private EditText etImsi;
+    private Button btnLoc;
 
 
     @Override
@@ -50,11 +55,13 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
         test1 = findViewById(R.id.test1);
         test2 = findViewById(R.id.test2);
         test3 = findViewById(R.id.test3);
-        test4= findViewById(R.id.test4);
+        test4 = findViewById(R.id.test4);
         test5 = findViewById(R.id.test5);
         test6 = findViewById(R.id.test6);
         test7 = findViewById(R.id.test7);
         test8 = findViewById(R.id.test8);
+        etImsi = findViewById(R.id.et_imsi);
+        btnLoc = findViewById(R.id.btn_loc);
         btGetDeviceLog = findViewById(R.id.btGetDeviceLog);
         tvTemperature = findViewById(R.id.tvTemperature);
         tvArfcns = findViewById(R.id.tvArfcns);
@@ -62,8 +69,8 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
 
         initView();
 
-        EventAdapter.register(UPDATE_TMEPRATURE,this);
-        EventAdapter.register(EventAdapter.GET_NAME_LIST,this);
+        EventAdapter.register(UPDATE_TMEPRATURE, this);
+        EventAdapter.register(EventAdapter.GET_NAME_LIST, this);
         //EventAdapter.setEvent(EventAdapter.SPEAK,this);
     }
 
@@ -78,7 +85,7 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
         test2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String content = Cellular.file_fcns+"########"+Cellular.final_fcns;
+                String content = Cellular.file_fcns + "########" + Cellular.final_fcns;
                 tvArfcns.setText(content);
 
             }
@@ -112,7 +119,7 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
                         CacheManager.setLocalWhiteList("off");
 
                     }
-                },1000);
+                }, 1000);
 
             }
         });
@@ -125,7 +132,11 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
                 new Timer().schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        CacheManager.setLocalWhiteList("off");
+                        if (VersionManage.isArmyVer()) {
+                            CacheManager.setLocalWhiteList("on");
+                        } else {
+                            CacheManager.setLocalWhiteList("off");
+                        }
 
                     }
                 },1000);
@@ -142,7 +153,7 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
                         CacheManager.setLocalWhiteList("on");
 
                     }
-                },1000);
+                }, 1000);
             }
         });
 
@@ -157,37 +168,113 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
         test8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ProtocolManager.setActiveMode("2");
+                View view = LayoutInflater.from(TestActivity.this).inflate(R.layout.layout_input_fcn, null);
+                EditText etMobile = view.findViewById(R.id.et_mobile_fcn);
+                EditText etUnicom = view.findViewById(R.id.et_unicom_fcn);
+                new AlertDialog.Builder(TestActivity.this).setTitle("请输入消息")
+                        .setIcon(android.R.drawable.sym_def_app_icon)
+                        .setView(view)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                String mobileFcn = etMobile.getText().toString().trim();
+                                String unicomFcn = etUnicom.getText().toString().trim();
 
-                new Timer().schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        ProtocolManager.setNameList("on", "46000,2,49#46002,49,6#46007,2,49#46001,2,120", "",
-                                "", "", "redirect","","");
+                                if (TextUtils.isEmpty(mobileFcn)) {
+                                    ToastUtils.showMessage("请输入移动2G频点");
+                                    return;
+                                }
 
-                    }
-                },1000);
+                                if (TextUtils.isEmpty(unicomFcn)) {
+                                    ToastUtils.showMessage("请输入联通2G频点");
+                                    return;
+                                }
 
+                                ToastUtils.showMessage("已下发指派");
 
+                                EventAdapter.call(EventAdapter.STOP_LOC);
+                                ProtocolManager.openAllRf();
+
+                                ProtocolManager.setActiveMode("2");
+
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        ProtocolManager.setNameList("on",
+                                                "46000,2," + mobileFcn + "#46002,2," + mobileFcn + "#46007,2," + mobileFcn + "#46001,2," + unicomFcn, "",
+                                                "", "", "redirect", "", "");
+
+                                    }
+                                }, 1000);
+
+                            }
+                        }).setNegativeButton("取消", null).show();
 
 
             }
         });
+
+
+        btnLoc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    String  imsi = etImsi.getText().toString().trim();
+                    if(!CacheManager.checkDevice(TestActivity.this)){
+                        return;
+                    }
+
+                    if (TextUtils.isEmpty(imsi)){
+                        ToastUtils.showMessage("请输入IMSI");
+                        return;
+                    }
+
+
+                    if (CacheManager.getLocState()){
+                        if (CacheManager.getCurrentLoction().getImsi().equals(imsi)){
+                            ToastUtils.showMessage( "该号码正在搜寻中");
+                            return;
+                        }else{
+                            EventAdapter.call(EventAdapter.SHOW_PROGRESS,8000);  //防止快速频繁更换定位目标
+
+                            ProtocolManager.exchangeFcn(imsi);
+
+                            CacheManager.updateLoc(imsi);
+                            CacheManager.changeLocTarget(imsi);
+                            ToastUtils.showMessage( "开始新的搜寻");
+                        }
+                    }else{
+                        EventAdapter.call(EventAdapter.SHOW_PROGRESS,5000);  //防止快速频繁更换定位目标
+                        ProtocolManager.exchangeFcn(imsi);
+
+                        CacheManager.updateLoc(imsi);
+                        CacheManager.startLoc(imsi);
+                        ProtocolManager.openAllRf();
+                        ToastUtils.showMessage("搜寻开始");
+                    }
+
+                    EventAdapter.call(EventAdapter.CHANGE_TAB, 1);
+
+                    EventAdapter.call(EventAdapter.ADD_LOCATION,imsi);
+                    EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.START_LOCALTE_FROM_NAMELIST+imsi);
+                } catch (Exception e) {
+                    LogUtils.log("开启搜寻失败"+e);
+                }
+            }
+        });
+
     }
 
 
-
-
-
-    private Handler mHandler = new Handler(){
+    private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case 0:
-                    tvTemperature.setText("温度："+ msg.obj);
+                    tvTemperature.setText("温度：" + msg.obj);
                     break;
                 case 1:
-                    tvNameList.setText("白名单："+CacheManager.namelist.toString());
+                    tvNameList.setText("白名单：" + CacheManager.namelist.toString());
                     break;
             }
 
@@ -196,7 +283,7 @@ public class JustForTest extends BaseActivity implements EventAdapter.EventCall 
 
     @Override
     public void call(String key, Object val) {
-        switch (key){
+        switch (key) {
             case UPDATE_TMEPRATURE:
                 Message msg = new Message();
                 msg.what = 0;

@@ -1,6 +1,7 @@
 package com.doit.net.Event;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.doit.net.Model.BlackBoxManger;
@@ -55,6 +56,10 @@ public class AddToLocationListener implements View.OnClickListener
                 return;
             }
 
+            if (TextUtils.isEmpty(imsi)){
+                return;
+            }
+
 
             if (CacheManager.getLocState()){
                 if (CacheManager.getCurrentLoction().getImsi().equals(imsi)){
@@ -79,7 +84,7 @@ public class AddToLocationListener implements View.OnClickListener
                 ToastUtils.showMessage("搜寻开始");
             }
 
-            TurnToLocInterface();
+            EventAdapter.call(EventAdapter.CHANGE_TAB, 1);
 
             EventAdapter.call(EventAdapter.ADD_LOCATION,imsi);
             EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.START_LOCALTE_FROM_NAMELIST+imsi);
@@ -90,20 +95,4 @@ public class AddToLocationListener implements View.OnClickListener
     }
 
 
-
-    private void TurnToLocInterface() {
-        EventAdapter.call(EventAdapter.CHANGE_TAB, 1);
-    }
-
-
-    private void checkPower(String imsi){
-        String operator = UtilOperator.getOperatorName(imsi);
-        if (operator.equals(lastLocOperator)){
-            return;
-        }else {
-            UtilOperator.checkPower(imsi);
-        }
-
-        lastLocOperator = operator;
-    }
 }

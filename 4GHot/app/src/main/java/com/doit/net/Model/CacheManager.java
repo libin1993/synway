@@ -160,8 +160,24 @@ public class CacheManager {
     }
 
 
+    /**
+     * @param imsi 开始定位
+     */
     public static void startLoc(String imsi) {
         ProtocolManager.setActiveMode("1");
+
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (VersionManage.isArmyVer()) {
+                    setLocalWhiteList("on");
+                } else {
+                    setLocalWhiteList("off");
+                }
+
+            }
+        },1000);
+
         ProtocolManager.setLocImsi(imsi);
 
         CacheManager.getCurrentLoction().setLocateStart(true);
@@ -175,30 +191,30 @@ public class CacheManager {
      * 开关管控模式
      */
     public static void setLocalWhiteList(String mode) {
-        String imsi0 = getSimIMSI(0);
-        String imsi1 = getSimIMSI(1);
+//        String imsi0 = getSimIMSI(0);
+//        String imsi1 = getSimIMSI(1);
 
-        if (imsi0 == null || imsi0.equals("000000000000000"))
-            imsi0 = "";
+//        if (imsi0 == null || imsi0.equals("000000000000000"))
+//            imsi0 = "";
+//
+//        if (imsi1 == null || imsi1.equals("000000000000000"))
+//            imsi1 = "";
+//
+//
+//        String whitelistContent = "";
+//
+//        if ("".equals(imsi0) && "".equals(imsi1)) {
+//            whitelistContent = "";
+//        } else if (!"".equals(imsi0) && "".equals(imsi1)) {
+//            whitelistContent = imsi0;
+//        } else if ("".equals(imsi0) && !"".equals(imsi1)) {
+//            whitelistContent = imsi1;
+//        } else {
+//            whitelistContent = imsi0 + "," + imsi1;
+//        }
 
-        if (imsi1 == null || imsi1.equals("000000000000000"))
-            imsi1 = "";
 
-
-        String whitelistContent = "";
-
-        if ("".equals(imsi0) && "".equals(imsi1)) {
-            whitelistContent = "";
-        } else if (!"".equals(imsi0) && "".equals(imsi1)) {
-            whitelistContent = imsi0;
-        } else if ("".equals(imsi0) && !"".equals(imsi1)) {
-            whitelistContent = imsi1;
-        } else {
-            whitelistContent = imsi0 + "," + imsi1;
-        }
-
-
-        ProtocolManager.setNameList(mode, "", whitelistContent,
+        ProtocolManager.setNameList(mode, "", "",
                 "", "", "block", "", "");
 
     }
@@ -279,7 +295,6 @@ public class CacheManager {
 
     public static void stopCurrentLoc() {
         ProtocolManager.setLocImsi("0000");
-        ProtocolManager.setActiveMode(CacheManager.currentWorkMode);
 
         try {
             DbManager dbManager = UCSIDBManager.getDbManager();
@@ -299,6 +314,18 @@ public class CacheManager {
 
         if (CacheManager.getCurrentLoction() != null)
             CacheManager.getCurrentLoction().setLocateStart(false);
+    }
+
+    /**
+     * 重置模式
+     */
+    public static void resetMode(){
+        ProtocolManager.setActiveMode(CacheManager.currentWorkMode);
+        if (VersionManage.isArmyVer()) {
+            CacheManager.setLocalWhiteList("on");
+        } else {
+            CacheManager.setLocalWhiteList("off");
+        }
     }
 
     public static boolean getLocState() {
