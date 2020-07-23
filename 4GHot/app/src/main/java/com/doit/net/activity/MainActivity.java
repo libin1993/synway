@@ -249,7 +249,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     private void initSpeech() {
         PrefManage.getPlayType();
         textToSpeech = new TextToSpeech(this, this);
-        textToSpeech.setSpeechRate(1.8f);
         baiduAudio = new BaiduAudio(this);
     }
 
@@ -339,8 +338,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
     public void speak(String text) {
         if (PrefManage.play_type == 0) {
-            textToSpeech.setPitch(1f);// 设置音调，值越大声音越尖（女生），值越小则变成男声,1.0是常规
-            textToSpeech.setSpeechRate(0.7f);
             textToSpeech.speak(text, TextToSpeech.QUEUE_ADD, null);
         } else if (PrefManage.play_type == 1) {
             baiduAudio.speak(text);
@@ -494,7 +491,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
         clearDataDir();
 
         unregisterReceiver(networkChangeReceiver);
-//        ServerSocketManager.getInstance().closeMainListener(NetConfig.MONITOR_PORT);
+
         if (textToSpeech != null) {
             textToSpeech.stop();
             textToSpeech.shutdown();
@@ -573,13 +570,15 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
     @Override
     public void onInit(int status) {
-        LogUtils.log("TextToSpeech status=" + status);
+        LogUtils.log("语音播报初始化：" + status);
         if (status == TextToSpeech.SUCCESS) {
+            textToSpeech.setPitch(0f);// 设置音调，值越大声音越尖（女生），值越小则变成男声,1.0是常规
+            textToSpeech.setSpeechRate(1f);
             int result = textToSpeech.setLanguage(Locale.CHINESE);
-            LogUtils.log("TextToSpeech result=" + result);
+            LogUtils.log("语音播报中文：" + result);
             if (result == TextToSpeech.LANG_MISSING_DATA
                     || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                Toast.makeText(this, R.string.tip_08, Toast.LENGTH_SHORT).show();
+                ToastUtils.showMessage(R.string.tip_08);
                 PrefManage.setPlayType(1);
                 PrefManage.supportPlay = false;
             } else {

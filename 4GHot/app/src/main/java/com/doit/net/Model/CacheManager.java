@@ -164,7 +164,12 @@ public class CacheManager {
      * @param imsi 开始定位
      */
     public static void startLoc(String imsi) {
+//        if (VersionManage.isPoliceVer()){
+//            ProtocolManager.setActiveMode("1");
+//        }
+
         ProtocolManager.setActiveMode("1");
+
 
         new Timer().schedule(new TimerTask() {
             @Override
@@ -321,11 +326,19 @@ public class CacheManager {
      */
     public static void resetMode(){
         ProtocolManager.setActiveMode(CacheManager.currentWorkMode);
-        if (VersionManage.isArmyVer()) {
-            CacheManager.setLocalWhiteList("on");
-        } else {
-            CacheManager.setLocalWhiteList("off");
-        }
+
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (VersionManage.isArmyVer()) {
+                    setLocalWhiteList("on");
+                } else {
+                    setLocalWhiteList("off");
+                }
+
+            }
+        },1000);
+
     }
 
     public static boolean getLocState() {

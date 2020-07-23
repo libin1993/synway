@@ -155,7 +155,7 @@
             android:textSize="13sp"
             android:textColor="@color/darkorange"
             android:text="搜索结果"
-            android:gravity="bottom"
+            android:gravity="center_vertical"
             android:layout_marginStart="12dp"
             />
 

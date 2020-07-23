@@ -619,7 +619,7 @@ public class ProtocolManager {
 
             if ("3".equals(channel.getBand()) && CacheManager.getLocState()){
                 LogUtils.log("当前正在定位且是band3，不设置band3频点");
-                return;
+                break;
             }
             if ("".equals(tmpArfcnConfig)) {
                 setChannelConfig(channel.getIdx(), "", "", defaultPower, defaultGa, "", "", "");
@@ -658,8 +658,7 @@ public class ProtocolManager {
     }
 
     /**
-     * @param
-     * @param
+     *保存默认频点
      */
     public static void saveDefaultFcn() {
         String fcn="";

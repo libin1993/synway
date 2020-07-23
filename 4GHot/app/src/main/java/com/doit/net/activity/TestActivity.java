@@ -5,15 +5,18 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.speech.tts.TextToSpeech;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.doit.net.Model.BlackBoxManger;
 import com.doit.net.Model.CacheManager;
+import com.doit.net.Model.PrefManage;
 import com.doit.net.Model.VersionManage;
 import com.doit.net.Protocol.ProtocolManager;
 import com.doit.net.Utils.LogUtils;
@@ -24,6 +27,8 @@ import com.doit.net.Utils.Cellular;
 import com.doit.net.Utils.ToastUtils;
 import com.doit.net.ucsi.R;
 
+import java.util.Locale;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -45,6 +50,13 @@ public class TestActivity extends BaseActivity implements EventAdapter.EventCall
     private TextView tvNameList;
     private EditText etImsi;
     private Button btnLoc;
+    private Button btnSpeak;
+    private SeekBar sbPitch;
+    private SeekBar sbSpeed;
+    private TextView tvPitch;
+    private TextView tvSpeed;
+
+    private TextToSpeech textToSpeech;
 
 
     @Override
@@ -66,6 +78,11 @@ public class TestActivity extends BaseActivity implements EventAdapter.EventCall
         tvTemperature = findViewById(R.id.tvTemperature);
         tvArfcns = findViewById(R.id.tvArfcns);
         tvNameList = findViewById(R.id.tv_name_list);
+        btnSpeak = findViewById(R.id.btn_speak);
+        sbPitch = findViewById(R.id.sb_pitch);
+        sbSpeed = findViewById(R.id.sb_speed);
+        tvPitch = findViewById(R.id.tv_pitch);
+        tvSpeed = findViewById(R.id.tv_speed);
 
         initView();
 
@@ -127,7 +144,12 @@ public class TestActivity extends BaseActivity implements EventAdapter.EventCall
         test5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                if (VersionManage.isPoliceVer()){
+//                    ProtocolManager.setActiveMode("1");
+//                }
+
                 ProtocolManager.setActiveMode("1");
+
 
                 new Timer().schedule(new TimerTask() {
                     @Override
@@ -154,6 +176,74 @@ public class TestActivity extends BaseActivity implements EventAdapter.EventCall
 
                     }
                 }, 1000);
+            }
+        });
+
+        textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    textToSpeech.setPitch(1f);// 设置音调，值越大声音越尖（女生），值越小则变成男声,1.0是常规
+                    textToSpeech.setSpeechRate(1f);
+                    int result = textToSpeech.setLanguage(Locale.CHINESE);
+                    LogUtils.log("语音播报中文：" + result);
+                    if (result == TextToSpeech.LANG_MISSING_DATA
+                            || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                        ToastUtils.showMessage(R.string.tip_08);
+                    }
+                }
+            }
+        });
+
+        btnSpeak.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        textToSpeech.speak((int) (Math.random() * 100)+"", TextToSpeech.QUEUE_ADD, null);
+                    }
+                },0,2000);
+            }
+        });
+
+        sbPitch.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                double v = (Math.round(progress * 10) / 10.0);
+                float v1 = (float) (v / sbPitch.getMax());
+                textToSpeech.setPitch(v1);
+                tvPitch.setText("音调:"+v1);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        sbSpeed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                double v = (Math.round(progress * 10) / 10.0);
+                float v1 = (float) (v / sbSpeed.getMax());
+                textToSpeech.setSpeechRate(v1);
+                tvSpeed.setText("语速:"+v1);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
             }
         });
 

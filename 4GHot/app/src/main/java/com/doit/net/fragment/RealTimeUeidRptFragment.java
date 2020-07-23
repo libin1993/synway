@@ -60,10 +60,10 @@ public class RealTimeUeidRptFragment extends BaseFragment implements EventAdapte
 
     private CheckBox cbDetectSwitch;
 
-    private PopupWindow ueidItemPop;
-    View ueidItemPopView;
-    private TextView tvGetTelNumber;
-    private UeidBean selectedUeidItem = null;
+//    private PopupWindow ueidItemPop;
+//    View ueidItemPopView;
+//    private TextView tvGetTelNumber;
+//    private UeidBean selectedUeidItem = null;
     private long lastSortTime = 0;  //为了防止频繁上报排序导致列表错乱，定时排序一次
 
     //handler消息
@@ -118,37 +118,37 @@ public class RealTimeUeidRptFragment extends BaseFragment implements EventAdapte
 //            }
 //        });
 
-        ueidItemPopView = LayoutInflater.from(getActivity()).inflate(R.layout.realtime_ueid_pop_window, null);
-        ueidItemPop = new PopupWindow(ueidItemPopView, getResources().getDisplayMetrics().widthPixels / 3,
-                LinearLayout.LayoutParams.WRAP_CONTENT, true);   //宽度和屏幕成比例
-        ueidItemPop.setContentView(ueidItemPopView);
-        ueidItemPop.setBackgroundDrawable(new ColorDrawable());  //据说不设在有些情况下会关不掉
-        tvGetTelNumber = ueidItemPopView.findViewById(R.id.tvGetTelNumber);
-        tvGetTelNumber.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LogUtils.log("点击了：" + selectedUeidItem.getImsi());
-                if (!ImsiMsisdnConvert.isAuthenticated()) {
-                    ToastUtils.showMessageLong("尚未通过认证，请先进入“号码翻译设置”进行认证");
-                    return;
-                }
+//        ueidItemPopView = LayoutInflater.from(getActivity()).inflate(R.layout.realtime_ueid_pop_window, null);
+//        ueidItemPop = new PopupWindow(ueidItemPopView, getResources().getDisplayMetrics().widthPixels / 3,
+//                LinearLayout.LayoutParams.WRAP_CONTENT, true);   //宽度和屏幕成比例
+//        ueidItemPop.setContentView(ueidItemPopView);
+//        ueidItemPop.setBackgroundDrawable(new ColorDrawable());  //据说不设在有些情况下会关不掉
+//        tvGetTelNumber = ueidItemPopView.findViewById(R.id.tvGetTelNumber);
+//        tvGetTelNumber.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                LogUtils.log("点击了：" + selectedUeidItem.getImsi());
+//                if (!ImsiMsisdnConvert.isAuthenticated()) {
+//                    ToastUtils.showMessageLong("尚未通过认证，请先进入“号码翻译设置”进行认证");
+//                    return;
+//                }
+//
+//                new Thread() {
+//                    @Override
+//                    public void run() {
+//                        ImsiMsisdnConvert.requestConvertImsiToMsisdn(getContext(), selectedUeidItem.getImsi());
+//                        //ImsiMsisdnConvert.queryImsiConvertMsisdnRes(getContext(), selectedUeidItem.getImsi());
+//                        //ToastUtils.showMessageLong(getContext(), requestRes);
+//                    }
+//                }.start();
+//
+//
+//                ueidItemPop.dismiss();
+//            }
+//        });
 
-                new Thread() {
-                    @Override
-                    public void run() {
-                        ImsiMsisdnConvert.requestConvertImsiToMsisdn(getContext(), selectedUeidItem.getImsi());
-                        //ImsiMsisdnConvert.queryImsiConvertMsisdnRes(getContext(), selectedUeidItem.getImsi());
-                        //ToastUtils.showMessageLong(getContext(), requestRes);
-                    }
-                }.start();
 
-
-                ueidItemPop.dismiss();
-            }
-        });
-
-
-        LogUtils.log("状态1" + CacheManager.isDeviceOk());
+        cbDetectSwitch.setOnCheckedChangeListener(null);
         cbDetectSwitch.setChecked(CacheManager.isDeviceOk());
         cbDetectSwitch.setOnCheckedChangeListener(rfDetectSwichtListener);
     }
@@ -201,35 +201,35 @@ public class RealTimeUeidRptFragment extends BaseFragment implements EventAdapte
     };
 
 
-    private void showListPopWindow(View anchorView, int posX, int posY) {
-        ueidItemPop.showAtLocation(anchorView, Gravity.TOP | Gravity.START, posX, posY);
-    }
-
-    private int calcPopWindowPosY(int eventY) {
-        int listviewHeight = mListView.getResources().getDisplayMetrics().heightPixels;
-        ueidItemPop.getContentView().measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        int popWinHeight = ueidItemPop.getContentView().getMeasuredHeight();
-
-        boolean isNeedShowUpward = (eventY + popWinHeight > listviewHeight);  //超过范围就向上显示
-        if (isNeedShowUpward) {
-            return eventY - popWinHeight;
-        } else {
-            return eventY;
-        }
-    }
-
-    private int calcPopWindowPosX(int eventX) {
-        int listviewWidth = mListView.getResources().getDisplayMetrics().widthPixels;
-        ueidItemPop.getContentView().measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        int windowWidth = ueidItemPop.getContentView().getMeasuredWidth();
-
-        boolean isShowLeft = (eventX + windowWidth > listviewWidth);  //超过屏幕的话就向左边显示
-        if (isShowLeft) {
-            return eventX - windowWidth;
-        } else {
-            return eventX;
-        }
-    }
+//    private void showListPopWindow(View anchorView, int posX, int posY) {
+//        ueidItemPop.showAtLocation(anchorView, Gravity.TOP | Gravity.START, posX, posY);
+//    }
+//
+//    private int calcPopWindowPosY(int eventY) {
+//        int listviewHeight = mListView.getResources().getDisplayMetrics().heightPixels;
+//        ueidItemPop.getContentView().measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+//        int popWinHeight = ueidItemPop.getContentView().getMeasuredHeight();
+//
+//        boolean isNeedShowUpward = (eventY + popWinHeight > listviewHeight);  //超过范围就向上显示
+//        if (isNeedShowUpward) {
+//            return eventY - popWinHeight;
+//        } else {
+//            return eventY;
+//        }
+//    }
+//
+//    private int calcPopWindowPosX(int eventX) {
+//        int listviewWidth = mListView.getResources().getDisplayMetrics().widthPixels;
+//        ueidItemPop.getContentView().measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+//        int windowWidth = ueidItemPop.getContentView().getMeasuredWidth();
+//
+//        boolean isShowLeft = (eventX + windowWidth > listviewWidth);  //超过屏幕的话就向左边显示
+//        if (isShowLeft) {
+//            return eventX - windowWidth;
+//        } else {
+//            return eventX;
+//        }
+//    }
 
     private void addShildRptList(String imsi, String srsp) {
         //不再过滤，需要额外显示
