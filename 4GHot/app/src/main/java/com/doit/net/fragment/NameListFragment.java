@@ -90,6 +90,8 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
     private final static  int IMPORT_SUCCESS = 2;  //导入成功
     private final static  int EXPORT_SUCCESS =  3;  //导出成功
 
+    private MySweetAlertDialog mProgressDialog;
+
     public NameListFragment() {
     }
 
@@ -127,6 +129,11 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
         });
 
         EventAdapter.register(EventAdapter.REFRESH_BLACKLIST, this);
+
+        mProgressDialog = new MySweetAlertDialog(getActivity(), MySweetAlertDialog.PROGRESS_TYPE);
+        mProgressDialog.setTitleText("加载中，请耐心等待...");
+        mProgressDialog.setCancelable(false);
+
         return rootView;
     }
 
@@ -209,6 +216,9 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
         @Override
         public void onClick(View v) {
 
+            if (mProgressDialog !=null && !mProgressDialog.isShowing()){
+                mProgressDialog.show();
+            }
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -374,10 +384,12 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
      * @param fileList 导入黑名单
      */
     private void importBlackList(List<FileBean> fileList) {
+        if (mProgressDialog !=null && !mProgressDialog.isShowing()){
+            mProgressDialog.show();
+        }
         new Thread(new Runnable() {
             @Override
             public void run() {
-
                 File file = null;
                 for (FileBean fileBean : fileList) {
                     if (fileBean.isCheck()) {
@@ -578,17 +590,26 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
 
                 closeSwipe(lastOpenSwipePos);
             } else if (msg.what == EXPORT_ERROR) {
+                if (mProgressDialog !=null && mProgressDialog.isShowing()){
+                    mProgressDialog.dismiss();
+                }
                 new MySweetAlertDialog(getContext(), MySweetAlertDialog.ERROR_TYPE)
                         .setTitleText("导出失败")
                         .setContentText("失败原因：" + msg.obj)
                         .show();
             }else if (msg.what == IMPORT_SUCCESS){
+                if (mProgressDialog !=null && mProgressDialog.isShowing()){
+                    mProgressDialog.dismiss();
+                }
                 new MySweetAlertDialog(getContext(), MySweetAlertDialog.SUCCESS_TYPE)
                         .setTitleText("导入完成")
                         .setContentText(String.valueOf(msg.obj))
                         .show();
                 refreshNamelist();
             }else if (msg.what == EXPORT_SUCCESS){
+                if (mProgressDialog !=null && mProgressDialog.isShowing()){
+                    mProgressDialog.dismiss();
+                }
                 new MySweetAlertDialog(getActivity(), MySweetAlertDialog.TEXT_SUCCESS)
                         .setTitleText("导出成功")
                         .setContentText(String.valueOf(msg.obj))

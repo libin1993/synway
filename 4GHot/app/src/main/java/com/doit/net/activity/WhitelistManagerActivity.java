@@ -115,6 +115,8 @@ public class WhitelistManagerActivity extends BaseActivity implements EventAdapt
     private final static  int IMPORT_SUCCESS =  3;  //导入成功
     private final static  int EXPORT_SUCCESS =  4;  //导出成功
 
+    private MySweetAlertDialog mProgressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -201,6 +203,10 @@ public class WhitelistManagerActivity extends BaseActivity implements EventAdapt
                 whitelistItemPop.dismiss();
             }
         });
+
+        mProgressDialog = new MySweetAlertDialog(this, MySweetAlertDialog.PROGRESS_TYPE);
+        mProgressDialog.setTitleText("加载中，请耐心等待...");
+        mProgressDialog.setCancelable(false);
     }
 
     private void showListPopWindow(View anchorView, int posX, int posY) {
@@ -397,6 +403,9 @@ public class WhitelistManagerActivity extends BaseActivity implements EventAdapt
      * 导入白名单
      */
     private void importWhitelist(List<FileBean> fileList) {
+        if (mProgressDialog !=null && !mProgressDialog.isShowing()){
+            mProgressDialog.show();
+        }
         new Thread() {
             @Override
             public void run() {
@@ -523,8 +532,10 @@ public class WhitelistManagerActivity extends BaseActivity implements EventAdapt
 
     View.OnClickListener exortWhitelistClick = new View.OnClickListener() {
         @Override
-
         public void onClick(View v) {
+            if (mProgressDialog !=null && !mProgressDialog.isShowing()){
+                mProgressDialog.show();
+            }
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -664,11 +675,17 @@ public class WhitelistManagerActivity extends BaseActivity implements EventAdapt
                 updateListFromDB();
                 CacheManager.updateWhitelistToDev(activity);
             } else if (msg.what == EXPORT_ERROR) {
+                if (mProgressDialog !=null && mProgressDialog.isShowing()){
+                    mProgressDialog.dismiss();
+                }
                 new SweetAlertDialog(activity, SweetAlertDialog.ERROR_TYPE)
                         .setTitleText("导出失败")
                         .setContentText("失败原因：" + msg.obj)
                         .show();
             }else if (msg.what == IMPORT_SUCCESS){
+                if (mProgressDialog !=null && mProgressDialog.isShowing()){
+                    mProgressDialog.dismiss();
+                }
                 new MySweetAlertDialog(activity, MySweetAlertDialog.TEXT_SUCCESS)
                         .setTitleText("导入完成")
                         .setContentText(String.valueOf(msg.obj))
@@ -676,6 +693,9 @@ public class WhitelistManagerActivity extends BaseActivity implements EventAdapt
 
                 updateListFromDB();
             } else if (msg.what == EXPORT_SUCCESS){
+                if (mProgressDialog !=null && mProgressDialog.isShowing()){
+                    mProgressDialog.dismiss();
+                }
                 new MySweetAlertDialog(activity, MySweetAlertDialog.TEXT_SUCCESS)
                         .setTitleText("导出成功")
                         .setContentText(String.valueOf(msg.obj))
