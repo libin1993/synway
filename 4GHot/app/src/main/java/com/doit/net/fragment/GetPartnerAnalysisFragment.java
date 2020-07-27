@@ -250,7 +250,7 @@ public class GetPartnerAnalysisFragment extends BaseFragment {
             EventAdapter.call(EventAdapter.UPDATE_FILE_SYS, fullPath);
             new MySweetAlertDialog(getContext(), MySweetAlertDialog.TEXT_SUCCESS)
                     .setTitleText("导出成功")
-                    .setContentText("文件导出在：手机存储/"+FileUtils.ROOT_DIRECTORY+"/"+ fileName)
+                    .setContentText("文件导出在：手机存储/"+FileUtils.ROOT_DIRECTORY+"/export/"+ fileName)
                     .show();
         }
 

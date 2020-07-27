@@ -137,23 +137,25 @@
             android:orientation="horizontal">
 
             <com.beardedhen.androidbootstrap.BootstrapButton
-                android:id="@+id/btAuthenticate"
+                android:id="@+id/btClose"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
-                android:layout_marginStart="20dp"
                 android:layout_weight="1"
-                android:text="@string/authenticate"
-                app:bootstrapBrand="primary" />
+                android:text="@string/close"
+                app:bootstrapBrand="regular"
+                android:layout_marginStart="20dp"/>
 
             <com.beardedhen.androidbootstrap.BootstrapButton
-                android:id="@+id/btClose"
+                android:id="@+id/btAuthenticate"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="20dp"
                 android:layout_weight="1"
-                android:text="@string/close"
-                app:bootstrapBrand="regular" />
+                android:text="@string/authenticate"
+                app:bootstrapBrand="primary" />
+
+
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

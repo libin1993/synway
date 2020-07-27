@@ -77,23 +77,24 @@
             android:orientation="horizontal">
 
             <com.beardedhen.androidbootstrap.BootstrapButton
+                android:id="@+id/btCancel"
+                style="@style/wrapping_button"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="@string/cancel"
+                app:bootstrapBrand="regular" />
+            <com.beardedhen.androidbootstrap.BootstrapButton
                 android:id="@+id/btTimePoint"
                 style="@style/wrapping_button"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_weight="1"
                 android:text="@string/add"
-                app:bootstrapBrand="primary" />
+                app:bootstrapBrand="primary"
+                android:layout_marginStart="20dp"/>
 
-            <com.beardedhen.androidbootstrap.BootstrapButton
-                android:id="@+id/btCancel"
-                style="@style/wrapping_button"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginStart="20dp"
-                android:layout_weight="1"
-                android:text="@string/cancel"
-                app:bootstrapBrand="regular" />
+
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

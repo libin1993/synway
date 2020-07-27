@@ -144,10 +144,6 @@ public class TestActivity extends BaseActivity implements EventAdapter.EventCall
         test5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if (VersionManage.isPoliceVer()){
-//                    ProtocolManager.setActiveMode("1");
-//                }
-
                 ProtocolManager.setActiveMode("1");
 
 

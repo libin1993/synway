@@ -167,7 +167,6 @@ public class CacheManager {
 //        if (VersionManage.isPoliceVer()){
 //            ProtocolManager.setActiveMode("1");
 //        }
-
         ProtocolManager.setActiveMode("1");
 
 

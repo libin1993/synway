@@ -321,8 +321,6 @@ public class LTE_PT_PARAM {
         }
 
 
-
-
         File file = new File(filePath);
         if (file.exists() && !file.isDirectory()) {
 
@@ -356,14 +354,9 @@ public class LTE_PT_PARAM {
                     longitude = splitUeid[4];
                     latitude = splitUeid[5];
 
-//                    if (isImsiExistInSimpleRpt(tmpImsi, listUeid)) {
-//                        continue;
-//                    }
 
                     ueidMap.put(tmpImsi,new UeidBean(tmpImsi, "", tmpTmsi, band, tmpRptTime, longitude, latitude));
-//                    listUeid.add(new UeidBean(tmpImsi, "", tmpTmsi, band, tmpRptTime, longitude, latitude));
-//                        UtilBaseLog.printLog(splitUeid[0]+"  "+splitUeid[1]+"  "+splitUeid[2]+"  "+splitUeid[3]+"  "+splitUeid[4]+"  "+
-//                                splitUeid[5]);
+
 
                     if (!CacheManager.removeExistUeidInRealtimeList(splitUeid[0])) {
                         //
@@ -783,7 +776,7 @@ public class LTE_PT_PARAM {
                 }
 
                 String tmpImsi = split[0];
-                if (tmpImsi.equals(CacheManager.getCurrentLoction().getImsi()) && !TextUtils.isEmpty(SRSP)) {
+                if (tmpImsi.equals(CacheManager.getCurrentLoction().getImsi()) && !TextUtils.isEmpty(SRSP) && Integer.parseInt(SRSP) > 0) {
                     EventAdapter.call(EventAdapter.LOCATION_RPT, SRSP);
 
                 }
@@ -811,18 +804,19 @@ public class LTE_PT_PARAM {
                 String[] split = splitStr[i].split(":");
                 if (split.length > 1) {
                     SRSP = split[1];
-                    if (SRSP.equals(""))
+                    if (TextUtils.isEmpty(SRSP) || Integer.parseInt(SRSP) <=0){
                         continue;
+                    }
 
                     if (CacheManager.getLocState()) {
                         if (splitStr[i].split(":")[0].equals(CacheManager.getCurrentLoction().getImsi())) {
                             EventAdapter.call(EventAdapter.LOCATION_RPT, SRSP);
                         }
                     }
+
+                    EventAdapter.call(EventAdapter.SHIELD_RPT, splitStr[i]);
                 }
 
-
-                EventAdapter.call(EventAdapter.SHIELD_RPT, splitStr[i]);
             }
         }
 

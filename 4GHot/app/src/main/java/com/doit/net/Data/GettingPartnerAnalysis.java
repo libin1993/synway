@@ -30,7 +30,7 @@ public class GettingPartnerAnalysis {
         long timeDev = Long.parseLong(deviation)*60*1000;
 
         mapImsiWithDetectTime.clear();
-        //listTargetImsiWithDetectTime.clear();
+
         //1.得到时间段内所有目标IMSI,并按照时间排序
         try {
             targetUeidInPeriod = dbManager.selector(DBUeidInfo.class)
@@ -73,7 +73,7 @@ public class GettingPartnerAnalysis {
             }
 
             tmpLastTimePoint = tmpUeid.getCreateDate();
-            //listTargetImsiWithDetectTime.addRealtimeUeidList(tmpUeid.getCreateDate());
+
             mapPeriodWithIMSI.put(tmpUeid.getCreateDate(), imsiInDeviation);
         }
 

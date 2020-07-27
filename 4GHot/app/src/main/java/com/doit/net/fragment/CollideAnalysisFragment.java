@@ -225,7 +225,7 @@ public class CollideAnalysisFragment extends BaseFragment {
 
     private void ExportCollideResult(List<AnalysisResultBean> listCollideResult) {
         boolean isSuccess = true;
-        final String COLLIDE_RES_FILE_PATH = FileUtils.ROOT_PATH+"export/";
+        String COLLIDE_RES_FILE_PATH = FileUtils.ROOT_PATH+"export/";
 
         String fileName = "COLLIDE_"+ DateUtils.getStrOfDate()+".txt";
         String fullPath = COLLIDE_RES_FILE_PATH+fileName;
@@ -262,7 +262,7 @@ public class CollideAnalysisFragment extends BaseFragment {
             EventAdapter.call(EventAdapter.UPDATE_FILE_SYS, fullPath);
             new MySweetAlertDialog(getContext(), MySweetAlertDialog.TEXT_SUCCESS)
                     .setTitleText("导出成功")
-                    .setContentText("文件导出在：手机存储/"+FileUtils.ROOT_DIRECTORY+"/"+ fileName)
+                    .setContentText("文件导出在：手机存储/"+FileUtils.ROOT_DIRECTORY+"/export/"+ fileName)
                     .show();
         }
     }

@@ -27,8 +27,11 @@
         android:orientation="horizontal">
 
         <TextView
-            style="@style/dialog_label"
-            android:text="@string/lab_start_time" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lab_start_time"
+            android:textColor="@android:color/white"
+            android:textSize="14sp" />
 
         <EditText
             android:id="@+id/etStartTime"
@@ -47,8 +50,11 @@
         android:orientation="horizontal">
 
         <TextView
-            style="@style/dialog_label"
-            android:text="@string/lab_end_time" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lab_end_time"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"/>
 
         <EditText
             android:id="@+id/etEndTime"
@@ -66,20 +72,20 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btSure"
-            android:layout_height="36dp"
-            android:textColor="@color/darkorange"
-            android:background="@drawable/common_button_bkg"
-            android:layout_width="88dp"
-            android:text="@string/sure" />
-
-        <Button
             android:id="@+id/btCancel"
             android:layout_height="36dp"
             android:textColor="@color/darkorange"
             android:background="@drawable/common_button_bkg"
             android:layout_width="88dp"
+            android:text="@string/cancel"/>
+
+        <Button
+            android:id="@+id/btSure"
+            android:layout_height="36dp"
+            android:textColor="@color/darkorange"
+            android:background="@drawable/common_button_bkg"
+            android:layout_width="88dp"
             android:layout_marginStart="18dp"
-            android:text="@string/cancel" />
+            android:text="@string/sure" />
     </LinearLayout>
 </LinearLayout>
