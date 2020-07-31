@@ -151,8 +151,8 @@ public class SystemSettingActivity extends BaseActivity {
     };
 
     private void generalAdmin() {
-        final String accountFullPath = FileUtils.ROOT_PATH+"FtpAccount/";
-        final String accountFileName = "account";
+        String accountFullPath = FileUtils.ROOT_PATH+"FtpAccount/";
+        String accountFileName = "account";
 
 
         File namelistFile = new File(accountFullPath+accountFileName);
@@ -179,7 +179,7 @@ public class SystemSettingActivity extends BaseActivity {
             public void run() {
                 try {
                     FTPManager.getInstance().connect();
-                    if (FTPManager.getInstance().uploadFile(accountFullPath, accountFileName)){
+                    if (FTPManager.getInstance().uploadFile(false,accountFullPath, accountFileName)){
                         ToastUtils.showMessage( "生成管理员账号成功");
                     }else {
                         ToastUtils.showMessage("生成管理员账号出错");

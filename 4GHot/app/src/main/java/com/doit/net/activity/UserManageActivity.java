@@ -16,6 +16,7 @@ import android.widget.ListView;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.util.Attributes;
 import com.doit.net.Event.EventAdapter;
+import com.doit.net.Model.CacheManager;
 import com.doit.net.View.AddUserDialog;
 import com.doit.net.View.ModifyAdminAccountDialog;
 import com.doit.net.adapter.UserListAdapter;
@@ -85,13 +86,6 @@ public class UserManageActivity extends BaseActivity implements EventAdapter.Eve
         @Override
         public void onClick(View v) {
             AddUserDialog addUserDialog = new AddUserDialog(activity);
-            addUserDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    //FTPManager.getInstance().UpdateAccountToDevice();
-                    updateListFromDatabase();
-                }
-            });
             addUserDialog.show();
         }
     };
@@ -142,7 +136,9 @@ public class UserManageActivity extends BaseActivity implements EventAdapter.Eve
 
     @Override
     protected void onResume() {
-        ToastUtils.showMessageLong("请在已连接到设备Wifi的情况下管理账户，否则不生效！");
+        if (!CacheManager.isWifiConnected){
+            ToastUtils.showMessageLong("请在已连接到设备Wifi的情况下管理账户，否则不生效！");
+        }
         super.onResume();
     }
 

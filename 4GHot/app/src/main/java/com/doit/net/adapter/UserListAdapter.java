@@ -14,6 +14,7 @@ import com.doit.net.Event.EventAdapter;
 import com.doit.net.Model.AccountManage;
 import com.doit.net.Model.UCSIDBManager;
 import com.doit.net.Model.UserInfo;
+import com.doit.net.Utils.LoadingUtils;
 import com.doit.net.Utils.ToastUtils;
 import com.doit.net.View.ModifyUserInfoDialog;
 import com.doit.net.ucsi.R;
@@ -76,12 +77,6 @@ public class UserListAdapter extends BaseSwipeAdapter {
             @Override
             public void onClick(View v) {
                 ModifyUserInfoDialog modifyUserInfoDialog = new ModifyUserInfoDialog(mContext, userInfo.getAccount(), userInfo.getPassword(),userInfo.getRemake());
-                modifyUserInfoDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        EventAdapter.call(EventAdapter.REFRESH_USER_LIST);
-                    }
-                });
                 modifyUserInfoDialog.show();
             }
         });
@@ -117,12 +112,11 @@ public class UserListAdapter extends BaseSwipeAdapter {
         public void onClick(View v) {
             UserInfo resp = listUserInfo.get(position);
             try {
-                //listUserInfo.remove(position);
-
                 UCSIDBManager.getDbManager().delete(resp);
                 if (AccountManage.UpdateAccountToDevice()){
                     EventAdapter.call(EventAdapter.REFRESH_USER_LIST);
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX,BlackBoxManger.DELTE_USER+resp.getAccount());
+                    LoadingUtils.loading(mContext);
                 }else{
                     UCSIDBManager.getDbManager().save(resp);
                     ToastUtils.showMessageLong(R.string.del_user_fail_ftp_error);

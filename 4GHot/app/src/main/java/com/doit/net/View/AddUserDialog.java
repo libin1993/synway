@@ -3,6 +3,7 @@ package com.doit.net.View;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +16,8 @@ import com.doit.net.Event.EventAdapter;
 import com.doit.net.Model.AccountManage;
 import com.doit.net.Model.UCSIDBManager;
 import com.doit.net.Model.UserInfo;
+import com.doit.net.Utils.LoadingUtils;
+import com.doit.net.Utils.MySweetAlertDialog;
 import com.doit.net.Utils.ToastUtils;
 import com.doit.net.ucsi.R;
 
@@ -35,9 +38,11 @@ public class AddUserDialog extends Dialog {
     private EditText etPassword;
     private Button btAddUser;
     private Button btCancel;
+    private Context mContext;
 
     public AddUserDialog(Context context) {
         super(context, R.style.Theme_dialog);
+        this.mContext = context;
         initView();
     }
 
@@ -77,7 +82,11 @@ public class AddUserDialog extends Dialog {
                 }
 
                 dismiss();
+
+
+                EventAdapter.call(EventAdapter.REFRESH_USER_LIST);
                 EventAdapter.call(EventAdapter.ADD_BLACKBOX,BlackBoxManger.ADD_USER+"账号："+name+"密码："+password+"备注："+remark);
+                LoadingUtils.loading(mContext);
             }
         });
 
@@ -93,7 +102,7 @@ public class AddUserDialog extends Dialog {
 
     private int addToLocalUser(String name, String remake, String password) {
         try {
-//            ToastUtils.showMessage(mContext,"index:"+position+", imsi:"+imsi);
+
             DbManager dbManager = UCSIDBManager.getDbManager();
             long count = dbManager.selector(UserInfo.class)
                     .where("account","=",name).count();
@@ -118,6 +127,8 @@ public class AddUserDialog extends Dialog {
                         .setContentText(getContext().getString(R.string.add_user_fail_ftp))
                         .show();
             }
+
+
 
         } catch (DbException e) {
             new SweetAlertDialog(getContext(), SweetAlertDialog.ERROR_TYPE)

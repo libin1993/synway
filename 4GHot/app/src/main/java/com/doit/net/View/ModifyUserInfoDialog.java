@@ -15,6 +15,7 @@ import com.doit.net.Event.EventAdapter;
 import com.doit.net.Model.AccountManage;
 import com.doit.net.Model.UCSIDBManager;
 import com.doit.net.Model.UserInfo;
+import com.doit.net.Utils.LoadingUtils;
 import com.doit.net.Utils.ToastUtils;
 import com.doit.net.ucsi.R;
 
@@ -40,12 +41,14 @@ public class ModifyUserInfoDialog extends Dialog {
     private Button btSave;
     private Button btCancel;
     private Button btDelete;
+    private Context mContext;
 
     public ModifyUserInfoDialog(Context context, String name, String password, String remake ) {
         super(context, R.style.Theme_dialog);
         modifyName = name;
         modifyRemake = remake;
         modifyPassword = password;
+        mContext = context;
         initView();
     }
 
@@ -100,18 +103,20 @@ public class ModifyUserInfoDialog extends Dialog {
                 tmpUserInfo.setAccount(etUserName.getText().toString());
                 tmpUserInfo.setRemake(etRemake.getText().toString());
                 tmpUserInfo.setPassword(etPassword.getText().toString());
-                UCSIDBManager.getDbManager().update(tmpUserInfo, "account", "password", "remake");
+                UCSIDBManager.getDbManager().update(tmpUserInfo);
                 if (AccountManage.UpdateAccountToDevice()){
                     ToastUtils.showMessage(R.string.modify_user_success);
 
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX,BlackBoxManger.MODIFY_USER+"修改账户"+modifyName+
                             "为:"+etUserName.getText().toString() + "+" + etPassword.getText().toString() +
                             ("".equals(etRemake.getText().toString())?"":("+"+etRemake.getText().toString())));
+                    EventAdapter.call(EventAdapter.REFRESH_USER_LIST);
+                    LoadingUtils.loading(mContext);
                 }else{
-                    tmpUserInfo.setAccount(modifyName);
-                    tmpUserInfo.setRemake(modifyRemake);
-                    tmpUserInfo.setPassword(modifyPassword);
-                    UCSIDBManager.getDbManager().update(tmpUserInfo, "account", "password", "remake");
+//                    tmpUserInfo.setAccount(modifyName);
+//                    tmpUserInfo.setRemake(modifyRemake);
+//                    tmpUserInfo.setPassword(modifyPassword);
+//                    UCSIDBManager.getDbManager().update(tmpUserInfo, "account", "password", "remake");
 
                     new SweetAlertDialog(getContext(), SweetAlertDialog.ERROR_TYPE)
                             .setTitleText(getContext().getString(R.string.modify_user_fail))

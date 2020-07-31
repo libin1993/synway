@@ -42,14 +42,14 @@ public class LoginActivity extends BaseActivity {
     ImageView ivdPasswordClear;
     boolean isRemember;
 
-    private Thread getAccountThread;
+
     private final String TIME_DATUM = "TIME_DATUM";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getWindow ().setFlags (WindowManager.LayoutParams.FLAG_FULLSCREEN,
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_login);
@@ -100,51 +100,25 @@ public class LoginActivity extends BaseActivity {
         AccountManage.checkAccountDir();
     }
 
-    private void initLog(){
+    private void initLog() {
         LogUtils.initLog(); //必须在UPDATE_FILE_SYS事件注册后，否则电脑端无法显示
     }
 
     private void getAccountInfoFormDevice() {
-        getAccountThread = new Thread() {
-            public void run() {
-                try {
-                    if (FTPManager.getInstance().connect()){
-                        AccountManage.clearCurrentAccountDB();
-                        AccountManage.downloadAccountFile();
-                        if (AccountManage.UpdateAccountFromFileToDB()){
-                            //AccountManage.getAdminAccoutFromPref();
-                            AccountManage.setGetAccountFromDevFlag(true);
-                        }else{
-                            ToastUtils.showMessageLong("从设备获取用户信息失败");
-                            AccountManage.setGetAccountFromDevFlag(false);
-                        }
-                        AccountManage.deleteAccountFile();
-                    }else{
-                        ToastUtils.showMessageLong( "从设备获取用户信息失败");
-                    }
-                } catch (Exception e) {
-                    ToastUtils.showMessageLong("从设备获取用户信息失败，请确保与设备网络连接畅通");
-                    e.printStackTrace();
-                }
-            }};
-        getAccountThread.start();
-        try {
-            getAccountThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
+
     }
 
     private boolean checkTimeDatum() {
-        long timeDatum =  PrefManage.getLong(TIME_DATUM, Long.valueOf("0"));
+        long timeDatum = PrefManage.getLong(TIME_DATUM, Long.valueOf("0"));
         long nowTime = new Date().getTime();
-        if (timeDatum == 0){
+        if (timeDatum == 0) {
             PrefManage.setLong(TIME_DATUM, nowTime);
             return true;
         }
 
-        if (timeDatum >= nowTime){
-            new MySweetAlertDialog(this,MySweetAlertDialog.WARNING_TYPE)
+        if (timeDatum >= nowTime) {
+            new MySweetAlertDialog(this, MySweetAlertDialog.WARNING_TYPE)
                     .setTitleText("时间异常")
                     .setContentText("当前系统时间异常，请矫正后再打开App！")
                     .setConfirmText("退出")
@@ -157,7 +131,7 @@ public class LoginActivity extends BaseActivity {
                     .show();
 
             return false;
-        }else{
+        } else {
             PrefManage.setLong(TIME_DATUM, nowTime);
             return true;
         }
@@ -173,7 +147,7 @@ public class LoginActivity extends BaseActivity {
         PrefManage.setBoolean(LOC_PREF_KEY, ifOpenLocMode);
     }
 
-    private void initView(){
+    private void initView() {
         etUserName = findViewById(R.id.etImsi);
         etPassword = findViewById(R.id.etPassword);
         ivUserNameClear = findViewById(R.id.ivUserNameClear);
@@ -192,62 +166,88 @@ public class LoginActivity extends BaseActivity {
             ckRememberPass.setChecked(true);
         }
 
+        AccountManage.clearCurrentAccountDB();
+
         btLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                boolean tmpCheckRes = checkTimeDatum();
-//                if (!tmpCheckRes){
-//                    return;
-//                }
-//                tmpCheckRes = checkAuthorize();
-//                if (!tmpCheckRes){
-//                    return;
-//                }
 
-                String userName = etUserName.getText().toString();
-                String password = etPassword.getText().toString();
+                String userName = etUserName.getText().toString().trim();
+                String password = etPassword.getText().toString().trim();
 
-                if ("".equals(userName) || "".equals(password)){
+                if ("".equals(userName) || "".equals(password)) {
                     ToastUtils.showMessage("密码或账号为空，请重新输入");
                     return;
                 }
 
                 AccountManage.getAdminAccoutFromPref();
-                if (!userName.equals(AccountManage.getSuperAccount()) && !userName.equals(AccountManage.getAdminAcount())){
+                if (!userName.equals(AccountManage.getSuperAccount()) && !userName.equals(AccountManage.getAdminAcount())) {
 
-                    getAccountInfoFormDevice();
-                    if (!AccountManage.hasGetAccountFromDev()){
-                        return;
-                    }
-                }
+                    new Thread() {
+                        public void run() {
+                            try {
+                                if (FTPManager.getInstance().connect()) {
+                                    boolean isDownloadSuccess = FTPManager.getInstance().downloadFile(AccountManage.LOCAL_FTP_ACCOUNT_PATH,
+                                            AccountManage.ACCOUNT_FILE_NAME);
+                                    if (isDownloadSuccess) {
+                                        if (AccountManage.UpdateAccountFromFileToDB()) {
+                                            checkAccount();
+                                            AccountManage.deleteAccountFile();
+                                        } else {
+                                            ToastUtils.showMessageLong("从设备获取用户信息失败");
+                                        }
 
-                if (AccountManage.checkAccount(userName, password)) {
-                    if (ckRememberPass.isChecked()) { // 检查复选框是否被选中
-                        PrefManage.setBoolean("remember_password", true);
-                        PrefManage.setString("username", userName);
-                        PrefManage.setString("password", password);
-                    } else {
-                        PrefManage.setBoolean("remember_password", false);
-                        PrefManage.setString("username", "");
-                        PrefManage.setString("password", "");
-                    }
+                                    }else {
+                                        ToastUtils.showMessageLong("从设备获取用户信息失败");
+                                    }
 
-                    AccountManage.setCurrentLoginAccount(userName);
-
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
+                                } else {
+                                    ToastUtils.showMessageLong("从设备获取用户信息失败");
+                                }
+                            } catch (Exception e) {
+                                ToastUtils.showMessageLong("从设备获取用户信息失败，请确保与设备网络连接畅通");
+                                e.printStackTrace();
+                            }
+                        }
+                    }.start();
                 } else {
-                    ToastUtils.showMessage("密码或账号错误,请联系管理员！");
+                    checkAccount();
                 }
+
+
             }
         });
 
-        addClearListener(etUserName,ivUserNameClear);
-        addClearListener(etPassword,ivdPasswordClear);
+        addClearListener(etUserName, ivUserNameClear);
+        addClearListener(etPassword, ivdPasswordClear);
     }
 
-    private void addClearListener(final EditText et , final ImageView iv){
+    private void checkAccount() {
+        String userName = etUserName.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
+
+        if (AccountManage.checkAccount(userName, password)) {
+            if (ckRememberPass.isChecked()) { // 检查复选框是否被选中
+                PrefManage.setBoolean("remember_password", true);
+                PrefManage.setString("username", userName);
+                PrefManage.setString("password", password);
+            } else {
+                PrefManage.setBoolean("remember_password", false);
+                PrefManage.setString("username", "");
+                PrefManage.setString("password", "");
+            }
+
+            AccountManage.setCurrentLoginAccount(userName);
+
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        } else {
+            ToastUtils.showMessage("密码或账号错误,请联系管理员！");
+        }
+    }
+
+    private void addClearListener(final EditText et, final ImageView iv) {
         et.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -260,10 +260,10 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void afterTextChanged(Editable editable) {
                 //如果有输入内容长度大于0那么显示clear按钮
-                String str = editable + "" ;
-                if (editable.length() > 0){
+                String str = editable + "";
+                if (editable.length() > 0) {
                     iv.setVisibility(View.VISIBLE);
-                }else{
+                } else {
                     iv.setVisibility(View.INVISIBLE);
                 }
             }

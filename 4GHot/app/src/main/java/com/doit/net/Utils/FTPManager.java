@@ -130,7 +130,7 @@ public class FTPManager {
 
 
     // 实现上传文件的功能
-    public synchronized boolean uploadFile(String path, String updateFileName)
+    public synchronized boolean uploadFile(boolean isAppend,String path, String updateFileName)
             throws Exception {
         String localPath = path + updateFileName;
         // 上传文件之前，先判断本地文件是否存在
@@ -150,17 +150,16 @@ public class FTPManager {
         FTPFile[] files = ftpClient.listFiles(fileName);
 
         long serverSize = 0;
-        if (files.length == 0) {
-            //UtilBaseLog.printLog( "服务器文件不存在");
+        if (files.length != 0) {
+            if (isAppend){
+                serverSize = files[0].getSize(); // 服务器文件的长度
+            }else {
+                LogUtils.log("非断点续传，删除文件");
+                ftpClient.deleteFile(fileName);
 
-            serverSize = 0;
-        } else {
-            serverSize = files[0].getSize(); // 服务器文件的长度
-            //UtilBaseLog.printLog("服务器文件存在");
-//                ftpClient.deleteFile(fileName);
-//                serverSize = 0;
-//                ftpClient.deleteFile(fileName);
+            }
         }
+
         if (localSize <= serverSize) {
             if (ftpClient.deleteFile(fileName)) {
                 LogUtils.log("服务器文件存在,删除文件,开始重新上传");
@@ -169,34 +168,24 @@ public class FTPManager {
         }
         RandomAccessFile raf = new RandomAccessFile(localFile, "r");
         // 进度
-        long step = localSize / 100;
-        long process = 0;
-        long currentSize = 0;
+
         // 好了，正式开始上传文件
         ftpClient.enterLocalPassiveMode();
 
         ftpClient.setRestartOffset(serverSize);
         raf.seek(serverSize);
-        //OutputStream output = ftpClient.storeFileStream(fileName);
+
         OutputStream output = ftpClient.appendFileStream(fileName);
         byte[] b = new byte[1024];
         int length = 0;
         while ((length = raf.read(b)) != -1) {
             output.write(b, 0, length);
-//                currentSize = currentSize + length;
-//                if (currentSize / step != process) {
-//                    process = currentSize / step;
-//                    if (process % 10 == 0) {
-//                        //UtilBaseLog.printLog("上传进度：" + process);
-//                    }
-//                }
+
         }
         output.flush();
         output.close();
         raf.close();
 
-
-        //ftpClient.changeWorkingDirectory("/");
         if (ftpClient.completePendingCommand()) {
             LogUtils.log("文件上传成功");
             return true;

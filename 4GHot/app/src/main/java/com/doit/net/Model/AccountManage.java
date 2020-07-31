@@ -1,6 +1,7 @@
 package com.doit.net.Model;
 
 import android.os.Environment;
+import android.text.TextUtils;
 
 import com.doit.net.Utils.FTPManager;
 import com.doit.net.Utils.FileUtils;
@@ -12,6 +13,7 @@ import org.xutils.ex.DbException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -31,8 +33,8 @@ public class AccountManage {
     private static final String ADMIN_REMARK = "administrator88861158";  //存储在账号文件用于鉴定管理员账户
     private static String currentLoginAccount = "";
 
-    private static String LOCAL_FTP_ACCOUNT_PATH = FileUtils.ROOT_PATH + "FtpAccount/";
-    private static String ACCOUNT_FILE_NAME = "account";
+    public static String LOCAL_FTP_ACCOUNT_PATH = FileUtils.ROOT_PATH + "FtpAccount/";
+    public static String ACCOUNT_FILE_NAME = "account";
 
     private static DbManager dbManager = UCSIDBManager.getDbManager();
 
@@ -65,13 +67,6 @@ public class AccountManage {
         return adminPassword;
     }
 
-//    public static boolean isAdminLogin() {
-//        return isAdminLogin;
-//    }
-
-//    public static void setAdminLogin(boolean login) {
-//        isAdminLogin = login;
-//    }
 
     public static String getCurrentLoginAccount() {
         return currentLoginAccount;
@@ -118,7 +113,6 @@ public class AccountManage {
             setCurrentPerLevel(PERMISSION_LEVEL3);
             return true;
         } else if (inputAccount.equals(adminAccount) && inputPassword.equals(adminPassword)) {
-            //setAdminLogin(true);
             setCurrentPerLevel(PERMISSION_LEVEL2);
             return true;
         } else {
@@ -155,7 +149,7 @@ public class AccountManage {
             e.printStackTrace();
         }
 
-        final File namelistFile = new File(LOCAL_FTP_ACCOUNT_PATH + ACCOUNT_FILE_NAME);
+        File namelistFile = new File(LOCAL_FTP_ACCOUNT_PATH + ACCOUNT_FILE_NAME);
         if (namelistFile.exists()) {
             namelistFile.delete();
         }
@@ -164,19 +158,25 @@ public class AccountManage {
         try {
             bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(LOCAL_FTP_ACCOUNT_PATH + ACCOUNT_FILE_NAME, true), StandardCharsets.UTF_8));
             if (listUserInfo != null) {
-                //bufferedWriter.write(AccountManage.getAdminAcount()+","+AccountManage.getAdminPassword()+ "," + AccountManage.getAdminRemark()+"\n");
                 for (UserInfo info : listUserInfo) {
-                    //bufferedWriter.write(DateUtil.getDateByFormat(info.getCreateDate(),DateUtil.LOCAL_DATE)+",");
-                    bufferedWriter.write(info.getAccount() + ",");
-                    bufferedWriter.write(info.getPassword() + ",");
-                    bufferedWriter.write(info.getRemake());
-                    bufferedWriter.write("\n");
+                    LogUtils.log("上传账户："+info.toString());
+                    bufferedWriter.write(info.getAccount() + ","+info.getPassword() + ","+info.getRemake()+"#");
                 }
+
+                new Thread() {
+                    public void run() {
+                        try {
+                            FTPManager.getInstance().connect();
+                            FTPManager.getInstance().uploadFile(false,LOCAL_FTP_ACCOUNT_PATH, ACCOUNT_FILE_NAME);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
             }
         } catch (IOException e) {
             result = false;
             e.printStackTrace();
-            //log.error("File Error",e);
         } finally {
             if (bufferedWriter != null) {
                 try {
@@ -186,25 +186,12 @@ public class AccountManage {
             }
         }
 
-        new Thread() {
-            public void run() {
-                try {
-                    FTPManager.getInstance().connect();
-                    FTPManager.getInstance().uploadFile(LOCAL_FTP_ACCOUNT_PATH, ACCOUNT_FILE_NAME);
-                    namelistFile.delete();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }.start();
+
 
 
         return result;
     }
 
-    public static void downloadAccountFile() {
-        FTPManager.getInstance().downloadFile(LOCAL_FTP_ACCOUNT_PATH, ACCOUNT_FILE_NAME);
-    }
 
 
     public static boolean UpdateAccountFromFileToDB() {
@@ -221,26 +208,40 @@ public class AccountManage {
             return false;
         }
 
+
         BufferedReader bufferedReader = null;
         try {
             bufferedReader = new BufferedReader(new FileReader(file));
-            String readline = "";
-            while ((readline = bufferedReader.readLine()) != null) {
-                String[] split = readline.split(",");
-                if (split.length < 2)
-                    continue;
-
-                LogUtils.log(readline);
-                UserInfo info = new UserInfo();
-                info.setAccount(split[0]);
-                info.setPassword(split[1]);
-                if (split.length == 3) {
-                    info.setRemake(split[2]);
-                } else {
-                    info.setRemake("");
-                }
-                dbManager.save(info);
+            StringBuilder sb = new StringBuilder();
+            String s="";
+            while ((s = bufferedReader.readLine()) != null) {
+                sb.append(s);
             }
+
+            String content = sb.toString();
+            LogUtils.log("设备下载的账号："+content);
+            if (TextUtils.isEmpty(content)){
+                return false;
+            }
+
+            String[] split = content.split("#");
+            for (String s1 : split) {
+                if (!TextUtils.isEmpty(s1)){
+                    String[] split1 = s1.split(",");
+                    if (split1.length >= 2){
+                        UserInfo info = new UserInfo();
+                        info.setAccount(split1[0]);
+                        info.setPassword(split1[1]);
+                        if (split1.length == 3) {
+                            info.setRemake(split1[2]);
+                        } else {
+                            info.setRemake("");
+                        }
+                        dbManager.save(info);
+                    }
+                }
+            }
+
         } catch (IOException e) {
             result = false;
             e.printStackTrace();
@@ -276,11 +277,4 @@ public class AccountManage {
         }
     }
 
-    public static boolean hasGetAccountFromDev() {
-        return hasGetAccountFromDev;
-    }
-
-    public static void setGetAccountFromDevFlag(boolean hasGetAccountInfoFromDevice) {
-        hasGetAccountFromDev = hasGetAccountInfoFromDevice;
-    }
 }

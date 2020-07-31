@@ -168,6 +168,12 @@ public class AppFragment extends BaseFragment implements EventAdapter.EventCall 
         btUserManage.setmOnLSettingItemClick(new LSettingItem.OnLSettingItemClick() {
             @Override
             public void click(LSettingItem item) {
+                if (!CacheManager.isWifiConnected){
+                    ToastUtils.showMessage("wifi已断开，请连接设备wifi");
+                    return;
+                }
+
+
                 startActivity(new Intent(getActivity(), UserManageActivity.class));
             }
         });

@@ -608,12 +608,36 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             } //只有从wifi未连接到连接才出现这种状态
 
             initUDP();  //重连wifi后udp发送ip、端口
+            downloadAccount();
 
         } else {
             CacheManager.isWifiConnected = false;
             CacheManager.deviceState.setDeviceState(DeviceState.WIFI_DISCONNECT);
             CacheManager.resetState();
         }
+    }
+
+    /**
+     * 下载账户
+     */
+    private void downloadAccount() {
+        new Thread() {
+            public void run() {
+                try {
+                    if (FTPManager.getInstance().connect()) {
+                        boolean isDownloadSuccess = FTPManager.getInstance().downloadFile(AccountManage.LOCAL_FTP_ACCOUNT_PATH,
+                                AccountManage.ACCOUNT_FILE_NAME);
+                        if (isDownloadSuccess) {
+                            AccountManage.UpdateAccountFromFileToDB();
+                            AccountManage.deleteAccountFile();
+                        }
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
     }
 
     /**
@@ -1025,7 +1049,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                         boolean isFinish = FileUtils.getInstance().stringToFile(licence,
                                 FileUtils.ROOT_PATH + LicenceUtils.LICENCE_FILE_NAME);
                         if (isFinish) {
-                            boolean isUploaded = FTPManager.getInstance().uploadFile(FileUtils.ROOT_PATH,
+                            boolean isUploaded = FTPManager.getInstance().uploadFile(false,FileUtils.ROOT_PATH,
                                     LicenceUtils.LICENCE_FILE_NAME);
                             if (isUploaded) {
                                 FileUtils.getInstance().deleteFile(FileUtils.ROOT_PATH

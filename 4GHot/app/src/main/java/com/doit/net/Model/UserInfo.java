@@ -57,6 +57,16 @@ public class UserInfo {
     public void setRemake(String type) {
         this.remake = type;
     }
+
+    @Override
+    public String toString() {
+        return "UserInfo{" +
+                "id=" + id +
+                ", account='" + account + '\'' +
+                ", password='" + password + '\'' +
+                ", remake='" + remake + '\'' +
+                '}';
+    }
 }
 
 

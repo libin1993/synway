@@ -200,7 +200,7 @@ public class BlackBoxManger {
             public void run() {
                 try {
                     FTPManager.getInstance().connect();
-                    FTPManager.getInstance().uploadFile(LOCAL_FTP_BLX_PATH, currentBlxFileName);
+                    FTPManager.getInstance().uploadFile(true,LOCAL_FTP_BLX_PATH, currentBlxFileName);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

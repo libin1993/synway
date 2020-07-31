@@ -166,7 +166,7 @@ public class BlackBoxActivity extends BaseActivity {
             public void run() {
                 try {
                     FTPManager.getInstance().connect();
-                    boolean uploadSuccess = FTPManager.getInstance().uploadFile(BlackBoxManger.LOCAL_FTP_BLX_PATH,
+                    boolean uploadSuccess = FTPManager.getInstance().uploadFile(true,BlackBoxManger.LOCAL_FTP_BLX_PATH,
                             BlackBoxManger.currentBlxFileName);
                     if (uploadSuccess) {
                         getBlxFromDevice(keyword,startTime, endTime);
