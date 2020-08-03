@@ -8,15 +8,13 @@
         android:layout_width="150dp"
         android:layout_height="40dp"
         android:hint="移动2G频点"
-        android:inputType="number"
-        android:text="49"/>
+        android:inputType="number" />
 
     <EditText
         android:id="@+id/et_unicom_fcn"
         android:layout_width="150dp"
         android:layout_height="40dp"
         android:hint="联通2G频点"
-        android:inputType="number"
-        android:text="107"/>
+        android:inputType="number" />
 
 </LinearLayout>

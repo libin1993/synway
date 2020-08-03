@@ -751,10 +751,15 @@ public class LTE_PT_PARAM {
         /* 1.定位过程中app异常重启的后，会有持续定位上报，其中包括了大量的设置的黑名单imsi,此代码块为解决此问题而加
            2.管控模式的号码强度也是从这里上报，要加以区分 */
         String locRpt = UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(), 0);
-        LogUtils.log("定位上报:" + locRpt);
+        LogUtils.log("上报:" + locRpt);
         if (CacheManager.currentWorkMode.equals("0") && !CacheManager.getLocState()) {
 
             LogUtils.log("忽略此次srsp上报:" + locRpt);
+            return;
+        }
+
+        if (!CacheManager.isRFOpen()){
+            LogUtils.log("射频未开启，忽略上报");
             return;
         }
 

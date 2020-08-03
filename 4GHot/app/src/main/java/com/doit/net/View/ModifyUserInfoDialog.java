@@ -3,6 +3,7 @@ package com.doit.net.View;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +16,7 @@ import com.doit.net.Event.EventAdapter;
 import com.doit.net.Model.AccountManage;
 import com.doit.net.Model.UCSIDBManager;
 import com.doit.net.Model.UserInfo;
+import com.doit.net.Utils.FormatUtils;
 import com.doit.net.Utils.LoadingUtils;
 import com.doit.net.Utils.ToastUtils;
 import com.doit.net.ucsi.R;
@@ -79,7 +81,22 @@ public class ModifyUserInfoDialog extends Dialog {
                 return;
             }
 
-            try {
+                if (!FormatUtils.getInstance().isCommon(etUserName.getText().toString()) ||
+                        !FormatUtils.getInstance().isCommon(etPassword.getText().toString())){
+                    ToastUtils.showMessage( "请不要输入特殊字符");
+                    return;
+                }
+
+                if (!TextUtils.isEmpty(etRemake.getText().toString())){
+                    if (!FormatUtils.getInstance().isCommon(etRemake.getText().toString())){
+                        ToastUtils.showMessage( "请不要输入特殊字符");
+                        return;
+                    }
+                }
+
+
+
+                try {
                 DbManager db = UCSIDBManager.getDbManager();
                 UserInfo tmpUserInfo = db.selector(UserInfo.class)
                         .where("account", "=", modifyName)

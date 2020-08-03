@@ -132,4 +132,13 @@ public class FormatUtils {
 
         return true;
     }
+
+
+    /**
+     *  特殊字符
+     */
+    public boolean isCommon(String data) {
+
+        return !data.contains(",") && !data.contains("#");
+    }
 }

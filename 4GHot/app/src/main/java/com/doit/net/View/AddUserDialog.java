@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +17,7 @@ import com.doit.net.Event.EventAdapter;
 import com.doit.net.Model.AccountManage;
 import com.doit.net.Model.UCSIDBManager;
 import com.doit.net.Model.UserInfo;
+import com.doit.net.Utils.FormatUtils;
 import com.doit.net.Utils.LoadingUtils;
 import com.doit.net.Utils.MySweetAlertDialog;
 import com.doit.net.Utils.ToastUtils;
@@ -75,6 +77,18 @@ public class AddUserDialog extends Dialog {
                 }else if ("".equals(password)){
                     ToastUtils.showMessage( "请输入密码！");
                     return;
+                }
+
+                if (!FormatUtils.getInstance().isCommon(name) || !FormatUtils.getInstance().isCommon(password)){
+                    ToastUtils.showMessage( "请不要输入特殊字符");
+                    return;
+                }
+
+                if (!TextUtils.isEmpty(remark)){
+                    if (!FormatUtils.getInstance().isCommon(remark)){
+                        ToastUtils.showMessage( "请不要输入特殊字符");
+                        return;
+                    }
                 }
 
                 if (addToLocalUser(name, remark,password) < 0){

@@ -384,6 +384,23 @@ public class CacheManager {
     }
 
     /**
+     * @return 射频是否开启
+     */
+    public static boolean isRFOpen(){
+        boolean isOpen = false;
+        if (channels !=null && channels.size()>0){
+            for (LteChannelCfg channel : channels) {
+                if (channel.getRFState()) {
+                    isOpen = true;
+                    break;
+                }
+            }
+        }
+
+        return isOpen;
+    }
+
+    /**
      * 重置一下状态，一般设备需要重启时调用
      */
     public static void resetState() {
