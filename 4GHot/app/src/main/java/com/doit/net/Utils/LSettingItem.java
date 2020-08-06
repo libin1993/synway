@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -224,15 +225,26 @@ public class LSettingItem extends RelativeLayout {
         mRightIcon_check = mView.findViewById(R.id.rightcheck);
         mRightIcon_switch = mView.findViewById(R.id.rightswitch);
 
-        mRightIcon_switch.setOnClickListener(new OnClickListener() {
+
+        mRightIcon_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-//                mRightIcon_switch.setChecked(!mRightIcon_switch.isChecked());
-                if (null != mOnLSettingCheckedChange) {
-                    mOnLSettingCheckedChange.click(LSettingItem.this);
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (buttonView.isPressed()){
+                    if (null != mOnLSettingCheckedChange) {
+                        mOnLSettingCheckedChange.click(LSettingItem.this);
+                    }
                 }
             }
         });
+//        mRightIcon_switch.setOnCheckedChangeListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+////                mRightIcon_switch.setChecked(!mRightIcon_switch.isChecked());
+//                if (null != mOnLSettingCheckedChange) {
+//                    mOnLSettingCheckedChange.click(LSettingItem.this);
+//                }
+//            }
+//        });
 
         mDivider = mView.findViewById(R.id.vDivider);
     }

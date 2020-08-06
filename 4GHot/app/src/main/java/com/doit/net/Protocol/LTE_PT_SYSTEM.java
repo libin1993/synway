@@ -41,7 +41,7 @@ public class LTE_PT_SYSTEM {
 
         //获取整体的包
         byte[] tempSendBytes=sendPackage.getPackageContent();
-        LogUtils.log1("TCP发送：Type:" + sendPackage.getPackageMainType() + ";  SubType:0x" + Integer.toHexString(sendPackage.getPackageSubType()) + ";  子协议:" + UtilDataFormatChange.bytesToString(sendPackage.getByteSubContent(), 0));
+        LogUtils.log("TCP发送：Type:" + sendPackage.getPackageMainType() + ";  SubType:0x" + Integer.toHexString(sendPackage.getPackageSubType()) + ";  子协议:" + UtilDataFormatChange.bytesToString(sendPackage.getByteSubContent(), 0));
         ServerSocketUtils.getInstance().sendData(tempSendBytes);
     }
 
@@ -67,7 +67,7 @@ public class LTE_PT_SYSTEM {
         //获取整体的包
         byte[] tempSendBytes=sendPackage.getPackageContent();
 
-        LogUtils.log1("TCP发送：Type:" + sendPackage.getPackageMainType() + ";  SubType:0x" + Integer.toHexString(sendPackage.getPackageSubType()) + ";  子协议:" + UtilDataFormatChange.bytesToString(sendPackage.getByteSubContent(), 0));
+        LogUtils.log("TCP发送：Type:" + sendPackage.getPackageMainType() + ";  SubType:0x" + Integer.toHexString(sendPackage.getPackageSubType()) + ";  子协议:" + UtilDataFormatChange.bytesToString(sendPackage.getByteSubContent(), 0));
         ServerSocketUtils.getInstance().sendData(tempSendBytes);
     }
 

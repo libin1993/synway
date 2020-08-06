@@ -36,7 +36,7 @@ public class LTE_PT_LOGIN {
 		//设置子类型
 		sendPackage.setPackageSubType(LOGIN_RESP);
 		//设置内容
-		sendPackage.setByteSubContent(new byte[]{(byte) 0xFF});
+		sendPackage.setByteSubContent(new byte[]{0x01});
 		//设置校验位
 		sendPackage.setPackageCheckNum(sendPackage.getCheckNum());
 
@@ -56,8 +56,10 @@ public class LTE_PT_LOGIN {
 		byte[] tempSendBytes=sendPackage.getPackageContent();
 		LogUtils.log("登录回复");
 
-		LogUtils.log1("TCP发送：Type:" + sendPackage.getPackageMainType() + ";  SubType:0x" + Integer.toHexString(receivePackage.getPackageSubType())+ ";  子协议:" + UtilDataFormatChange.bytesToString(sendPackage.getByteSubContent(), 0));
+		LogUtils.log("TCP发送：Type:" + sendPackage.getPackageMainType() + ";  SubType:0x" + Integer.toHexString(sendPackage.getPackageSubType())+ ";  子协议:" + UtilDataFormatChange.bytesToString(sendPackage.getByteSubContent(), 0));
 
 		ServerSocketUtils.getInstance().sendData(tempSendBytes);
+
+
 	}
 }

@@ -9,6 +9,7 @@ import android.content.Context;
 import android.os.Build;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 
 import com.doit.net.Utils.UtilOperator;
 import com.doit.net.application.MyApplication;
@@ -82,6 +83,11 @@ public class CacheManager {
     public static boolean getLocMode() {
         return loc_mode;
     }
+
+    private static LteCellConfig cellConfig;
+    private static LteEquipConfig equipConfig;
+    public static List<LteChannelCfg> channels = new ArrayList<>();
+
 
 
     public static void setLocMode(boolean locMode) {
@@ -404,15 +410,11 @@ public class CacheManager {
      * 重置一下状态，一般设备需要重启时调用
      */
     public static void resetState() {
-        LogUtils.log("reset state.");
         cellConfig = null;
         channels.clear();
         equipConfig = null;
     }
 
-    private static LteCellConfig cellConfig;
-    private static LteEquipConfig equipConfig;
-    public static List<LteChannelCfg> channels = new ArrayList<>();
 
 
     public static LteCellConfig getCellConfig() {
@@ -564,30 +566,22 @@ public class CacheManager {
         return allGa > 32;
     }
 
-    public static void changeBand(final String idx, final String changeBand) {
+    public static void changeBand( String idx,  String changeBand) {
+
         ProtocolManager.changeBand(idx, changeBand);
 
         //下发切换之后，等待生效，设置默认频点
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                String band38Fcns = "37900,38098,38200";
-                String band40Fcns = "38950,39148,39300";
-
-                switch (changeBand) {
-                    case "38":
-                        ProtocolManager.setChannelConfig(idx, band38Fcns, "", "", "", "", "", "");
-                        break;
-
-                    case "40":
-                        ProtocolManager.setChannelConfig(idx, band40Fcns, "", "", "", "", "", "");
-                        break;
-
-                    default:
-                        break;
+                String band = ProtocolManager.getCheckedFcn(changeBand);
+                if (TextUtils.isEmpty(band)){
+                    return;
                 }
+                ProtocolManager.setChannelConfig(idx, band, "", "", "", "", "", "");
+
             }
-        }, 5000);
+        }, 2000);
 
         //设置完频点，更新参数和界面
         new Timer().schedule(new TimerTask() {

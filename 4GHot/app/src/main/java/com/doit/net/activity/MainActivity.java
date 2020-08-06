@@ -226,6 +226,10 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             @Override
             public void onDisconnect() {
                 CacheManager.deviceState.setDeviceState(DeviceState.ON_INIT);
+                heartbeatCount = false;    //一旦发现是连接就重置此标志以设置所有配置
+                //设备重启（重连）后需要重新检查设置默认参数
+                CacheManager.hasSetDefaultParam = false;
+                CacheManager.resetState();
 
             }
         });

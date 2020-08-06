@@ -9,6 +9,7 @@ import org.apache.commons.net.SocketClient;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -27,7 +28,7 @@ public class ServerSocketUtils {
     private ServerSocket mServerSocket;
 
     public final static int PORT = 7003;   //端口
-    private final static int READ_TIME_OUT = 60000;  //超时时间
+    private final static int READ_TIME_OUT = 90000;  //超时时间
     public String currentRemoteAddress = "";       //当前访问ip
     private Map<String, Socket> map = new HashMap<>();
 
@@ -79,8 +80,10 @@ public class ServerSocketUtils {
                         LogUtils.log("TCP收到设备连接,ip：" + remoteIP + "；端口：" + remotePort);
 
 
-                        ReceiveThread receiveThread = new ReceiveThread(remoteIP, remotePort, onSocketChangedListener);
-                        receiveThread.start();
+//                        ReceiveThread receiveThread = new ReceiveThread(remoteIP, remotePort, onSocketChangedListener);
+//                        receiveThread.start();
+
+                        new Thread(new ReceiveRunnable(remoteIP, remotePort, onSocketChangedListener)).start();
 
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -90,7 +93,56 @@ public class ServerSocketUtils {
                 }
             }
         }).start();
+    }
 
+
+    /**
+     * 接收线程
+     */
+    public class ReceiveRunnable implements Runnable {
+        private OnSocketChangedListener onSocketChangedListener;
+        private String remoteIP;
+        private int remotePort;
+
+        public ReceiveRunnable(String remoteIP, int remotePort, OnSocketChangedListener onSocketChangedListener) {
+            this.onSocketChangedListener = onSocketChangedListener;
+            this.remoteIP = remoteIP;
+            this.remotePort = remotePort;
+        }
+
+        @Override
+        public void run() {
+            //数据缓存
+            byte[] bytesReceived = new byte[1024];
+            //接收到流的数量
+            int receiveCount;
+            LTEDataParse lteDataParse = new LTEDataParse();
+            Socket socket;
+            try {
+                //获取当前socket
+                socket = map.get(remoteIP + ":" + remotePort);
+                if (socket == null) {
+                    return;
+                }
+
+                //获取输入流
+                InputStream inputStream = socket.getInputStream();
+
+                //循环接收数据
+                while ((receiveCount = inputStream.read(bytesReceived)) != -1) {
+                    lteDataParse.parseData(bytesReceived, receiveCount);
+                }
+
+                LogUtils.log("socket被关闭，读取长度：" + receiveCount);
+
+            } catch (IOException ex) {
+                LogUtils.log("socket异常:" + ex.toString());
+            }
+
+            onSocketChangedListener.onDisconnect();
+            closeSocket(remoteIP + ":" + remotePort);  //关闭socket
+            lteDataParse.clearReceiveBuffer();
+        }
     }
 
 
@@ -170,19 +222,20 @@ public class ServerSocketUtils {
     public void sendData(byte[] tempByte) {
 
         Socket socket = map.get(currentRemoteAddress);
-        if (socket != null) {
-            new Thread() {
+        if (socket != null && socket.isConnected()) {
+            new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         OutputStream outputStream = socket.getOutputStream();
                         outputStream.write(tempByte);
+                        outputStream.flush();
                     } catch (Exception e) {
                         e.printStackTrace();
-                        LogUtils.log("socket发送失败："+e.getMessage());
+                        LogUtils.log("socket发送失败：" + e.getMessage());
                     }
                 }
-            }.start();
+            }).start();
         }
 
     }

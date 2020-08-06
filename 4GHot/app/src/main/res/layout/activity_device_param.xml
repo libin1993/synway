@@ -2,13 +2,11 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    android:background="@color/black"
-    android:scrollbars="vertical"
-    android:id="@+id/device_layout">
+    android:background="@color/black">
 
     <View
         android:layout_width="match_parent"
@@ -225,14 +223,12 @@
         android:background="@color/dimgrey"
         />
 
-    <LinearLayout
-        android:id="@+id/id_channel_list"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_band"
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:background="@drawable/ueid_bkg"
         android:layout_height="0dp"
-        android:layout_weight="1">
-    </LinearLayout>
+        android:layout_weight="1"/>
+
 
     <View
         android:layout_width="match_parent"
@@ -245,7 +241,6 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:layout_gravity="bottom"
         android:gravity="center">
 
         <Button

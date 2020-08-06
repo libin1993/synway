@@ -1,5 +1,6 @@
 package com.doit.net.Data;
 
+import com.doit.net.Protocol.LTE_PT_ADJUST;
 import com.doit.net.Protocol.LTE_PT_LOGIN;
 import com.doit.net.Protocol.LTE_PT_PARAM;
 import com.doit.net.Protocol.LTE_PT_SYSTEM;
@@ -11,7 +12,6 @@ import com.doit.net.Utils.UtilDataFormatChange;
  * Created by Zxc on 2018/10/18.
  */
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class LTEDataParse {
     //将字节数暂存
@@ -126,7 +126,7 @@ public class LTEDataParse {
         receivePackage.setByteSubContent(byteSubContent);
 
 
-        LogUtils.log1("TCP接收：Type:" + packageMainType + ";  SubType:0x" + Integer.toHexString(receivePackage.getPackageSubType()) + ";  子协议:" + UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(), 0));
+        LogUtils.log("TCP接收：Type:" + packageMainType + ";  SubType:0x" + Integer.toHexString(receivePackage.getPackageSubType()) + ";  子协议:" + UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(), 0));
         //实时解析协议
         realTimeResponse(receivePackage);
     }
@@ -138,6 +138,9 @@ public class LTEDataParse {
 
             case LTE_PT_LOGIN.PT_LOGIN:
                 LTE_PT_LOGIN.loginResp(receivePackage);
+                break;
+            case LTE_PT_ADJUST.PT_ADJUST:
+//                LTE_PT_ADJUST.response(receivePackage);
                 break;
 
             case LTE_PT_SYSTEM.PT_SYSTEM:

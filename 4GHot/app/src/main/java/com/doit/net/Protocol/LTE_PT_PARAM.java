@@ -114,7 +114,7 @@ public class LTE_PT_PARAM {
         //获取整体的包
         byte[] tempSendBytes = sendPackage.getPackageContent();
 
-        LogUtils.log1("TCP发送：Type:" + sendPackage.getPackageMainType() + ";  SubType:0x" + Integer.toHexString(sendPackage.getPackageSubType()) + "" + ";  子协议:" + UtilDataFormatChange.bytesToString(sendPackage.getByteSubContent(), 0));
+        LogUtils.log("TCP发送：Type:" + sendPackage.getPackageMainType() + ";  SubType:0x" + Integer.toHexString(sendPackage.getPackageSubType()) + "" + ";  子协议:" + UtilDataFormatChange.bytesToString(sendPackage.getByteSubContent(), 0));
 
         ServerSocketUtils.getInstance().sendData(tempSendBytes);
     }
@@ -225,7 +225,7 @@ public class LTE_PT_PARAM {
 
         //获取整体的包
         byte[] tempSendBytes = sendPackage.getPackageContent();
-        LogUtils.log1("TCP发送：Type:" + sendPackage.getPackageMainType() + ";  SubType:0x" + Integer.toHexString(sendPackage.getPackageSubType()) + ";  子协议:" + UtilDataFormatChange.bytesToString(sendPackage.getByteSubContent(), 0));
+        LogUtils.log("TCP发送：Type:" + sendPackage.getPackageMainType() + ";  SubType:0x" + Integer.toHexString(sendPackage.getPackageSubType()) + ";  子协议:" + UtilDataFormatChange.bytesToString(sendPackage.getByteSubContent(), 0));
         ServerSocketUtils.getInstance().sendData(tempSendBytes);
     }
 
@@ -285,6 +285,10 @@ public class LTE_PT_PARAM {
 
         EventAdapter.call(EventAdapter.HEARTBEAT_RPT);
         EventAdapter.call(EventAdapter.RF_STATUS_RPT);
+
+        //		LTE_PT_ADJUST.sendData(LTE_PT_ADJUST.ADJUST_APP,"");
+
+//        LTE_PT_ADJUST.sendData(LTE_PT_ADJUST.ADJUST_RESP,"");
     }
 
     //处理黑名单中标上报
@@ -553,6 +557,7 @@ public class LTE_PT_PARAM {
 
             case LTE_PT_PARAM.PARAM_CHANGE_BAND_ACK:
                 if (respContent.charAt(0) == '0') {
+                    LogUtils.log("切换band成功");
                     //ToastUtils.showMessageLong(GameApplication.appContext,"下发切换Band命令成功，请等待设备重启。");
                 } else if (respContent.charAt(0) == '1') {
                     LogUtils.log("切换band失败");
@@ -758,10 +763,10 @@ public class LTE_PT_PARAM {
             return;
         }
 
-        if (!CacheManager.isRFOpen()){
-            LogUtils.log("射频未开启，忽略上报");
-            return;
-        }
+//        if (!CacheManager.isRFOpen()){
+//            LogUtils.log("射频未开启，忽略上报");
+//            return;
+//        }
 
 
         if ("".equals(locRpt))

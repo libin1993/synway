@@ -437,8 +437,8 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
                             continue;
                         }
 
-                        if (!TextUtils.isEmpty(name) && name.length() > 8) {
-                            name = name.substring(0, 8);
+                        if (!TextUtils.isEmpty(name) && name.length() > 5) {
+                            name = name.substring(0, 5);
                         }
 
                         if (!TextUtils.isEmpty(remark) && remark.length() > 8) {

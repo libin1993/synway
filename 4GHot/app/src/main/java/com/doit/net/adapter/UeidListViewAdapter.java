@@ -164,7 +164,7 @@ public class UeidListViewAdapter extends BaseSwipeAdapter {
 
     private void checkBlackWhiteList(UeidBean resp, TextView tvContent) {
 
-        String content = "IMSI：" + resp.getImsi() + "                " + "制式: " + UtilOperator.getOperatorNameCH(resp.getImsi()) + "\n";
+        String content = "IMSI：" + resp.getImsi() + "          " + "制式: " + UtilOperator.getOperatorNameCH(resp.getImsi()) + "\n";
 
         //优先先检查是否为黑名单
         if (VersionManage.isPoliceVer()) {

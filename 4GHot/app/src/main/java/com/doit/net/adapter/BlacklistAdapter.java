@@ -112,7 +112,7 @@ public class BlacklistAdapter extends BaseSwipeAdapter {
         DBBlackInfo resp = ueidList.get(position);
         String name = "";
         if(!StringUtils.isBlank(resp.getName())){
-            name = mContext.getString(R.string.lab_name)+resp.getName()+"      ";
+            name = mContext.getString(R.string.lab_name)+resp.getName()+"    ";
         }
         String remark = "";
         if (!TextUtils.isEmpty(resp.getRemark())){

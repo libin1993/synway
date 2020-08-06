@@ -125,8 +125,6 @@ public class LTESendPackage
 		if(this.byteSubContent!=null) {
 			byteArray.append(this.byteSubContent,0,this.byteSubContent.length);
 		}
-
-		LogUtils.log("TCP接收：Type:"+packageMainType+";SubType："+packageSubType);
 		
 		return byteArray.toByteArray();
 	}

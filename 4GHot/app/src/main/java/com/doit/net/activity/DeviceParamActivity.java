@@ -37,11 +37,13 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.doit.net.bean.LteChannelCfg;
 import com.doit.net.Model.BlackBoxManger;
@@ -64,13 +66,14 @@ import java.util.TimerTask;
  */
 public class DeviceParamActivity extends BaseActivity implements EventAdapter.EventCall {
     private final Activity activity = this;
-    private LinearLayout layoutChannelList;
+
 
     private Button btSetCellParam;
     private Button btSetChannelCfg;
     private Button btUpdateTac;
     private Button btRebootDevice;
     private Button btRefreshParam;
+    private RecyclerView rvBand;
     private long lastRefreshParamTime = 0; //防止频繁刷新参数
 
     private RadioGroup rgPowerLevel;
@@ -92,12 +95,14 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
     private CheckBox cbRFSwitch;
 
     private MySweetAlertDialog mProgressDialog;
-    private Handler checkHandler = new Handler();
+
     private boolean refreshViewEnable = true;   //在设置需要长时间回馈的参数时，禁止界面更新
 
     //handler消息
     private final int UPDATE_VIEW = 0;
     private final int SHOW_PROGRESS = 1;
+
+    private BaseQuickAdapter<LteChannelCfg,BaseViewHolder> adapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -125,6 +130,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
         btRebootDevice.setOnClickListener(rebootDeviceClick);
         btRefreshParam = findViewById(R.id.btRefreshParam);
         btRefreshParam.setOnClickListener(refreshParamClick);
+        rvBand = findViewById(R.id.rv_band);
 
         rgPowerLevel = findViewById(R.id.rgPowerLevel);
         rbPowerHigh = findViewById(R.id.rbPowerHigh);
@@ -144,7 +150,63 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
         cbRFSwitch = findViewById(R.id.cbRFSwitch);
         cbRFSwitch.setOnCheckedChangeListener(rfCheckChangeListener);
 
-        layoutChannelList = findViewById(R.id.id_channel_list);
+
+        rvBand.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new BaseQuickAdapter<LteChannelCfg, BaseViewHolder>(R.layout.layout_rv_band_item,CacheManager.channels) {
+            @Override
+            protected void convert(BaseViewHolder helper, LteChannelCfg item) {
+                helper.setText(R.id.tv_band_info,"通道：" + item.getIdx() + "        " + "频段：" + item.getBand() + "\n" +
+                        "频点：[" + item.getFcn() + "]");
+                ImageView ivRFStatus = helper.getView(R.id.iv_rf_status);
+                if (item.getRFState()){
+                    ivRFStatus.setImageResource(R.drawable.switch_open);
+                }else {
+                    ivRFStatus.setImageResource(R.drawable.switch_close);
+                }
+
+                helper.addOnClickListener(R.id.iv_rf_status);
+            }
+        };
+        rvBand.setAdapter(adapter);
+        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                LteChannelCfg lteChannelCfg = CacheManager.channels.get(position);
+                if (lteChannelCfg != null && !TextUtils.isEmpty(lteChannelCfg.getChangeBand())) {
+                    changeChannelBandDialog(lteChannelCfg.getIdx(), lteChannelCfg.getChangeBand());
+                }
+            }
+        });
+        adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                if (view.getId() == R.id.iv_rf_status){
+                    if (!CacheManager.checkDevice(DeviceParamActivity.this)){
+                        return;
+                    }
+
+                    LteChannelCfg lteChannelCfg = CacheManager.channels.get(position);
+
+                    if (lteChannelCfg == null){
+                        return;
+                    }
+
+                    if (CacheManager.getLocState()) {
+                        ToastUtils.showMessageLong("当前正在搜寻中，请确认通道射频变动是否对其产生影响！");
+                    }
+
+                    showProcess(0);
+                    if (lteChannelCfg.getRFState()) {
+                        ProtocolManager.closeRf(lteChannelCfg.getIdx());
+
+                    } else {
+                        ProtocolManager.openRf(lteChannelCfg.getIdx());
+                    }
+
+                }
+
+            }
+        });
 
         mProgressDialog = new MySweetAlertDialog(activity, MySweetAlertDialog.PROGRESS_TYPE);
         mProgressDialog.setTitleText("Loading...");
@@ -539,8 +601,8 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
         refreshDetectOperation();
         refreshPowerLevel();
         refreshRFSwitch();
-        refreshChannels();
-//        channelListViewAdapter.setChannels(CacheManager.getChannels());
+        adapter.notifyDataSetChanged();
+
     }
 
     private void refreshRFSwitch() {
@@ -553,7 +615,9 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
             }
         }
 
+        cbRFSwitch.setOnCheckedChangeListener(null);
         cbRFSwitch.setChecked(rfState);
+        cbRFSwitch.setOnCheckedChangeListener(rfCheckChangeListener);
     }
 
     private void refreshDetectOperation() {
@@ -605,70 +669,68 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
     }
 
 
-    private void refreshChannels() {
-        if (!CacheManager.isDeviceOk()) {
-            return;
-        }
-
-        layoutChannelList.removeAllViews();
-        for (int i = 0; i < CacheManager.channels.size(); i++) {
-            final LteChannelCfg cfg = CacheManager.getChannels().get(i);
-            //String tac = CacheManager.getTac(cfg.getIdx());
-
-            LSettingItem item = new LSettingItem(activity);
-            String leftText = "通道：" + cfg.getIdx() + "        " + "频段：" + cfg.getBand() + "\n" +
-                    "频点：[" + cfg.getFcn() + "]";
-            item.setRightStyle(3);
-            item.switchRightStyle(3);
-            item.setLeftIconVisible(View.GONE);
-            item.setClickItemChangeState(false);
-            item.setChecked(cfg.getRFState());
-//            item.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT));
-            item.setLeftText(leftText);
-            item.isShowDivider(true);
-            //只有能切换的band可以点击
-            if (!"".equals(cfg.getChangeBand())) {
-                item.setmOnLSettingItemClick(new LSettingItem.OnLSettingItemClick() {
-                    @Override
-                    public void click(LSettingItem item) {
-                        changeChannelBandDialog(cfg.getIdx(), cfg.getChangeBand());
-                    }
-                });
-            }
-
-            item.setOnLSettingCheckedChange(new LSettingItem.OnLSettingItemClick() {
-                @Override
-                public void click(LSettingItem item) {
-                    if (!CacheManager.checkDevice(activity)) {
-                        if (item.isChecked()) {
-                            item.setChecked(false);
-                        } else {
-                            item.setChecked(true);
-                        }
-                        return;
-                    }
-
-                    if (CacheManager.getLocState()) {
-                        ToastUtils.showMessageLong("当前正在搜寻中，请确认通道射频变动是否对其产生影响！");
-//                        item.setChecked(!item.isChecked());
+//    private void refreshChannels() {
+//        if (!CacheManager.isDeviceOk()) {
+//            return;
+//        }
+//
+//        layoutChannelList.removeAllViews();
+//        for (int i = 0; i < CacheManager.channels.size(); i++) {
+//            final LteChannelCfg cfg = CacheManager.getChannels().get(i);
+//            //String tac = CacheManager.getTac(cfg.getIdx());
+//
+//            LSettingItem item = new LSettingItem(activity);
+//            String leftText = "通道：" + cfg.getIdx() + "        " + "频段：" + cfg.getBand() + "\n" +
+//                    "频点：[" + cfg.getFcn() + "]";
+//            item.setRightStyle(3);
+//            item.switchRightStyle(3);
+//            item.setLeftIconVisible(View.GONE);
+//            item.setClickItemChangeState(false);
+//            item.setChecked(cfg.getRFState());
+////            item.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT));
+//            item.setLeftText(leftText);
+//            item.isShowDivider(true);
+//            //只有能切换的band可以点击
+//            if (!"".equals(cfg.getChangeBand())) {
+//                item.setmOnLSettingItemClick(new LSettingItem.OnLSettingItemClick() {
+//                    @Override
+//                    public void click(LSettingItem item) {
+//                        changeChannelBandDialog(cfg.getIdx(), cfg.getChangeBand());
+//                    }
+//                });
+//            }
+//
+//            item.setOnLSettingCheckedChange(new LSettingItem.OnLSettingItemClick() {
+//                @Override
+//                public void click(LSettingItem item) {
+//                    if (!CacheManager.checkDevice(activity)) {
+//                        if (item.isChecked()) {
+//                            item.setChecked(false);
+//                        } else {
+//                            item.setChecked(true);
+//                        }
 //                        return;
-                    }
-
-                    showProcess(0);
-                    if (item.isChecked()) {
-                        item.setChecked(true);
-                        ProtocolManager.openRf(cfg.getIdx());
-                    } else {
-                        item.setChecked(false);
-                        ProtocolManager.closeRf(cfg.getIdx());
-                    }
-                }
-            });
-
-            layoutChannelList.addView(item);
-//            txt += "通道："  + cfg.getPlmn() + "，频点:" + cfg.getBand()+ "，TAC:" + tac + "，射频：" + (rf ? rf_open_tip : rf_close_tip)+"<br>";
-        }
-    }
+//                    }
+//
+//                    if (CacheManager.getLocState()) {
+//                        ToastUtils.showMessageLong("当前正在搜寻中，请确认通道射频变动是否对其产生影响！");
+//                    }
+//
+//                    showProcess(0);
+//                    if (item.isChecked()) {
+//                        item.setChecked(true);
+//                        ProtocolManager.openRf(cfg.getIdx());
+//                    } else {
+//                        item.setChecked(false);
+//                        ProtocolManager.closeRf(cfg.getIdx());
+//                    }
+//                }
+//            });
+//
+//            layoutChannelList.addView(item);
+////            txt += "通道："  + cfg.getPlmn() + "，频点:" + cfg.getBand()+ "，TAC:" + tac + "，射频：" + (rf ? rf_open_tip : rf_close_tip)+"<br>";
+//        }
+//    }
 
     private void changeChannelBandDialog(final String idx, final String band) {
         UserChannelListAdapter adapter = new UserChannelListAdapter(activity);

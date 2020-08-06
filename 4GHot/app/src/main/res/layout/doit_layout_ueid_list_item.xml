@@ -46,7 +46,8 @@
             android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:text="1."
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textSize="14sp"/>
 
         <TextView
             android:padding="2dp"
@@ -55,7 +56,8 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:tag="Hover"/>
+            android:tag="Hover"
+            android:textSize="14sp"/>
 
 
         <ImageView

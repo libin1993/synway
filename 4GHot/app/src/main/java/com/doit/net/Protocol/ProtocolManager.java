@@ -163,7 +163,7 @@ public class ProtocolManager {
         content += idx;
         content += "@BAND:";
         content += changeBand;
-
+        LogUtils.log("切换band:"+content);
         LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_CHANGE_BAND, content);
     }
 
@@ -639,7 +639,7 @@ public class ProtocolManager {
     /**
      * 获取选中fcn
      */
-    private static String getCheckedFcn(String band) {
+    public static String getCheckedFcn(String band) {
         try {
             DbManager dbManager = UCSIDBManager.getDbManager();
             DBChannel channel = dbManager.selector(DBChannel.class)

@@ -39,7 +39,7 @@
                 style="@style/dialog_edit"
                 android:layout_weight="1"
                 android:singleLine="true"
-                android:maxLength="8"/>
+                android:maxLength="5"/>
         </LinearLayout>
 
         <LinearLayout

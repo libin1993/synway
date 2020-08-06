@@ -28,3 +28,4 @@
 -keep class com.baidu.** { *;}
 
 -keepattributes EnclosingMethod
+
