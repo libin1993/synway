@@ -970,16 +970,16 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
 
                 CacheManager.deviceState.setDeviceState(DeviceState.NORMAL);
+                getChannel();
 
-
-                if (CacheManager.hasPressStartButton()) {
-                    new Timer().schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            ProtocolManager.openAllRf();
-                        }
-                    }, 5000);
-                }
+//                if (CacheManager.hasPressStartButton()) {
+//                    new Timer().schedule(new TimerTask() {
+//                        @Override
+//                        public void run() {
+//                            ProtocolManager.openAllRf();
+//                        }
+//                    }, 5000);
+//                }
 
             }
 
@@ -989,6 +989,22 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             msg.obj = val;
             mHandler.sendMessage(msg);
         }
+    }
+
+    /**
+     * 定时轮询获取设备配置
+     */
+    private void  getChannel(){
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (CacheManager.deviceState.getDeviceState().equals(DeviceState.NORMAL)){
+                    ProtocolManager.getEquipAndAllChannelConfig();
+                }else {
+                    cancel();
+                }
+            }
+        },1000,6000);
     }
 
 

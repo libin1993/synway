@@ -583,13 +583,6 @@ public class CacheManager {
             }
         }, 2000);
 
-        //设置完频点，更新参数和界面
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                ProtocolManager.getEquipAndAllChannelConfig();
-            }
-        }, 12000);
 
         EventAdapter.call(EventAdapter.SHOW_PROGRESS, 13000);
     }

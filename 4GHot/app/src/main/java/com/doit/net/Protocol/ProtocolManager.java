@@ -183,6 +183,12 @@ public class ProtocolManager {
 
         for (LteChannelCfg channel : CacheManager.getChannels()) {
             setChannelConfig(channel.getIdx(), "", plnmValue, "", "", "", "", "");
+
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -329,6 +335,11 @@ public class ProtocolManager {
     public static void openAllRf() {
         for (LteChannelCfg channel : CacheManager.getChannels()) {
             openRf(channel.getIdx());
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -348,6 +359,11 @@ public class ProtocolManager {
     public static void closeAllRf() {
         for (LteChannelCfg channel : CacheManager.getChannels()) {
             closeRf(channel.getIdx());
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -432,8 +448,8 @@ public class ProtocolManager {
         String band38Fcns = "37900,38098,38200";
         String band39Fcns = "38400,38544,38300";
         String band40Fcns = "38950,39148,39300";
-        String band41Fcns = "37900,38098,38200";
-        String tmpAllFcns = "";
+        String band41Fcns = "40540,40936,41134";
+
         String pMax = "";
 
         for (LteChannelCfg channel : CacheManager.getChannels()) {

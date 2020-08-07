@@ -96,7 +96,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
 
     private MySweetAlertDialog mProgressDialog;
 
-    private boolean refreshViewEnable = true;   //在设置需要长时间回馈的参数时，禁止界面更新
+//    private boolean refreshViewEnable = true;   //在设置需要长时间回馈的参数时，禁止界面更新
 
     //handler消息
     private final int UPDATE_VIEW = 0;
@@ -195,10 +195,9 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                         ToastUtils.showMessageLong("当前正在搜寻中，请确认通道射频变动是否对其产生影响！");
                     }
 
-                    showProcess(0);
+                    showProcess(6000);
                     if (lteChannelCfg.getRFState()) {
                         ProtocolManager.closeRf(lteChannelCfg.getIdx());
-
                     } else {
                         ProtocolManager.openRf(lteChannelCfg.getIdx());
                     }
@@ -315,10 +314,11 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
 
 
                     ToastUtils.showMessage(R.string.tip_15);
-                    EventAdapter.call(EventAdapter.SHOW_PROGRESS);
+                    showProcess(6000);
 
                     ProtocolManager.setChannelConfig(CacheManager.channels.get(position).getIdx(),
                             fcn, plmn, pa, ga, rlm, "", alt_fcn);
+
                 }
             }
         });
@@ -400,7 +400,6 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                 return;
             }
 
-            refreshViewEnable = false;
 
             if (CacheManager.getLocState()) {
                 ToastUtils.showMessage("当前正在搜寻中，请留意功率变动是否对其产生影响！");
@@ -430,13 +429,6 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
             }
 
             showProcess(8000);
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    ProtocolManager.getEquipAndAllChannelConfig();
-                    refreshViewEnable = true;
-                }
-            }, 8000);
         }
     };
 
@@ -460,7 +452,6 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                 ToastUtils.showMessageLong("侦码制式设置已下发，请等待其生效");
             }
 
-            refreshViewEnable = false;
 
             switch (checkedId) {
                 case R.id.rbDetectAll:
@@ -488,14 +479,8 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                     break;
             }
 
-            showProcess(10000);
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    ProtocolManager.getEquipAndAllChannelConfig();
-                    refreshViewEnable = true;
-                }
-            }, 10000);
+            showProcess(8000);
+
         }
     };
 
@@ -512,21 +497,12 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                 return;
             }
 
-            refreshViewEnable = false;
 
             if (isChecked) {
                 ProtocolManager.openAllRf();
                 ToastUtils.showMessageLong(R.string.rf_open);
                 EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.OPEN_ALL_RF);
                 showProcess(6000);
-                new Timer().schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        refreshViewEnable = true;
-                        //refreshViews();
-                        ProtocolManager.getEquipAndAllChannelConfig();
-                    }
-                }, 6000);
             } else {
                 if (CacheManager.getLocState()) {
                     new MySweetAlertDialog(activity, MySweetAlertDialog.WARNING_TYPE)
@@ -543,14 +519,6 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                                     ProtocolManager.closeAllRf();
                                     ToastUtils.showMessage(R.string.rf_close);
                                     showProcess(6000);
-                                    new Timer().schedule(new TimerTask() {
-                                        @Override
-                                        public void run() {
-                                            refreshViewEnable = true;
-                                            //refreshViews();
-                                            ProtocolManager.getEquipAndAllChannelConfig();
-                                        }
-                                    }, 6000);
                                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CLOSE_ALL_RF);
                                 }
                             })
@@ -559,14 +527,6 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                     ProtocolManager.closeAllRf();
                     ToastUtils.showMessageLong(R.string.rf_close);
                     showProcess(6000);
-                    new Timer().schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            refreshViewEnable = true;
-                            //refreshViews();
-                            ProtocolManager.getEquipAndAllChannelConfig();
-                        }
-                    }, 6000);
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CLOSE_ALL_RF);
                 }
 
@@ -583,7 +543,8 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
 
         String gaConfig = "";
         String tmpGa = "";
-        for (LteChannelCfg channel : CacheManager.getChannels()) {
+        for (int i = 0; i < CacheManager.channels.size(); i++) {
+            LteChannelCfg channel = CacheManager.channels.get(i);
             tmpGa = String.valueOf(Integer.parseInt(channel.getPMax()) + powerAtt);
             gaConfig = tmpGa + ",";
             gaConfig += gaConfig;
@@ -591,13 +552,18 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
             LogUtils.log("设置功率：" + "IDX:" + channel.getIdx() + "@" + "PA:" + gaConfig);
             LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_CHANNEL_CONFIG,
                     "IDX:" + channel.getIdx() + "@" + "PA:" + gaConfig);
+
+            //
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
+
     }
 
     public void refreshViews() {
-        if (!refreshViewEnable)
-            return;
-
         refreshDetectOperation();
         refreshPowerLevel();
         refreshRFSwitch();

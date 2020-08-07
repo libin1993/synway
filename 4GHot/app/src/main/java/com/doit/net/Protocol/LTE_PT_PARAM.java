@@ -285,6 +285,7 @@ public class LTE_PT_PARAM {
 
         EventAdapter.call(EventAdapter.HEARTBEAT_RPT);
         EventAdapter.call(EventAdapter.RF_STATUS_RPT);
+        EventAdapter.call(EventAdapter.REFRESH_DEVICE);
 
         //		LTE_PT_ADJUST.sendData(LTE_PT_ADJUST.ADJUST_APP,"");
 
@@ -525,7 +526,7 @@ public class LTE_PT_PARAM {
             case LTE_PT_PARAM.PARAM_SET_CHANNEL_CONFIG_ACK:
                 if (respContent.charAt(0) == '0') {
                     LogUtils.log("设置通道成功");
-                    ProtocolManager.getEquipAndAllChannelConfig();
+//                    ProtocolManager.getEquipAndAllChannelConfig();
                 } else if (respContent.charAt(0) == '1') {
                     LogUtils.log("设置通道失败");
                 }

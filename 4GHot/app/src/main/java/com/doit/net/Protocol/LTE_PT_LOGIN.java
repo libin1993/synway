@@ -36,7 +36,7 @@ public class LTE_PT_LOGIN {
 		//设置子类型
 		sendPackage.setPackageSubType(LOGIN_RESP);
 		//设置内容
-		sendPackage.setByteSubContent(new byte[]{0x01});
+		sendPackage.setByteSubContent(new byte[]{(byte)0xFF});
 		//设置校验位
 		sendPackage.setPackageCheckNum(sendPackage.getCheckNum());
 
