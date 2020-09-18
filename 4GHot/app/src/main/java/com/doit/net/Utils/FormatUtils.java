@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import com.doit.net.application.MyApplication;
 
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
 /**
@@ -140,5 +141,108 @@ public class FormatUtils {
     public boolean isCommon(String data) {
 
         return !data.contains(",") && !data.contains("#");
+    }
+
+    /**
+     * @param data 数组倒序
+     */
+    public void reverseData(byte[] data) {
+        for (int start = 0, end = data.length - 1; start < end; start++, end--) {
+            byte temp = data[end];
+            data[end] = data[start];
+            data[start] = temp;
+        }
+    }
+
+
+    /**
+     * byte[] 转int
+     *
+     * @param tempValue
+     * @return
+     */
+    public int byteToInt(byte[] tempValue) {
+        int[] tempInt = new int[4];
+        tempInt[3] = (tempValue[3] & 0xff) << 0;
+        tempInt[2] = (tempValue[2] & 0xff) << 8;
+        tempInt[1] = (tempValue[1] & 0xff) << 16;
+        tempInt[0] = (tempValue[0] & 0xff) << 24;
+        return tempInt[0] + tempInt[1] + tempInt[2] + tempInt[3];
+    }
+
+
+    /**
+     * 将传入的字符串转换成byte[]
+     *
+     * @param tempValue
+     * @return
+     */
+    public  byte[] string2BytesForASCII(String tempValue) {
+        try {
+            return tempValue.getBytes(StandardCharsets.US_ASCII);
+        } catch (Exception ex) {
+        }
+        return null;
+    }
+
+    /**
+     * 将传入的字符串转换成byte[]
+     *
+     * @param tempValue
+     * @return
+     */
+    public  byte[] string2BytesForUTF(String tempValue) {
+        try {
+            return tempValue.getBytes(StandardCharsets.UTF_8);
+        } catch (Exception ex) {
+        }
+        return null;
+    }
+
+    /**
+     * 将传入的byte[]转换成字符串
+     *
+     * @param data
+     * @return
+     */
+    public  String bytes2StringForASCII(byte[] data) {
+        return new String(data,StandardCharsets.US_ASCII);
+    }
+
+
+    /**
+     * 将传入的byte[]转换成字符串
+     *
+     * @param data
+     * @return
+     */
+    public  String bytes2StringForUTF(byte[] data) {
+        return new String(data,StandardCharsets.UTF_8);
+    }
+
+
+    /**
+     * byte[] 转short
+     *
+     * @param
+     * @return
+     */
+    public short byteToShort(byte[] tempValue) {
+        return (short) ((tempValue[0] << 8) + (tempValue[1] & 0xFF));
+    }
+
+
+    /**
+     * Byte转Bit
+     */
+    public String byteToBit(byte b) {
+        return "" + (byte) ((b >> 0) & 0x1) +
+                (byte) ((b >> 1) & 0x1) +
+                (byte) ((b >> 2) & 0x1) +
+                (byte) ((b >> 3) & 0x1) +
+                (byte) ((b >> 4) & 0x1) +
+                (byte) ((b >> 5) & 0x1) +
+                (byte) ((b >> 6) & 0x1) +
+                (byte) ((b >> 7) & 0x1);
     }
 }

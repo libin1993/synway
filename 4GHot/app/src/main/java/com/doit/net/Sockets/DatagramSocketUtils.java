@@ -1,20 +1,11 @@
 package com.doit.net.Sockets;
 
-import com.doit.net.Model.CacheManager;
 import com.doit.net.Utils.LogUtils;
-import com.doit.net.Utils.NetWorkUtils;
-import com.doit.net.application.MyApplication;
-import com.doit.net.bean.DeviceState;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-
-import static com.doit.net.Sockets.NetConfig.BOALINK_LTE_IP;
 
 
 /**
@@ -26,7 +17,9 @@ public class DatagramSocketUtils {
     private static DatagramSocketUtils mInstance;
     private boolean isRunning = true; //未收到tcp连接请求就循环发送
     private DatagramSocket mSocket;
-    public final static int UDP_PORT = 6070; //设备udp端口
+    public static String REMOTE_LTE_IP = "192.168.4.100";
+    public final static int UDP_LOCAL_PORT = 7003;     //本机udp端口
+    public final static int UDP_REMOTE_PORT = 6070; //设备udp端口
     public final static String SEND_LOCAL_IP = "MSG_SET_XA_IP"; //手机发送ip
     public final static String SEND_LOCAL_IP_ACK = "MSG_SET_XA_IP_ACK"; //手机发送ip设备回复
 
@@ -49,12 +42,12 @@ public class DatagramSocketUtils {
      * 开启udp socket
      */
     public void init() {
-        isRunning = true;
         if (mSocket == null || mSocket.isClosed()) {
             try {
                 mSocket = new DatagramSocket();
             } catch (SocketException e) {
                 e.printStackTrace();
+                LogUtils.log("UDP异常: " + e.toString());
             }
 
             new ReceiveThread().start();
@@ -74,8 +67,8 @@ public class DatagramSocketUtils {
                     String remoteIP = dp.getAddress().getHostAddress();
                     int remotePort = dp.getPort();
                     String receiveData = new String(dp.getData(), 0, dp.getLength());
-                    JSONObject jsonReceive = new JSONObject(receiveData);
-                    String id = jsonReceive.getString("id");
+//                    JSONObject jsonReceive = new JSONObject(receiveData);
+//                    String id = jsonReceive.getString("id");
 //                        if (NetConfig.BOALINK_LTE_IP.equals(remoteIP) && remotePort == UDP_PORT
 //                                && SEND_LOCAL_IP_ACK.equals(id)) {
 //
@@ -131,9 +124,9 @@ public class DatagramSocketUtils {
             super.run();
             try {
 
-                InetAddress inetAddress = InetAddress.getByName(BOALINK_LTE_IP);
+                InetAddress inetAddress = InetAddress.getByName(REMOTE_LTE_IP);
                 DatagramPacket packet = new DatagramPacket(data.getBytes(), data.getBytes().length,
-                        inetAddress, UDP_PORT); //创建要发送的数据包，然后用套接字发送
+                        inetAddress, UDP_REMOTE_PORT); //创建要发送的数据包，然后用套接字发送
                 mSocket.send(packet); //用套接字发送数据包
                 LogUtils.log("UDP发送：" + data);
             } catch (Exception e) {

@@ -4,15 +4,15 @@ package com.doit.net.Protocol;
  * Created by Zxc on 2018/10/18.
  */
 public class LTEReceivePackage {
-	short packageLength;//长 2字节
-	short packageCheckNum;//校验位2字节
-	short packageSequence;//包的序号2字节
-	short packageSessionID;//对话ID2字节
-	byte packageEquipType;//主类型1字节
-	byte packageReserve;//预留1字节
-	byte packageMainType;//主类型1字节
-	byte packageSubType;//子类型1字节
-	byte[] byteSubContent;//子协议内容
+	private short packageLength;//长 2字节
+	private short packageCheckNum;//校验位2字节
+	private short packageSequence;//包的序号2字节
+	private short packageSessionID;//对话ID2字节
+	private byte packageEquipType;//主类型1字节
+	private byte packageReserve;//预留1字节
+	private byte packageMainType;//主类型1字节
+	private byte packageSubType;//子类型1字节
+	private byte[] byteSubContent;//子协议内容
 	public short getPackageLength() 
 	{
 		return packageLength;

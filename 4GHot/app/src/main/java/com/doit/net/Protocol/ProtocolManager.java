@@ -422,9 +422,9 @@ public class ProtocolManager {
                     .findFirst();
             if (dbChannel !=null){
                 if ("CTJ".equals(UtilOperator.getOperatorName(imsi))){
-                    ProtocolManager.setChannelConfig(dbChannel.getIdx(), "1300,1506,1650", "46000", "", "", "", "", "");
+                    setChannelConfig(dbChannel.getIdx(), "1300,1506,1650", "46000", "", "", "", "", "");
                 }else {
-                    ProtocolManager.setChannelConfig(dbChannel.getIdx(), dbChannel.getFcn(),
+                    setChannelConfig(dbChannel.getIdx(), dbChannel.getFcn(),
                             "46001,46011", "", "", "", "", "");
                 }
             }
@@ -715,6 +715,14 @@ public class ProtocolManager {
                             .findFirst();
                     if (channel1 == null) {
                         dbManager.save(new DBChannel(channel.getIdx(), channel.getBand(), fcn, 1, 1));
+
+                        //band38和band40可切换，需将band38和band40都保存下来
+                        if (channel.getBand().equals("38")){
+                            dbManager.save(new DBChannel(channel.getIdx(), "40", band40Fcns, 1, 1));
+                        }else if (channel.getBand().equals("40")){
+                            dbManager.save(new DBChannel(channel.getIdx(), "38", band38Fcns, 1, 1));
+                        }
+
                     }
 
                 } catch (DbException e) {

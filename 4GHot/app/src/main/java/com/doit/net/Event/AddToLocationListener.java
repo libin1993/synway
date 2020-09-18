@@ -20,8 +20,7 @@ import org.xutils.ex.DbException;
 /**
  * Created by wiker on 2016/4/27.
  */
-public class AddToLocationListener implements View.OnClickListener
-{
+public class AddToLocationListener implements View.OnClickListener {
 
     private int position;
     private Context mContext;

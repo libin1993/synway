@@ -31,15 +31,15 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.doit.net.Protocol.GSMSendPackage;
+import com.doit.net.Protocol.GSMPackage;
+import com.doit.net.Protocol.GSMSendManager;
 import com.doit.net.Protocol.GSMSubPackage;
-import com.doit.net.Sockets.NetConfig;
 import com.doit.net.Sockets.OnSocketChangedListener;
 import com.doit.net.Sockets.ServerSocketUtils;
 import com.doit.net.Sockets.DatagramSocketUtils;
 import com.doit.net.Sockets.UDPSocketUtils;
+import com.doit.net.Utils.FormatUtils;
 import com.doit.net.Utils.PermissionUtils;
 import com.doit.net.View.BatteryView;
 import com.doit.net.adapter.MainTabLayoutAdapter;
@@ -612,6 +612,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             } //只有从wifi未连接到连接才出现这种状态
 
             initUDP();  //重连wifi后udp发送ip、端口
+            initGSM();
             downloadAccount();
 
         } else {
@@ -645,35 +646,31 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     }
 
     /**
-     * 创建DatagramSocket
+     * 2G
      */
     private void initGSM() {
 
-        Timer timer = new Timer();
-        TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                GSMSendPackage sendPackage = new GSMSendPackage();
-                sendPackage.setMsgNumber((byte) 0x01);
-                sendPackage.setCarrierInstruction((byte) 0x00);
-                sendPackage.setMsgParameter((byte) 0x00);
+        UDPSocketUtils.getInstance().init();
 
-                GSMSubPackage subPackage = new GSMSubPackage();
+//        GSMPackage sendPackage = new GSMPackage();
+//        sendPackage.setMsgNumber((byte) 0x01);
+//        sendPackage.setCarrierInstruction((byte) 0x00);
+//        sendPackage.setMsgParameter((byte) 0x00);
+//
+//        GSMSubPackage subPackage = new GSMSubPackage();
+//        subPackage.setSubMsgLength((byte) 23);
+//        subPackage.setSubMsgNumber((short) 0x0001);
+//        subPackage.setSubMsgContent(new byte[20]);
+//
+//        sendPackage.setSubContent(subPackage.getMsgContent());
+//
+//        UDPSocketUtils.getInstance().sendData(sendPackage.getMsgContent());
 
-                subPackage.setSubMsgNumber((short) 0x0001);
 
-                byte[] a = new byte[20];
-                subPackage.setSubMsgContent(a);
+        LogUtils.log("运行状态:"+FormatUtils.getInstance().byteToBit((byte)6));
 
-                sendPackage.setMsgSubContent(subPackage.getMsgContent());
-
-                UDPSocketUtils.getInstance().sendData(sendPackage.getMsgContent());
-            }
-        };
-
-        timer.schedule(timerTask,
-                0,
-                5000);//周期时间
+        GSMSendManager.closeRF();
+        GSMSendManager.getNearbyCell();
 
     }
 
@@ -682,6 +679,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
      * 创建DatagramSocket
      */
     private void initUDP() {
+
         if (!PrefManage.getBoolean(SET_STATIC_IP, true)) {     //是否设置自动连接
             return;
         }
@@ -712,7 +710,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("ip", NetWorkUtils.getWIFILocalIpAddress(MyApplication.mContext));
-            jsonObject.put("port", NetConfig.LOCAL_PORT);
+            jsonObject.put("port", DatagramSocketUtils.UDP_LOCAL_PORT);
             jsonObject.put("id", DatagramSocketUtils.SEND_LOCAL_IP);
             jsonObject.put("ok", true);
 
@@ -994,17 +992,17 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     /**
      * 定时轮询获取设备配置
      */
-    private void  getChannel(){
+    private void getChannel() {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                if (CacheManager.deviceState.getDeviceState().equals(DeviceState.NORMAL)){
+                if (CacheManager.deviceState.getDeviceState().equals(DeviceState.NORMAL)) {
                     ProtocolManager.getEquipAndAllChannelConfig();
-                }else {
+                } else {
                     cancel();
                 }
             }
-        },1000,6000);
+        }, 1000, 6000);
     }
 
 
@@ -1069,7 +1067,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                         boolean isFinish = FileUtils.getInstance().stringToFile(licence,
                                 FileUtils.ROOT_PATH + LicenceUtils.LICENCE_FILE_NAME);
                         if (isFinish) {
-                            boolean isUploaded = FTPManager.getInstance().uploadFile(false,FileUtils.ROOT_PATH,
+                            boolean isUploaded = FTPManager.getInstance().uploadFile(false, FileUtils.ROOT_PATH,
                                     LicenceUtils.LICENCE_FILE_NAME);
                             if (isUploaded) {
                                 FileUtils.getInstance().deleteFile(FileUtils.ROOT_PATH

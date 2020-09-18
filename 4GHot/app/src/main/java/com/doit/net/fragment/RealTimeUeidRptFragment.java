@@ -179,7 +179,6 @@ public class RealTimeUeidRptFragment extends BaseFragment implements EventAdapte
                             .setConfirmText(getString(R.string.sure))
                             .showCancelButton(true)
                             .setConfirmClickListener(new MySweetAlertDialog.OnSweetClickListener() {
-
                                 @Override
                                 public void onClick(MySweetAlertDialog sweetAlertDialog) {
                                     sweetAlertDialog.dismiss();
@@ -187,6 +186,15 @@ public class RealTimeUeidRptFragment extends BaseFragment implements EventAdapte
                                     ToastUtils.showMessage(R.string.all_rf_close);
                                     EventAdapter.call(EventAdapter.SHOW_PROGRESS, 6000);
                                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CLOSE_ALL_RF);
+                                }
+                            })
+                            .setCancelClickListener(new MySweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(MySweetAlertDialog mySweetAlertDialog) {
+                                    mySweetAlertDialog.dismiss();
+                                    cbDetectSwitch.setOnCheckedChangeListener(null);
+                                    cbDetectSwitch.setChecked(true);
+                                    cbDetectSwitch.setOnCheckedChangeListener(rfDetectSwichtListener);
                                 }
                             })
                             .show();

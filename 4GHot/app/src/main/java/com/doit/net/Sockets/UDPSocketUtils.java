@@ -1,5 +1,6 @@
 package com.doit.net.Sockets;
 
+import com.doit.net.Protocol.GSMReceiveManager;
 import com.doit.net.Utils.LogUtils;
 
 import org.json.JSONObject;
@@ -8,6 +9,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.Arrays;
 
 /**
  * Author：Libin on 2020/6/5 10:53
@@ -21,6 +23,8 @@ public class UDPSocketUtils {
     private DatagramSocket mSocket;
     public final static int UDP_LOCAL_PORT = 5557; //本机udp端口
     public final static int UDP_REMOTE_PORT = 5558; //设备udp端口
+    public final static String REMOTE_GSM_IP = "192.168.1.202";
+    public final static String REMOTE_CDMA_IP = "192.168.1.203";
 
 
     private UDPSocketUtils() {
@@ -42,12 +46,12 @@ public class UDPSocketUtils {
      * 开启udp socket
      */
     public void init() {
-        isRunning = true;
         if (mSocket == null || mSocket.isClosed()) {
             try {
                 mSocket = new DatagramSocket(UDP_LOCAL_PORT);
             } catch (SocketException e) {
                 e.printStackTrace();
+                LogUtils.log("UDP1异常: " + e.toString());
             }
 
             new ReceiveThread().start();
@@ -59,24 +63,27 @@ public class UDPSocketUtils {
         @Override
         public void run() {
             super.run();
-            try {
-                while (isRunning) {
+            while (isRunning) {
+                GSMReceiveManager gsmReceiveManager = new GSMReceiveManager();
+                try {
+
                     byte[] buf = new byte[1024];
                     DatagramPacket dp = new DatagramPacket(buf, buf.length);
                     mSocket.receive(dp);
                     String remoteIP = dp.getAddress().getHostAddress();
                     int remotePort = dp.getPort();
-                    String receiveData = new String(dp.getData(), 0, dp.getLength());
 
-                    //tcp有设备连接,关闭socket
-                    LogUtils.log("udp来自ip为：" + remoteIP + " 端口为：" + remotePort + "的信息为：" + receiveData);
+//                    LogUtils.log("UDP1来自ip为：" + remoteIP + " 端口为：" + remotePort + "的信息为："
+//                            + Arrays.toString(dp.getData())+",长度为："+dp.getLength());
+                    gsmReceiveManager.parseData(remoteIP, dp.getData(), dp.getLength());
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    LogUtils.log("UDP1接收失败: " + e.toString());
+                    gsmReceiveManager.clearReceiveBuffer();
                 }
 
-            } catch (Exception e) {
-                e.printStackTrace();
-                LogUtils.log("udp接收失败: " + e.toString());
             }
-
 
         }
     }
@@ -86,11 +93,16 @@ public class UDPSocketUtils {
      * 发送数据
      */
     public void sendData(byte[] data) {
-        init();
-        new SendThread(data).start();
-
+        sendData(REMOTE_GSM_IP,data);
+        sendData(REMOTE_CDMA_IP,data);
     }
 
+    /**
+     * 发送数据
+     */
+    public void sendData(String ip,byte[] data) {
+        new SendThread(ip,data).start();
+    }
 
 
     public void closeSocket() {
@@ -104,10 +116,11 @@ public class UDPSocketUtils {
      *
      */
     public class SendThread extends Thread {
-
+        private String ip;
         private byte[] data;
 
-        public SendThread(byte[] data) {
+        public SendThread(String ip,byte[] data) {
+            this.ip = ip;
             this.data = data;
         }
 
@@ -115,9 +128,9 @@ public class UDPSocketUtils {
         public void run() {
             super.run();
             try {
-                LogUtils.log("UDP开始发送");
+                LogUtils.log("UDP1开始发送");
 
-                InetAddress inetAddress = InetAddress.getByName(NetConfig.REMOTE_GSM_IP);
+                InetAddress inetAddress = InetAddress.getByName(ip);
                 DatagramPacket packet = new DatagramPacket(data, data.length,
                         inetAddress, UDP_REMOTE_PORT); //创建要发送的数据包，然后用套接字发送
                 mSocket.send(packet); //用套接字发送数据包
@@ -126,9 +139,9 @@ public class UDPSocketUtils {
                 for (byte b : data) {
                     sb.append(b).append(",");
                 }
-                LogUtils.log("udp发送内容：" + sb.toString());
+                LogUtils.log("UDP1发送内容：" + sb.toString());
             } catch (Exception e) {
-                LogUtils.log("udp发送失败： " + e.toString());
+                LogUtils.log("UDP1发送失败： " + e.toString());
             }
         }
     }

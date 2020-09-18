@@ -70,6 +70,8 @@ public class LTESendPackage
 		return byteSubContent;
 	}
 	public void setByteSubContent(byte[] byteSubContent) {
+
+
 		this.byteSubContent = byteSubContent;
 	}
 	

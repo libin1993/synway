@@ -574,11 +574,11 @@ public class CacheManager {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                String band = ProtocolManager.getCheckedFcn(changeBand);
-                if (TextUtils.isEmpty(band)){
+                String fcn = ProtocolManager.getCheckedFcn(changeBand);
+                if (TextUtils.isEmpty(fcn)){
                     return;
                 }
-                ProtocolManager.setChannelConfig(idx, band, "", "", "", "", "", "");
+                ProtocolManager.setChannelConfig(idx, fcn, "", "", "", "", "", "");
 
             }
         }, 2000);

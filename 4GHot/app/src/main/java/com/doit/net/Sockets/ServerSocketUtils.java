@@ -1,19 +1,14 @@
 package com.doit.net.Sockets;
 
-import com.doit.net.Data.LTEDataParse;
+import com.doit.net.Protocol.LTEReceiveManager;
 import com.doit.net.Model.CacheManager;
 import com.doit.net.Utils.LogUtils;
-
-import org.apache.commons.net.SocketClient;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -117,7 +112,7 @@ public class ServerSocketUtils {
             byte[] bytesReceived = new byte[1024];
             //接收到流的数量
             int receiveCount;
-            LTEDataParse lteDataParse = new LTEDataParse();
+            LTEReceiveManager lteReceiveManager = new LTEReceiveManager();
             Socket socket;
             try {
                 //获取当前socket
@@ -131,7 +126,7 @@ public class ServerSocketUtils {
 
                 //循环接收数据
                 while ((receiveCount = inputStream.read(bytesReceived)) != -1) {
-                    lteDataParse.parseData(bytesReceived, receiveCount);
+                    lteReceiveManager.parseData(bytesReceived, receiveCount);
                 }
 
                 LogUtils.log("socket被关闭，读取长度：" + receiveCount);
@@ -142,7 +137,7 @@ public class ServerSocketUtils {
 
             onSocketChangedListener.onDisconnect();
             closeSocket(remoteIP + ":" + remotePort);  //关闭socket
-            lteDataParse.clearReceiveBuffer();
+            lteReceiveManager.clearReceiveBuffer();
         }
     }
 

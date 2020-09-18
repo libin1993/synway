@@ -1,13 +1,18 @@
 package com.doit.net.Protocol;
 
+import android.text.TextUtils;
+
+import com.doit.net.Utils.FormatUtils;
 import com.doit.net.Utils.UtilDataFormatChange;
 
 import org.apache.http.util.ByteArrayBuffer;
 
+import java.util.Arrays;
+
 /**
  * Author：Libin on 2020/6/5 14:51
  * Email：1993911441@qq.com
- * Describe：
+ * Describe：信息体
  */
 public class GSMSubPackage {
     private byte subMsgLength; //长度 1字节
@@ -15,8 +20,8 @@ public class GSMSubPackage {
     private byte[] subMsgContent;  //数据内容 可变长度
 
     public byte getSubMsgLength() {
-        byte packageLength = 8;
-        if (this.subMsgContent != null) {
+        byte packageLength = 3;
+        if (subMsgContent !=null && subMsgContent.length>0) {
             packageLength += subMsgContent.length;
         }
         return packageLength;
@@ -33,11 +38,12 @@ public class GSMSubPackage {
 
         //信息编号
         byte[] tempMsgNumber = UtilDataFormatChange.shortToByteArray(this.subMsgNumber);
+        FormatUtils.getInstance().reverseData(tempMsgNumber);
         byteArray.append(tempMsgNumber, 0, tempMsgNumber.length);
 
         //拷贝内容
-        if (this.subMsgContent != null) {
-            byteArray.append(this.subMsgContent, 0, this.subMsgContent.length);
+        if (subMsgContent !=null && subMsgContent.length>0) {
+            byteArray.append(subMsgContent, 0, subMsgContent.length);
         }
 
         return byteArray.toByteArray();
@@ -62,5 +68,14 @@ public class GSMSubPackage {
 
     public void setSubMsgContent(byte[] subMsgContent) {
         this.subMsgContent = subMsgContent;
+    }
+
+    @Override
+    public String toString() {
+        return "GSMSubPackage{" +
+                "subMsgLength=" + subMsgLength +
+                ", subMsgNumber=" + subMsgNumber +
+                ", subMsgContent=" + Arrays.toString(subMsgContent) +
+                '}';
     }
 }

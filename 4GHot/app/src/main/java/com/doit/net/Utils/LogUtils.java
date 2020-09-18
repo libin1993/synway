@@ -2,6 +2,7 @@ package com.doit.net.Utils;
 
 import android.os.Environment;
 import android.util.Log;
+import android.widget.PopupWindow;
 
 import com.doit.net.Event.EventAdapter;
 import com.doit.net.ucsi.BuildConfig;
@@ -75,6 +76,7 @@ public class LogUtils {
                 ex.printStackTrace();
             }
         }
+
     }
 
     public static void unInitLog(){
