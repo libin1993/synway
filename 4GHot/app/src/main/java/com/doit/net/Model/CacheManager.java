@@ -170,10 +170,10 @@ public class CacheManager {
      * @param imsi 开始定位
      */
     public static void startLoc(String imsi) {
-//        if (VersionManage.isPoliceVer()){
-//            ProtocolManager.setActiveMode("1");
-//        }
-        ProtocolManager.setActiveMode("1");
+        if (VersionManage.isPoliceVer()){
+            ProtocolManager.setActiveMode("1");
+        }
+
 
 
         new Timer().schedule(new TimerTask() {
@@ -188,13 +188,19 @@ public class CacheManager {
             }
         },1000);
 
-        ProtocolManager.setLocImsi(imsi);
+
+        if (VersionManage.isPoliceVer()){
+            ProtocolManager.setLocImsi(imsi);
+        }
+
 
         CacheManager.getCurrentLoction().setLocateStart(true);
     }
 
     public static void changeLocTarget(String imsi) {
-        ProtocolManager.setLocImsi(imsi);
+        if (VersionManage.isPoliceVer()){
+            ProtocolManager.setLocImsi(imsi);
+        }
     }
 
     /**

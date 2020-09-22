@@ -9,9 +9,9 @@ android {
 
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 2022
+        versionCode 2023
         useLibrary 'org.apache.http.legacy'
-        versionName 'v1.3.6'
+        versionName 'v1.3.7'
         multiDexEnabled true
         flavorDimensions "versionCode"
         compileOptions {

@@ -603,7 +603,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     private void wifiChangeEvent() {
         NetworkInfo wifiNetInfo = ((ConnectivityManager) activity.
                 getSystemService(Context.CONNECTIVITY_SERVICE)).getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-//        String ssid = NetWorkUtils.getWifiSSID(activity);
 
         if (wifiNetInfo.isConnected()) {
             CacheManager.isWifiConnected = true;
@@ -612,7 +611,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             } //只有从wifi未连接到连接才出现这种状态
 
             initUDP();  //重连wifi后udp发送ip、端口
-            initGSM();
+//            initGSM();
             downloadAccount();
 
         } else {
@@ -652,25 +651,12 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
         UDPSocketUtils.getInstance().init();
 
-//        GSMPackage sendPackage = new GSMPackage();
-//        sendPackage.setMsgNumber((byte) 0x01);
-//        sendPackage.setCarrierInstruction((byte) 0x00);
-//        sendPackage.setMsgParameter((byte) 0x00);
-//
-//        GSMSubPackage subPackage = new GSMSubPackage();
-//        subPackage.setSubMsgLength((byte) 23);
-//        subPackage.setSubMsgNumber((short) 0x0001);
-//        subPackage.setSubMsgContent(new byte[20]);
-//
-//        sendPackage.setSubContent(subPackage.getMsgContent());
-//
-//        UDPSocketUtils.getInstance().sendData(sendPackage.getMsgContent());
-
-
-        LogUtils.log("运行状态:"+FormatUtils.getInstance().byteToBit((byte)6));
 
         GSMSendManager.closeRF();
         GSMSendManager.getNearbyCell();
+        GSMSendManager.getGSMParams();
+        GSMSendManager.getCDMAParams();
+        LogUtils.log(FormatUtils.getInstance().byteToBit((byte)6));
 
     }
 

@@ -24,6 +24,16 @@ public class GSMMsgType {
     public static final byte NB_CELL_REPORT = 0x3B;  //小区上报
 
 
-//    public static final byte GET_DEVICE_STATUS = 0x01;  //查询通用消息
+    public static final short DEVICE_VERSION = 0x0001;  //软件版本号
+    public static final short DEVICE_STATUS = 0x0002;  //运行状态
+    public static final short CONFIGURE_MODE = 0x010A;  //配置模式
+    public static final short WORK_MODE = 0x010B;  //工作模式
+    public static final short CDMA_FCN1 = 0x0120;  //CDMA频点1
+    public static final short CDMA_FCN2 = 0x0128;  //CDMA频点2
+    public static final short CDMA_FCN3 = 0x0130;  //CDMA频点3
+    public static final short CDMA_FCN4 = 0x0138;  //CDMA频点4
+    public static final short GSM_FCN = 0x0150;  //GSM频点
+    public static final short DOWN_ATTENUATION = 0x0151;  //下行衰减
+
 
 }

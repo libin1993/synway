@@ -1,5 +1,6 @@
 package com.doit.net.activity;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -144,7 +145,9 @@ public class TestActivity extends BaseActivity implements EventAdapter.EventCall
         test5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ProtocolManager.setActiveMode("1");
+                if (VersionManage.isPoliceVer()){
+                    ProtocolManager.setActiveMode("1");
+                }
 
 
                 new Timer().schedule(new TimerTask() {
@@ -352,6 +355,7 @@ public class TestActivity extends BaseActivity implements EventAdapter.EventCall
     }
 
 
+    @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
