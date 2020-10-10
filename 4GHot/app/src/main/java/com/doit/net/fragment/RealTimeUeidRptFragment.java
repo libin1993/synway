@@ -333,12 +333,27 @@ public class RealTimeUeidRptFragment extends BaseFragment implements EventAdapte
                         return;
 
                     //确保到达这里的采集数据已经去过重，并存到数据库了
-                    List<UeidBean> listUeid = (List<UeidBean>) msg.obj;
-                    CacheManager.addRealtimeUeidList(listUeid);
+//                    List<UeidBean> listUeid = (List<UeidBean>) msg.obj;
+
+                    String imsi = (String) msg.obj;
+//                    CacheManager.addRealtimeUeidList(i);
+
+                    addShildRptList(imsi, "0");
+
+                    if (new Date().getTime() - lastSortTime >= 3000) {
+                        Collections.sort(CacheManager.realtimeUeidList, new Comparator<UeidBean>() {
+                            public int compare(UeidBean o1, UeidBean o2) {
+                                return (int) (DateUtils.convert2long(o2.getRptTime(),DateUtils.LOCAL_DATE) -
+                                                                        DateUtils.convert2long(o1.getRptTime(),DateUtils.LOCAL_DATE));
+                            }
+                        });
+
+                        lastSortTime = new Date().getTime();
+                    }
 
                     /* 对于同步完成之前的上传数据，保存数据库但不显示 */
-                    if (!CacheManager.isDeviceOk())
-                        return;
+//                    if (!CacheManager.isDeviceOk())
+//                        return;
 
                     updateView();
                     break;

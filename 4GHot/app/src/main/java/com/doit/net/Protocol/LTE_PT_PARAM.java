@@ -34,8 +34,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Zxc on 2018/10/18.
@@ -329,60 +331,34 @@ public class LTE_PT_PARAM {
         File file = new File(filePath);
         if (file.exists() && !file.isDirectory()) {
 
-            Map<String,UeidBean>  ueidMap = new HashMap<>();
+            Set<String> ueidSet = new HashSet<>();
             String[] splitUeid;
 
             try {
                 FileInputStream fileInputStream = new FileInputStream(file);
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
                 String readLine = "";
-                String tmpImsi, tmpTmsi, band, tmpRptTime, longitude, latitude;
-
 
                 while ((readLine = bufferedReader.readLine()) != null) {
                     splitUeid = readLine.split("\t");
 
-                    //如果是定位号码就跳过（目前的情况是在定位就不会有FTP上传）
-//                    if (CacheManager.getCurrentLoction() != null && CacheManager.getCurrentLoction().isLocateStart() &&
-//                            (CacheManager.currentLoction.getImsi().equals(splitUeid[0])))
-//                        continue;
 
                     //据测试，有时文件最后会多一行且带有/t
                     if (splitUeid.length < 6) {
                         continue;
                     }
 
-                    tmpImsi = splitUeid[0];
-                    tmpTmsi = splitUeid[1];
-                    band = splitUeid[2];
-                    tmpRptTime = splitUeid[3];
-                    longitude = splitUeid[4];
-                    latitude = splitUeid[5];
+                    ueidSet.add(splitUeid[0]);
 
-
-                    ueidMap.put(tmpImsi,new UeidBean(tmpImsi, "", tmpTmsi, band, tmpRptTime, longitude, latitude));
-
-
-                    if (!CacheManager.removeExistUeidInRealtimeList(splitUeid[0])) {
-                        //
-                        /* 1.如果实时上报界面没打开，就只是存到数据库而不显示
-                         * 2.存入数据库需要去重，去重的依据是否则已经存在实时列表里
-                         * */
-                        UCSIDBManager.saveUeidToDB(tmpImsi, ImsiMsisdnConvert.getMsisdnFromLocal(tmpImsi), tmpTmsi,
-                                DateUtils.convert2long(tmpRptTime, DateUtils.LOCAL_DATE), longitude, latitude);
-                    }
                 }
                 bufferedReader.close();
                 file.delete();   //处理完删除
 
-                if (ueidMap.size() > 0){
-                    List<UeidBean> listUeid = new ArrayList<>();
-                    for (Map.Entry<String, UeidBean> entry : ueidMap.entrySet()) {
-                        listUeid.add(entry.getValue());
+                if (ueidSet.size() > 0){
+                    for (String s : ueidSet) {
+                        EventAdapter.call(EventAdapter.UEID_RPT, s);
                     }
 
-                    LogUtils.log("ftp采号上传："+listUeid.size());
-                    EventAdapter.call(EventAdapter.UEID_RPT, listUeid);
                 }
 
             } catch (IOException e) {
@@ -764,72 +740,103 @@ public class LTE_PT_PARAM {
             return;
         }
 
-//        if (!CacheManager.isRFOpen()){
-//            LogUtils.log("射频未开启，忽略上报");
-//            return;
-//        }
-
 
         if ("".equals(locRpt))
             return;
 
-        String SRSP = "";
-
-        if (CacheManager.currentWorkMode.equals("0")) {
-            String[] splitStr = locRpt.split("#");
-            Map<String,UeidBean>  ueidMap = new HashMap<>();
-            for (int i = 0; i < splitStr.length; i++) {
-                String[] split = splitStr[i].split(":");
-                if (split.length > 1) {
-                    SRSP = split[1];
-                } else {
-                    SRSP = "";
+        String[] splitStr = locRpt.split("#");
+        for (String s : splitStr) {
+            String[] split = s.split(":");
+            if (split.length > 1) {
+                String SRSP = split[1];
+                if (TextUtils.isEmpty(SRSP) || Integer.parseInt(SRSP) <= 0) {
+                    continue;
                 }
 
-                String tmpImsi = split[0];
-                if (tmpImsi.equals(CacheManager.getCurrentLoction().getImsi()) && !TextUtils.isEmpty(SRSP) && Integer.parseInt(SRSP) > 0) {
-                    EventAdapter.call(EventAdapter.LOCATION_RPT, SRSP);
-
-                }
-
-                ueidMap.put(tmpImsi,new UeidBean(tmpImsi, "", "", "",
-                        DateUtils.convert2String(new Date(), DateUtils.LOCAL_DATE), "", ""));
-
-                if (!CacheManager.removeExistUeidInRealtimeList(tmpImsi)) {
-                    UCSIDBManager.saveUeidToDB(tmpImsi, ImsiMsisdnConvert.getMsisdnFromLocal(tmpImsi), "",
-                            new Date().getTime(), "", "");
-                }
-            }
-
-            if (ueidMap.size() > 0){
-                List<UeidBean> listUeid = new ArrayList<>();
-                for (Map.Entry<String, UeidBean> entry : ueidMap.entrySet()) {
-                    listUeid.add(entry.getValue());
-                }
-                EventAdapter.call(EventAdapter.UEID_RPT, listUeid);
-            }
-
-        } else if (CacheManager.currentWorkMode.equals("2")) {
-            String[] splitStr = locRpt.split("#");
-            for (int i = 0; i < splitStr.length; i++) {
-                String[] split = splitStr[i].split(":");
-                if (split.length > 1) {
-                    SRSP = split[1];
-                    if (TextUtils.isEmpty(SRSP) || Integer.parseInt(SRSP) <=0){
-                        continue;
+                if (CacheManager.getLocState()) {
+                    if (s.split(":")[0].equals(CacheManager.getCurrentLoction().getImsi())) {
+                        EventAdapter.call(EventAdapter.LOCATION_RPT, SRSP);
                     }
+                }
 
-                    if (CacheManager.getLocState()) {
-                        if (splitStr[i].split(":")[0].equals(CacheManager.getCurrentLoction().getImsi())) {
-                            EventAdapter.call(EventAdapter.LOCATION_RPT, SRSP);
-                        }
-                    }
-
-                    EventAdapter.call(EventAdapter.SHIELD_RPT, splitStr[i]);
+                if (CacheManager.currentWorkMode.equals("0")) {
+                    EventAdapter.call(EventAdapter.UEID_RPT, s.split(":")[0]);
+                }else {
+                    EventAdapter.call(EventAdapter.SHIELD_RPT, s);
                 }
 
             }
+
         }
+
+
+
+
+
+
+
+
+
+
+
+
+//        if (CacheManager.currentWorkMode.equals("0")) {
+//            String[] splitStr = locRpt.split("#");
+//            Map<String,UeidBean>  ueidMap = new HashMap<>();
+//            for (int i = 0; i < splitStr.length; i++) {
+//                String[] split = splitStr[i].split(":");
+//                if (split.length > 1) {
+//                    SRSP = split[1];
+//                } else {
+//                    SRSP = "";
+//                }
+//
+//                String tmpImsi = split[0];
+//                if (tmpImsi.equals(CacheManager.getCurrentLoction().getImsi()) && !TextUtils.isEmpty(SRSP) && Integer.parseInt(SRSP) > 0) {
+//                    EventAdapter.call(EventAdapter.LOCATION_RPT, SRSP);
+//
+//                }
+//
+//                ueidMap.put(tmpImsi,new UeidBean(tmpImsi, "", "", "",
+//                        DateUtils.convert2String(new Date(), DateUtils.LOCAL_DATE), "", ""));
+//
+//                CacheManager.saveImsi(tmpImsi);
+//
+//
+//
+//            }
+//
+//            if (ueidMap.size() > 0){
+//                List<UeidBean> listUeid = new ArrayList<>();
+//                for (Map.Entry<String, UeidBean> entry : ueidMap.entrySet()) {
+//                    listUeid.add(entry.getValue());
+//                }
+//                EventAdapter.call(EventAdapter.UEID_RPT, listUeid);
+//            }
+//
+//
+//
+//        } else if (CacheManager.currentWorkMode.equals("2")) {
+//            String[] splitStr = locRpt.split("#");
+//            for (int i = 0; i < splitStr.length; i++) {
+//                String[] split = splitStr[i].split(":");
+//                if (split.length > 1) {
+//                    SRSP = split[1];
+//                    if (TextUtils.isEmpty(SRSP) || Integer.parseInt(SRSP) <=0){
+//                        continue;
+//                    }
+//
+//                    if (CacheManager.getLocState()) {
+//                        if (splitStr[i].split(":")[0].equals(CacheManager.getCurrentLoction().getImsi())) {
+//                            EventAdapter.call(EventAdapter.LOCATION_RPT, SRSP);
+//                        }
+//                    }
+//
+//                    EventAdapter.call(EventAdapter.SHIELD_RPT, splitStr[i]);
+//                }
+//
+//            }
+//        }
 
     }
 }

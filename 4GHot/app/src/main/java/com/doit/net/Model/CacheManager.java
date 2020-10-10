@@ -37,6 +37,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,31 +97,8 @@ public class CacheManager {
 
 
     public synchronized static void addRealtimeUeidList(List<UeidBean> listUeid) {
-        addToList(listUeid);
-
-        /* 如果实时上报界面没加载就有数据上传，就会丢失数据
-           所以将存储数据库操作移到processUeidRpt */
-//        try {
-//            DbManager dbManager = UCSIDBManager.getDbManager();
-//            for (int i= 0; i < listUeid.size(); i++){
-//                DBUeidInfo info = new DBUeidInfo();
-//                info.setImsi(listUeid.get(i).getImsi());
-//                info.setTmsi(listUeid.get(i).getTmsi());
-//                //info.setCreateDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(listUeid.get(i).getRptTime()));
-//                info.setCreateDate(DateUtil.convert2long(listUeid.get(i).getRptTime(), DateUtil.LOCAL_DATE));
-//                info.setLongitude(listUeid.get(i).getLongitude());
-//                info.setLatitude(listUeid.get(i).getLatitude());
-//                dbManager.save(info);
-//            }
-//        } catch (DbException e) {
-//            log.error("插入UEID 到数据库异常",e);
-//        }
-    }
-
-    public synchronized static void addToList(List<UeidBean> listUeid) {
         if ((realtimeUeidList.size() + listUeid.size()) >= MAX_REALTIME_LIST_SIZE) {
             for (int i = 0; i < (realtimeUeidList.size() + listUeid.size() - MAX_REALTIME_LIST_SIZE); i++)
-                //realtimeUeidList.remove(realtimeUeidList.size()-1);
                 realtimeUeidList.remove(0);
         }
 
@@ -128,6 +106,7 @@ public class CacheManager {
         Collections.reverse(listUeid);
         realtimeUeidList.addAll(0, listUeid);
     }
+
 
     public static boolean hasPressStartButton() {
         return hasPressStartButton;
@@ -595,18 +574,20 @@ public class CacheManager {
 
 
     /*
-        删除列表里已存在的ueid
-        成功删除返回ture,没有删除（即不存在）返回false
+
      */
-    public static synchronized boolean removeExistUeidInRealtimeList(String imsi) {
-        for (int i = 0; i < realtimeUeidList.size(); i++) {
-            if (realtimeUeidList.get(i).getImsi().equals(imsi)) {
-                realtimeUeidList.remove(i);
-                return true;
+    public static synchronized void saveImsi(String imsi) {
+        boolean isContain = false;
+        for (UeidBean ueidBean : CacheManager.realtimeUeidList) {
+            if (ueidBean.getImsi().equals(imsi)){
+                isContain = true;
+                break;
             }
         }
-
-        return false;
+        if (!isContain){
+            UCSIDBManager.saveUeidToDB(imsi, ImsiMsisdnConvert.getMsisdnFromLocal(imsi), "",
+                    new Date().getTime(), "", "");
+        }
     }
 
     public static void clearUeidWhithoutSrsp() {
