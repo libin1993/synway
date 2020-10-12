@@ -53,7 +53,7 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
     private Timer speechTimer = null;
     private final int BROADCAST_PERIOD = 1900;
     private long lastLocRptTime = 0;
-    private int LOC_RPT_TIMEOUT = 5 * 1000;  //多长时间没上报就开始播报“正在搜寻”
+    private int LOC_RPT_TIMEOUT = 15000;  //多长时间没上报就开始播报“正在搜寻”
     private int UPDATE_ARFCN_TIMEOUT = 2 * 60 * 1000;  //多长时间没上报就更新频点
     private final int MAX_DEVIATION = 16;   //强度与上次上报偏差大于这个值就重新计算
 
@@ -297,8 +297,10 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
                 if (CacheManager.currentLoction == null || CacheManager.currentLoction.getImsi().equals("")) {
                     ToastUtils.showMessage(R.string.button_loc_unstart);
                 } else {
-                    ProtocolManager.openAllRf();
                     startLoc();
+
+                    ProtocolManager.openAllRf();
+
                     EventAdapter.call(EventAdapter.SHOW_PROGRESS, 8000);
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.START_LOCALTE + CacheManager.currentLoction.getImsi());
                 }

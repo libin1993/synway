@@ -17,6 +17,9 @@ import com.doit.net.Utils.UtilOperator;
 import org.xutils.DbManager;
 import org.xutils.ex.DbException;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 /**
  * Created by wiker on 2016/4/27.
  */
@@ -79,7 +82,9 @@ public class AddToLocationListener implements View.OnClickListener {
 
                 CacheManager.updateLoc(imsi);
                 CacheManager.startLoc(imsi);
+
                 ProtocolManager.openAllRf();
+
                 ToastUtils.showMessage("搜寻开始");
             }
 

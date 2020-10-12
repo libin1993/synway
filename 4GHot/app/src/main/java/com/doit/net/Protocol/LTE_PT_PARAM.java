@@ -146,7 +146,6 @@ public class LTE_PT_PARAM {
         }
 
 
-
         EventAdapter.call(EventAdapter.UPDATE_BATTERY, Integer.valueOf(CacheManager.getLteEquipConfig().getVoltage12V()));
 
         EventAdapter.call(EventAdapter.REFRESH_DEVICE);
@@ -331,7 +330,7 @@ public class LTE_PT_PARAM {
         File file = new File(filePath);
         if (file.exists() && !file.isDirectory()) {
 
-            Set<String> ueidSet = new HashSet<>();
+            List<UeidBean> ueidList = new ArrayList<>();
             String[] splitUeid;
 
             try {
@@ -348,16 +347,18 @@ public class LTE_PT_PARAM {
                         continue;
                     }
 
-                    ueidSet.add(splitUeid[0]);
+                    UeidBean ueidBean = new UeidBean();
+                    ueidBean.setImsi(splitUeid[0]);
+                    ueidBean.setSrsp("0");
+
+                    ueidList.add(ueidBean);
 
                 }
                 bufferedReader.close();
                 file.delete();   //处理完删除
 
-                if (ueidSet.size() > 0){
-                    for (String s : ueidSet) {
-                        EventAdapter.call(EventAdapter.UEID_RPT, s);
-                    }
+                if (ueidList.size() > 0) {
+                    EventAdapter.call(EventAdapter.UEID_RPT, ueidList);
 
                 }
 
@@ -451,7 +452,7 @@ public class LTE_PT_PARAM {
                 if (onAsk[0].charAt(0) == '0') {
                     for (LteChannelCfg channel : CacheManager.getChannels()) {
                         if (channel.getIdx().equals(onAsk[1])) {
-                            LogUtils.log(onAsk[1]+"：射频开启成功");
+                            LogUtils.log(onAsk[1] + "：射频开启成功");
                             channel.setRFState(true);
                         }
                     }
@@ -468,7 +469,7 @@ public class LTE_PT_PARAM {
                 if (offAsk[0].charAt(0) == '0') {
                     for (LteChannelCfg channel : CacheManager.getChannels()) {
                         if (channel.getIdx().equals(offAsk[1])) {
-                            LogUtils.log(offAsk[1]+"：射频关闭成功");
+                            LogUtils.log(offAsk[1] + "：射频关闭成功");
                             channel.setRFState(false);
                         }
                     }
@@ -745,98 +746,39 @@ public class LTE_PT_PARAM {
             return;
 
         String[] splitStr = locRpt.split("#");
+        List<UeidBean> ueidList = new ArrayList<>();
         for (String s : splitStr) {
             String[] split = s.split(":");
             if (split.length > 1) {
-                String SRSP = split[1];
-                if (TextUtils.isEmpty(SRSP) || Integer.parseInt(SRSP) <= 0) {
+                String rssi = split[1];
+                if (TextUtils.isEmpty(rssi) || Integer.parseInt(rssi) <= 0) {
                     continue;
                 }
 
                 if (CacheManager.getLocState()) {
-                    if (s.split(":")[0].equals(CacheManager.getCurrentLoction().getImsi())) {
-                        EventAdapter.call(EventAdapter.LOCATION_RPT, SRSP);
+                    if (split[0].equals(CacheManager.getCurrentLoction().getImsi())) {
+                        EventAdapter.call(EventAdapter.LOCATION_RPT, rssi);
                     }
                 }
 
-                if (CacheManager.currentWorkMode.equals("0")) {
-                    EventAdapter.call(EventAdapter.UEID_RPT, s.split(":")[0]);
-                }else {
-                    EventAdapter.call(EventAdapter.SHIELD_RPT, s);
-                }
+
+                UeidBean ueidBean = new UeidBean();
+                ueidBean.setImsi(split[0]);
+                ueidBean.setSrsp(rssi);
+
+                ueidList.add(ueidBean);
 
             }
 
         }
 
-
-
-
-
-
-
-
-
-
-
-
-//        if (CacheManager.currentWorkMode.equals("0")) {
-//            String[] splitStr = locRpt.split("#");
-//            Map<String,UeidBean>  ueidMap = new HashMap<>();
-//            for (int i = 0; i < splitStr.length; i++) {
-//                String[] split = splitStr[i].split(":");
-//                if (split.length > 1) {
-//                    SRSP = split[1];
-//                } else {
-//                    SRSP = "";
-//                }
-//
-//                String tmpImsi = split[0];
-//                if (tmpImsi.equals(CacheManager.getCurrentLoction().getImsi()) && !TextUtils.isEmpty(SRSP) && Integer.parseInt(SRSP) > 0) {
-//                    EventAdapter.call(EventAdapter.LOCATION_RPT, SRSP);
-//
-//                }
-//
-//                ueidMap.put(tmpImsi,new UeidBean(tmpImsi, "", "", "",
-//                        DateUtils.convert2String(new Date(), DateUtils.LOCAL_DATE), "", ""));
-//
-//                CacheManager.saveImsi(tmpImsi);
-//
-//
-//
-//            }
-//
-//            if (ueidMap.size() > 0){
-//                List<UeidBean> listUeid = new ArrayList<>();
-//                for (Map.Entry<String, UeidBean> entry : ueidMap.entrySet()) {
-//                    listUeid.add(entry.getValue());
-//                }
-//                EventAdapter.call(EventAdapter.UEID_RPT, listUeid);
-//            }
-//
-//
-//
-//        } else if (CacheManager.currentWorkMode.equals("2")) {
-//            String[] splitStr = locRpt.split("#");
-//            for (int i = 0; i < splitStr.length; i++) {
-//                String[] split = splitStr[i].split(":");
-//                if (split.length > 1) {
-//                    SRSP = split[1];
-//                    if (TextUtils.isEmpty(SRSP) || Integer.parseInt(SRSP) <=0){
-//                        continue;
-//                    }
-//
-//                    if (CacheManager.getLocState()) {
-//                        if (splitStr[i].split(":")[0].equals(CacheManager.getCurrentLoction().getImsi())) {
-//                            EventAdapter.call(EventAdapter.LOCATION_RPT, SRSP);
-//                        }
-//                    }
-//
-//                    EventAdapter.call(EventAdapter.SHIELD_RPT, splitStr[i]);
-//                }
-//
-//            }
-//        }
+        if (ueidList.size() > 0) {
+            if (CacheManager.currentWorkMode.equals("0")) {
+                EventAdapter.call(EventAdapter.UEID_RPT, ueidList);
+            } else {
+                EventAdapter.call(EventAdapter.SHIELD_RPT, ueidList);
+            }
+        }
 
     }
 }
