@@ -172,6 +172,7 @@ public class RealTimeUeidRptFragment extends BaseFragment implements EventAdapte
     private void addShildRptList(List<UeidBean> ueidList) {
         for (UeidBean ueidBean : ueidList) {
             LogUtils.log("侦码上报: IMSI：" + ueidBean.getImsi() + "强度：" + ueidBean.getSrsp());
+            boolean isContain = false;
             for (int i = 0; i < CacheManager.realtimeUeidList.size(); i++) {
                 if (CacheManager.realtimeUeidList.get(i).getImsi().equals(ueidBean.getImsi())) {
                     int times = CacheManager.realtimeUeidList.get(i).getRptTimes();
@@ -182,19 +183,22 @@ public class RealTimeUeidRptFragment extends BaseFragment implements EventAdapte
                     CacheManager.realtimeUeidList.get(i).setSrsp("" + Integer.parseInt(ueidBean.getSrsp()) * 5 / 6);
                     CacheManager.realtimeUeidList.get(i).setRptTime(DateUtils.convert2String(new Date().getTime(), DateUtils.LOCAL_DATE));
 
-                    return;
+                    isContain = true;
                 }
             }
 
-            UeidBean newUeid = new UeidBean();
-            newUeid.setImsi(ueidBean.getImsi());
-            newUeid.setSrsp("" + Integer.parseInt(ueidBean.getSrsp()) * 5 / 6);
-            newUeid.setRptTime(DateUtils.convert2String(new Date().getTime(), DateUtils.LOCAL_DATE));
-            newUeid.setRptTimes(1);
-            CacheManager.realtimeUeidList.add(newUeid);
+            if (!isContain){
+                UeidBean newUeid = new UeidBean();
+                newUeid.setImsi(ueidBean.getImsi());
+                newUeid.setSrsp("" + Integer.parseInt(ueidBean.getSrsp()) * 5 / 6);
+                newUeid.setRptTime(DateUtils.convert2String(new Date().getTime(), DateUtils.LOCAL_DATE));
+                newUeid.setRptTimes(1);
+                CacheManager.realtimeUeidList.add(newUeid);
 
-            UCSIDBManager.saveUeidToDB(ueidBean.getImsi(), "", "",
-                    new Date().getTime(), "", "");
+                UCSIDBManager.saveUeidToDB(ueidBean.getImsi(), "", "",
+                        new Date().getTime(), "", "");
+            }
+
         }
 
     }
