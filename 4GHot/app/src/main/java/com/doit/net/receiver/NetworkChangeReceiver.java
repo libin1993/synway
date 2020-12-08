@@ -6,11 +6,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.wifi.WifiInfo;
 
-import com.doit.net.Event.EventAdapter;
-import com.doit.net.Model.CacheManager;
-import com.doit.net.Utils.MySweetAlertDialog;
+import com.doit.net.event.EventAdapter;
+import com.doit.net.model.CacheManager;
+import com.doit.net.utils.MySweetAlertDialog;
 import com.doit.net.ucsi.R;
 
 /**

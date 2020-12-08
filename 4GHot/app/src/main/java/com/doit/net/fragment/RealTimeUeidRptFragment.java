@@ -1,11 +1,9 @@
 package com.doit.net.fragment;
 
 import android.annotation.SuppressLint;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +11,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.daimajia.swipe.SwipeLayout;
@@ -24,22 +20,17 @@ import com.doit.net.adapter.UeidListViewAdapter;
 import com.doit.net.base.BaseFragment;
 import com.doit.net.bean.LteChannelCfg;
 import com.doit.net.bean.UeidBean;
-import com.doit.net.Event.EventAdapter;
-import com.doit.net.Protocol.ProtocolManager;
-import com.doit.net.Model.BlackBoxManger;
-import com.doit.net.Model.CacheManager;
-import com.doit.net.Model.ImsiMsisdnConvert;
-import com.doit.net.Model.UCSIDBManager;
-import com.doit.net.Model.WhiteListInfo;
-import com.doit.net.Utils.DateUtils;
-import com.doit.net.Utils.MySweetAlertDialog;
-import com.doit.net.Utils.ToastUtils;
-import com.doit.net.Utils.LogUtils;
-import com.doit.net.Utils.UtilOperator;
+import com.doit.net.event.EventAdapter;
+import com.doit.net.protocol.ProtocolManager;
+import com.doit.net.model.BlackBoxManger;
+import com.doit.net.model.CacheManager;
+import com.doit.net.model.UCSIDBManager;
+import com.doit.net.utils.DateUtils;
+import com.doit.net.utils.MySweetAlertDialog;
+import com.doit.net.utils.ToastUtils;
+import com.doit.net.utils.LogUtils;
+import com.doit.net.utils.UtilOperator;
 import com.doit.net.ucsi.R;
-
-import org.xutils.DbManager;
-import org.xutils.ex.DbException;
 
 import java.util.Collections;
 import java.util.Comparator;

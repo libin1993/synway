@@ -8,10 +8,10 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import com.doit.net.base.BaseFragment;
-import com.doit.net.Event.EventAdapter;
-import com.doit.net.Protocol.ProtocolManager;
-import com.doit.net.Model.CacheManager;
-import com.doit.net.Utils.MySweetAlertDialog;
+import com.doit.net.event.EventAdapter;
+import com.doit.net.protocol.ProtocolManager;
+import com.doit.net.model.CacheManager;
+import com.doit.net.utils.MySweetAlertDialog;
 import com.doit.net.ucsi.R;
 
 /**

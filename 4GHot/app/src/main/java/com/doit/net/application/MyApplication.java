@@ -2,13 +2,11 @@ package com.doit.net.application;
 
 import android.app.Application;
 import android.content.Context;
-import android.os.Environment;
 import android.support.multidex.MultiDex;
 
-import com.doit.net.Model.PrefManage;
-import com.doit.net.Utils.CipherUtils;
-import com.doit.net.Utils.LogUtils;
-import com.doit.net.Utils.MyExceptionHandler;
+import com.doit.net.model.PrefManage;
+import com.doit.net.utils.CipherUtils;
+import com.doit.net.utils.MyExceptionHandler;
 
 import org.xutils.x;
 

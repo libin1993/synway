@@ -24,22 +24,23 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.util.Attributes;
-import com.doit.net.Utils.FileUtils;
-import com.doit.net.Utils.FormatUtils;
-import com.doit.net.Utils.LogUtils;
+import com.doit.net.utils.FileUtils;
+import com.doit.net.utils.FormatUtils;
+import com.doit.net.utils.LogUtils;
+import com.doit.net.utils.StringUtils;
 import com.doit.net.adapter.BlacklistAdapter;
-import com.doit.net.View.NameListEditDialog;
+import com.doit.net.view.NameListEditDialog;
 import com.doit.net.base.BaseFragment;
-import com.doit.net.Model.BlackBoxManger;
-import com.doit.net.Event.EventAdapter;
-import com.doit.net.Model.CacheManager;
-import com.doit.net.Model.DBBlackInfo;
-import com.doit.net.Model.UCSIDBManager;
-import com.doit.net.Utils.DateUtils;
-import com.doit.net.Utils.MySweetAlertDialog;
+import com.doit.net.model.BlackBoxManger;
+import com.doit.net.event.EventAdapter;
+import com.doit.net.model.CacheManager;
+import com.doit.net.model.DBBlackInfo;
+import com.doit.net.model.UCSIDBManager;
+import com.doit.net.utils.DateUtils;
+import com.doit.net.utils.MySweetAlertDialog;
 import com.doit.net.bean.FileBean;
 import com.doit.net.ucsi.R;
-import com.doit.net.Utils.ToastUtils;
+import com.doit.net.utils.ToastUtils;
 
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
@@ -55,11 +56,15 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.xutils.DbManager;
 import org.xutils.ex.DbException;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -80,15 +85,16 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
     private Button btClearNamelist;
     private DbManager dbManager;
 
-    private final String BLACKLIST_FILE_PATH = FileUtils.ROOT_PATH + "Blacklist.xls";
+    private static final String BLACKLIST_FILE_PATH_EXCEL = FileUtils.ROOT_PATH + "Blacklist.xls";
+    private static final String BLACKLIST_FILE_PATH_TXT = FileUtils.ROOT_PATH + "Blacklist.txt";
     private List<DBBlackInfo> dbBlackInfos = new ArrayList<>();
     private int lastOpenSwipePos = 0;
 
     //handler消息
     private final int UPDATE_NAMELIST = 1;
     private final int EXPORT_ERROR = -1;
-    private final static  int IMPORT_SUCCESS = 2;  //导入成功
-    private final static  int EXPORT_SUCCESS =  3;  //导出成功
+    private final static int IMPORT_SUCCESS = 2;  //导入成功
+    private final static int EXPORT_SUCCESS = 3;  //导出成功
 
     private MySweetAlertDialog mProgressDialog;
 
@@ -184,7 +190,7 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
                         .findAll();
 
                 if (dbBlackInfos == null || dbBlackInfos.size() <= 0) {
-                    ToastUtils.showMessage( R.string.search_not_found);
+                    ToastUtils.showMessage(R.string.search_not_found);
                     return;
                 }
                 blacklistAdapter.setUeidList(dbBlackInfos);
@@ -215,19 +221,57 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
     View.OnClickListener exportNamelistClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            View contentView = LayoutInflater.from(getActivity()).inflate(R.layout.popup_export_name_list, null);
+            PopupWindow mPopupWindow = new PopupWindow(contentView, ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
 
-            if (mProgressDialog !=null && !mProgressDialog.isShowing()){
-                mProgressDialog.show();
-            }
-            new Thread(new Runnable() {
+            //设置Popup具体控件
+
+            TextView tvExcel = contentView.findViewById(R.id.tv_export_excel);
+            TextView tvTxt = contentView.findViewById(R.id.tv_export_txt);
+
+
+            //设置Popup具体参数
+            mPopupWindow.setBackgroundDrawable(new BitmapDrawable(getResources(), (Bitmap) null));
+            mPopupWindow.setFocusable(true);
+            mPopupWindow.setTouchable(true);//popup区域可触摸
+            mPopupWindow.setOutsideTouchable(true);//非popup区域可触摸
+            mPopupWindow.showAtLocation(getActivity().getWindow().getDecorView(), Gravity.CENTER, 0, 0);
+
+            tvExcel.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void run() {
-                    try {
-                        File file = new File(BLACKLIST_FILE_PATH);
-                        if (file.exists()) {
-                            file.delete();
-                        }
+                public void onClick(View v) {
+                    mPopupWindow.dismiss();
+                    exportBlackList(BLACKLIST_FILE_PATH_EXCEL);
+                }
+            });
 
+            tvTxt.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mPopupWindow.dismiss();
+                    exportBlackList(BLACKLIST_FILE_PATH_TXT);
+                }
+            });
+
+        }
+    };
+
+    private void exportBlackList(String filePath) {
+        if (mProgressDialog != null && !mProgressDialog.isShowing()) {
+            mProgressDialog.show();
+        }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    File file = new File(filePath);
+                    if (file.exists()) {
+                        file.delete();
+                    }
+
+                    if (filePath.equals(BLACKLIST_FILE_PATH_EXCEL)) {
                         XSSFWorkbook workbook = new XSSFWorkbook();
                         XSSFSheet sheet = workbook.createSheet(WorkbookUtil.createSafeSheetName("BlackList"));
 
@@ -258,28 +302,42 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
                         workbook.write(outputStream);
                         outputStream.flush();
                         outputStream.close();
+                    } else {
+                        BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file,true)));
+                        bufferedWriter.write("IMSI,姓名,备注,创建时间"+"\r\n");
+                        if (dbBlackInfos == null || dbBlackInfos.size() == 0){
+                            ToastUtils.showMessageLong("当前名单为空，此次导出为模板");
+                        }else{
+                            for (DBBlackInfo info: dbBlackInfos) {
+                                bufferedWriter.write(info.getImsi()+",");
+                                bufferedWriter.write(info.getName()+",");
+                                bufferedWriter.write(StringUtils.defaultString(info.getRemark())+",");
+                                bufferedWriter.write(DateUtils.convert2String(info.getCreateDate(), DateUtils.LOCAL_DATE));
+                                bufferedWriter.write("\r\n");
+                            }
+                        }
 
-
-                        EventAdapter.call(EventAdapter.UPDATE_FILE_SYS, BLACKLIST_FILE_PATH);
-
-                        Message message = new Message();
-                        message.what = EXPORT_SUCCESS;
-                        message.obj = "文件导出在：手机存储/"+FileUtils.ROOT_DIRECTORY+"/"+ file.getName();
-                        mHandler.sendMessage(message);
-
-
-                        EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.EXPORT_NAMELIST + BLACKLIST_FILE_PATH);
-
-                    } catch (Exception e) {
-                        /* proper exception handling to be here */
-                        createExportError("导出名单失败");
+                        bufferedWriter.close();
                     }
+
+                    EventAdapter.call(EventAdapter.UPDATE_FILE_SYS, filePath);
+
+                    Message message = new Message();
+                    message.what = EXPORT_SUCCESS;
+                    message.obj = "文件导出在：手机存储/" + FileUtils.ROOT_DIRECTORY + "/" + file.getName();
+                    mHandler.sendMessage(message);
+
+
+                    EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.EXPORT_NAMELIST + filePath);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    createExportError("导出名单失败");
                 }
-            }).start();
+            }
+        }).start();
+    }
 
-        }
-
-    };
 
     View.OnClickListener importNamelistClick = new View.OnClickListener() {
         @Override
@@ -287,13 +345,13 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
 
             File file = new File(FileUtils.ROOT_PATH);
             if (!file.exists()) {
-                ToastUtils.showMessageLong("未找到黑名单，请确认已将黑名单放在\"手机存储/"+FileUtils.ROOT_DIRECTORY+"\"目录下");
+                ToastUtils.showMessageLong("未找到黑名单，请确认已将黑名单放在\"手机存储/" + FileUtils.ROOT_DIRECTORY + "\"目录下");
                 return;
             }
 
             File[] files = file.listFiles();
             if (files == null || files.length == 0) {
-                ToastUtils.showMessageLong("未找到黑名单，请确认已将黑名单放在\"手机存储/"+FileUtils.ROOT_DIRECTORY+"\"目录下");
+                ToastUtils.showMessageLong("未找到黑名单，请确认已将黑名单放在\"手机存储/" + FileUtils.ROOT_DIRECTORY + "\"目录下");
                 return;
             }
 
@@ -301,7 +359,7 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
 
             for (int i = 0; i < files.length; i++) {
                 String tmpFileName = files[i].getName();
-                if (tmpFileName.endsWith(".xls") || tmpFileName.endsWith(".xlsx")) {
+                if (tmpFileName.endsWith(".xls") || tmpFileName.endsWith(".xlsx") || tmpFileName.endsWith(".txt")) {
                     FileBean fileBean = new FileBean();
                     fileBean.setFileName(tmpFileName);
                     fileBean.setCheck(false);
@@ -371,9 +429,6 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
                     mPopupWindow.dismiss();
 
                     importBlackList(fileList);
-
-
-
                 }
             });
 
@@ -384,7 +439,7 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
      * @param fileList 导入黑名单
      */
     private void importBlackList(List<FileBean> fileList) {
-        if (mProgressDialog !=null && !mProgressDialog.isShowing()){
+        if (mProgressDialog != null && !mProgressDialog.isShowing()) {
             mProgressDialog.show();
         }
         new Thread(new Runnable() {
@@ -404,55 +459,105 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
                 int repeatNum = 0;
                 int errorFormatNum = 0;
                 try {
-                    InputStream stream = new FileInputStream(file);
-                    Workbook workbook = WorkbookFactory.create(stream);
-                    Sheet sheet = workbook.getSheetAt(0);  //示意访问sheet
-                    int rowsCount = sheet.getPhysicalNumberOfRows();
-                    FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
                     List<DBBlackInfo> listValidBlack = new ArrayList<>();
-                    for (int r = 0; r < rowsCount; r++) {
-                        String imsi = "";
+                    if (file.getName().endsWith(".txt")) {
+
                         String name = "";
                         String remark = "";
-                        Row row = sheet.getRow(r);
 
+                        BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+                        String readline = "";
+                        while ((readline = bufferedReader.readLine()) != null) {
+                            if (readline.contains("IMSI") && readline.contains("姓名"))
+                                continue;
 
-                        imsi = getCellAsString(row, 0, formulaEvaluator);
-                        name = getCellAsString(row, 1, formulaEvaluator);
-                        remark = getCellAsString(row, 2, formulaEvaluator);
+                            if (!isBlacklistFormatRight(readline)) {
+                                errorFormatNum++;
+                                continue;
+                            }
 
-                        if ("IMSI".equals(imsi) && "姓名".equals(name)) {
-                            continue;
+                            if (isBlacklistExist(readline.split(",")[0], listValidBlack)) {
+                                repeatNum++;
+                                continue;
+                            }
+
+                            //如果含有创建时间（即有3个，）的话，那split(",")的返回值固定为4
+                            int i = readline.length() - readline.replace(",", "").length();
+                            if (i == 3) {
+                                name = readline.split(",")[1];
+                                remark = readline.split(",")[2];
+                            } else if (i == 2) {
+                                if (!readline.endsWith(",")) {
+                                    remark = readline.split(",")[2];
+                                }
+                                name = readline.substring(readline.indexOf(",") + 1, readline.lastIndexOf(","));
+                            } else {
+                                errorFormatNum++;
+                                continue;
+                            }
+
+                            validImportNum++;
+                            listValidBlack.add(new DBBlackInfo(readline.split(",")[0],
+                                    name, remark, new Date()));
+                            if (validImportNum > 100)
+                                break;
+
                         }
 
 
-                        if (TextUtils.isEmpty(imsi) || !isNumeric(imsi) || imsi.length() != 15) {
-                            errorFormatNum++;
-                            continue;
+                    } else {
+                        InputStream stream = new FileInputStream(file);
+                        Workbook workbook = WorkbookFactory.create(stream);
+                        Sheet sheet = workbook.getSheetAt(0);  //示意访问sheet
+                        int rowsCount = sheet.getPhysicalNumberOfRows();
+                        FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
+
+                        for (int r = 0; r < rowsCount; r++) {
+                            String imsi = "";
+                            String name = "";
+                            String remark = "";
+                            Row row = sheet.getRow(r);
+
+
+                            imsi = getCellAsString(row, 0, formulaEvaluator);
+                            name = getCellAsString(row, 1, formulaEvaluator);
+                            remark = getCellAsString(row, 2, formulaEvaluator);
+
+                            if ("IMSI".equals(imsi) && "姓名".equals(name)) {
+                                continue;
+                            }
+
+
+                            if (TextUtils.isEmpty(imsi) || !isNumeric(imsi) || imsi.length() != 15) {
+                                errorFormatNum++;
+                                continue;
+                            }
+
+
+                            if (isBlacklistExist(imsi, listValidBlack)) {
+                                repeatNum++;
+                                continue;
+                            }
+
+                            if (!TextUtils.isEmpty(name) && name.length() > 5) {
+                                name = name.substring(0, 5);
+                            }
+
+                            if (!TextUtils.isEmpty(remark) && remark.length() > 8) {
+                                remark = remark.substring(0, 8);
+                            }
+
+                            validImportNum++;
+                            listValidBlack.add(new DBBlackInfo(imsi, name, remark, new Date()));
+
+                            if (validImportNum > 100)  //黑名单最大100
+                                break;
+
                         }
-
-
-                        if (isBlacklistExist(imsi, listValidBlack)) {
-                            repeatNum++;
-                            continue;
-                        }
-
-                        if (!TextUtils.isEmpty(name) && name.length() > 5) {
-                            name = name.substring(0, 5);
-                        }
-
-                        if (!TextUtils.isEmpty(remark) && remark.length() > 8) {
-                            remark = remark.substring(0, 8);
-                        }
-
-                        validImportNum++;
-                        listValidBlack.add(new DBBlackInfo(imsi, name, remark, new Date()));
-
-                        if (validImportNum > 100)  //黑名单最大100
-                            break;
-
+                        stream.close();
                     }
-                    stream.close();
+
+
                     dbManager.save(listValidBlack);
 
                     Message message = new Message();
@@ -466,14 +571,26 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
                         CacheManager.setCurrentBlackList();
                     }
 
-                    EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.IMPORT_NAMELIST + BLACKLIST_FILE_PATH);
+                    EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.IMPORT_NAMELIST + file.getName());
                 } catch (Exception e) {
-                    /* proper exception handling to be here */
-                    LogUtils.log("导入黑名单错误："+e.toString());
+                    e.printStackTrace();
+                    LogUtils.log("导入黑名单错误：" + e.toString());
                     createExportError("写入文件错误");
                 }
             }
         }).start();
+    }
+
+    private boolean isBlacklistFormatRight(String readline) {
+
+        //导出会将创建时间导出，但是导入不需要创建时间字段
+        if (((readline.length() - readline.replace(",", "").length()) < 2) ||
+                (readline.startsWith(",")) ||
+                (readline.split(",")[0].length() != 15) ||   //判断长度和是否含有非数字
+                !isNumeric(readline.split(",")[0])) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -510,7 +627,7 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
             }
         } catch (NullPointerException e) {
             /* proper error handling should be here */
-            LogUtils.log("黑名单解析异常："+e.toString());
+            LogUtils.log("黑名单解析异常：" + e.toString());
         }
         return value;
     }
@@ -526,7 +643,7 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
 
             new MySweetAlertDialog(getContext(), MySweetAlertDialog.WARNING_TYPE)
                     .setTitleText("提示")
-                    .setContentText("手机及设备上的名单都会被清空,确定吗?")
+                    .setContentText("手机的名单都会被清空,确定吗?")
                     .setCancelText(getContext().getString(R.string.cancel))
                     .setConfirmText(getContext().getString(R.string.sure))
                     .showCancelButton(true)
@@ -539,7 +656,7 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
                             } catch (DbException e) {
                                 e.printStackTrace();
                             }
-
+                            EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CLEAR_NAMELIST);
                             refreshNamelist();
                             sweetAlertDialog.dismiss();
                         }
@@ -590,15 +707,15 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
 
                 closeSwipe(lastOpenSwipePos);
             } else if (msg.what == EXPORT_ERROR) {
-                if (mProgressDialog !=null && mProgressDialog.isShowing()){
+                if (mProgressDialog != null && mProgressDialog.isShowing()) {
                     mProgressDialog.dismiss();
                 }
                 new MySweetAlertDialog(getContext(), MySweetAlertDialog.ERROR_TYPE)
                         .setTitleText("导出失败")
                         .setContentText("失败原因：" + msg.obj)
                         .show();
-            }else if (msg.what == IMPORT_SUCCESS){
-                if (mProgressDialog !=null && mProgressDialog.isShowing()){
+            } else if (msg.what == IMPORT_SUCCESS) {
+                if (mProgressDialog != null && mProgressDialog.isShowing()) {
                     mProgressDialog.dismiss();
                 }
                 new MySweetAlertDialog(getContext(), MySweetAlertDialog.SUCCESS_TYPE)
@@ -606,8 +723,8 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
                         .setContentText(String.valueOf(msg.obj))
                         .show();
                 refreshNamelist();
-            }else if (msg.what == EXPORT_SUCCESS){
-                if (mProgressDialog !=null && mProgressDialog.isShowing()){
+            } else if (msg.what == EXPORT_SUCCESS) {
+                if (mProgressDialog != null && mProgressDialog.isShowing()) {
                     mProgressDialog.dismiss();
                 }
                 new MySweetAlertDialog(getActivity(), MySweetAlertDialog.TEXT_SUCCESS)

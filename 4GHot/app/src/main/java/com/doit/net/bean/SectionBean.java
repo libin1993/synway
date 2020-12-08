@@ -1,7 +1,7 @@
 package com.doit.net.bean;
 
 import com.chad.library.adapter.base.entity.SectionEntity;
-import com.doit.net.Model.DBChannel;
+import com.doit.net.model.DBChannel;
 
 /**
  * Author：Libin on 2020/5/22 13:19

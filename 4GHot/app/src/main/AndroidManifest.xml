@@ -86,26 +86,6 @@
         </provider>
 
 
-
-        <!-- android:largeHeap="true" 使用较大内存堆栈 -->
-        <!-- android:hardwareAccelerated="false" 是否使用硬件加速 -->
-        <!-- StartActivity 闪屏Activity，如果需要闪屏修改此Activity 取消注释 ，使用的图片在drawable-hdpi/welcome.png，布局文件在layout/start.xml -->
-        <!--
-        <activity
-            android:name="com.game.urace.activity.StartActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation"
-            android:label="@string/app_name"
-            android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:windowSoftInputMode="stateAlwaysHidden" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-				<category android:name="android.intent.category.LEANBACK_LAUNCHER" />
-            </intent-filter>
-        </activity>
-        -->
-
         <activity
             android:name="com.doit.net.activity.StartActivity"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale"

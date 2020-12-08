@@ -32,16 +32,14 @@ import android.widget.ImageView;
 
 import android.widget.TextView;
 
-import com.doit.net.Protocol.GSMPackage;
-import com.doit.net.Protocol.GSMSendManager;
-import com.doit.net.Protocol.GSMSubPackage;
-import com.doit.net.Sockets.OnSocketChangedListener;
-import com.doit.net.Sockets.ServerSocketUtils;
-import com.doit.net.Sockets.DatagramSocketUtils;
-import com.doit.net.Sockets.UDPSocketUtils;
-import com.doit.net.Utils.FormatUtils;
-import com.doit.net.Utils.PermissionUtils;
-import com.doit.net.View.BatteryView;
+import com.doit.net.protocol.GSMSendManager;
+import com.doit.net.sockets.OnSocketChangedListener;
+import com.doit.net.sockets.ServerSocketUtils;
+import com.doit.net.sockets.DatagramSocketUtils;
+import com.doit.net.sockets.UDPSocketUtils;
+import com.doit.net.utils.FormatUtils;
+import com.doit.net.utils.PermissionUtils;
+import com.doit.net.view.BatteryView;
 import com.doit.net.adapter.MainTabLayoutAdapter;
 import com.doit.net.application.MyApplication;
 import com.doit.net.base.BaseActivity;
@@ -50,33 +48,33 @@ import com.doit.net.bean.BatteryBean;
 import com.doit.net.bean.DeviceState;
 import com.doit.net.bean.LteChannelCfg;
 import com.doit.net.bean.TabEntity;
-import com.doit.net.Protocol.ProtocolManager;
-import com.doit.net.Model.BlackBoxManger;
-import com.doit.net.Event.EventAdapter;
-import com.doit.net.Model.AccountManage;
-import com.doit.net.Model.CacheManager;
-import com.doit.net.Utils.FTPManager;
-import com.doit.net.Utils.LicenceUtils;
-import com.doit.net.Model.PrefManage;
-import com.doit.net.Model.VersionManage;
-import com.doit.net.Utils.DateUtils;
-import com.doit.net.Utils.FTPServerUtils;
-import com.doit.net.Utils.FileUtils;
-import com.doit.net.Utils.MySweetAlertDialog;
-import com.doit.net.Utils.NetWorkUtils;
-import com.doit.net.Utils.LogUtils;
+import com.doit.net.protocol.ProtocolManager;
+import com.doit.net.model.BlackBoxManger;
+import com.doit.net.event.EventAdapter;
+import com.doit.net.model.AccountManage;
+import com.doit.net.model.CacheManager;
+import com.doit.net.utils.FTPManager;
+import com.doit.net.utils.LicenceUtils;
+import com.doit.net.model.PrefManage;
+import com.doit.net.model.VersionManage;
+import com.doit.net.utils.DateUtils;
+import com.doit.net.utils.FTPServerUtils;
+import com.doit.net.utils.FileUtils;
+import com.doit.net.utils.MySweetAlertDialog;
+import com.doit.net.utils.NetWorkUtils;
+import com.doit.net.utils.LogUtils;
 
 import com.doit.net.fragment.AppFragment;
-import com.doit.net.View.LicenceDialog;
+import com.doit.net.view.LicenceDialog;
 import com.doit.net.fragment.LocationFragment;
 import com.doit.net.fragment.NameListFragment;
 import com.doit.net.receiver.NetworkChangeReceiver;
 import com.doit.net.fragment.StartPageFragment;
 import com.doit.net.fragment.UeidFragment;
 import com.doit.net.ucsi.R;
-import com.doit.net.Utils.BaiduAudio;
-import com.doit.net.Utils.SoundUtils;
-import com.doit.net.Utils.ToastUtils;
+import com.doit.net.utils.BaiduAudio;
+import com.doit.net.utils.SoundUtils;
+import com.doit.net.utils.ToastUtils;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
@@ -121,7 +119,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
 
     private ImageView ivDeviceState;
-    Animation viewAnit = new AlphaAnimation(0, 1);
+    Animation viewAnim = new AlphaAnimation(0, 1);
     private ImageView ivWifiState;
     private ImageView ivBatteryLevel;
     private ImageView ivSyncError;
@@ -188,7 +186,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     private void setData() {
         NetworkInfo wifiNetInfo = ((ConnectivityManager) activity.
                 getSystemService(Context.CONNECTIVITY_SERVICE)).getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-//        String ssid = NetWorkUtils.getWifiSSID(activity);
 
         if (wifiNetInfo.isConnected()) {
             LogUtils.log("wifi连接成功");
@@ -201,30 +198,17 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
 
     private void initBlackBox() {
-        if (VersionManage.isArmyVer())
-            return;
 
         BlackBoxManger.setCurrentAccount(AccountManage.getCurrentLoginAccount());
         BlackBoxManger.initBlx();
-
+        BlackBoxManger.recordOperation(BlackBoxManger.LOGIN + AccountManage.getCurrentLoginAccount());
     }
 
     private void initNetWork() {
 
         ServerSocketUtils.getInstance().startTCP(new OnSocketChangedListener() {
             @Override
-            public void onConnect() {
-                CacheManager.deviceState.setDeviceState(DeviceState.ON_INIT);
-
-                heartbeatCount = false;    //一旦发现是连接就重置此标志以设置所有配置
-                //设备重启（重连）后需要重新检查设置默认参数
-                CacheManager.hasSetDefaultParam = false;
-                CacheManager.resetState();
-
-            }
-
-            @Override
-            public void onDisconnect() {
+            public void onChange() {
                 CacheManager.deviceState.setDeviceState(DeviceState.ON_INIT);
                 heartbeatCount = false;    //一旦发现是连接就重置此标志以设置所有配置
                 //设备重启（重连）后需要重新检查设置默认参数
@@ -232,6 +216,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                 CacheManager.resetState();
 
             }
+
         });
     }
 
@@ -724,7 +709,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                 tvRemainTime.setVisibility(View.GONE);
                 CacheManager.isReportBattery = false;
 
-                viewAnit.cancel();
+                viewAnim.cancel();
                 ivDeviceState.clearAnimation();
                 ivDeviceState.setVisibility(View.GONE);
                 break;
@@ -741,7 +726,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                 tvRemainTime.setVisibility(View.GONE);
                 CacheManager.isReportBattery = false;
 
-                viewAnit.cancel();
+                viewAnim.cancel();
                 ivDeviceState.clearAnimation();
                 ivDeviceState.setVisibility(View.GONE);
 
@@ -759,12 +744,12 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
                 ivDeviceState.setImageDrawable(getDrawable(R.drawable.small_device_icon));
                 ivDeviceState.setVisibility(View.VISIBLE);
-                if (!viewAnit.hasStarted() || viewAnit.hasEnded()) {
-                    viewAnit.setDuration(900);   //时间毫秒
-                    viewAnit.setInterpolator(new LinearInterpolator());
-                    viewAnit.setRepeatMode(Animation.REVERSE);   //播放次序为倒叙
-                    viewAnit.setRepeatCount(-1);   //无限
-                    ivDeviceState.startAnimation(viewAnit);
+                if (!viewAnim.hasStarted() || viewAnim.hasEnded()) {
+                    viewAnim.setDuration(900);   //时间毫秒
+                    viewAnim.setInterpolator(new LinearInterpolator());
+                    viewAnim.setRepeatMode(Animation.REVERSE);   //播放次序为倒叙
+                    viewAnim.setRepeatCount(-1);   //无限
+                    ivDeviceState.startAnimation(viewAnim);
                 }
 
                 break;
@@ -773,7 +758,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                 ivWifiState.setImageDrawable(getDrawable(R.drawable.wifi_connect));
 
                 ivDeviceState.setVisibility(View.VISIBLE);
-                viewAnit.cancel();
+                viewAnim.cancel();
                 ivDeviceState.setImageDrawable(getDrawable(R.drawable.small_device_icon));
                 ivDeviceState.clearAnimation();
 
@@ -918,12 +903,28 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             mHandler.sendEmptyMessage(POWER_START);
         } else if (EventAdapter.HEARTBEAT_RPT.equals(key)) {
             if (!heartbeatCount) {
-                ProtocolManager.setNowTime();
                 LogUtils.log("首次下发查询以获取小区信息：");
                 ProtocolManager.getEquipAndAllChannelConfig();
-//                ProtocolManager.setBlackList("1", "");  //防止上报其他手机设置的黑名单，就查上来删掉
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        ProtocolManager.setBlackList("1", "");  //防止上报其他手机设置的黑名单，就查上来删掉
+                    }
+                },1000);
 
-                ProtocolManager.setFTPConfig(); //设置ftp配置
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        ProtocolManager.setFTPConfig(); //设置ftp配置
+                    }
+                },2000);
+
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        ProtocolManager.setNowTime();
+                    }
+                },3000);
 
 
                 if (CacheManager.checkLicense) {
@@ -945,16 +946,32 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 //                if (VersionManage.isPoliceVer() && !CacheManager.getLocState()) {
 //                    CacheManager.setCurrentBlackList();
 //                }
+//
                 CacheManager.hasSetDefaultParam = true;
 
                 ProtocolManager.saveDefaultFcn();
 
-
-                ProtocolManager.setDefaultArfcnsAndPwr();
-
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        ProtocolManager.setDefaultArfcnsAndPwr();
+                    }
+                },1000);
 
                 CacheManager.deviceState.setDeviceState(DeviceState.NORMAL);
-                getChannel();
+
+                //定时查询配置
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        if (CacheManager.deviceState.getDeviceState().equals(DeviceState.NORMAL)) {
+                            ProtocolManager.getEquipAndAllChannelConfig();
+                        } else {
+                            cancel();
+                        }
+                    }
+                }, 3000, 6000);
+
 
 //                if (CacheManager.hasPressStartButton()) {
 //                    new Timer().schedule(new TimerTask() {
@@ -975,21 +992,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
         }
     }
 
-    /**
-     * 定时轮询获取设备配置
-     */
-    private void getChannel() {
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (CacheManager.deviceState.getDeviceState().equals(DeviceState.NORMAL)) {
-                    ProtocolManager.getEquipAndAllChannelConfig();
-                } else {
-                    cancel();
-                }
-            }
-        }, 1000, 6000);
-    }
+
 
 
     private void setDeviceWorkMode() {

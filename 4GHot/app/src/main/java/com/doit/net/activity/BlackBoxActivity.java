@@ -12,19 +12,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.doit.net.Utils.FTPManager;
-import com.doit.net.Utils.FileUtils;
-import com.doit.net.Utils.LogUtils;
+import com.doit.net.utils.FTPManager;
+import com.doit.net.utils.FileUtils;
+import com.doit.net.utils.LogUtils;
 import com.doit.net.base.BaseActivity;
-import com.doit.net.Model.BlackBoxManger;
-import com.doit.net.Event.EventAdapter;
-import com.doit.net.Model.BlackBoxBean;
-import com.doit.net.Model.CacheManager;
-import com.doit.net.Model.UCSIDBManager;
-import com.doit.net.Utils.DateUtils;
-import com.doit.net.Utils.ToastUtils;
+import com.doit.net.model.BlackBoxManger;
+import com.doit.net.event.EventAdapter;
+import com.doit.net.model.BlackBoxBean;
+import com.doit.net.model.CacheManager;
+import com.doit.net.model.UCSIDBManager;
+import com.doit.net.utils.DateUtils;
+import com.doit.net.utils.ToastUtils;
 import com.doit.net.adapter.BlackBoxListAdapter;
-import com.doit.net.View.MyTimePickDialog;
+import com.doit.net.view.MyTimePickDialog;
 import com.doit.net.ucsi.R;
 
 import org.apache.commons.net.ftp.FTPFile;
@@ -236,7 +236,6 @@ public class BlackBoxActivity extends BaseActivity {
             if ("".equals(startTime)) {
                 try {
                     searchBlackBox = dbManager.selector(BlackBoxBean.class).findAll();
-                    //UtilBaseLog.printLog("所有大小："+searchBlackBox.size());
 
                     searchBlackBox = dbManager.selector(BlackBoxBean.class)
                             .where("account", "like", "%" + keyword + "%")
@@ -283,7 +282,7 @@ public class BlackBoxActivity extends BaseActivity {
             bufferedReader = new BufferedReader(new FileReader(file));
             String readline = "";
             while ((readline = bufferedReader.readLine()) != null) {
-                //UtilBaseLog.printLog("解析黑匣子——"+readline);
+
                 BlackBoxManger.saveOperationToDB(readline);
             }
         } catch (IOException e){

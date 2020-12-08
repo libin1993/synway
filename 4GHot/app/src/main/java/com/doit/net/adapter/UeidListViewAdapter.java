@@ -1,35 +1,30 @@
 package com.doit.net.adapter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
-import com.doit.net.Event.AddToWhitelistListner;
-import com.doit.net.Event.EventAdapter;
-import com.doit.net.View.AddWhitelistDialog;
-import com.doit.net.View.ModifyWhitelistDialog;
+import com.doit.net.view.AddWhitelistDialog;
+import com.doit.net.view.ModifyWhitelistDialog;
 import com.doit.net.application.MyApplication;
 import com.doit.net.bean.UeidBean;
-import com.doit.net.Event.AddToLocalBlackListener;
-import com.doit.net.Event.AddToLocationListener;
-import com.doit.net.Model.CacheManager;
-import com.doit.net.Model.DBBlackInfo;
-import com.doit.net.Model.ImsiMsisdnConvert;
-import com.doit.net.Model.UCSIDBManager;
-import com.doit.net.Model.VersionManage;
-import com.doit.net.Model.WhiteListInfo;
-import com.doit.net.Utils.LogUtils;
-import com.doit.net.Utils.UtilOperator;
+import com.doit.net.event.AddToLocalBlackListener;
+import com.doit.net.event.AddToLocationListener;
+import com.doit.net.model.CacheManager;
+import com.doit.net.model.DBBlackInfo;
+import com.doit.net.model.UCSIDBManager;
+import com.doit.net.model.VersionManage;
+import com.doit.net.model.WhiteListInfo;
+import com.doit.net.utils.LogUtils;
+import com.doit.net.utils.UtilOperator;
 import com.doit.net.ucsi.R;
-import com.doit.net.Utils.StringUtils;
 
 import org.xutils.DbManager;
 import org.xutils.ex.DbException;
@@ -37,9 +32,6 @@ import org.xutils.ex.DbException;
 public class UeidListViewAdapter extends BaseSwipeAdapter {
 
     private Context mContext;
-
-    //    private onItemLongClickListener mOnItemLongClickListener;
-    private MotionEvent motionEvent;
 
     public UeidListViewAdapter(Context mContext) {
         this.mContext = mContext;
@@ -61,11 +53,6 @@ public class UeidListViewAdapter extends BaseSwipeAdapter {
         return v;
     }
 
-//    public void setOnItemLongClickListener(onItemLongClickListener mOnItemLongClickListener) {
-//        this.mOnItemLongClickListener = mOnItemLongClickListener;
-//    }
-
-
     @Override
     public synchronized void fillValues(int position, View convertView) {
         LinearLayout layoutItemText = convertView.findViewById(R.id.layoutItemText);
@@ -81,8 +68,7 @@ public class UeidListViewAdapter extends BaseSwipeAdapter {
         TextView tvContent = convertView.findViewById(R.id.tvUeidItemText);
         UeidBean resp = CacheManager.realtimeUeidList.get(position);
 
-//        String msisdn = ImsiMsisdnConvert.getMsisdnFromLocal(resp.getImsi());
-
+        SwipeLayout swipeLayout = convertView.findViewById(R.id.swipe);
 
         if (VersionManage.isPoliceVer()) {
             convertView.findViewById(R.id.add_to_black).setOnClickListener(new AddToLocalBlackListener(mContext, resp.getImsi()));
@@ -100,6 +86,10 @@ public class UeidListViewAdapter extends BaseSwipeAdapter {
                                 @Override
                                 public void onDismiss(DialogInterface dialog) {
                                     notifyDataSetChanged();
+
+                                    if (swipeLayout !=null){
+                                        swipeLayout.close();
+                                    }
                                 }
                             });
                             modifyWhitelistDialog.show();
@@ -109,6 +99,10 @@ public class UeidListViewAdapter extends BaseSwipeAdapter {
                                 @Override
                                 public void onDismiss(DialogInterface dialog) {
                                     notifyDataSetChanged();
+
+                                    if (swipeLayout !=null){
+                                        swipeLayout.close();
+                                    }
                                 }
                             });
                             addWhitelistDialog.show();
@@ -121,42 +115,11 @@ public class UeidListViewAdapter extends BaseSwipeAdapter {
         }
 
         if (CacheManager.getLocMode()) {
-            convertView.findViewById(R.id.add_to_localtion).setOnClickListener(new AddToLocationListener(position, mContext, resp.getImsi(), resp.getTmsi()));
+            convertView.findViewById(R.id.add_to_localtion).setOnClickListener(new AddToLocationListener( mContext, resp.getImsi()));
         } else {
             convertView.findViewById(R.id.add_to_localtion).setVisibility(View.GONE);
         }
 
-//        if (mOnItemLongClickListener != null) {
-//            //获取触摸点的坐标，以决定pop从哪里弹出
-//            convertView.setOnTouchListener(new View.OnTouchListener() {
-//                @SuppressLint("ClickableViewAccessibility")
-//                @Override
-//                public boolean onTouch(View v, MotionEvent event) {
-//                    switch (event.getAction()) {
-//                        case MotionEvent.ACTION_DOWN:
-//                            motionEvent = event;
-//                            break;
-//                        default:
-//                            break;
-//                    }
-//                    // 如果onTouch返回false,首先是onTouch事件的down事件发生，此时，如果长按，触发onLongClick事件；
-//                    // 然后是onTouch事件的up事件发生，up完毕，最后触发onClick事件。
-//                    return false;
-//                }
-//            });
-//
-//
-//            final int pos = position;
-//            convertView.setOnLongClickListener(new View.OnLongClickListener() {
-//                @Override
-//                public boolean onLongClick(View v) {
-//                    //int position = holder.getLayoutPosition();
-//                    mOnItemLongClickListener.onItemLongClick(motionEvent, pos);
-//                    //返回true 表示消耗了事件 事件不会继续传递
-//                    return true; //长按了就禁止swipe弹出
-//                }
-//            });
-//        }
 
         checkBlackWhiteList(resp, tvContent);
 
@@ -252,10 +215,6 @@ public class UeidListViewAdapter extends BaseSwipeAdapter {
     @Override
     public long getItemId(int position) {
         return position;
-    }
-
-    public interface onItemLongClickListener {
-        void onItemLongClick(MotionEvent motionEvent, int position);
     }
 
 }

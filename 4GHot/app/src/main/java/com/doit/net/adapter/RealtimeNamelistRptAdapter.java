@@ -7,9 +7,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
-import com.doit.net.Event.AddToLocationListener;
-import com.doit.net.Event.EventAdapter;
-import com.doit.net.Model.CacheManager;
+import com.doit.net.event.AddToLocationListener;
+import com.doit.net.event.EventAdapter;
+import com.doit.net.model.CacheManager;
 import com.doit.net.ucsi.R;
 
 import java.util.ArrayList;
@@ -76,7 +76,7 @@ public class RealtimeNamelistRptAdapter extends BaseSwipeAdapter {
 
         if(CacheManager.getLocMode()){
             convertView.findViewById(R.id.add_to_localtion).setOnClickListener(new AddToLocationListener(
-                    position,mContext,resp.split("\n")[0].split(":")[1],""));
+                    mContext,resp.split("\n")[0].split(":")[1]));
         }else{
             convertView.findViewById(R.id.add_to_localtion).setVisibility(View.GONE);
         }

@@ -15,7 +15,7 @@
         android:orientation="vertical">
 
 
-        <com.doit.net.Utils.LSettingItem
+        <com.doit.net.utils.LSettingItem
             android:id="@+id/tvOnOffLocation"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -24,7 +24,7 @@
             app:rightStyle="iconSwitch" />
 
 
-        <com.doit.net.Utils.LSettingItem
+        <com.doit.net.utils.LSettingItem
             android:id="@+id/tvIfAutoOpenRF"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -32,7 +32,7 @@
             app:leftText="是否开机自动打开射频"
             app:rightStyle="iconSwitch" />
 
-        <com.doit.net.Utils.LSettingItem
+        <com.doit.net.utils.LSettingItem
             android:id="@+id/tv_static_ip"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -40,7 +40,7 @@
             app:leftText="自动连接设备"
             app:rightStyle="iconSwitch" />
 
-        <com.doit.net.Utils.LSettingItem
+        <com.doit.net.utils.LSettingItem
             android:id="@+id/tvGeneralAdmin"
             android:layout_width="match_parent"
             android:layout_height="50dp"

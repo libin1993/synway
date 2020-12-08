@@ -10,19 +10,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.doit.net.Utils.FormatUtils;
-import com.doit.net.application.MyApplication;
+import com.doit.net.utils.FormatUtils;
 import com.doit.net.bean.LteChannelCfg;
-import com.doit.net.Event.EventAdapter;
-import com.doit.net.Protocol.ProtocolManager;
-import com.doit.net.Model.CacheManager;
-import com.doit.net.Utils.ToastUtils;
+import com.doit.net.event.EventAdapter;
+import com.doit.net.protocol.ProtocolManager;
+import com.doit.net.model.CacheManager;
+import com.doit.net.utils.ToastUtils;
 import com.doit.net.ucsi.R;
-import com.doit.net.udp.g4.bean.G4MsgChannelCfg;
-import com.suke.widget.SwitchButton;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class ChannelListViewAdapter extends BaseAdapter {
 

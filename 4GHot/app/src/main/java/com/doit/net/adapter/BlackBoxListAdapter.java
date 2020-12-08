@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.doit.net.Model.BlackBoxBean;
-import com.doit.net.Utils.DateUtils;
+import com.doit.net.model.BlackBoxBean;
+import com.doit.net.utils.DateUtils;
 import com.doit.net.ucsi.R;
 
 import java.util.List;

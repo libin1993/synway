@@ -37,7 +37,7 @@
         android:layout_marginTop="12dp"
         android:orientation="vertical">
 
-        <com.doit.net.View.LocateCircle
+        <com.doit.net.view.LocateCircle
             android:id="@+id/vLocateCircle"
             android:layout_width="350dp"
             android:layout_height="350dp"
@@ -116,7 +116,7 @@
         android:background="@color/black"
         android:orientation="horizontal">
 
-        <com.doit.net.View.LocateChart
+        <com.doit.net.view.LocateChart
             android:id="@+id/vLocateChart"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -139,7 +139,7 @@
                 android:text="近"
                 android:textSize="22sp"
                 android:textColor="@android:color/white" />
-            <com.doit.net.View.TriangleView
+            <com.doit.net.view.TriangleView
                 android:layout_width="20dp"
                 android:layout_height="0dp"
                 android:layout_weight="1"

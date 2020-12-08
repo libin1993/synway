@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.doit.net.base.BaseActivity;
-import com.doit.net.Event.EventAdapter;
-import com.doit.net.Utils.LogUtils;
-import com.doit.net.Utils.ScreenUtils;
+import com.doit.net.event.EventAdapter;
+import com.doit.net.utils.LogUtils;
+import com.doit.net.utils.ScreenUtils;
 import com.doit.net.ucsi.R;
 
 import butterknife.BindView;

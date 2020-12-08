@@ -12,10 +12,10 @@ import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.doit.net.adapter.ScanFreqRstAdapter;
 import com.doit.net.base.BaseActivity;
 import com.doit.net.bean.ScanFreqRstBean;
-import com.doit.net.Event.EventAdapter;
-import com.doit.net.Utils.ToastUtils;
+import com.doit.net.event.EventAdapter;
+import com.doit.net.utils.ToastUtils;
 import com.doit.net.adapter.ScanFreqRstAdapter.ViewHolder;
-import com.doit.net.Model.CacheManager;
+import com.doit.net.model.CacheManager;
 import com.doit.net.ucsi.R;
 
 import java.util.ArrayList;

@@ -1,6 +1,5 @@
 package com.doit.net.adapter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.LayoutInflater;
@@ -9,20 +8,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
-import com.doit.net.Event.AddToLocalBlackListener;
-import com.doit.net.Event.AddToLocationListener;
-import com.doit.net.Event.AddToWhitelistListner;
-import com.doit.net.Model.CacheManager;
-import com.doit.net.Model.DBUeidInfo;
-import com.doit.net.Model.ImsiMsisdnConvert;
-import com.doit.net.Model.UCSIDBManager;
-import com.doit.net.Model.VersionManage;
-import com.doit.net.Model.WhiteListInfo;
-import com.doit.net.View.AddWhitelistDialog;
-import com.doit.net.View.ModifyWhitelistDialog;
+import com.doit.net.event.AddToLocalBlackListener;
+import com.doit.net.event.AddToLocationListener;
+import com.doit.net.model.CacheManager;
+import com.doit.net.model.DBUeidInfo;
+import com.doit.net.model.UCSIDBManager;
+import com.doit.net.model.VersionManage;
+import com.doit.net.model.WhiteListInfo;
+import com.doit.net.view.AddWhitelistDialog;
+import com.doit.net.view.ModifyWhitelistDialog;
 import com.doit.net.ucsi.R;
-import com.doit.net.Utils.DateUtils;
+import com.doit.net.utils.DateUtils;
 
 import org.xutils.DbManager;
 import org.xutils.ex.DbException;
@@ -86,7 +84,7 @@ public class HistoryListViewAdapter extends BaseSwipeAdapter {
         index.setText((position + 1) + ".");
 
         TextView text_data = convertView.findViewById(R.id.tvUeidItemText);
-
+        SwipeLayout swipeLayout = convertView.findViewById(R.id.layout_user_info);
         DBUeidInfo resp = ueidList.get(position);
         text_data.setText("IMSI:"+resp.getImsi()+"\n"+mContext.getString(R.string.lab_rpt_time)+ DateUtils.convert2String(resp.getCreateDate(), DateUtils.LOCAL_DATE));
         text_data.setTag(position);
@@ -107,6 +105,10 @@ public class HistoryListViewAdapter extends BaseSwipeAdapter {
                                 @Override
                                 public void onDismiss(DialogInterface dialog) {
                                     notifyDataSetChanged();
+
+                                    if (swipeLayout !=null){
+                                        swipeLayout.close();
+                                    }
                                 }
                             });
                             modifyWhitelistDialog.show();
@@ -116,6 +118,10 @@ public class HistoryListViewAdapter extends BaseSwipeAdapter {
                                 @Override
                                 public void onDismiss(DialogInterface dialog) {
                                     notifyDataSetChanged();
+
+                                    if (swipeLayout !=null){
+                                        swipeLayout.close();
+                                    }
                                 }
                             });
                             addWhitelistDialog.show();
@@ -129,7 +135,7 @@ public class HistoryListViewAdapter extends BaseSwipeAdapter {
 
         //if(BuildConfig.LOC_MODEL){
         if(CacheManager.getLocMode()){
-            convertView.findViewById(R.id.add_to_localtion).setOnClickListener(new AddToLocationListener(position,mContext,resp.getImsi(),resp.getTmsi()));
+            convertView.findViewById(R.id.add_to_localtion).setOnClickListener(new AddToLocationListener(mContext,resp.getImsi()));
         }else{
             convertView.findViewById(R.id.add_to_localtion).setVisibility(View.GONE);
         }

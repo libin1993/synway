@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/white"
-    tools:context="com.doit.net.View.PingActivity">
+    tools:context="com.doit.net.view.PingActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

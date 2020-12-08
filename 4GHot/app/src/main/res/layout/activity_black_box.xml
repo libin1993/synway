@@ -18,11 +18,11 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_height="match_parent"
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
+            android:layout_height="42dp"
             android:gravity="center_vertical"
-            android:textColor="@color/darkorange"
-            android:text="@string/lab_keyword" />
+            android:text="@string/lab_keyword"
+            android:textColor="@color/darkorange"/>
 
         <EditText
             android:id="@+id/etKeyword"
@@ -46,10 +46,10 @@
 
         <TextView
             android:layout_height="match_parent"
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:gravity="center_vertical"
             android:textColor="@color/darkorange"
-            android:text="@string/lab_start_time" />
+            android:text="@string/lab_start_time"/>
 
         <EditText
             android:id="@+id/etStartTime"
@@ -59,7 +59,8 @@
             android:layout_weight="1"
             android:singleLine="true"
             android:layout_marginStart="8dp"
-            android:focusableInTouchMode="false" />
+            android:focusableInTouchMode="false"
+            android:hint="点击选择"/>
 
     </LinearLayout>
 
@@ -74,10 +75,10 @@
 
         <TextView
             android:layout_height="match_parent"
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:gravity="center_vertical"
             android:textColor="@color/darkorange"
-            android:text="@string/lab_end_time" />
+            android:text="@string/lab_end_time"/>
 
         <EditText
             android:id="@+id/etEndTime"
@@ -87,7 +88,8 @@
             android:layout_weight="1"
             android:singleLine="true"
             android:layout_marginStart="8dp"
-            android:focusableInTouchMode="false" />
+            android:focusableInTouchMode="false"
+            android:hint="点击选择"/>
     </LinearLayout>
 
 

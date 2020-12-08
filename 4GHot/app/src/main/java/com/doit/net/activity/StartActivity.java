@@ -1,30 +1,21 @@
 package com.doit.net.activity;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 
-import com.doit.net.Utils.PermissionUtils;
+import com.doit.net.utils.PermissionUtils;
 import com.doit.net.base.BaseActivity;
-import com.doit.net.Utils.ToastUtils;
 import com.doit.net.ucsi.BuildConfig;
 import com.doit.net.ucsi.R;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class StartActivity extends BaseActivity {

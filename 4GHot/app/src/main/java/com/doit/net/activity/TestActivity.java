@@ -15,26 +15,24 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.doit.net.Model.BlackBoxManger;
-import com.doit.net.Model.CacheManager;
-import com.doit.net.Model.PrefManage;
-import com.doit.net.Model.VersionManage;
-import com.doit.net.Protocol.ProtocolManager;
-import com.doit.net.Utils.LogUtils;
+import com.doit.net.model.BlackBoxManger;
+import com.doit.net.model.CacheManager;
+import com.doit.net.model.VersionManage;
+import com.doit.net.protocol.ProtocolManager;
+import com.doit.net.utils.LogUtils;
 import com.doit.net.base.BaseActivity;
-import com.doit.net.Event.EventAdapter;
-import com.doit.net.Protocol.LTE_PT_SYSTEM;
-import com.doit.net.Utils.Cellular;
-import com.doit.net.Utils.ToastUtils;
+import com.doit.net.event.EventAdapter;
+import com.doit.net.protocol.LTE_PT_SYSTEM;
+import com.doit.net.utils.Cellular;
+import com.doit.net.utils.ToastUtils;
 import com.doit.net.ucsi.R;
 
 import java.util.Locale;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.doit.net.Event.EventAdapter.GET_NAME_LIST;
-import static com.doit.net.Event.EventAdapter.UPDATE_TMEPRATURE;
+import static com.doit.net.event.EventAdapter.GET_NAME_LIST;
+import static com.doit.net.event.EventAdapter.UPDATE_TMEPRATURE;
 
 public class TestActivity extends BaseActivity implements EventAdapter.EventCall {
     private Button test1;

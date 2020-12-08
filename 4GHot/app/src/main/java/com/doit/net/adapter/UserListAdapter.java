@@ -1,7 +1,6 @@
 package com.doit.net.adapter;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,14 +8,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
-import com.doit.net.Model.BlackBoxManger;
-import com.doit.net.Event.EventAdapter;
-import com.doit.net.Model.AccountManage;
-import com.doit.net.Model.UCSIDBManager;
-import com.doit.net.Model.UserInfo;
-import com.doit.net.Utils.LoadingUtils;
-import com.doit.net.Utils.ToastUtils;
-import com.doit.net.View.ModifyUserInfoDialog;
+import com.doit.net.model.BlackBoxManger;
+import com.doit.net.event.EventAdapter;
+import com.doit.net.model.AccountManage;
+import com.doit.net.model.UCSIDBManager;
+import com.doit.net.model.UserInfo;
+import com.doit.net.utils.LoadingUtils;
+import com.doit.net.utils.ToastUtils;
+import com.doit.net.view.ModifyUserInfoDialog;
 import com.doit.net.ucsi.R;
 
 import org.xutils.ex.DbException;

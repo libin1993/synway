@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.doit.net.bean.LteChannelCfg;
-import com.doit.net.Model.CacheManager;
+import com.doit.net.model.CacheManager;
 import com.doit.net.ucsi.R;
 
 /**

@@ -8,16 +8,14 @@ import android.os.Bundle;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.doit.net.Utils.FormatUtils;
-import com.doit.net.Utils.ScreenUtils;
-import com.doit.net.View.ChannelsDialog;
-import com.doit.net.View.SystemSetupDialog;
-import com.doit.net.adapter.ChannelListViewAdapter;
+import com.doit.net.utils.FormatUtils;
+import com.doit.net.utils.ScreenUtils;
+import com.doit.net.view.SystemSetupDialog;
 import com.doit.net.adapter.UserChannelListAdapter;
 import com.doit.net.base.BaseActivity;
-import com.doit.net.Protocol.LTE_PT_PARAM;
-import com.doit.net.Utils.MySweetAlertDialog;
-import com.doit.net.Utils.LogUtils;
+import com.doit.net.protocol.LTE_PT_PARAM;
+import com.doit.net.utils.MySweetAlertDialog;
+import com.doit.net.utils.LogUtils;
 import com.doit.net.ucsi.R;
 
 import android.graphics.Color;
@@ -38,27 +36,21 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 
 import com.doit.net.bean.LteChannelCfg;
-import com.doit.net.Model.BlackBoxManger;
-import com.doit.net.Event.EventAdapter;
-import com.doit.net.Protocol.ProtocolManager;
-import com.doit.net.Model.CacheManager;
+import com.doit.net.model.BlackBoxManger;
+import com.doit.net.event.EventAdapter;
+import com.doit.net.protocol.ProtocolManager;
+import com.doit.net.model.CacheManager;
 
-import com.doit.net.Utils.LSettingItem;
-import com.doit.net.Utils.ToastUtils;
+import com.doit.net.utils.ToastUtils;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ListHolder;
 import com.orhanobut.dialogplus.OnItemClickListener;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 
 /**

@@ -39,7 +39,8 @@
             android:singleLine="true"
             android:textCursorDrawable="@null"
             android:digits="@string/account_rule"
-            android:focusableInTouchMode="false" />
+            android:focusableInTouchMode="false"
+            android:hint="点击选择"/>
     </LinearLayout>
 
     <LinearLayout
@@ -61,7 +62,8 @@
             style="@style/dialog_edit"
             android:singleLine="true"
             android:textCursorDrawable="@null"
-            android:focusableInTouchMode="false" />
+            android:focusableInTouchMode="false"
+            android:hint="点击选择"/>
     </LinearLayout>
 
     <LinearLayout

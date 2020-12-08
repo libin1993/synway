@@ -2,23 +2,22 @@ package com.doit.net.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Environment;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.BootstrapEditText;
-import com.doit.net.Utils.FileUtils;
+import com.doit.net.utils.FileUtils;
 import com.doit.net.base.BaseActivity;
-import com.doit.net.Model.AccountManage;
+import com.doit.net.model.AccountManage;
 import com.doit.net.bean.LteChannelCfg;
-import com.doit.net.Protocol.ProtocolManager;
-import com.doit.net.Model.CacheManager;
-import com.doit.net.Utils.FTPManager;
-import com.doit.net.Model.PrefManage;
-import com.doit.net.Utils.LSettingItem;
-import com.doit.net.Utils.ToastUtils;
+import com.doit.net.protocol.ProtocolManager;
+import com.doit.net.model.CacheManager;
+import com.doit.net.utils.FTPManager;
+import com.doit.net.model.PrefManage;
+import com.doit.net.utils.LSettingItem;
+import com.doit.net.utils.ToastUtils;
 import com.doit.net.ucsi.R;
 
 import java.io.BufferedWriter;
@@ -39,7 +38,6 @@ public class SystemSettingActivity extends BaseActivity {
     private LSettingItem tvIfAutoOpenRF;
     private LSettingItem tvGeneralAdmin;
     private LSettingItem tvStaticIp;
-    //private SettingItemClickEvent settingItemLocSwitch = new SettingItemClickEvent();
 
     private BootstrapButton btSetFan;
     private BootstrapEditText etMaxWindSpeed;
@@ -77,11 +75,7 @@ public class SystemSettingActivity extends BaseActivity {
         btRefresh = findViewById(R.id.btRefresh);
         btRefresh.setOnClickListener(refreshClikListen);
 
-        if (PrefManage.getBoolean(LOC_PREF_KEY, true)){
-            tvOnOffLocation.setChecked(true);
-        }else{
-            tvOnOffLocation.setChecked(false);
-        }
+        tvOnOffLocation.setChecked(PrefManage.getBoolean(LOC_PREF_KEY, true));
 
         tvStaticIp = findViewById(R.id.tv_static_ip);
         tvStaticIp.setChecked(PrefManage.getBoolean(SET_STATIC_IP,true));
@@ -103,11 +97,7 @@ public class SystemSettingActivity extends BaseActivity {
     private LSettingItem.OnLSettingItemClick settingItemLocSwitch = new LSettingItem.OnLSettingItemClick(){
         @Override
         public void click(LSettingItem item) {
-            if (tvOnOffLocation.isChecked()) {
-                PrefManage.setBoolean(LOC_PREF_KEY, true);
-            }else{
-                PrefManage.setBoolean(LOC_PREF_KEY, false);
-            }
+            PrefManage.setBoolean(LOC_PREF_KEY, tvOnOffLocation.isChecked());
 
             ToastUtils.showMessage( "设置成功，重新登陆生效。");
         }

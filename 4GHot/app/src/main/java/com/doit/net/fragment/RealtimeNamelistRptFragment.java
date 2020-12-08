@@ -17,10 +17,10 @@ import com.daimajia.swipe.util.Attributes;
 import com.doit.net.adapter.RealtimeNamelistRptAdapter;
 import com.doit.net.base.BaseFragment;
 import com.doit.net.bean.BlackNameBean;
-import com.doit.net.Event.EventAdapter;
-import com.doit.net.Model.CacheManager;
-import com.doit.net.Model.DBBlackInfo;
-import com.doit.net.Model.UCSIDBManager;
+import com.doit.net.event.EventAdapter;
+import com.doit.net.model.CacheManager;
+import com.doit.net.model.DBBlackInfo;
+import com.doit.net.model.UCSIDBManager;
 import com.doit.net.ucsi.R;
 
 import org.xutils.ex.DbException;
