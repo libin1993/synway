@@ -133,13 +133,13 @@ public class CacheManager {
         if (listBlackList == null || listBlackList.size() == 0)
             return;
 
-        String content = "";
+        StringBuilder content = new StringBuilder();
+
         for (DBBlackInfo dbBlackInfo : listBlackList) {
-            content += "#";
-            content += dbBlackInfo.getImsi();
+            content.append("#").append(dbBlackInfo.getImsi());
         }
 
-        ProtocolManager.setBlackList("2", content);
+        ProtocolManager.setBlackList("2", content.toString());
     }
 
 
