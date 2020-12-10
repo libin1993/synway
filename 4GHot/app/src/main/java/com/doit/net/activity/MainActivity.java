@@ -153,6 +153,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
@@ -789,7 +790,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
     }
 
-    private void processBattery(int voltage) {
+    private void processBattery(String level) {
         if (CacheManager.isReportBattery) {
             ivBatteryLevel.setVisibility(View.GONE);
             return;
@@ -797,6 +798,11 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             ivBatteryLevel.setVisibility(View.VISIBLE);
         }
 
+        if (TextUtils.isEmpty(level)){
+            return;
+        }
+
+        int voltage = Integer.parseInt(level);
 
         final int LEVEL1 = 9112;
         final int LEVEL2 = 9800;
@@ -1166,7 +1172,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             } else if (msg.what == SPEAK) {
                 speak((String) msg.obj);
             } else if (msg.what == UPDATE_BATTERY) {
-                processBattery((int) msg.obj);
+                processBattery((String) msg.obj);
             } else if (msg.what == ADD_BLACKBOX) {
                 BlackBoxManger.recordOperation((String) msg.obj);
             } else if (msg.what == CHANGE_TAB) {

@@ -143,7 +143,8 @@ public class LTE_PT_PARAM {
         }
 
 
-        EventAdapter.call(EventAdapter.UPDATE_BATTERY, Integer.valueOf(CacheManager.getLteEquipConfig().getVoltage12V()));
+        LogUtils.log(CacheManager.getLteEquipConfig().toString());
+        EventAdapter.call(EventAdapter.UPDATE_BATTERY, CacheManager.getLteEquipConfig().getVoltage12V());
 
         EventAdapter.call(EventAdapter.REFRESH_DEVICE);
         EventAdapter.call(EventAdapter.INIT_SUCCESS);

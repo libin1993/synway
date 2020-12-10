@@ -40,6 +40,7 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.doit.net.bean.LteChannelCfg;
 import com.doit.net.model.BlackBoxManger;
@@ -69,13 +70,6 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
     private long lastRefreshParamTime = 0; //防止频繁刷新参数
 
     private RadioGroup rgPowerLevel;
-    private RadioButton rbPowerHigh;
-    private RadioButton rbPowerMedium;
-    private RadioButton rbPowerLow;
-    private final int POWER_LEVEL_HIGH = 0; //功率等级乘-5+Pmax作为功率设置下去
-    private final int POWER_LEVEL_MEDIUM = 3;
-    private final int POWER_LEVEL_LOW = 6;
-    private RadioButton lastPowerPress;
 
     private RadioGroup rgDetectCarrierOperate;
     private RadioButton rbDetectAll;
@@ -88,13 +82,12 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
 
     private MySweetAlertDialog mProgressDialog;
 
-//    private boolean refreshViewEnable = true;   //在设置需要长时间回馈的参数时，禁止界面更新
 
     //handler消息
     private final int UPDATE_VIEW = 0;
     private final int SHOW_PROGRESS = 1;
 
-    private BaseQuickAdapter<LteChannelCfg,BaseViewHolder> adapter;
+    private BaseQuickAdapter<LteChannelCfg, BaseViewHolder> adapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -122,13 +115,14 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
         btRebootDevice.setOnClickListener(rebootDeviceClick);
         btRefreshParam = findViewById(R.id.btRefreshParam);
         btRefreshParam.setOnClickListener(refreshParamClick);
+
         rvBand = findViewById(R.id.rv_band);
 
         rgPowerLevel = findViewById(R.id.rgPowerLevel);
-        rbPowerHigh = findViewById(R.id.rbPowerHigh);
-        rbPowerMedium = findViewById(R.id.rbPowerMedium);
-        rbPowerLow = findViewById(R.id.rbPowerLow);
-        lastPowerPress = rbPowerHigh;
+//        rbPowerHigh = findViewById(R.id.rbPowerHigh);
+//        rbPowerMedium = findViewById(R.id.rbPowerMedium);
+//        rbPowerLow = findViewById(R.id.rbPowerLow);
+
         rgPowerLevel.setOnCheckedChangeListener(powerLevelListener);
 
         rgDetectCarrierOperate = findViewById(R.id.rgDetectCarrierOperate);
@@ -144,15 +138,15 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
 
 
         rvBand.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new BaseQuickAdapter<LteChannelCfg, BaseViewHolder>(R.layout.layout_rv_band_item,CacheManager.channels) {
+        adapter = new BaseQuickAdapter<LteChannelCfg, BaseViewHolder>(R.layout.layout_rv_band_item, CacheManager.channels) {
             @Override
             protected void convert(BaseViewHolder helper, LteChannelCfg item) {
-                helper.setText(R.id.tv_band_info,"通道：" + item.getIdx() + "        " + "频段：" + item.getBand() + "\n" +
+                helper.setText(R.id.tv_band_info, "通道：" + item.getIdx() + "        " + "频段：" + item.getBand() + "\n" +
                         "频点：[" + item.getFcn() + "]");
                 ImageView ivRFStatus = helper.getView(R.id.iv_rf_status);
-                if (item.getRFState()){
+                if (item.getRFState()) {
                     ivRFStatus.setImageResource(R.drawable.switch_open);
-                }else {
+                } else {
                     ivRFStatus.setImageResource(R.drawable.switch_close);
                 }
 
@@ -172,14 +166,14 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
         adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                if (view.getId() == R.id.iv_rf_status){
-                    if (!CacheManager.checkDevice(DeviceParamActivity.this)){
+                if (view.getId() == R.id.iv_rf_status) {
+                    if (!CacheManager.checkDevice(DeviceParamActivity.this)) {
                         return;
                     }
 
                     LteChannelCfg lteChannelCfg = CacheManager.channels.get(position);
 
-                    if (lteChannelCfg == null){
+                    if (lteChannelCfg == null) {
                         return;
                     }
 
@@ -221,8 +215,6 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                 return;
             }
 
-//            new ChannelsDialog(DeviceParamActivity.this).show();
-
             setChannel();
         }
     };
@@ -234,7 +226,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
     private void setChannel() {
         View dialogView = LayoutInflater.from(this).inflate(R.layout.doit_layout_channels_dialog, null);
         PopupWindow popupWindow = new PopupWindow(dialogView, ScreenUtils.getInstance()
-                .getScreenWidth(DeviceParamActivity.this)-FormatUtils.getInstance().dip2px(40),
+                .getScreenWidth(DeviceParamActivity.this) - FormatUtils.getInstance().dip2px(40),
                 ViewGroup.LayoutParams.WRAP_CONTENT);
 
         RecyclerView rvChannel = dialogView.findViewById(R.id.rv_channel);
@@ -272,16 +264,16 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
 
                 if (view.getId() == R.id.button_save) {
-                    if (!CacheManager.checkDevice(DeviceParamActivity.this)){
+                    if (!CacheManager.checkDevice(DeviceParamActivity.this)) {
                         return;
                     }
 
-                    EditText etFcn = (EditText) adapter.getViewByPosition(rvChannel,position, R.id.editText_fcn);
-                    EditText etPlmn = (EditText) adapter.getViewByPosition(rvChannel,position, R.id.editText_plmn);
-                    EditText etGa = (EditText) adapter.getViewByPosition(rvChannel,position, R.id.editText_ga);
-                    EditText etPa = (EditText) adapter.getViewByPosition(rvChannel,position, R.id.editText_pa);
-                    EditText etRLM = (EditText) adapter.getViewByPosition(rvChannel,position, R.id.etRLM);
-                    EditText etAltFcn = (EditText) adapter.getViewByPosition(rvChannel,position, R.id.etAltFcn);
+                    EditText etFcn = (EditText) adapter.getViewByPosition(rvChannel, position, R.id.editText_fcn);
+                    EditText etPlmn = (EditText) adapter.getViewByPosition(rvChannel, position, R.id.editText_plmn);
+                    EditText etGa = (EditText) adapter.getViewByPosition(rvChannel, position, R.id.editText_ga);
+                    EditText etPa = (EditText) adapter.getViewByPosition(rvChannel, position, R.id.editText_pa);
+                    EditText etRLM = (EditText) adapter.getViewByPosition(rvChannel, position, R.id.etRLM);
+                    EditText etAltFcn = (EditText) adapter.getViewByPosition(rvChannel, position, R.id.etAltFcn);
 
                     String fcn = etFcn.getText().toString().trim();
                     String plmn = etPlmn.getText().toString().trim();
@@ -332,7 +324,6 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
             }
 
             ProtocolManager.changeTac();
-            //ToastUtils.showMessage(GameApplication.appContext,"下发更新TAC成功");
             EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CHANNEL_TAG);
         }
     };
@@ -388,7 +379,6 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
             }
 
             if (!CacheManager.checkDevice(activity)) {
-                lastPowerPress.setChecked(true);
                 return;
             }
 
@@ -398,29 +388,25 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
             } else {
                 ToastUtils.showMessageLong("功率设置已下发，请等待其生效");
             }
+            showProcess(8000);
 
             switch (checkedId) {
                 case R.id.rbPowerHigh:
-                    //ProtocolManager.setAllPower(String.valueOf(-5*POWER_LEVEL_HIGH));
-                    setPowerLevel(POWER_LEVEL_HIGH);
-                    lastPowerPress = rbPowerHigh;
+                    setPowerLevel(0);
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.SET_ALL_POWER + "高");
                     break;
 
                 case R.id.rbPowerMedium:
-                    setPowerLevel(POWER_LEVEL_MEDIUM);
-                    lastPowerPress = rbPowerMedium;
+                    setPowerLevel(-15);
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.SET_ALL_POWER + "中");
                     break;
 
                 case R.id.rbPowerLow:
-                    setPowerLevel(POWER_LEVEL_LOW);
-                    lastPowerPress = rbPowerLow;
+                    setPowerLevel(-30);
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.SET_ALL_POWER + "低");
                     break;
             }
 
-            showProcess(8000);
         }
     };
 
@@ -526,18 +512,15 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
         }
     };
 
-    public void setPowerLevel(int powerLevel) {
-        if (!CacheManager.isDeviceOk()) {
-            return;
-        }
 
-        int powerAtt = powerLevel * -5;
+    public void setPowerLevel(int powerLevel) {
+
 
         String gaConfig = "";
         String tmpGa = "";
         for (int i = 0; i < CacheManager.channels.size(); i++) {
             LteChannelCfg channel = CacheManager.channels.get(i);
-            tmpGa = String.valueOf(Integer.parseInt(channel.getPMax()) + powerAtt);
+            tmpGa = String.valueOf(Integer.parseInt(channel.getPMax()) + powerLevel);
             gaConfig = tmpGa + ",";
             gaConfig += gaConfig;
             gaConfig += tmpGa;
@@ -597,18 +580,19 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
     private void refreshPowerLevel() {
         //定位下有不同频点的功率变动，故不刷新&& !CacheManager.getLocState()
         if (CacheManager.isDeviceOk()) {
-            int powerLevel = (Integer.parseInt(CacheManager.getChannels().get(0).getPa().split(",")[0]) -
-                    Integer.parseInt(CacheManager.getChannels().get(0).getPMax())) / -5;
+            int powerLevel = Integer.parseInt(CacheManager.getChannels().get(0).getPMax()) - Integer.parseInt(CacheManager.getChannels().get(0).getPa().split(",")[0]);
+            int index;
+            if (powerLevel < 15){
+                index = 0;
+            }else if (powerLevel < 30){
+                index = 1;
+            }else{
+                index = 2;
+            }
+            rgPowerLevel.setOnCheckedChangeListener(null);
+            ((RadioButton) rgPowerLevel.getChildAt(index)).setChecked(true);
+            rgPowerLevel.setOnCheckedChangeListener(powerLevelListener);
 
-
-            //-1  -16 -31
-            //1    3   6
-            if (powerLevel <= 1)
-                rbPowerHigh.setChecked(true);
-            else if ((powerLevel >= 2) && (powerLevel < 5))
-                rbPowerMedium.setChecked(true);
-            else if (powerLevel >= 5)
-                rbPowerLow.setChecked(true);
         }
 
     }
@@ -627,69 +611,6 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
     }
 
 
-//    private void refreshChannels() {
-//        if (!CacheManager.isDeviceOk()) {
-//            return;
-//        }
-//
-//        layoutChannelList.removeAllViews();
-//        for (int i = 0; i < CacheManager.channels.size(); i++) {
-//            final LteChannelCfg cfg = CacheManager.getChannels().get(i);
-//            //String tac = CacheManager.getTac(cfg.getIdx());
-//
-//            LSettingItem item = new LSettingItem(activity);
-//            String leftText = "通道：" + cfg.getIdx() + "        " + "频段：" + cfg.getBand() + "\n" +
-//                    "频点：[" + cfg.getFcn() + "]";
-//            item.setRightStyle(3);
-//            item.switchRightStyle(3);
-//            item.setLeftIconVisible(View.GONE);
-//            item.setClickItemChangeState(false);
-//            item.setChecked(cfg.getRFState());
-////            item.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT));
-//            item.setLeftText(leftText);
-//            item.isShowDivider(true);
-//            //只有能切换的band可以点击
-//            if (!"".equals(cfg.getChangeBand())) {
-//                item.setmOnLSettingItemClick(new LSettingItem.OnLSettingItemClick() {
-//                    @Override
-//                    public void click(LSettingItem item) {
-//                        changeChannelBandDialog(cfg.getIdx(), cfg.getChangeBand());
-//                    }
-//                });
-//            }
-//
-//            item.setOnLSettingCheckedChange(new LSettingItem.OnLSettingItemClick() {
-//                @Override
-//                public void click(LSettingItem item) {
-//                    if (!CacheManager.checkDevice(activity)) {
-//                        if (item.isChecked()) {
-//                            item.setChecked(false);
-//                        } else {
-//                            item.setChecked(true);
-//                        }
-//                        return;
-//                    }
-//
-//                    if (CacheManager.getLocState()) {
-//                        ToastUtils.showMessageLong("当前正在搜寻中，请确认通道射频变动是否对其产生影响！");
-//                    }
-//
-//                    showProcess(0);
-//                    if (item.isChecked()) {
-//                        item.setChecked(true);
-//                        ProtocolManager.openRf(cfg.getIdx());
-//                    } else {
-//                        item.setChecked(false);
-//                        ProtocolManager.closeRf(cfg.getIdx());
-//                    }
-//                }
-//            });
-//
-//            layoutChannelList.addView(item);
-////            txt += "通道："  + cfg.getPlmn() + "，频点:" + cfg.getBand()+ "，TAC:" + tac + "，射频：" + (rf ? rf_open_tip : rf_close_tip)+"<br>";
-//        }
-//    }
-
     private void changeChannelBandDialog(final String idx, final String band) {
         UserChannelListAdapter adapter = new UserChannelListAdapter(activity);
         adapter.setIdx(idx);
@@ -697,11 +618,9 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
         DialogPlus deviceListDialog = DialogPlus.newDialog(activity)
                 .setContentHolder(new ListHolder())
                 .setHeader(R.layout.user_channel_header)
-//				.setFooter(R.layout.footer)
                 .setCancelable(true)
                 .setGravity(Gravity.CENTER)
                 .setAdapter(adapter)
-//				.setOnClickListener(clickListener)
                 .setOnItemClickListener(new OnItemClickListener() {
                     @Override
                     public void onItemClick(DialogPlus dialog, Object item, View view, int position) {

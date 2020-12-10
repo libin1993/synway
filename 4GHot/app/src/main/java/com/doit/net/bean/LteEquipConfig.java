@@ -139,4 +139,23 @@ public class LteEquipConfig {
     public void setTempThreshold(String tempThreshold) {
         this.tempThreshold = tempThreshold;
     }
+
+    @Override
+    public String toString() {
+        return "LteEquipConfig{" +
+                "hw='" + hw + '\'' +
+                ", sw='" + sw + '\'' +
+                ", expired='" + expired + '\'' +
+                ", server1='" + server1 + '\'' +
+                ", server2='" + server2 + '\'' +
+                ", board='" + board + '\'' +
+                ", protocol='" + protocol + '\'' +
+                ", protocolType='" + protocolType + '\'' +
+                ", voltage12V='" + voltage12V + '\'' +
+                ", voltage28V='" + voltage28V + '\'' +
+                ", maxFanSpeed='" + maxFanSpeed + '\'' +
+                ", minFanSpeed='" + minFanSpeed + '\'' +
+                ", tempThreshold='" + tempThreshold + '\'' +
+                '}';
+    }
 }

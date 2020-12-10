@@ -152,7 +152,6 @@ public class CacheManager {
         }
 
 
-
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
@@ -161,7 +160,6 @@ public class CacheManager {
                 } else {
                     setLocalWhiteList("off");
                 }
-
             }
         },1000);
 
