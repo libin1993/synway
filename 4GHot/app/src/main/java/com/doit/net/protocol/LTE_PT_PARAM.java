@@ -357,7 +357,6 @@ public class LTE_PT_PARAM {
 
                 if (ueidList.size() > 0) {
                     EventAdapter.call(EventAdapter.UEID_RPT, ueidList);
-
                 }
 
             } catch (IOException e) {
