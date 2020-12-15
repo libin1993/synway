@@ -341,7 +341,7 @@ public class LTE_PT_PARAM {
 
 
                     //据测试，有时文件最后会多一行且带有/t
-                    if (splitUeid.length < 6) {
+                    if (splitUeid.length < 1 || splitUeid[0].length() < 15) {
                         continue;
                     }
 

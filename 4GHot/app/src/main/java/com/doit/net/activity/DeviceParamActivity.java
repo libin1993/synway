@@ -119,9 +119,6 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
         rvBand = findViewById(R.id.rv_band);
 
         rgPowerLevel = findViewById(R.id.rgPowerLevel);
-//        rbPowerHigh = findViewById(R.id.rbPowerHigh);
-//        rbPowerMedium = findViewById(R.id.rbPowerMedium);
-//        rbPowerLow = findViewById(R.id.rbPowerLow);
 
         rgPowerLevel.setOnCheckedChangeListener(powerLevelListener);
 
