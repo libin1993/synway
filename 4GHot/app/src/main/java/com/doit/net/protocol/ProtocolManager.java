@@ -43,9 +43,8 @@ public class ProtocolManager {
         String namelist = "MODE:" + mode;
 
 
-        namelist += "@REDIRECT_CONFIG:";
         if (!"".equals(redirectConfig)) {
-            namelist += redirectConfig;
+            namelist +=  "@REDIRECT_CONFIG:"+redirectConfig;
         }
 
         namelist += "@NAMELIST_REJECT:";
@@ -68,10 +67,10 @@ public class ProtocolManager {
             namelist += nameListRestAction;
         }
 
-        namelist += "@NAMELIST_RELEASE:";
-        if (!"".equals(nameListRelease)) {
-            namelist += nameListRelease;
-        }
+//        namelist += "@NAMELIST_RELEASE:";
+//        if (!"".equals(nameListRelease)) {
+//            namelist += nameListRelease;
+//        }
 
         namelist += "@NAMELIST_FILE:";
         if (!"".equals(nameListFile)) {

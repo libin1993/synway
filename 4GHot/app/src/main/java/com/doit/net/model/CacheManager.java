@@ -182,28 +182,6 @@ public class CacheManager {
      * 开关管控模式
      */
     public static void setLocalWhiteList(String mode) {
-//        String imsi0 = getSimIMSI(0);
-//        String imsi1 = getSimIMSI(1);
-
-//        if (imsi0 == null || imsi0.equals("000000000000000"))
-//            imsi0 = "";
-//
-//        if (imsi1 == null || imsi1.equals("000000000000000"))
-//            imsi1 = "";
-//
-//
-//        String whitelistContent = "";
-//
-//        if ("".equals(imsi0) && "".equals(imsi1)) {
-//            whitelistContent = "";
-//        } else if (!"".equals(imsi0) && "".equals(imsi1)) {
-//            whitelistContent = imsi0;
-//        } else if ("".equals(imsi0) && !"".equals(imsi1)) {
-//            whitelistContent = imsi1;
-//        } else {
-//            whitelistContent = imsi0 + "," + imsi1;
-//        }
-
 
         ProtocolManager.setNameList(mode, "", "",
                 "", "", "block", "", "");
