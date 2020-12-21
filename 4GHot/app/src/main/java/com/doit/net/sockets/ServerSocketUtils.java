@@ -24,7 +24,6 @@ public class ServerSocketUtils {
 
     public final static int PORT = 7003;   //端口
     private final static int READ_TIME_OUT = 60000;  //超时时间
-    public String currentRemoteAddress = "";       //当前访问ip
     private Map<String, Socket> map = new HashMap<>();
 
 
@@ -62,10 +61,12 @@ public class ServerSocketUtils {
 
                         Socket socket = mServerSocket.accept();  //获取socket
                         socket.setSoTimeout(READ_TIME_OUT);      //设置超时
+                        socket.setKeepAlive(true);
+                        socket.setTcpNoDelay(true);
                         String remoteIP = socket.getInetAddress().getHostAddress();  //远程ip
                         int remotePort = socket.getPort();    //远程端口
-                        map.put(remoteIP + ":" + remotePort, socket);   //存储socket
-                        currentRemoteAddress = remoteIP + ":" + remotePort;   //ip+端口作为key
+
+                        map.put(remoteIP, socket);   //存储socket
                         CacheManager.DEVICE_IP = remoteIP;  //当前设备ip
 
                         if (onSocketChangedListener != null) {
@@ -75,7 +76,7 @@ public class ServerSocketUtils {
                         LogUtils.log("TCP收到设备连接,ip：" + remoteIP + "；端口：" + remotePort);
 
 
-                        ReceiveThread receiveThread = new ReceiveThread(socket,remoteIP, remotePort, onSocketChangedListener);
+                        ReceiveThread receiveThread = new ReceiveThread(socket,remoteIP, onSocketChangedListener);
                         receiveThread.start();
 
 
@@ -97,13 +98,11 @@ public class ServerSocketUtils {
     public class ReceiveThread extends Thread {
         private OnSocketChangedListener onSocketChangedListener;
         private String remoteIP;
-        private int remotePort;
         private Socket socket;
 
-        public ReceiveThread(Socket socket,String remoteIP, int remotePort, OnSocketChangedListener onSocketChangedListener) {
+        public ReceiveThread(Socket socket,String remoteIP,  OnSocketChangedListener onSocketChangedListener) {
             this.socket = socket;
             this.remoteIP = remoteIP;
-            this.remotePort = remotePort;
             this.onSocketChangedListener = onSocketChangedListener;
         }
 
@@ -137,7 +136,6 @@ public class ServerSocketUtils {
                 if (onSocketChangedListener != null) {
                     onSocketChangedListener.onChange();
                 }
-                map.remove(remoteIP+ ":" + remotePort);
                 lteReceiveManager.clearReceiveBuffer();
                 LogUtils.log(remoteIP + ":关闭socket");
 
@@ -173,7 +171,7 @@ public class ServerSocketUtils {
      */
     public void sendData(byte[] tempByte) {
 
-        Socket socket = map.get(currentRemoteAddress);
+        Socket socket = map.get(CacheManager.DEVICE_IP);
         if (socket != null && socket.isConnected()) {
 
             new Thread(new Runnable() {
@@ -183,12 +181,15 @@ public class ServerSocketUtils {
                         OutputStream outputStream = socket.getOutputStream();
                         outputStream.write(tempByte);
                         outputStream.flush();
+                        LogUtils.log("TCP发送："+tempByte.length);
                     } catch (Exception e) {
                         e.printStackTrace();
                         LogUtils.log("socket发送失败：" + e.getMessage());
                     }
                 }
             }).start();
+        }else {
+            LogUtils.log("socket未连接");
         }
 
     }

@@ -105,8 +105,8 @@ public class FTPServerUtils extends DefaultFtplet {
     }
 
     public void startFTPServer() {
-        init();
         try {
+            init();
             mFTPServer.start();
         } catch (Exception e) {
             e.printStackTrace();

@@ -161,6 +161,9 @@ public class AppFragment extends BaseFragment implements EventAdapter.EventCall 
            if (AccountManage.getCurrentPerLevel() >= AccountManage.PERMISSION_LEVEL3){
                rlTest.setVisibility(View.VISIBLE);
                viewTest.setVisibility(View.VISIBLE);
+
+               rlSystemSetting.setVisibility(View.VISIBLE);
+               viewSystemSetting.setVisibility(View.VISIBLE);
            }
            rlUserManage.setVisibility(View.VISIBLE);
             viewUserManage.setVisibility(View.VISIBLE);
@@ -175,8 +178,7 @@ public class AppFragment extends BaseFragment implements EventAdapter.EventCall 
             rlClearData.setVisibility(View.VISIBLE);
             viewHistoryData.setVisibility(View.VISIBLE);
 
-            rlSystemSetting.setVisibility(View.VISIBLE);
-            viewSystemSetting.setVisibility(View.VISIBLE);
+
         }
 
         rlUserManage.setmOnLSettingItemClick(new LSettingItem.OnLSettingItemClick() {

@@ -249,7 +249,7 @@ public class HistoryListActivity extends BaseActivity implements EventAdapter.Ev
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
-                startActivity(new Intent(this, MainActivity.class));
+//                startActivity(new Intent(this, MainActivity.class));
                 return true;
 
             default:

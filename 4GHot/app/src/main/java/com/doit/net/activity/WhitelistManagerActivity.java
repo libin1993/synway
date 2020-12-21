@@ -661,7 +661,7 @@ public class WhitelistManagerActivity extends BaseActivity implements EventAdapt
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
-                startActivity(new Intent(this, MainActivity.class));
+//                startActivity(new Intent(this, MainActivity.class));
                 return true;
 
             default:

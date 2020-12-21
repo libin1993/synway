@@ -95,7 +95,6 @@ import java.util.TimerTask;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.doit.net.activity.SystemSettingActivity.SET_STATIC_IP;
 
-@SuppressLint("NewApi")
 public class MainActivity extends BaseActivity implements TextToSpeech.OnInitListener, EventAdapter.EventCall {
     private Activity activity = this;
 
@@ -971,7 +970,8 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                     @Override
                     public void run() {
                         if (CacheManager.deviceState.getDeviceState().equals(DeviceState.NORMAL)) {
-                            ProtocolManager.getEquipAndAllChannelConfig();
+                            ProtocolManager.
+                                    getEquipAndAllChannelConfig();
                         } else {
                             cancel();
                         }

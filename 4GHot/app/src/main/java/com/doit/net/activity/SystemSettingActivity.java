@@ -290,7 +290,7 @@ public class SystemSettingActivity extends BaseActivity {
 //                }
 
                 finish();
-                startActivity(new Intent(this, MainActivity.class));
+//                startActivity(new Intent(this, MainActivity.class));
                 return true;
 
             default:
