@@ -28,6 +28,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -668,6 +669,18 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
             case EventAdapter.REFRESH_DEVICE:
                 mHandler.sendEmptyMessage(UPDATE_VIEW);
                 break;
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }

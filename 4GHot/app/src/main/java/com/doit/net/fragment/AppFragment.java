@@ -226,8 +226,8 @@ public class AppFragment extends BaseFragment implements EventAdapter.EventCall 
         rlDeviceParam.setmOnLSettingItemClick(new LSettingItem.OnLSettingItemClick() {
             @Override
             public void click(LSettingItem item) {
-//                if (!CacheManager.checkDevice(getContext()))
-//                    return;
+                if (!CacheManager.checkDevice(getContext()))
+                    return;
                 startActivity(new Intent(getActivity(), DeviceParamActivity.class));
             }
         });

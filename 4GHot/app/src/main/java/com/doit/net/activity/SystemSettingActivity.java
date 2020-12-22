@@ -51,7 +51,7 @@ public class SystemSettingActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_system_setting);
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         tvOnOffLocation = findViewById(R.id.tvOnOffLocation);
         tvOnOffLocation.setOnLSettingCheckedChange(settingItemLocSwitch);
         tvOnOffLocation.setmOnLSettingItemClick(settingItemLocSwitch);  //点击该行开关以外地方也会切换开关，故覆盖其回调
@@ -282,19 +282,13 @@ public class SystemSettingActivity extends BaseActivity {
         * 否则会出现在子activity点击返回直接将app切到后台(为防止mainActivity重复加载，已将其设置为singleTop启动) */
         switch (item.getItemId()) {
             case android.R.id.home:
-                // 点击返回按钮，退回上一层Activity
-                // UtilBaseLog.printLog("home");
-//                if (NavUtils.getParentActivityName(activity) != null) {
-//                    // 启动父Activity
-//                    NavUtils.navigateUpFromSameTask(activity);
-//                }
-
                 finish();
-//                startActivity(new Intent(this, MainActivity.class));
                 return true;
 
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
+
 }

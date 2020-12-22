@@ -69,7 +69,6 @@ public class BlackBoxActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_black_box);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         dbManager = UCSIDBManager.getDbManager();
         lvBlackBox = findViewById(R.id.lvBlackBox);
@@ -364,7 +363,6 @@ public class BlackBoxActivity extends BaseActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
-//                startActivity(new Intent(this, MainActivity.class));
                 return true;
 
             default:

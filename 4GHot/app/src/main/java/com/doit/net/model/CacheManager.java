@@ -421,7 +421,7 @@ public class CacheManager {
         Collections.sort(channels, new Comparator<LteChannelCfg>() {
             @Override
             public int compare(LteChannelCfg lhs, LteChannelCfg rhs) {
-                return NumberUtils.toInt(lhs.getPlmn()) - NumberUtils.toInt(rhs.getPlmn());
+                return NumberUtils.toInt(lhs.getBand()) - NumberUtils.toInt(rhs.getBand());
             }
         });
     }

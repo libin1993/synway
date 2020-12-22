@@ -146,7 +146,6 @@ public class UserManageActivity extends BaseActivity implements EventAdapter.Eve
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
-//                startActivity(new Intent(this, MainActivity.class));
                 return true;
 
             default:
@@ -178,4 +177,5 @@ public class UserManageActivity extends BaseActivity implements EventAdapter.Eve
                 break;
         }
     }
+
 }
