@@ -67,6 +67,9 @@ public class AppFragment extends BaseFragment implements EventAdapter.EventCall 
     @ViewInject(R.id.tvLoginAccount)
     private TextView tvLoginAccount;
 
+    @ViewInject(R.id.view_header)
+    private View viewHeader;
+
     @ViewInject(R.id.rl_user_manage)
     private LSettingItem rlUserManage;
 
@@ -75,9 +78,6 @@ public class AppFragment extends BaseFragment implements EventAdapter.EventCall 
 
     @ViewInject(R.id.rl_black_box)
     private LSettingItem rlBlackBox;
-
-    @ViewInject(R.id.view_black_box)
-    private View viewBlackBox;
 
     @ViewInject(R.id.rl_white_list)
     private LSettingItem rlWhiteList;
@@ -157,6 +157,7 @@ public class AppFragment extends BaseFragment implements EventAdapter.EventCall 
         }
 
 
+
        if (AccountManage.getCurrentPerLevel() >= AccountManage.PERMISSION_LEVEL2) {
            if (AccountManage.getCurrentPerLevel() >= AccountManage.PERMISSION_LEVEL3){
                rlTest.setVisibility(View.VISIBLE);
@@ -167,19 +168,20 @@ public class AppFragment extends BaseFragment implements EventAdapter.EventCall 
            }
            rlUserManage.setVisibility(View.VISIBLE);
             viewUserManage.setVisibility(View.VISIBLE);
-            rlBlackBox.setVisibility(View.VISIBLE);
 
             if (VersionManage.isArmyVer()){
-                viewBlackBox.setVisibility(View.VISIBLE);
+                rlBlackBox.setVisibility(View.GONE);
             }else {
-                viewBlackBox.setVisibility(View.GONE);
+                rlBlackBox.setVisibility(View.VISIBLE);
             }
 
             rlClearData.setVisibility(View.VISIBLE);
             viewHistoryData.setVisibility(View.VISIBLE);
-
-
-        }
+        }else {
+           if (VersionManage.isPoliceVer()){
+               viewHeader.setVisibility(View.GONE);
+           }
+       }
 
         rlUserManage.setmOnLSettingItemClick(new LSettingItem.OnLSettingItemClick() {
             @Override

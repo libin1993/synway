@@ -87,7 +87,6 @@ import java.util.regex.Pattern;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class WhitelistManagerActivity extends BaseActivity implements EventAdapter.EventCall {
-    private final Activity activity = this;
     private ListView lvWhitelistInfo;
     private WhitelistAdapter mAdapter;
     private Button btAddWhitelist;
@@ -142,7 +141,7 @@ public class WhitelistManagerActivity extends BaseActivity implements EventAdapt
         btClearWhitelist = findViewById(R.id.btClearWhitelist);
         btClearWhitelist.setOnClickListener(clearWhitelistClick);
 
-        mAdapter = new WhitelistAdapter(activity);
+        mAdapter = new WhitelistAdapter(this);
         lvWhitelistInfo.setAdapter(mAdapter);
         mAdapter.setMode(Attributes.Mode.Single);
         lvWhitelistInfo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -163,7 +162,7 @@ public class WhitelistManagerActivity extends BaseActivity implements EventAdapt
     View.OnClickListener addWhitelistClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            AddWhitelistDialog addWhitelistDialog = new AddWhitelistDialog(activity);
+            AddWhitelistDialog addWhitelistDialog = new AddWhitelistDialog(WhitelistManagerActivity.this);
             addWhitelistDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialog) {
@@ -688,12 +687,12 @@ public class WhitelistManagerActivity extends BaseActivity implements EventAdapt
                 closeSwipe(lastOpenSwipePos);
             } else if (msg.what == UPDATE_WHITELIST) {
                 updateListFromDB();
-                CacheManager.updateWhitelistToDev(activity);
+                CacheManager.updateWhitelistToDev(WhitelistManagerActivity.this);
             } else if (msg.what == EXPORT_ERROR) {
                 if (mProgressDialog !=null && mProgressDialog.isShowing()){
                     mProgressDialog.dismiss();
                 }
-                new SweetAlertDialog(activity, SweetAlertDialog.ERROR_TYPE)
+                new SweetAlertDialog(WhitelistManagerActivity.this, SweetAlertDialog.ERROR_TYPE)
                         .setTitleText("导出失败")
                         .setContentText("失败原因：" + msg.obj)
                         .show();
@@ -701,7 +700,7 @@ public class WhitelistManagerActivity extends BaseActivity implements EventAdapt
                 if (mProgressDialog !=null && mProgressDialog.isShowing()){
                     mProgressDialog.dismiss();
                 }
-                new MySweetAlertDialog(activity, MySweetAlertDialog.TEXT_SUCCESS)
+                new MySweetAlertDialog(WhitelistManagerActivity.this, MySweetAlertDialog.TEXT_SUCCESS)
                         .setTitleText("导入完成")
                         .setContentText(String.valueOf(msg.obj))
                         .show();
@@ -711,7 +710,7 @@ public class WhitelistManagerActivity extends BaseActivity implements EventAdapt
                 if (mProgressDialog !=null && mProgressDialog.isShowing()){
                     mProgressDialog.dismiss();
                 }
-                new MySweetAlertDialog(activity, MySweetAlertDialog.TEXT_SUCCESS)
+                new MySweetAlertDialog(WhitelistManagerActivity.this, MySweetAlertDialog.TEXT_SUCCESS)
                         .setTitleText("导出成功")
                         .setContentText(String.valueOf(msg.obj))
                         .show();

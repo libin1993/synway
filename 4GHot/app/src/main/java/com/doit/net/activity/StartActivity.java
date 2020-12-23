@@ -72,8 +72,8 @@ public class StartActivity extends BaseActivity {
     }
 
 	private void redirectTo(){
-        finish();
         startActivity(new Intent(this, LoginActivity.class));
+        finish();
 	}
 
 

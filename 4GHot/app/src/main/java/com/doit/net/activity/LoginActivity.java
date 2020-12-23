@@ -31,7 +31,6 @@ import static com.doit.net.activity.SystemSettingActivity.LOC_PREF_KEY;
 
 
 public class LoginActivity extends BaseActivity {
-    private Activity activity = this;
 
     private CheckBox ckRememberPass;
     private EditText etUserName;
@@ -42,7 +41,7 @@ public class LoginActivity extends BaseActivity {
     boolean isRemember;
 
 
-    private final String TIME_DATUM = "TIME_DATUM";
+    private static final String TIME_DATUM = "TIME_DATUM";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

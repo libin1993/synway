@@ -199,6 +199,9 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
     private void initBlackBox() {
 
+        if (VersionManage.isArmyVer()){
+            return;
+        }
         BlackBoxManger.setCurrentAccount(AccountManage.getCurrentLoginAccount());
         BlackBoxManger.initBlx();
         BlackBoxManger.recordOperation(BlackBoxManger.LOGIN + AccountManage.getCurrentLoginAccount());
@@ -214,9 +217,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                 //设备重启（重连）后需要重新检查设置默认参数
                 CacheManager.hasSetDefaultParam = false;
                 CacheManager.resetState();
-
             }
-
         });
     }
 
@@ -970,23 +971,13 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                     @Override
                     public void run() {
                         if (CacheManager.deviceState.getDeviceState().equals(DeviceState.NORMAL)) {
-                            ProtocolManager.
-                                    getEquipAndAllChannelConfig();
+                            ProtocolManager.getEquipAndAllChannelConfig();
                         } else {
                             cancel();
                         }
                     }
                 }, 3000, 6000);
 
-
-//                if (CacheManager.hasPressStartButton()) {
-//                    new Timer().schedule(new TimerTask() {
-//                        @Override
-//                        public void run() {
-//                            ProtocolManager.openAllRf();
-//                        }
-//                    }, 5000);
-//                }
 
             }
 
@@ -997,9 +988,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             mHandler.sendMessage(msg);
         }
     }
-
-
-
 
     private void setDeviceWorkMode() {
 

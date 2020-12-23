@@ -13,7 +13,6 @@ import com.doit.net.utils.ScreenUtils;
 import com.doit.net.view.SystemSetupDialog;
 import com.doit.net.adapter.UserChannelListAdapter;
 import com.doit.net.base.BaseActivity;
-import com.doit.net.protocol.LTE_PT_PARAM;
 import com.doit.net.utils.MySweetAlertDialog;
 import com.doit.net.utils.LogUtils;
 import com.doit.net.ucsi.R;
@@ -41,7 +40,6 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 
 import com.doit.net.bean.LteChannelCfg;
 import com.doit.net.model.BlackBoxManger;
@@ -53,6 +51,9 @@ import com.doit.net.utils.ToastUtils;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ListHolder;
 import com.orhanobut.dialogplus.OnItemClickListener;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 /**
@@ -431,25 +432,25 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
 
             switch (checkedId) {
                 case R.id.rbDetectAll:
-                    ProtocolManager.setDetectCarrierOpetation("detect_all");
+                    ProtocolManager.setDetectCarrierOperation("detect_all");
                     lastDetectCarrierOperatePress = rbDetectAll;
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CHANGE_DETTECT_OPERATE + "所有");
                     break;
 
                 case R.id.rbCTJ:
-                    ProtocolManager.setDetectCarrierOpetation("detect_ctj");
+                    ProtocolManager.setDetectCarrierOperation("detect_ctj");
                     lastDetectCarrierOperatePress = rbCTJ;
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CHANGE_DETTECT_OPERATE + "移动");
                     break;
 
                 case R.id.rbCTU:
-                    ProtocolManager.setDetectCarrierOpetation("detect_ctu");
+                    ProtocolManager.setDetectCarrierOperation("detect_ctu");
                     lastDetectCarrierOperatePress = rbCTU;
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CHANGE_DETTECT_OPERATE + "联通");
                     break;
 
                 case R.id.rbCTC:
-                    ProtocolManager.setDetectCarrierOpetation("detect_ctc");
+                    ProtocolManager.setDetectCarrierOperation("detect_ctc");
                     lastDetectCarrierOperatePress = rbCTC;
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CHANGE_DETTECT_OPERATE + "电信");
                     break;
@@ -478,7 +479,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                 ProtocolManager.openAllRf();
                 ToastUtils.showMessageLong(R.string.rf_open);
                 EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.OPEN_ALL_RF);
-                showProcess(6000);
+                showProcess(9000);
             } else {
                 if (CacheManager.getLocState()) {
                     new MySweetAlertDialog(activity, MySweetAlertDialog.WARNING_TYPE)
@@ -494,7 +495,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                                     sweetAlertDialog.dismiss();
                                     ProtocolManager.closeAllRf();
                                     ToastUtils.showMessage(R.string.rf_close);
-                                    showProcess(6000);
+                                    showProcess(9000);
                                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CLOSE_ALL_RF);
                                 }
                             })
@@ -502,7 +503,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                 } else {
                     ProtocolManager.closeAllRf();
                     ToastUtils.showMessageLong(R.string.rf_close);
-                    showProcess(6000);
+                    showProcess(9000);
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CLOSE_ALL_RF);
                 }
 
@@ -512,27 +513,25 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
 
 
     public void setPowerLevel(int powerLevel) {
-
-
-        String gaConfig = "";
-        String tmpGa = "";
-        for (int i = 0; i < CacheManager.channels.size(); i++) {
-            LteChannelCfg channel = CacheManager.channels.get(i);
-            tmpGa = String.valueOf(Integer.parseInt(channel.getPMax()) + powerLevel);
-            gaConfig = tmpGa + ",";
-            gaConfig += gaConfig;
-            gaConfig += tmpGa;
-            LogUtils.log("设置功率：" + "IDX:" + channel.getIdx() + "@" + "PA:" + gaConfig);
-            LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_SET_CHANNEL_CONFIG,
-                    "IDX:" + channel.getIdx() + "@" + "PA:" + gaConfig);
-
-            //
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        if (!CacheManager.isDeviceOk()) {
+            return;
         }
+
+        for (int i = 0; i < CacheManager.getChannels().size(); i++) {
+            int index = i;
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    LteChannelCfg channel = CacheManager.getChannels().get(index);
+                    int pa = powerLevel + Integer.parseInt(channel.getPMax());
+
+                    ProtocolManager.setChannelConfig(channel.getIdx(), "", "", pa + "," + pa + "," + pa,
+                            "", "", "", "");
+                    channel.setPa(pa + "," + pa + "," + pa);
+                }
+            }, index*200);
+        }
+
 
     }
 

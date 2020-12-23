@@ -49,7 +49,6 @@ import java.util.List;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class BlackBoxActivity extends BaseActivity {
-    private final Activity activity = this;
     private ListView lvBlackBox;
     private BlackBoxListAdapter blackBoxListAdapter;
     private EditText etKeyword;
@@ -80,7 +79,7 @@ public class BlackBoxActivity extends BaseActivity {
         etStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MyTimePickDialog myTimePicKDialog = new MyTimePickDialog(activity, etStartTime.getText().toString());
+                MyTimePickDialog myTimePicKDialog = new MyTimePickDialog(BlackBoxActivity.this, etStartTime.getText().toString());
                 myTimePicKDialog.dateTimePicKDialog(etStartTime);
             }
         });
@@ -89,7 +88,7 @@ public class BlackBoxActivity extends BaseActivity {
         etEndTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MyTimePickDialog myTimePicKDialog = new MyTimePickDialog(activity, etEndTime.getText().toString());
+                MyTimePickDialog myTimePicKDialog = new MyTimePickDialog(BlackBoxActivity.this, etEndTime.getText().toString());
                 myTimePicKDialog.dateTimePicKDialog(etEndTime);
             }
         });
@@ -109,7 +108,7 @@ public class BlackBoxActivity extends BaseActivity {
                     blackBoxListAdapter.updateView();
                 }
             } else if (msg.what == EXPORT_ERROR) {
-                new SweetAlertDialog(activity, SweetAlertDialog.ERROR_TYPE)
+                new SweetAlertDialog(BlackBoxActivity.this, SweetAlertDialog.ERROR_TYPE)
                         .setTitleText("导出失败")
                         .setContentText("失败原因：" + msg.obj)
                         .show();
@@ -349,7 +348,7 @@ public class BlackBoxActivity extends BaseActivity {
 
 
             EventAdapter.call(EventAdapter.UPDATE_FILE_SYS, fullPath);
-            new SweetAlertDialog(activity, SweetAlertDialog.SUCCESS_TYPE)
+            new SweetAlertDialog(BlackBoxActivity.this, SweetAlertDialog.SUCCESS_TYPE)
                     .setTitleText("导出成功")
                     .setContentText("文件导出在：手机存储/" + FileUtils.ROOT_DIRECTORY + "/" + fileName)
                     .show();

@@ -101,10 +101,10 @@ public class RealTimeUeidRptFragment extends BaseFragment implements EventAdapte
 
         cbDetectSwitch.setOnCheckedChangeListener(null);
         cbDetectSwitch.setChecked(CacheManager.isDeviceOk());
-        cbDetectSwitch.setOnCheckedChangeListener(rfDetectSwichtListener);
+        cbDetectSwitch.setOnCheckedChangeListener(rfDetectSwitchtListener);
     }
 
-    CompoundButton.OnCheckedChangeListener rfDetectSwichtListener = new CompoundButton.OnCheckedChangeListener() {
+    CompoundButton.OnCheckedChangeListener rfDetectSwitchtListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
             if (!compoundButton.isPressed()) {
@@ -120,7 +120,7 @@ public class RealTimeUeidRptFragment extends BaseFragment implements EventAdapte
                 ProtocolManager.openAllRf();
                 ToastUtils.showMessageLong(R.string.all_rf_open);
                 EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.OPEN_ALL_RF);
-                EventAdapter.call(EventAdapter.SHOW_PROGRESS, 6000);
+                EventAdapter.call(EventAdapter.SHOW_PROGRESS, 9000);
             } else {
                 if (CacheManager.getLocState()) {
                     new MySweetAlertDialog(getContext(), MySweetAlertDialog.WARNING_TYPE)
@@ -135,7 +135,7 @@ public class RealTimeUeidRptFragment extends BaseFragment implements EventAdapte
                                     sweetAlertDialog.dismiss();
                                     ProtocolManager.closeAllRf();
                                     ToastUtils.showMessage(R.string.all_rf_close);
-                                    EventAdapter.call(EventAdapter.SHOW_PROGRESS, 6000);
+                                    EventAdapter.call(EventAdapter.SHOW_PROGRESS, 9000);
                                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CLOSE_ALL_RF);
                                 }
                             })
@@ -145,14 +145,14 @@ public class RealTimeUeidRptFragment extends BaseFragment implements EventAdapte
                                     mySweetAlertDialog.dismiss();
                                     cbDetectSwitch.setOnCheckedChangeListener(null);
                                     cbDetectSwitch.setChecked(true);
-                                    cbDetectSwitch.setOnCheckedChangeListener(rfDetectSwichtListener);
+                                    cbDetectSwitch.setOnCheckedChangeListener(rfDetectSwitchtListener);
                                 }
                             })
                             .show();
                 } else {
                     ProtocolManager.closeAllRf();
                     ToastUtils.showMessageLong(R.string.all_rf_close);
-                    EventAdapter.call(EventAdapter.SHOW_PROGRESS, 6000);
+                    EventAdapter.call(EventAdapter.SHOW_PROGRESS, 9000);
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CLOSE_ALL_RF);
                 }
             }
@@ -315,7 +315,7 @@ public class RealTimeUeidRptFragment extends BaseFragment implements EventAdapte
 
         cbDetectSwitch.setOnCheckedChangeListener(null);
         cbDetectSwitch.setChecked(rfState);
-        cbDetectSwitch.setOnCheckedChangeListener(rfDetectSwichtListener);
+        cbDetectSwitch.setOnCheckedChangeListener(rfDetectSwitchtListener);
     }
 
 

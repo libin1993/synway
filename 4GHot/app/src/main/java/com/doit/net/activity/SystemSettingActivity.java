@@ -1,13 +1,13 @@
 package com.doit.net.activity;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.BootstrapEditText;
+import com.doit.net.model.DBChannel;
 import com.doit.net.utils.FileUtils;
 import com.doit.net.base.BaseActivity;
 import com.doit.net.model.AccountManage;
@@ -25,13 +25,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 import static cn.pedant.SweetAlert.SweetAlertDialog.WARNING_TYPE;
 
 public class SystemSettingActivity extends BaseActivity {
-    private Activity activity = this;
     public static String LOC_PREF_KEY = "LOC_PREF_KEY";
     public static String SET_STATIC_IP = "STATIC_IP";
     private LSettingItem tvOnOffLocation;
@@ -67,13 +68,13 @@ public class SystemSettingActivity extends BaseActivity {
         etMinWindSpeed = findViewById(R.id.etMinWindSpeed);
         etTempThreshold = findViewById(R.id.etTempThreshold);
         btSetFan = findViewById(R.id.btSetFan);
-        btSetFan.setOnClickListener(setFanClikListen);
+        btSetFan.setOnClickListener(setFanClickListener);
 
         btResetFreqScanFcn = findViewById(R.id.btResetFreqScanFcn);
-        btResetFreqScanFcn.setOnClickListener(resetFreqScanFcnClikListener);
+        btResetFreqScanFcn.setOnClickListener(resetFreqScanFcnClickListener);
 
         btRefresh = findViewById(R.id.btRefresh);
-        btRefresh.setOnClickListener(refreshClikListen);
+        btRefresh.setOnClickListener(refreshClickListener);
 
         tvOnOffLocation.setChecked(PrefManage.getBoolean(LOC_PREF_KEY, true));
 
@@ -82,7 +83,7 @@ public class SystemSettingActivity extends BaseActivity {
         tvStaticIp.setOnLSettingCheckedChange(setStaticIpSwitch);
         tvStaticIp.setmOnLSettingItemClick(setStaticIpSwitch);
 
-        if (CacheManager.checkDevice(activity)){
+        if (CacheManager.checkDevice(this)){
             etMaxWindSpeed.setText(CacheManager.getLteEquipConfig().getMaxFanSpeed());
             etMinWindSpeed.setText(CacheManager.getLteEquipConfig().getMinFanSpeed());
             etTempThreshold.setText(CacheManager.getLteEquipConfig().getTempThreshold());
@@ -106,7 +107,7 @@ public class SystemSettingActivity extends BaseActivity {
     private LSettingItem.OnLSettingItemClick settingItemAutoRFSwitch = new LSettingItem.OnLSettingItemClick(){
         @Override
         public void click(LSettingItem item) {
-            if(!CacheManager.checkDevice(activity)){
+            if(!CacheManager.checkDevice(SystemSettingActivity.this)){
                 tvIfAutoOpenRF.setChecked(!tvIfAutoOpenRF.isChecked());
                 return;
             }
@@ -152,9 +153,9 @@ public class SystemSettingActivity extends BaseActivity {
 
         BufferedWriter bufferedWriter = null;
         try {
-                bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(accountFullPath+accountFileName,true)));
-                bufferedWriter.write("admin"+","+"admin"+ "," + AccountManage.getAdminRemark()+"\n");
-                bufferedWriter.flush();
+            bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(accountFullPath+accountFileName,true)));
+            bufferedWriter.write("admin"+","+"admin"+ "," + AccountManage.getAdminRemark()+"\n");
+            bufferedWriter.flush();
         } catch (IOException e){
             e.printStackTrace();
         } finally {
@@ -183,29 +184,29 @@ public class SystemSettingActivity extends BaseActivity {
         }.start();
     }
 
-    View.OnClickListener setFanClikListen = new View.OnClickListener(){
+    View.OnClickListener setFanClickListener = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            if(!CacheManager.checkDevice(activity))
+            if(!CacheManager.checkDevice(SystemSettingActivity.this))
                 return;
 
-            ProtocolManager.setFancontrol(etMaxWindSpeed.getText().toString(), etMinWindSpeed.getText().toString()
+            ProtocolManager.setFanControl(etMaxWindSpeed.getText().toString(), etMinWindSpeed.getText().toString()
                     ,etTempThreshold.getText().toString());
         }
     };
 
 
-    View.OnClickListener resetFreqScanFcnClikListener = new View.OnClickListener(){
+    View.OnClickListener resetFreqScanFcnClickListener = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            if(!CacheManager.checkDevice(activity))
+            if(!CacheManager.checkDevice(SystemSettingActivity.this))
                 return;
 
-            new SweetAlertDialog(activity, WARNING_TYPE)
+            new SweetAlertDialog(SystemSettingActivity.this, WARNING_TYPE)
                     .setTitleText("提示")
                     .setContentText("开机搜网列表将被重置，确定吗?")
-                    .setCancelText(activity.getString(R.string.cancel))
-                    .setConfirmText(activity.getString(R.string.sure))
+                    .setCancelText(SystemSettingActivity.this.getString(R.string.cancel))
+                    .setConfirmText(SystemSettingActivity.this.getString(R.string.sure))
                     .showCancelButton(true)
                     .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                         @Override
@@ -220,45 +221,33 @@ public class SystemSettingActivity extends BaseActivity {
     };
 
     private void resetFreqScanFcn() {
-        String band1Fcns = "100,375,400";
-        String band3Fcns = "1300,1506,1650,1825";
-        String band38Fcns = "37900,38098,38200";
-        String band39Fcns = "38400,38544,38300";
-        String band40Fcns = "38950,39148,39300";
-        String tmpAllFcns = "";
-        String[] tmpSplitFcn;
-
-        for (LteChannelCfg channel : CacheManager.getChannels()) {
-            switch (channel.getBand()) {
-                case "1":
-                    ProtocolManager.setChannelConfig(channel.getIdx(), "", "", "", "", "", "", band1Fcns);
-                    break;
-
-                case "3":
-                    ProtocolManager.setChannelConfig(channel.getIdx(), "", "", "", "", "", "", band3Fcns);
-                    break;
-                case "38":
-                    ProtocolManager.setChannelConfig(channel.getIdx(), "", "", "", "", "", "", band38Fcns);
-                    break;
-
-                case "39":
-                    ProtocolManager.setChannelConfig(channel.getIdx(), "", "", "", "", "", "", band39Fcns);
-                    break;
-
-                case "40":
-                    ProtocolManager.setChannelConfig(channel.getIdx(), "", "", "", "", "", "", band40Fcns);
-                    break;
-
-                default:
-                    break;
-            }
+        if (!CacheManager.checkDevice(this)){
+            return;
         }
+        for (int i = 0; i < CacheManager.getChannels().size(); i++) {
+            int index = i;
+
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    LteChannelCfg channel = CacheManager.getChannels().get(index);
+                    String fcn = ProtocolManager.getCheckedFcn(channel.getBand());
+                    if (!TextUtils.isEmpty(fcn)) {
+                        ProtocolManager.setChannelConfig(channel.getIdx(), fcn ,
+                                "", "", "", "", "", "");
+                        channel.setFcn(fcn);
+                    }
+
+                }
+            }, index * 200);
+        }
+
     }
 
-    View.OnClickListener refreshClikListen = new View.OnClickListener(){
+    View.OnClickListener refreshClickListener = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            if(!CacheManager.checkDevice(activity))
+            if(!CacheManager.checkDevice(SystemSettingActivity.this))
                 return;
 
             etMaxWindSpeed.setText(CacheManager.getLteEquipConfig().getMaxFanSpeed());
@@ -279,7 +268,7 @@ public class SystemSettingActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         /* 为解决从后台切回来之后重新打开启动屏及登录界面问题，需要设置点击子activity时强制打开MainActivity
-        * 否则会出现在子activity点击返回直接将app切到后台(为防止mainActivity重复加载，已将其设置为singleTop启动) */
+         * 否则会出现在子activity点击返回直接将app切到后台(为防止mainActivity重复加载，已将其设置为singleTop启动) */
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();

@@ -74,6 +74,11 @@ public class BlackBoxManger {
 
     public static void recordOperation(String operation){
         //不对超级账户做记录
+
+        if (VersionManage.isArmyVer()){
+            return;
+        }
+
         if (AccountManage.getCurrentPerLevel() > AccountManage.PERMISSION_LEVEL2)
             return;
 
