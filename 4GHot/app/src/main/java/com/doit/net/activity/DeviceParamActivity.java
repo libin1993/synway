@@ -531,8 +531,6 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                 }
             }, index*200);
         }
-
-
     }
 
     public void refreshViews() {
