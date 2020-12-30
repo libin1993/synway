@@ -290,7 +290,7 @@ public class TestActivity extends BaseActivity implements EventAdapter.EventCall
                                     public void run() {
                                         ProtocolManager.setNameList("on",
                                                 "46000,2," + mobileFcn + "#46002,2," + mobileFcn + "#46007,2," + mobileFcn + "#46001,2," + unicomFcn, "",
-                                                "", "", "redirect", "", "");
+                                                "", "", "redirect",  "");
 
                                     }
                                 }, 1000);

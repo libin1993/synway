@@ -184,7 +184,7 @@ public class CacheManager {
     public static void setLocalWhiteList(String mode) {
 
         ProtocolManager.setNameList(mode, "", "",
-                "", "", "block", "", "");
+                "", "", "block", "");
 
     }
 
@@ -272,8 +272,18 @@ public class CacheManager {
                     .and("is_check","=","1")
                     .findFirst();
             if (dbChannel !=null){
-                ProtocolManager.setChannelConfig(dbChannel.getIdx(), dbChannel.getFcn(),
-                        "46001,46011", "", "", "", "", "");
+                String idx="";
+                for (LteChannelCfg channel : CacheManager.getChannels()) {
+                    if (channel.getBand().equals("3")){
+                        idx = channel.getIdx();
+                        break;
+                    }
+                }
+
+                if (!TextUtils.isEmpty(idx)){
+                    ProtocolManager.setChannelConfig(idx, dbChannel.getFcn(),
+                            "46001,46011", "", "", "", "", "");
+                }
             }
 
         } catch (DbException e) {

@@ -15,9 +15,6 @@ public class DBChannel {
     @Column(name = "id", isId = true)
     private int id;
 
-    @Column(name = "idx")
-    private String idx;
-
     @Column(name = "band")
     private String band;
 
@@ -70,17 +67,8 @@ public class DBChannel {
         this.id = id;
     }
 
-    public String getIdx() {
-        return idx;
-    }
+    public DBChannel(String band, String fcn, int isDefault, int isCheck) {
 
-    public void setIdx(String idx) {
-        this.idx = idx;
-    }
-
-
-    public DBChannel(String idx, String band, String fcn, int isDefault, int isCheck) {
-        this.idx = idx;
         this.band = band;
         this.fcn = fcn;
         this.isDefault = isDefault;

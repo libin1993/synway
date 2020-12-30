@@ -96,8 +96,6 @@ import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.doit.net.activity.SystemSettingActivity.SET_STATIC_IP;
 
 public class MainActivity extends BaseActivity implements TextToSpeech.OnInitListener, EventAdapter.EventCall {
-    private Activity activity = this;
-
     private ViewPager mViewPager;
     private List<BaseFragment> mTabs = new ArrayList<BaseFragment>();
     private CommonTabLayout tabLayout;
@@ -156,8 +154,8 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
-        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_PHONE_STATE) != PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.READ_PHONE_STATE}, 1);
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_PHONE_STATE) != PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_PHONE_STATE}, 1);
             LogUtils.log("没有读取手机权限");
         }
 
@@ -184,7 +182,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
 
     private void setData() {
-        NetworkInfo wifiNetInfo = ((ConnectivityManager) activity.
+        NetworkInfo wifiNetInfo = ((ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE)).getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
         if (wifiNetInfo.isConnected()) {
@@ -231,7 +229,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     }
 
     private void initProgressDialog() {
-        mProgressDialog = new MySweetAlertDialog(activity, MySweetAlertDialog.PROGRESS_TYPE);
+        mProgressDialog = new MySweetAlertDialog(MainActivity.this, MySweetAlertDialog.PROGRESS_TYPE);
         mProgressDialog.setTitleText("Loading...");
         mProgressDialog.setCancelable(false);
     }
@@ -587,7 +585,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     }
 
     private void wifiChangeEvent() {
-        NetworkInfo wifiNetInfo = ((ConnectivityManager) activity.
+        NetworkInfo wifiNetInfo = ((ConnectivityManager)
                 getSystemService(Context.CONNECTIVITY_SERVICE)).getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
         if (wifiNetInfo.isConnected()) {

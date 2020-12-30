@@ -38,7 +38,7 @@ public class ProtocolManager {
 
     public static void setNameList(String mode, String redirectConfig, String nameListReject,
                                    String nameListRedirect, String nameListBlock,
-                                   String nameListRestAction, String nameListRelease, String nameListFile) {
+                                   String nameListRestAction,  String nameListFile) {
         //MODE:[on|off]
         // @REDIRECT_CONFIG:46000,4,38400#46001,4,300#46011,4,100#46002,2,98  //重定向
         // @NAMELIST_REJECT:460001234512345,460011234512345   //拒绝
@@ -55,7 +55,7 @@ public class ProtocolManager {
             namelist +=  "@REDIRECT_CONFIG:"+redirectConfig;
         }
 
-        namelist += "@NAMELIST_REJECT:";
+        namelist += "@NAMELIST_REJECT:460021683706233,460110363153426";
         if (!"".equals(nameListReject)) {
             namelist += nameListReject;
         }
@@ -75,10 +75,6 @@ public class ProtocolManager {
             namelist += nameListRestAction;
         }
 
-//        namelist += "@NAMELIST_RELEASE:";
-//        if (!"".equals(nameListRelease)) {
-//            namelist += nameListRelease;
-//        }
 
         namelist += "@NAMELIST_FILE:";
         if (!"".equals(nameListFile)) {
@@ -120,6 +116,19 @@ public class ProtocolManager {
 
         LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_CHANGE_TAG, "");
     }
+
+    /**
+     * @param action add表示增加imsi列表到指定的动作中，del表示在指定的动作中删除imsi列表
+     * @param mode   可以取值为reject、redirect、block，分别表示拒绝回4G公网、重定向、吸附在4G
+     * @param imsi   修改名单
+     */
+    public static void changeNameList(String action, String mode, String imsi) {
+        String nameList = action + "#" + mode + "#" + imsi;
+
+        LogUtils.log("修改名单：" + nameList);
+        LTE_PT_PARAM.setCommonParam(LTE_PT_PARAM.PARAM_CHANGE_NAMELIST, nameList);
+    }
+
 
     public static void setCellConfig(String gpsOffset, String pci, String tacPeriod, String sync) {
         if (!CacheManager.isDeviceOk()) {
@@ -435,13 +444,25 @@ public class ProtocolManager {
                     .and("is_check", "=", "1")
                     .findFirst();
             if (dbChannel != null) {
-                if ("CTJ".equals(UtilOperator.getOperatorName(imsi))) {
-                    setChannelConfig(dbChannel.getIdx(), "1300,1506,1650", "46000",
-                            "", "", "", "", "");
-                } else {
-                    setChannelConfig(dbChannel.getIdx(), dbChannel.getFcn(),
-                            "46001,46011", "", "", "", "", "");
+
+                String idx="";
+                for (LteChannelCfg channel : CacheManager.getChannels()) {
+                    if (channel.getBand().equals("3")){
+                        idx = channel.getIdx();
+                        break;
+                    }
                 }
+
+                if (!TextUtils.isEmpty(idx)){
+                    if ("CTJ".equals(UtilOperator.getOperatorName(imsi))) {
+                        setChannelConfig(idx, "1300,1506,1650", "46000",
+                                "", "", "", "", "");
+                    } else {
+                        setChannelConfig(idx, dbChannel.getFcn(),
+                                "46001,46011", "", "", "", "", "");
+                    }
+                }
+
             }
 
         } catch (DbException e) {
@@ -569,53 +590,61 @@ public class ProtocolManager {
      * 保存默认频点
      */
     public static void saveDefaultFcn() {
+        try {
+            DbManager dbManager = UCSIDBManager.getDbManager();
 
-        for (LteChannelCfg channel : CacheManager.channels) {
-            String fcn = "";
-            switch (channel.getBand()) {
-                case "1":
-                    fcn = band1Fcns;
-                    break;
-                case "3":
-                    fcn = band3Fcns;
-                    break;
-                case "38":
-                    fcn = band38Fcns;
-                    break;
-                case "39":
-                    fcn = band39Fcns;
-                    break;
-                case "40":
-                    fcn = band40Fcns;
-                    break;
-                case "41":
-                    fcn = band41Fcns;
-                    break;
-
+            DBChannel dbChannel1 = dbManager.selector(DBChannel.class)
+                    .where("band", "=", "1")
+                    .and("fcn", "=", band1Fcns)
+                    .findFirst();
+            if (dbChannel1 == null) {
+                dbManager.save(new DBChannel( "1", band1Fcns, 1, 1));
             }
-            if (!TextUtils.isEmpty(fcn)) {
-                try {
-                    DbManager dbManager = UCSIDBManager.getDbManager();
-                    DBChannel channel1 = dbManager.selector(DBChannel.class)
-                            .where("band", "=", channel.getBand())
-                            .and("fcn", "=", fcn)
-                            .findFirst();
-                    if (channel1 == null) {
-                        dbManager.save(new DBChannel(channel.getIdx(), channel.getBand(), fcn, 1, 1));
 
-                        //band38和band40可切换，需将band38和band40都保存下来
-                        if (channel.getBand().equals("38")) {
-                            dbManager.save(new DBChannel(channel.getIdx(), "40", band40Fcns, 1, 1));
-                        } else if (channel.getBand().equals("40")) {
-                            dbManager.save(new DBChannel(channel.getIdx(), "38", band38Fcns, 1, 1));
-                        }
 
-                    }
-
-                } catch (DbException e) {
-                    e.printStackTrace();
-                }
+            DBChannel dbChannel3 = dbManager.selector(DBChannel.class)
+                    .where("band", "=", "3")
+                    .and("fcn", "=", band3Fcns)
+                    .findFirst();
+            if (dbChannel3 == null) {
+                dbManager.save(new DBChannel("3", band3Fcns, 1, 1));
             }
+
+            DBChannel dbChannel38 = dbManager.selector(DBChannel.class)
+                    .where("band", "=", "38")
+                    .and("fcn", "=", band38Fcns)
+                    .findFirst();
+            if (dbChannel38 == null) {
+                dbManager.save(new DBChannel("38", band38Fcns, 1, 1));
+            }
+
+
+            DBChannel dbChannel39 = dbManager.selector(DBChannel.class)
+                    .where("band", "=", "39")
+                    .and("fcn", "=", band39Fcns)
+                    .findFirst();
+            if (dbChannel39 == null) {
+                dbManager.save(new DBChannel("39", band39Fcns, 1, 1));
+            }
+
+            DBChannel dbChannel40 = dbManager.selector(DBChannel.class)
+                    .where("band", "=", "40")
+                    .and("fcn", "=", band40Fcns)
+                    .findFirst();
+            if (dbChannel40 == null) {
+                dbManager.save(new DBChannel("40", band40Fcns, 1, 1));
+            }
+
+            DBChannel dbChannel41 = dbManager.selector(DBChannel.class)
+                    .where("band", "=", "41")
+                    .and("fcn", "=", band41Fcns)
+                    .findFirst();
+            if (dbChannel41 == null) {
+                dbManager.save(new DBChannel( "41", band41Fcns, 1, 1));
+            }
+
+        } catch (DbException e) {
+            e.printStackTrace();
         }
 
     }

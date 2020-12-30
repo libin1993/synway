@@ -52,6 +52,9 @@ import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ListHolder;
 import com.orhanobut.dialogplus.OnItemClickListener;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -60,9 +63,6 @@ import java.util.TimerTask;
  * 设备参数
  */
 public class DeviceParamActivity extends BaseActivity implements EventAdapter.EventCall {
-    private final Activity activity = this;
-
-
     private Button btSetCellParam;
     private Button btSetChannelCfg;
     private Button btUpdateTac;
@@ -158,7 +158,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 LteChannelCfg lteChannelCfg = CacheManager.channels.get(position);
                 if (lteChannelCfg != null && !TextUtils.isEmpty(lteChannelCfg.getChangeBand())) {
-                    changeChannelBandDialog(lteChannelCfg.getIdx(), lteChannelCfg.getChangeBand());
+                    changeChannelBandDialog(lteChannelCfg.getIdx(), lteChannelCfg.getBand(),lteChannelCfg.getChangeBand());
                 }
             }
         });
@@ -192,7 +192,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
             }
         });
 
-        mProgressDialog = new MySweetAlertDialog(activity, MySweetAlertDialog.PROGRESS_TYPE);
+        mProgressDialog = new MySweetAlertDialog(DeviceParamActivity.this, MySweetAlertDialog.PROGRESS_TYPE);
         mProgressDialog.setTitleText("Loading...");
         mProgressDialog.setCancelable(false);
     }
@@ -200,17 +200,17 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
     View.OnClickListener setCellParamClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (!CacheManager.checkDevice(activity)) {
+            if (!CacheManager.checkDevice(DeviceParamActivity.this)) {
                 return;
             }
-            new SystemSetupDialog(activity).show();
+            new SystemSetupDialog(DeviceParamActivity.this).show();
         }
     };
 
     View.OnClickListener setChannelCfgClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (!CacheManager.checkDevice(activity)) {
+            if (!CacheManager.checkDevice(DeviceParamActivity.this)) {
                 return;
             }
 
@@ -318,7 +318,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
     View.OnClickListener updateTacClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (!CacheManager.checkDevice(activity)) {
+            if (!CacheManager.checkDevice(DeviceParamActivity.this)) {
                 return;
             }
 
@@ -330,11 +330,11 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
     View.OnClickListener rebootDeviceClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (!CacheManager.checkDevice(activity)) {
+            if (!CacheManager.checkDevice(DeviceParamActivity.this)) {
                 return;
             }
 
-            new MySweetAlertDialog(activity, MySweetAlertDialog.WARNING_TYPE)
+            new MySweetAlertDialog(DeviceParamActivity.this, MySweetAlertDialog.WARNING_TYPE)
                     .setTitleText("设备重启")
                     .setContentText("确定重启设备")
                     .setCancelText(getString(R.string.cancel))
@@ -355,7 +355,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
     View.OnClickListener refreshParamClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (!CacheManager.checkDevice(activity)) {
+            if (!CacheManager.checkDevice(DeviceParamActivity.this)) {
                 return;
             }
 
@@ -377,7 +377,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                 return;
             }
 
-            if (!CacheManager.checkDevice(activity)) {
+            if (!CacheManager.checkDevice(DeviceParamActivity.this)) {
                 return;
             }
 
@@ -416,7 +416,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                 return;
             }
 
-            if (!CacheManager.checkDevice(activity)) {
+            if (!CacheManager.checkDevice(DeviceParamActivity.this)) {
                 lastDetectCarrierOperatePress.setChecked(true);
                 return;
             }
@@ -469,7 +469,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                 return;
             }
 
-            if (!CacheManager.checkDevice(activity)) {
+            if (!CacheManager.checkDevice(DeviceParamActivity.this)) {
                 cbRFSwitch.setChecked(!isChecked);
                 return;
             }
@@ -482,7 +482,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                 showProcess(9000);
             } else {
                 if (CacheManager.getLocState()) {
-                    new MySweetAlertDialog(activity, MySweetAlertDialog.WARNING_TYPE)
+                    new MySweetAlertDialog(DeviceParamActivity.this, MySweetAlertDialog.WARNING_TYPE)
                             .setTitleText("提示")
                             .setContentText("当前正在搜寻，确定关闭吗？")
                             .setCancelText(getString(R.string.cancel))
@@ -606,11 +606,21 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
     }
 
 
-    private void changeChannelBandDialog(final String idx, final String band) {
-        UserChannelListAdapter adapter = new UserChannelListAdapter(activity);
-        adapter.setIdx(idx);
+    private void changeChannelBandDialog(final String idx, String band,final String changeBand) {
+        String[] split = changeBand.split(",");
+        List<String> dataList = new ArrayList<>();
+        for (String s : split) {
+            if (!s.equals(band)){
+                dataList.add(s);
+            }
+        }
+        if (dataList.size() == 0){
+            return;
+        }
+
+        UserChannelListAdapter adapter = new UserChannelListAdapter(DeviceParamActivity.this,idx,dataList);
         //显示设备管理界面
-        DialogPlus deviceListDialog = DialogPlus.newDialog(activity)
+        DialogPlus deviceListDialog = DialogPlus.newDialog(DeviceParamActivity.this)
                 .setContentHolder(new ListHolder())
                 .setHeader(R.layout.user_channel_header)
                 .setCancelable(true)
@@ -619,8 +629,9 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                 .setOnItemClickListener(new OnItemClickListener() {
                     @Override
                     public void onItemClick(DialogPlus dialog, Object item, View view, int position) {
-                        CacheManager.changeBand(idx, band);
+                        CacheManager.changeBand(idx, dataList.get(position));
                         dialog.dismiss();
+                        showProcess(8000);
                         ToastUtils.showMessageLong("切换Band命令已下发，请等待生效");
                         EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CHANGE_BAND + band);
                     }

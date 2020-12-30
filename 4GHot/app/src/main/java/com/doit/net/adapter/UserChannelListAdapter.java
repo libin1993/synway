@@ -11,39 +11,37 @@ import com.doit.net.bean.LteChannelCfg;
 import com.doit.net.model.CacheManager;
 import com.doit.net.ucsi.R;
 
+import java.util.List;
+
 /**
  * Created by wiker on 2016/4/29.
  */
 public class UserChannelListAdapter extends BaseAdapter {
     private LayoutInflater layoutInflater;
-
-    public UserChannelListAdapter(Context context) {
-        layoutInflater = LayoutInflater.from(context);
-    }
-
+    private List<String> dataList;
     private String idx;
 
-    public String getIdx() {
-        return idx;
-    }
-
-    public void setIdx(String idx) {
+    public UserChannelListAdapter(Context context,String idx, List<String> dataList) {
+        layoutInflater = LayoutInflater.from(context);
+        this.dataList = dataList;
         this.idx = idx;
     }
 
+
+
     @Override
     public int getCount() {
-        return 1;
+        return dataList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return null;
+        return dataList.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return 0;
+        return position;
     }
 
     @Override
@@ -61,13 +59,7 @@ public class UserChannelListAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) view.getTag();
         }
 
-        //Context context = parent.getContext();
-        LteChannelCfg cfg = CacheManager.getChannelByIdx(idx);
-        String txt = "";
-        if(cfg != null){
-            //UtilBaseLog.printLog("显示："+cfg.getChangeBand() + "     " + cfg.getBand());
-            viewHolder.tvContent.setText("通道："+cfg.getIdx()+"      "+"Band："+cfg.getChangeBand());
-        }
+        viewHolder.tvContent.setText("通道："+idx+"      "+"Band："+dataList.get(position));
 
         return view;
     }

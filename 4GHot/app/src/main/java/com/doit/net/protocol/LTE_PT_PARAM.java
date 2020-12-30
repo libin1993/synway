@@ -64,6 +64,8 @@ public class LTE_PT_PARAM {
     public static final byte PARAM_SET_CHANNEL_OFF_ACK = 0x1c;
     public static final byte PARAM_SET_NAMELIST = 0x1d;    //设置名单
     public static final byte PARAM_SET_NAMELIST_ACK = 0x1e;
+    public static final byte PARAM_CHANGE_NAMELIST = 0x1f;    //修改名单
+    public static final byte PARAM_CHANGE_NAMELIST_ACK = 0x20;
     public static final byte PARAM_SET_RT_IMSI = 0x21;    //设置是否实时上报黑名单IMSI
     public static final byte PARAM_SET_RT_IMSI_ACK = 0x22;
     public static final byte PARAM_SET_SCAN_FREQ = 0x23; //下发扫频命令

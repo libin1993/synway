@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -97,8 +98,7 @@ public class CustomFcnActivity extends BaseActivity {
 
             @Override
             protected void convertHead(BaseViewHolder helper, SectionBean item) {
-                String[] split = item.header.split(",");
-                helper.setText(R.id.tv_band, "通道: " + split[0] + "    " + "频段: " + split[1]);
+                helper.setText(R.id.tv_band,  "频段: " + item.header);
                 helper.addOnClickListener(R.id.iv_add_fcn);
             }
 
@@ -113,13 +113,13 @@ public class CustomFcnActivity extends BaseActivity {
                 switch (view.getId()) {
                     case R.id.iv_add_fcn:
                         SectionBean sectionBean = dataList.get(position);
-                        String[] split = sectionBean.header.split(",");
+
                         AddFcnDialog addFcnDialog = new AddFcnDialog(CustomFcnActivity.this,
-                                "添加频点", split[1], "", new AddFcnDialog.OnConfirmListener() {
+                                "添加频点", sectionBean.header, "", new AddFcnDialog.OnConfirmListener() {
                             @Override
                             public void onConfirm(String value) {
 
-                                addFcn(position, split[0], split[1], value);
+                                addFcn(position, sectionBean.header,value);
                             }
                         });
                         addFcnDialog.show();
@@ -145,7 +145,7 @@ public class CustomFcnActivity extends BaseActivity {
                         break;
                     case R.id.ll_delete_fcn:
                         SectionBean sectionDelete = dataList.get(position);
-                        deleteDcn(position, sectionDelete.t.getBand(),sectionDelete.t.getFcn(), sectionDelete.t.isCheck());
+                        deleteDcn(position, sectionDelete.t.getBand(), sectionDelete.t.getFcn(), sectionDelete.t.isCheck());
                         break;
                 }
             }
@@ -198,7 +198,7 @@ public class CustomFcnActivity extends BaseActivity {
         for (int i = 0; i < dataList.size(); i++) {
             SectionBean sectionBean = dataList.get(i);
             if (!sectionBean.isHeader && band.equals(sectionBean.t.getBand()) && fcn.equals(sectionBean.t.getFcn())) {
-                ToastUtils.showMessage( "已存在相同频点");
+                ToastUtils.showMessage("已存在相同频点");
                 return;
             }
         }
@@ -214,7 +214,7 @@ public class CustomFcnActivity extends BaseActivity {
             if (dbChannel != null) {
                 dbChannel.setFcn(fcn);
                 dbManager.update(dbChannel);
-                ToastUtils.showMessage( "修改成功，下次启动APP生效");
+                ToastUtils.showMessage("修改成功，下次启动APP生效");
             }
 
         } catch (DbException e) {
@@ -225,7 +225,7 @@ public class CustomFcnActivity extends BaseActivity {
     /**
      * 删除fcn
      */
-    private void deleteDcn(int position, String band, String fcn,int isCheck) {
+    private void deleteDcn(int position, String band, String fcn, int isCheck) {
         //删除已选中的，设置默认fcn为选中状态
 
         new MySweetAlertDialog(CustomFcnActivity.this, MySweetAlertDialog.WARNING_TYPE)
@@ -240,15 +240,14 @@ public class CustomFcnActivity extends BaseActivity {
                     public void onClick(MySweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismiss();
 
-
                         try {
                             WhereBuilder whereBuilder = WhereBuilder.b();
                             whereBuilder.and("band", "=", band)
-                                    .and("fcn","=",fcn);
-                            dbManager.delete(DBChannel.class,whereBuilder);
+                                    .and("fcn", "=", fcn);
+                            dbManager.delete(DBChannel.class, whereBuilder);
                         } catch (DbException e) {
                             e.printStackTrace();
-                            LogUtils.log("删除频点失败："+e.getMessage());
+                            LogUtils.log("删除频点失败：" + e.getMessage());
                         }
 
                         if (isCheck == 1) {
@@ -277,7 +276,6 @@ public class CustomFcnActivity extends BaseActivity {
                         dataList.remove(position);
                         adapter.notifyDataSetChanged();
 
-
                     }
                 })
                 .show();
@@ -285,22 +283,20 @@ public class CustomFcnActivity extends BaseActivity {
     }
 
     /**
-     * @param idx
      * @param band
      * @param fcn  新增fcn
      */
-    private void addFcn(int position, String idx, String band, String fcn) {
+    private void addFcn(int position, String band, String fcn) {
         int index = position; //插入的位置
         for (int i = position; i < dataList.size(); i++) {
             SectionBean sectionBean = dataList.get(i);
             if (!sectionBean.isHeader && band.equals(sectionBean.t.getBand()) && fcn.equals(sectionBean.t.getFcn())) {
-                ToastUtils.showMessage( "已存在相同频点");
+                ToastUtils.showMessage("已存在相同频点");
                 return;
             }
 
             if (sectionBean.isHeader) {
-                String[] split = sectionBean.header.split(",");
-                if (band.equals(split[1])) {
+                if (band.equals(sectionBean.header)) {
                     index++;
                 }
             } else {
@@ -311,7 +307,7 @@ public class CustomFcnActivity extends BaseActivity {
 
         }
 
-        DBChannel dbChannel = new DBChannel(idx, band, fcn, 0, 0);
+        DBChannel dbChannel = new DBChannel(band, fcn, 0, 0);
         SectionBean section = new SectionBean(dbChannel);
         if (index == dataList.size()) {
             dataList.add(section);
@@ -331,7 +327,7 @@ public class CustomFcnActivity extends BaseActivity {
 
     private void initData() {
         for (LteChannelCfg channel : CacheManager.channels) {
-            dataList.add(new SectionBean(true, channel.getIdx() + "," + channel.getBand()));
+            dataList.add(new SectionBean(true, channel.getBand()));
             try {
                 List<DBChannel> channelList = dbManager.selector(DBChannel.class)
                         .where("band", "=", channel.getBand())
