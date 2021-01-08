@@ -24,15 +24,6 @@
         android:visibility="gone" />
 
 
-    <ImageView
-        android:id="@+id/ivSyncError"
-        android:layout_width="12dp"
-        android:layout_height="12dp"
-        android:layout_marginStart="9dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/station_icon"
-        android:visibility="gone" />
-
     <View
         android:layout_width="0dp"
         android:layout_height="match_parent"

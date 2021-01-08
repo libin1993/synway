@@ -119,7 +119,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     Animation viewAnim = new AlphaAnimation(0, 1);
     private ImageView ivWifiState;
     private ImageView ivBatteryLevel;
-    private ImageView ivSyncError;
     private BatteryView batteryView;
     private TextView tvBattery;
     private ImageView ivCharging;
@@ -130,8 +129,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
 
     //handler消息
-//    private final int FOUND_BLACK_NAME = 0;
-//    private final int SYS_RPT = 1;
     private final int TIP_MSG = 2;
     private final int SHOW_PROGRESS = 3;
     private final int CLOSE_PROGRESS = 4;
@@ -249,18 +246,14 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
     private void initView() {
         setOverflowShowingAlways();
-//        getActionBar().setDisplayShowHomeEnabled(false);
         mViewPager = findViewById(R.id.vpTabPage);
         tabLayout = findViewById(R.id.tablayout);
 
         ivWifiState = findViewById(R.id.ivWifiState);
         ivWifiState.setOnClickListener(wifiSystemSetting);
-        //ivWifiState.setOnClickListener(showSetParamDialogListener);
 
         ivDeviceState = findViewById(R.id.ivDeviceState);
-        //ivDeviceState.setOnClickListener(showSetParamDialogListener);
 
-        ivSyncError = findViewById(R.id.ivSyncError);
 
         ivBatteryLevel = findViewById(R.id.ivBatteryLevel);
         batteryView = findViewById(R.id.battery_view);
@@ -729,7 +722,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                 ivDeviceState.clearAnimation();
                 ivDeviceState.setVisibility(View.GONE);
 
-                //ivSyncError.setVisibility(View.GONE);
                 break;
 
             case DeviceState.ON_INIT:
