@@ -78,6 +78,12 @@ public class ClearHistoryTimeDialog extends Dialog {
             }
         });
 
+        long endTime = System.currentTimeMillis();
+        long startTime = endTime - 1000 * 3600 * 24 * 7;
+
+        etStartTime.setText(DateUtils.convert2String(startTime,DateUtils.LOCAL_DATE));
+        etEndTime.setText(DateUtils.convert2String(endTime,DateUtils.LOCAL_DATE));
+
 
         btSure = mView.findViewById(R.id.btSure);
         btSure.setOnClickListener(new View.OnClickListener(){

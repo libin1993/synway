@@ -86,7 +86,7 @@ public class RealtimeNamelistRptFragment extends BaseFragment implements  EventA
         public void handleMessage(Message msg) {
             if(msg.what == NAMLELIST_RPT){
                 BlackNameBean blackName = (BlackNameBean) msg.obj;
-                if (CacheManager.getLocState() && CacheManager.getCurrentLoction().getImsi().equals(blackName.getIMSI()))
+                if (CacheManager.getLocState() && CacheManager.getCurrentLocation().getImsi().equals(blackName.getIMSI()))
                     return;
 
                 if(mAdapter != null && msg.obj != null){

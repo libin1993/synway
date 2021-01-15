@@ -496,6 +496,15 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
                                 continue;
                             }
 
+                            if (!TextUtils.isEmpty(name) && name.length() > 5) {
+                                name = name.substring(0, 5);
+                            }
+
+                            if (!TextUtils.isEmpty(remark) && remark.length() > 8) {
+                                remark = remark.substring(0, 8);
+                            }
+
+
                             validImportNum++;
                             listValidBlack.add(new DBBlackInfo(readline.split(",")[0],
                                     name, remark, new Date()));

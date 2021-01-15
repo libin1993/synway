@@ -16,6 +16,7 @@ import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.util.Attributes;
 import com.doit.net.event.EventAdapter;
 import com.doit.net.model.CacheManager;
+import com.doit.net.utils.NetWorkUtils;
 import com.doit.net.view.AddUserDialog;
 import com.doit.net.view.ModifyAdminAccountDialog;
 import com.doit.net.adapter.UserListAdapter;
@@ -131,15 +132,6 @@ public class UserManageActivity extends BaseActivity implements EventAdapter.Eve
         }
     }
 
-
-
-    @Override
-    protected void onResume() {
-        if (!CacheManager.isWifiConnected){
-            ToastUtils.showMessageLong("请在已连接到设备Wifi的情况下管理账户，否则不生效！");
-        }
-        super.onResume();
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

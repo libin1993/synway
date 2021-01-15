@@ -371,13 +371,26 @@ public class WhitelistManagerActivity extends BaseActivity implements EventAdapt
                             msisdnInLine = readline.substring(readline.indexOf(",")+1, readline.lastIndexOf(","));
                             remark = readline.split(",").length ==3?readline.split(",")[2]:"";
 
-                            if (isWhitelistExist(imsiInLine, msisdnInLine, listValidWhite)){
-                                repeatNum ++;
+                            if (TextUtils.isEmpty(imsiInLine) || TextUtils.isEmpty(msisdnInLine) ||
+                                    !isNumeric(imsiInLine) || imsiInLine.length() != 15 ||
+                                    !isNumeric(msisdnInLine) || msisdnInLine.length() != 11) {
+                                errorFormatNum++;
                                 continue;
                             }
 
-                            validImportNum++;
+
+                            if (isWhitelistExist(imsiInLine, msisdnInLine, listValidWhite)) {
+                                repeatNum++;
+                                continue;
+                            }
+
+                            if (!TextUtils.isEmpty(remark) &&remark.length() > 8){
+                                remark = remark.substring(0,8);
+                            }
+
                             listValidWhite.add(new WhiteListInfo(imsiInLine, msisdnInLine, remark));
+                            validImportNum++;
+
                             if (validImportNum > 10000)  //白名单最大10000
                                 break;
                         }

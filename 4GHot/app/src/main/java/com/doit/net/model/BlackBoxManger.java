@@ -4,6 +4,7 @@ import com.doit.net.utils.DateUtils;
 import com.doit.net.utils.FTPManager;
 import com.doit.net.utils.FileUtils;
 import com.doit.net.utils.LogUtils;
+import com.doit.net.utils.NetWorkUtils;
 
 import org.xutils.ex.DbException;
 
@@ -194,7 +195,7 @@ public class BlackBoxManger {
     }
 
     public static void uploadCurrentBlxFile() {
-        if (!CacheManager.isWifiConnected){
+        if (!NetWorkUtils.getNetworkState()){
             return;
         }
 
@@ -220,7 +221,7 @@ public class BlackBoxManger {
     }
 
     public static void downloadIntradayBlx() {
-        if (!CacheManager.isWifiConnected){
+        if (!NetWorkUtils.getNetworkState()){
             return;
         }
 

@@ -21,6 +21,8 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 
+import com.doit.net.application.MyApplication;
+
 import static android.content.Context.WIFI_SERVICE;
 
 
@@ -30,6 +32,28 @@ import static android.content.Context.WIFI_SERVICE;
  * @date 2016-4-26 下午2:53:35
  */
 public class NetWorkUtils {
+
+    /**
+     * @return 网络状态  宽带或wifi
+     */
+    public static boolean getNetworkState() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) MyApplication.mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+
+        NetworkInfo wifiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);  //wifi
+        NetworkInfo ethernetInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_ETHERNET); //以太网
+
+
+        boolean wifiState = wifiInfo != null && wifiInfo.isConnected();
+        boolean ethernetState = ethernetInfo != null && ethernetInfo.isConnected();
+        LogUtils.log("以太网网络状态：" + ethernetState);
+        LogUtils.log("WIFI网络状态：" + wifiState);
+
+        return ethernetState || wifiState;
+
+    }
+
+
 
     /* 设置ip地址类型 assign：STATIC/DHCP 静态/动态 */
     private static void setIpAssignment(String assign, WifiConfiguration wifiConf)

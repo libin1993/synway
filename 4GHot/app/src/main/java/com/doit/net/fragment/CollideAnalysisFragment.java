@@ -1,6 +1,7 @@
 package com.doit.net.fragment;
 
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -123,12 +124,18 @@ public class CollideAnalysisFragment extends BaseFragment {
         collideTimePeriodAdapter = new CollideTimePeriodAdapter(getContext(), listCollideTimePeriod);
 
         lvCollideTimePeriod.setAdapter(collideTimePeriodAdapter);
-        lvCollideTimePeriod.setMenuCreator(timePerioCreator);
+        lvCollideTimePeriod.setMenuCreator(timePeriodCreator);
         lvCollideTimePeriod.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
                 if (index == 0) {
+                    etCollideStartTime.setText(listCollideTimePeriod.get(position).getStartTime());
+                    etCollideEndTime.setText(listCollideTimePeriod.get(position).getEndTime());
 
+                    listCollideTimePeriod.remove(position);
+                    collideTimePeriodAdapter.updateView();
+
+                }else if (index == 1){
                     listCollideTimePeriod.remove(position);
                     collideTimePeriodAdapter.updateView();
                 }
@@ -325,16 +332,26 @@ public class CollideAnalysisFragment extends BaseFragment {
 
 
 
-    SwipeMenuCreator timePerioCreator = new SwipeMenuCreator() {
+    SwipeMenuCreator timePeriodCreator = new SwipeMenuCreator() {
         @Override
         public void create(SwipeMenu menu) {
-            SwipeMenuItem openItem = new SwipeMenuItem(getContext());
-            //openItem.setBackground(getResources().getColor(R.color.red));
-            openItem.setWidth(220);
-            openItem.setTitle("删除");
-            openItem.setTitleSize(14);
-            openItem.setTitleColor(Color.RED);
-            menu.addMenuItem(openItem);
+            SwipeMenuItem editItem = new SwipeMenuItem(getContext());
+            editItem.setBackground(new ColorDrawable(Color.GREEN));
+            editItem.setWidth(150);
+            editItem.setTitle("编辑");
+            editItem.setTitleSize(14);
+            editItem.setTitleColor(Color.WHITE);
+            menu.addMenuItem(editItem);
+
+
+
+            SwipeMenuItem deleteItem = new SwipeMenuItem(getContext());
+            deleteItem.setBackground(new ColorDrawable(Color.RED));
+            deleteItem.setWidth(150);
+            deleteItem.setTitle("删除");
+            deleteItem.setTitleSize(14);
+            deleteItem.setTitleColor(Color.WHITE);
+            menu.addMenuItem(deleteItem);
         }
     };
 

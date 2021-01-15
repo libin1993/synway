@@ -12,6 +12,7 @@ import android.widget.EditText;
 import com.doit.net.model.BlackBoxManger;
 import com.doit.net.event.EventAdapter;
 import com.doit.net.model.AccountManage;
+import com.doit.net.model.CacheManager;
 import com.doit.net.model.UCSIDBManager;
 import com.doit.net.model.UserInfo;
 import com.doit.net.utils.FormatUtils;
@@ -63,6 +64,11 @@ public class AddUserDialog extends Dialog {
         btAddUser.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                if (!CacheManager.isDeviceOk()){
+                    return;
+                }
+
+
                 String name = etUserName.getText().toString();
                 String remark = etRemake.getText().toString();
                 String password = etPassword.getText().toString();

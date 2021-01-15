@@ -27,9 +27,11 @@ import java.util.TimerTask;
  */
 
 public class ProtocolManager {
-
     private static final String band1Fcns = "100,375,400";
-    private static final String band3Fcns = "1825,1650,1506";//1300
+    private static final String band3Fcns = "1825,1650,1506";
+    private static final String band5Fcns = "2452,2500,2600";
+    private static final String band8Fcns = "3621,3683,3775";
+    private static final String band34Fcns = "36275,36225,36325";
     private static final String band38Fcns = "37900,38098,38200";
     private static final String band39Fcns = "38400,38544,38300";
     private static final String band40Fcns = "38950,39148,39300";
@@ -480,70 +482,41 @@ public class ProtocolManager {
             //2019.9.12讨论不再使用过滤筛选方式，直接使用固定常用频点
             String defaultFcn = "";
             String defaultGa = "";
-            String defaultPower = "-7,-7,-7";
-            String pMax = channel.getPMax();;
+            String defaultPower = "";
+            String pMax = channel.getPMax();
+            if (!TextUtils.isEmpty(pMax)){
+                defaultPower = pMax + "," + pMax + "," + pMax;
+            }
 
             switch (channel.getBand()) {
                 case "1":
-                    if ("".equals(pMax)) {
-                        defaultPower = "-7,-7,-7";
-                    } else {
-                        defaultPower = pMax + "," + pMax + "," + pMax;
-                    }
-
                     defaultFcn = band1Fcns;
-
                     break;
-
                 case "3":
-                    if ("".equals(pMax)) {
-                        defaultPower = "-7,-7,-7";
-                    } else {
-                        defaultPower = pMax + "," + pMax + "," + pMax;
-                    }
                     defaultFcn = band3Fcns;
-
                     break;
-
+                case "5":
+                    defaultFcn = band5Fcns;
+                    break;
+                case "8":
+                    defaultFcn = band8Fcns;
+                    break;
+                case "34":
+                    defaultFcn = band34Fcns;
+                    break;
                 case "38":
-                    if ("".equals(pMax)) {
-                        defaultPower = "-1,-1,-1";
-                    } else {
-                        defaultPower = pMax + "," + pMax + "," + pMax;
-                    }
                     defaultFcn = band38Fcns;
                     break;
-
                 case "39":
-                    if ("".equals(pMax)) {
-                        defaultPower = "-13,-13,-13";
-                    } else {
-                        defaultPower = pMax + "," + pMax + "," + pMax;
-                    }
-
                     defaultFcn = band39Fcns;
-
                     break;
-
                 case "40":
-                    if ("".equals(pMax)) {
-                        defaultPower = "-1,-1,-1";
-                    } else {
-                        defaultPower = pMax + "," + pMax + "," + pMax;
-                    }
                     defaultFcn = band40Fcns;
                     break;
                 case "41":
-                    if ("".equals(pMax)) {
-                        defaultPower = "-1,-1,-1";
-                    } else {
-                        defaultPower = pMax + "," + pMax + "," + pMax;
-                    }
-
                     defaultFcn = band41Fcns;
                     break;
             }
-
             String fcn = getCheckedFcn(channel.getBand());
             if (!TextUtils.isEmpty(fcn)) {
                 defaultFcn = fcn;
@@ -608,6 +581,30 @@ public class ProtocolManager {
                     .findFirst();
             if (dbChannel3 == null) {
                 dbManager.save(new DBChannel("3", band3Fcns, 1, 1));
+            }
+
+            DBChannel dbChannel5 = dbManager.selector(DBChannel.class)
+                    .where("band", "=", "5")
+                    .and("fcn", "=", band5Fcns)
+                    .findFirst();
+            if (dbChannel5 == null) {
+                dbManager.save(new DBChannel("5", band5Fcns, 1, 1));
+            }
+
+            DBChannel dbChannel8 = dbManager.selector(DBChannel.class)
+                    .where("band", "=", "8")
+                    .and("fcn", "=", band8Fcns)
+                    .findFirst();
+            if (dbChannel8 == null) {
+                dbManager.save(new DBChannel("8", band8Fcns, 1, 1));
+            }
+
+            DBChannel dbChannel34 = dbManager.selector(DBChannel.class)
+                    .where("band", "=", "34")
+                    .and("fcn", "=", band34Fcns)
+                    .findFirst();
+            if (dbChannel34 == null) {
+                dbManager.save(new DBChannel("34", band34Fcns, 1, 1));
             }
 
             DBChannel dbChannel38 = dbManager.selector(DBChannel.class)

@@ -2,7 +2,6 @@ package com.doit.net.protocol;
 
 
 import android.text.TextUtils;
-import android.widget.TextView;
 
 import com.doit.net.model.DBBlackInfo;
 import com.doit.net.model.UCSIDBManager;
@@ -782,7 +781,7 @@ public class LTE_PT_PARAM {
                 }
 
                 if (CacheManager.getLocState()) {
-                    if (split[0].equals(CacheManager.getCurrentLoction().getImsi())) {
+                    if (split[0].equals(CacheManager.getCurrentLocation().getImsi())) {
                         EventAdapter.call(EventAdapter.LOCATION_RPT, rssi);
                     }
                 }

@@ -73,8 +73,6 @@ public class CacheManager {
 
     public  static boolean hasSetDefaultParam = false;   //开始全部打开射频标志
 
-    public static boolean isWifiConnected = false;
-
     private static boolean hasPressStartButton = false;  //是否已经在主页面点击开始按钮
 
     public static boolean checkLicense = false; //连接成功后校验证书
@@ -169,7 +167,7 @@ public class CacheManager {
         }
 
 
-        CacheManager.getCurrentLoction().setLocateStart(true);
+        CacheManager.getCurrentLocation().setLocateStart(true);
     }
 
     public static void changeLocTarget(String imsi) {
@@ -291,8 +289,8 @@ public class CacheManager {
         }
 
 
-        if (CacheManager.getCurrentLoction() != null)
-            CacheManager.getCurrentLoction().setLocateStart(false);
+        if (CacheManager.getCurrentLocation() != null)
+            CacheManager.getCurrentLocation().setLocateStart(false);
     }
 
     /**
@@ -322,7 +320,7 @@ public class CacheManager {
         return currentLoction.isLocateStart();
     }
 
-    public static LocationBean getCurrentLoction() {
+    public static LocationBean getCurrentLocation() {
         return currentLoction;
     }
 

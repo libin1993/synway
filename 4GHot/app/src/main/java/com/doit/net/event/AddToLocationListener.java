@@ -38,7 +38,7 @@ public class AddToLocationListener implements View.OnClickListener {
 
 
             if (CacheManager.getLocState()){
-                if (CacheManager.getCurrentLoction().getImsi().equals(imsi)){
+                if (CacheManager.getCurrentLocation().getImsi().equals(imsi)){
                     ToastUtils.showMessage( "该号码正在搜寻中");
                     return;
                 }else{

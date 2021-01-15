@@ -1,5 +1,8 @@
 package com.doit.net.utils;
 
+import com.doit.net.model.CacheManager;
+import com.doit.net.sockets.ServerSocketUtils;
+
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
@@ -17,16 +20,15 @@ import java.io.RandomAccessFile;
  */
 
 public class FTPManager {
-    private final String HOST = "192.168.4.100";
-    private final int PORT = 21;
-    private final String USERNAME = "nodeb";
-    private final String PASSWORD = "nodeb";
+    private static final int PORT = 21;
+    private static final String USERNAME = "nodeb";
+    private static final String PASSWORD = "nodeb";
 
-    private String REMOTE_PATH = "/log/synway";
-    private String REMOTE_PATH_BACKUP = "/log/etc";
+    private static final String REMOTE_PATH = "/log/synway";
+    private static final String REMOTE_PATH_BACKUP = "/log/etc";
 
 
-    private static FTPManager ftpManagerInstance = null;
+    private static FTPManager mInstance = null;
     private FTPClient ftpClient;
 
     private FTPManager() {
@@ -34,10 +36,10 @@ public class FTPManager {
     }
 
     public static FTPManager getInstance() {
-        if (ftpManagerInstance == null) {
-            ftpManagerInstance = new FTPManager();
+        if (mInstance == null) {
+            mInstance = new FTPManager();
         }
-        return ftpManagerInstance;
+        return mInstance;
     }
 
 
@@ -51,13 +53,15 @@ public class FTPManager {
             }
             ftpClient.setDataTimeout(5000);//设置连接超时时间
             ftpClient.setControlEncoding("UTF-8");
-            ftpClient.connect(HOST, PORT);
+            ftpClient.connect(CacheManager.DEVICE_IP, PORT);
             ftpClient.login(USERNAME, PASSWORD);
             ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
             if (FTPReply.isPositiveCompletion(ftpClient.getReplyCode())) {
                 bool = true;
                 boolean changeDirectory = checkRemoteDir();
                 LogUtils.log("FTP连接成功，切换目录结果：" + changeDirectory);
+            }else {
+                LogUtils.log("FTP连接失败");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,21 +71,6 @@ public class FTPManager {
         return bool;
     }
 
-    public synchronized boolean isFileExist(String fileName) {
-
-        try {
-            FTPFile[] files = ftpClient.listFiles(fileName);
-            if (files.length == 0) {
-                LogUtils.log("服务器证书文件不存在");
-                return false;
-            } else {
-                return true;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
 
     /**
      * @return
@@ -106,21 +95,6 @@ public class FTPManager {
             return true;
         }
 
-//        String[] dirs = REMOTE_APTH.split("/");
-//
-//        for (String dir : dirs) {
-//            if(TextUtils.isEmpty(dir)) {
-//                continue;
-//            }
-//            if (!ftpClient.changeWorkingDirectory(dir)) {//若路径未存在则创建路径
-//                if (ftpClient.makeDirectory(dir)) {
-//                    ftpClient.changeWorkingDirectory(dir);
-//                }else {
-//                    return false;
-//                }
-//            }
-//        }
-
         return false;
     }
 
@@ -136,14 +110,12 @@ public class FTPManager {
             return false;
         }
 
-        //UtilBaseLog.printLog("本地文件存在，名称为：" + localFile.getName());
-        //checkRemoteDir(serverPath); // 如果文件夹不存在，创建文件夹
-
         String fileName = localFile.getName();
 
         // 如果本地文件存在，服务器文件也在，上传文件，这个方法中也包括了断点上传
         long localSize = localFile.length(); // 本地文件的长度
         FTPFile[] files = ftpClient.listFiles(fileName);
+
 
         long serverSize = 0;
         if (files.length != 0) {
@@ -163,11 +135,9 @@ public class FTPManager {
             }
         }
         RandomAccessFile raf = new RandomAccessFile(localFile, "r");
-        // 进度
 
         // 好了，正式开始上传文件
         ftpClient.enterLocalPassiveMode();
-
         ftpClient.setRestartOffset(serverSize);
         raf.seek(serverSize);
 
@@ -194,18 +164,17 @@ public class FTPManager {
 
     // 实现下载文件功能，可实现断点下载
     public synchronized boolean downloadFile(String localPath, String remoteFileName) {
-        //String localPath = LOCAL_FTP_TMP;
-        // String remoteFileName = ACCOUNT_FILE_NAME;
+
         // 先判断服务器文件是否存在
         try {
+            ftpClient.enterLocalPassiveMode();
             FTPFile[] files = ftpClient.listFiles(remoteFileName);
             if (files.length == 0) {
                 LogUtils.log("服务器文件不存在");
                 return false;
             }
-            //UtilBaseLog.printLog("远程文件存在,名字为：" + remoteFileName);
+
             LogUtils.log("远程文件存在,名字为：" + files[0].getName());
-            ///localPath = localPath + files[0].getName();
             localPath = localPath + remoteFileName;
             // 接着判断下载的文件是否能断点下载
             long serverSize = files[0].getSize(); // 获取远程文件的长度
@@ -215,39 +184,18 @@ public class FTPManager {
             }
 
             File localFile = new File(localPath);
-            long localSize = 0;
             if (localFile.exists()) {
-                localSize = localFile.length(); // 如果本地文件存在，获取本地文件的长度
-//                if (localSize >= serverSize) {
-                //UtilBaseLog.printLog("文件已经下载完了");
-                File file = new File(localPath);
-                file.delete();
+                localFile.delete();
                 LogUtils.log("本地文件存在，删除成功，开始重新下载");
-
-            } else {
-                //UtilBaseLog.printLog("本地文件不存在");
             }
-            // 进度
-            long step = serverSize / 100;
-            long process = 0;
-            long currentSize = 0;
+
             // 开始准备下载文件
-            ftpClient.enterLocalActiveMode();
-            OutputStream out = new FileOutputStream(localFile, true);
-            //ftpClient.setRestartOffset(localSize);
-            ftpClient.setRestartOffset(0);
+            OutputStream out = new FileOutputStream(new File(localPath));
             InputStream input = ftpClient.retrieveFileStream(remoteFileName);
             byte[] b = new byte[1024];
             int length = 0;
             while ((length = input.read(b)) != -1) {
                 out.write(b, 0, length);
-//                currentSize = currentSize + length;
-//                if (currentSize / step != process) {
-//                    process = currentSize / step;
-//                    if (process % 10 == 0) {
-//                        UtilBaseLog.printLog("下载进度：" + process);
-//                    }
-//                }
             }
             out.flush();
             out.close();
@@ -262,20 +210,20 @@ public class FTPManager {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            LogUtils.log("文件下载失败"+e.getMessage());
         }
         return false;
     }
 
-    public FTPFile[] listFiles(String direction) {
+    public FTPFile[] listFiles() {
+        ftpClient.enterLocalPassiveMode();
         FTPFile[] files = new FTPFile[0];
         try {
-            files = ftpClient.listFiles(".");
-            //files = ftpClient.listNames();
+            files = ftpClient.listFiles();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (files.length == 0) {
-            //UtilBaseLog.printLog("服务器目标下为空");
+        if (files == null || files.length == 0) {
             return null;
         }
 

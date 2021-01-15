@@ -179,13 +179,12 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
 
     private void setData() {
-        NetworkInfo wifiNetInfo = ((ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE)).getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-
-        if (wifiNetInfo.isConnected()) {
+        if (NetWorkUtils.getNetworkState()) {
             LogUtils.log("wifi连接成功");
-            if (CacheManager.deviceState.getDeviceState().equals(DeviceState.WIFI_DISCONNECT))  //只有从wifi未连接到连接才出现这种状态
+            if (CacheManager.deviceState.getDeviceState().equals(DeviceState.WIFI_DISCONNECT)){
+                //只有从wifi未连接到连接才出现这种状态
                 CacheManager.deviceState.setDeviceState(DeviceState.WAIT_SOCKET);
+            }
         } else {
             LogUtils.log("wifi断开连接");
         }
@@ -400,6 +399,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
         mViewPager.setOffscreenPageLimit(mTabEntities.size());
         mViewPager.setAdapter(adapter);
 
+        tabLayout.setIndicatorAnimEnable(false);
         tabLayout.setTabData(mTabEntities);
 
         tabLayout.setOnTabSelectListener(new OnTabSelectListener() {
@@ -578,24 +578,19 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     }
 
     private void wifiChangeEvent() {
-        NetworkInfo wifiNetInfo = ((ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE)).getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-
-        if (wifiNetInfo.isConnected()) {
-            CacheManager.isWifiConnected = true;
+        if (NetWorkUtils.getNetworkState()) {
             if (CacheManager.deviceState.getDeviceState().equals(DeviceState.WIFI_DISCONNECT)) {
                 CacheManager.deviceState.setDeviceState(DeviceState.WAIT_SOCKET);
             } //只有从wifi未连接到连接才出现这种状态
 
-            initUDP();  //重连wifi后udp发送ip、端口
-//            initGSM();
             downloadAccount();
-
+            initUDP();  //重连wifi后udp发送ip、端口
         } else {
-            CacheManager.isWifiConnected = false;
+            ToastUtils.showMessageLong("网络连接已断开！请检查网络是否正常连接！");
             CacheManager.deviceState.setDeviceState(DeviceState.WIFI_DISCONNECT);
             CacheManager.resetState();
         }
+
     }
 
     /**

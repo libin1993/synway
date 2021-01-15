@@ -143,7 +143,7 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
                     if ((int) (System.currentTimeMillis() - lastLocRptTime) > UPDATE_ARFCN_TIMEOUT) {
                         LogUtils.log("定位上报超时，尝试重新设置频点和功率... ...");
                         //ToastUtils.showMessage(getContext(),"搜寻上报超时，尝试更新频点和功率");
-                        Cellular.adjustArfcnPwrForLocTarget(CacheManager.getCurrentLoction().getImsi());
+                        Cellular.adjustArfcnPwrForLocTarget(CacheManager.getCurrentLocation().getImsi());
                     }
                 }
             }
@@ -158,7 +158,7 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
     }
 
     private void refreshPage() {
-        if (CacheManager.getCurrentLoction() == null) {
+        if (CacheManager.getCurrentLocation() == null) {
             return;
         }
 
@@ -194,8 +194,8 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
     void startLoc() {
         if (!CacheManager.getLocState()) {
             startSpeechBroadcastLoop();
-            ProtocolManager.exchangeFcn(CacheManager.getCurrentLoction().getImsi());
-            CacheManager.startLoc(CacheManager.getCurrentLoction().getImsi());
+            ProtocolManager.exchangeFcn(CacheManager.getCurrentLocation().getImsi());
+            CacheManager.startLoc(CacheManager.getCurrentLocation().getImsi());
             textContent = "正在搜寻："+CacheManager.currentLoction.getImsi();
             refreshPage();
         }
@@ -220,11 +220,11 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
         }
 
         if (VersionManage.isPoliceVer()) {
-            Cellular.adjustArfcnPwrForLocTarget(CacheManager.getCurrentLoction().getImsi());
+            Cellular.adjustArfcnPwrForLocTarget(CacheManager.getCurrentLocation().getImsi());
         }
         startSpeechBroadcastLoop();
 
-        lastLocateIMSI = CacheManager.getCurrentLoction().getImsi();
+        lastLocateIMSI = CacheManager.getCurrentLocation().getImsi();
 
 
         refreshPage();
@@ -234,7 +234,7 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
         speech("搜寻目标更换");
         currentSRSP = 0;
         lastRptSRSP = 0;
-        textContent = "正在搜寻：" + CacheManager.getCurrentLoction().getImsi();
+        textContent = "正在搜寻：" + CacheManager.getCurrentLocation().getImsi();
         resetLocateChartValue();
         refreshPage();
         startSpeechBroadcastLoop();  //从停止定位的状态添加定位，故语音手动再次开启
@@ -246,7 +246,7 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
             CacheManager.stopCurrentLoc();
 
             stopSpeechBroadcastLoop();
-            textContent = "搜寻暂停：" + CacheManager.getCurrentLoction().getImsi();
+            textContent = "搜寻暂停：" + CacheManager.getCurrentLocation().getImsi();
             currentSRSP = 0;
             resetLocateChartValue();
         }
@@ -347,7 +347,7 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
         if (!CacheManager.getLocState())
             return;
 
-        String operator = UtilOperator.getOperatorName(CacheManager.getCurrentLoction().getImsi());
+        String operator = UtilOperator.getOperatorName(CacheManager.getCurrentLocation().getImsi());
         String setBand = "";
         List<Integer> listBandInOpr;
         if (operator.equals("CTJ")) {
@@ -375,7 +375,7 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
             return;
 
 
-        String operator = UtilOperator.getOperatorName(CacheManager.getCurrentLoction().getImsi());
+        String operator = UtilOperator.getOperatorName(CacheManager.getCurrentLocation().getImsi());
         if (operator.equals("CTJ")) {
             //List<Integer> listBandsInCTJ = Arrays.asList(38,39,40,41);
             for (LteChannelCfg channel : CacheManager.getChannels()) {
@@ -531,7 +531,7 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
 //                    }
                     break;
                 case LOC_REPORT:
-                    if (CacheManager.getCurrentLoction() != null && CacheManager.getCurrentLoction().isLocateStart()) {
+                    if (CacheManager.getCurrentLocation() != null && CacheManager.getCurrentLocation().isLocateStart()) {
                         currentSRSP = correctSRSP(Integer.parseInt((String) msg.obj));
                         if (currentSRSP == 0)
                             return;
@@ -541,7 +541,7 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
 
                         listChartValue.add(currentSRSP / 4);
                         listChartValue.remove(0);
-                        textContent = "正在搜寻" + CacheManager.getCurrentLoction().getImsi();
+                        textContent = "正在搜寻" + CacheManager.getCurrentLocation().getImsi();
 
                         refreshPage();
                     }

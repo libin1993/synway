@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -22,6 +23,8 @@ import com.doit.net.model.BlackBoxBean;
 import com.doit.net.model.CacheManager;
 import com.doit.net.model.UCSIDBManager;
 import com.doit.net.utils.DateUtils;
+import com.doit.net.utils.MySweetAlertDialog;
+import com.doit.net.utils.NetWorkUtils;
 import com.doit.net.utils.ToastUtils;
 import com.doit.net.adapter.BlackBoxListAdapter;
 import com.doit.net.view.MyTimePickDialog;
@@ -49,6 +52,7 @@ import java.util.List;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class BlackBoxActivity extends BaseActivity {
+
     private ListView lvBlackBox;
     private BlackBoxListAdapter blackBoxListAdapter;
     private EditText etKeyword;
@@ -63,11 +67,15 @@ public class BlackBoxActivity extends BaseActivity {
     //handler消息
     private final int UPDATE_BLACKBOX_LIST = 0;
     private final int EXPORT_ERROR = -1;
+    private final int HIDE_LOADING = 2;
+
+    private MySweetAlertDialog mProgressDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_black_box);
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         dbManager = UCSIDBManager.getDbManager();
         lvBlackBox = findViewById(R.id.lvBlackBox);
@@ -98,6 +106,16 @@ public class BlackBoxActivity extends BaseActivity {
 
         blackBoxListAdapter = new BlackBoxListAdapter(this, R.layout.layout_black_box_item, listBlackBox);
         lvBlackBox.setAdapter(blackBoxListAdapter);
+
+        long endTime = System.currentTimeMillis();
+        long startTime = endTime - 1000 * 3600 * 24 * 7;
+
+        etStartTime.setText(DateUtils.convert2String(startTime,DateUtils.LOCAL_DATE));
+        etEndTime.setText(DateUtils.convert2String(endTime,DateUtils.LOCAL_DATE));
+
+        mProgressDialog = new MySweetAlertDialog(this, MySweetAlertDialog.PROGRESS_TYPE);
+        mProgressDialog.setTitleText("下载中，请耐心等待...");
+        mProgressDialog.setCancelable(false);
     }
 
     private Handler mHandler = new Handler() {
@@ -105,13 +123,17 @@ public class BlackBoxActivity extends BaseActivity {
         public void handleMessage(Message msg) {
             if (msg.what == UPDATE_BLACKBOX_LIST) {
                 if (blackBoxListAdapter != null) {
-                    blackBoxListAdapter.updateView();
+                    blackBoxListAdapter.notifyDataSetChanged();
                 }
             } else if (msg.what == EXPORT_ERROR) {
                 new SweetAlertDialog(BlackBoxActivity.this, SweetAlertDialog.ERROR_TYPE)
                         .setTitleText("导出失败")
                         .setContentText("失败原因：" + msg.obj)
                         .show();
+            } else if (msg.what == HIDE_LOADING) {
+                if (mProgressDialog !=null && mProgressDialog.isShowing()){
+                    mProgressDialog.dismiss();
+                }
             }
         }
     };
@@ -120,9 +142,13 @@ public class BlackBoxActivity extends BaseActivity {
     View.OnClickListener searchClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (!CacheManager.isDeviceOk()){
+                return;
+            }
+
             String keyword = etKeyword.getText().toString();
-            final String startTime = etStartTime.getText().toString();
-            final String endTime = etEndTime.getText().toString();
+            final String startTime = etStartTime.getText().toString().trim();
+            final String endTime = etEndTime.getText().toString().trim();
 
             clearBlackboxList();
 
@@ -132,11 +158,8 @@ public class BlackBoxActivity extends BaseActivity {
             } else if (!"".equals(startTime) && startTime.equals(endTime)) {
                 ToastUtils.showMessage("开始时间和结束时间一样，请重新设置！");
                 return;
-            } else if (!"".equals(startTime) && !"".equals(endTime) && !isStartEndTimeOrderRight(startTime, endTime)) {
+            } else if (!"".equals(startTime) && !isStartEndTimeOrderRight(startTime, endTime)) {
                 ToastUtils.showMessage("开始时间比结束时间晚，请重新设置！");
-                return;
-            } else if (!CacheManager.isWifiConnected) {
-                ToastUtils.showMessage("Wifi未连接到设备，黑匣子获取失败");
                 return;
             }
 
@@ -148,16 +171,15 @@ public class BlackBoxActivity extends BaseActivity {
 
     private void initQueryBlx(String keyword,String startTime, String endTime) {
 
-        if (!CacheManager.isWifiConnected) {
-            return;
-        }
-
         try {
             dbManager.delete(BlackBoxBean.class);
         } catch (DbException e) {
             e.printStackTrace();
         }
 
+        if (mProgressDialog !=null && !mProgressDialog.isShowing()){
+            mProgressDialog.show();
+        }
 
         new Thread(new Runnable() {
             @Override
@@ -171,6 +193,8 @@ public class BlackBoxActivity extends BaseActivity {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                    ToastUtils.showMessage("连接设备失败，请保持网络连接");
+                    mHandler.sendEmptyMessage(HIDE_LOADING);
                 }
             }
         }).start();
@@ -178,14 +202,10 @@ public class BlackBoxActivity extends BaseActivity {
     }
 
     public  void getBlxFromDevice(String keyword,String startTime, String endTime) {
-        if (!CacheManager.isWifiConnected){
-            LogUtils.log("wifi断开");
-            return;
-        }
 
-        FTPFile[] files = FTPManager.getInstance().listFiles(".");
+        FTPFile[] files = FTPManager.getInstance().listFiles();
         if (files == null) {
-            LogUtils.log("目录下没文件");
+            ToastUtils.showMessage("暂无黑匣子文件");
         } else {
             String tmpFileName = "";
             LogUtils.log("服务器黑匣子文件数量："+files.length);
@@ -228,10 +248,9 @@ public class BlackBoxActivity extends BaseActivity {
                 }
             }
 
-
             List<BlackBoxBean> searchBlackBox = new ArrayList<>();
 
-            if ("".equals(startTime)) {
+            if (TextUtils.isEmpty(startTime)) {
                 try {
                     searchBlackBox = dbManager.selector(BlackBoxBean.class).findAll();
 
@@ -245,7 +264,6 @@ public class BlackBoxActivity extends BaseActivity {
                 }
             } else {
                 try {
-
                     searchBlackBox = dbManager.selector(BlackBoxBean.class)
                             .where("time", "BETWEEN", new long[]{DateUtils.convert2long(startTime, DateUtils.LOCAL_DATE), DateUtils.convert2long(endTime, DateUtils.LOCAL_DATE)})
                             .and(WhereBuilder.b("operation", "like", "%" + keyword + "%").or("account", "like", "%" + keyword + "%"))
@@ -263,6 +281,8 @@ public class BlackBoxActivity extends BaseActivity {
 
             updateBlackboxList(searchBlackBox);
         }
+
+        mHandler.sendEmptyMessage(HIDE_LOADING);
     }
 
     private static String getDateByFileName(String fileName){

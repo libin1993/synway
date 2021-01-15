@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,7 +77,7 @@ public class ServerSocketUtils {
                         LogUtils.log("TCP收到设备连接,ip：" + remoteIP + "；端口：" + remotePort);
 
 
-                        ReceiveThread receiveThread = new ReceiveThread(socket,remoteIP, onSocketChangedListener);
+                        ReceiveThread receiveThread = new ReceiveThread(socket,remoteIP);
                         receiveThread.start();
 
 
@@ -96,14 +97,12 @@ public class ServerSocketUtils {
      * 接收线程
      */
     public class ReceiveThread extends Thread {
-        private OnSocketChangedListener onSocketChangedListener;
         private String remoteIP;
         private Socket socket;
 
-        public ReceiveThread(Socket socket,String remoteIP,  OnSocketChangedListener onSocketChangedListener) {
+        public ReceiveThread(Socket socket,String remoteIP) {
             this.socket = socket;
             this.remoteIP = remoteIP;
-            this.onSocketChangedListener = onSocketChangedListener;
         }
 
         @Override
@@ -114,52 +113,50 @@ public class ServerSocketUtils {
             //接收到流的数量
             int receiveCount;
             LTEReceiveManager lteReceiveManager = new LTEReceiveManager();
+            long lastTime = 0; //上次读取时间
 
-            try {
+            while (true) {
                 //获取输入流
-                InputStream inputStream = socket.getInputStream();
+                try {
+                    InputStream inputStream = socket.getInputStream();
+                    //循环接收数据
+                    while ((receiveCount = inputStream.read(bytesReceived)) != -1) {
+                        lteReceiveManager.parseData(bytesReceived, receiveCount);
+                        lastTime = System.currentTimeMillis();
+                    }
+                    LogUtils.log(remoteIP + "：socket异常，读取长度：" + receiveCount);
+                    closeSocket(socket);
+                    break;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    LogUtils.log(remoteIP + "：socket异常:" + e.toString());
+                    if (e instanceof SocketTimeoutException) {
+                        //捕获读取超时异常，若超时时间内收到数据，不做处理
 
-                //循环接收数据
-                while ((receiveCount = inputStream.read(bytesReceived)) != -1) {
-                    lteReceiveManager.parseData(bytesReceived, receiveCount);
+                        long timeout = System.currentTimeMillis() - lastTime;
+                        LogUtils.log(remoteIP + "：socket异常:读取超时" + timeout);
+                        if (timeout > READ_TIME_OUT) {
+                            closeSocket(socket);
+                            break;
+                        }
+                    } else {
+                        closeSocket(socket);
+                        break;
+                    }
                 }
 
-                LogUtils.log("socket被关闭，读取长度：" + receiveCount);
-
-            } catch (IOException ex) {
-                ex.printStackTrace();
-                LogUtils.log("socket异常:" + ex.toString());
-            }
-
-            try {
-                socket.close();
-                if (onSocketChangedListener != null) {
-                    onSocketChangedListener.onChange();
-                }
-                lteReceiveManager.clearReceiveBuffer();
-                LogUtils.log(remoteIP + ":关闭socket");
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                LogUtils.log(remoteIP + "：socket关闭失败:" + e.toString());
             }
 
         }
     }
 
-    //关闭socket
-    public void closeSocket(String ip) {
-        Socket socket = map.get(ip);
-        if (socket != null && !socket.isClosed()) {
-            //关闭输入流
-            try {
-                socket.close();//临时
-                map.remove(ip);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    private void closeSocket(Socket socket) {
+        try {
+            socket.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            LogUtils.log( "：socket关闭失败:" + ex.toString());
         }
-
     }
 
 
