@@ -35,12 +35,12 @@ public class ProtocolManager {
     private static final String band38Fcns = "37900,38098,38200";
     private static final String band39Fcns = "38400,38544,38300";
     private static final String band40Fcns = "38950,39148,39300";
-    private static final String band41Fcns = "40540,40936,41134";
+    private static final String band41Fcns = "40540,40738,40840";
 
 
     public static void setNameList(String mode, String redirectConfig, String nameListReject,
                                    String nameListRedirect, String nameListBlock,
-                                   String nameListRestAction,  String nameListFile) {
+                                   String nameListRestAction, String nameListFile) {
         //MODE:[on|off]
         // @REDIRECT_CONFIG:46000,4,38400#46001,4,300#46011,4,100#46002,2,98  //重定向
         // @NAMELIST_REJECT:460001234512345,460011234512345   //拒绝
@@ -52,9 +52,8 @@ public class ProtocolManager {
 
         String namelist = "MODE:" + mode;
 
-
-        if (!"".equals(redirectConfig)) {
-            namelist +=  "@REDIRECT_CONFIG:"+redirectConfig;
+        if (!TextUtils.isEmpty(redirectConfig)) {
+            namelist += "@REDIRECT_CONFIG:" + redirectConfig;
         }
 
         namelist += "@NAMELIST_REJECT:460021683706233,460110363153426";
@@ -447,15 +446,15 @@ public class ProtocolManager {
                     .findFirst();
             if (dbChannel != null) {
 
-                String idx="";
+                String idx = "";
                 for (LteChannelCfg channel : CacheManager.getChannels()) {
-                    if (channel.getBand().equals("3")){
+                    if (channel.getBand().equals("3")) {
                         idx = channel.getIdx();
                         break;
                     }
                 }
 
-                if (!TextUtils.isEmpty(idx)){
+                if (!TextUtils.isEmpty(idx)) {
                     if ("CTJ".equals(UtilOperator.getOperatorName(imsi))) {
                         setChannelConfig(idx, "1300,1506,1650", "46000",
                                 "", "", "", "", "");
@@ -484,7 +483,7 @@ public class ProtocolManager {
             String defaultGa = "";
             String defaultPower = "";
             String pMax = channel.getPMax();
-            if (!TextUtils.isEmpty(pMax)){
+            if (!TextUtils.isEmpty(pMax)) {
                 defaultPower = pMax + "," + pMax + "," + pMax;
             }
 
@@ -522,7 +521,7 @@ public class ProtocolManager {
                 defaultFcn = fcn;
             }
 
-            if (Integer.parseInt(channel.getGa()) <= 8){
+            if (Integer.parseInt(channel.getGa()) <= 8) {
                 defaultGa = String.valueOf(Integer.parseInt(channel.getGa()) * 5);
             }
 
@@ -571,7 +570,7 @@ public class ProtocolManager {
                     .and("fcn", "=", band1Fcns)
                     .findFirst();
             if (dbChannel1 == null) {
-                dbManager.save(new DBChannel( "1", band1Fcns, 1, 1));
+                dbManager.save(new DBChannel("1", band1Fcns, 1, 1));
             }
 
 
@@ -637,7 +636,7 @@ public class ProtocolManager {
                     .and("fcn", "=", band41Fcns)
                     .findFirst();
             if (dbChannel41 == null) {
-                dbManager.save(new DBChannel( "41", band41Fcns, 1, 1));
+                dbManager.save(new DBChannel("41", band41Fcns, 1, 1));
             }
 
         } catch (DbException e) {
