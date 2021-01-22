@@ -951,19 +951,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
                 CacheManager.deviceState.setDeviceState(DeviceState.NORMAL);
 
-                //定时查询配置
-                new Timer().schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        if (CacheManager.deviceState.getDeviceState().equals(DeviceState.NORMAL)) {
-                            ProtocolManager.getEquipAndAllChannelConfig();
-                        } else {
-                            cancel();
-                        }
-                    }
-                }, 3000, 6000);
-
-
             }
 
         } else if (EventAdapter.BATTERY_STATE.equals(key)) {

@@ -86,8 +86,8 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
 
 
     //handler消息
-    private final int UPDATE_VIEW = 0;
-    private final int SHOW_PROGRESS = 1;
+    private final int UPDATE_VIEW = 1;
+    private final int SHOW_PROGRESS = 2;
 
     private BaseQuickAdapter<LteChannelCfg, BaseViewHolder> adapter;
 
@@ -180,7 +180,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                         ToastUtils.showMessageLong("当前正在搜寻中，请确认通道射频变动是否对其产生影响！");
                     }
 
-                    showProcess(6000);
+                    showProcess(10000);
                     if (lteChannelCfg.getRFState()) {
                         ProtocolManager.closeRf(lteChannelCfg.getIdx());
                     } else {
@@ -195,6 +195,9 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
         mProgressDialog = new MySweetAlertDialog(DeviceParamActivity.this, MySweetAlertDialog.PROGRESS_TYPE);
         mProgressDialog.setTitleText("Loading...");
         mProgressDialog.setCancelable(false);
+
+
+        ProtocolManager.getEquipAndAllChannelConfig();
     }
 
     View.OnClickListener setCellParamClick = new View.OnClickListener() {
@@ -299,8 +302,35 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                     ToastUtils.showMessage(R.string.tip_15);
                     showProcess(6000);
 
+
+                    LteChannelCfg channelCfg = CacheManager.channels.get(position);
+                    if (!TextUtils.isEmpty(fcn)) {
+                        channelCfg.setFcn(fcn);
+                    }
+
+                    if (!TextUtils.isEmpty(plmn)) {
+                        channelCfg.setPlmn(plmn);
+                    }
+
+                    if (!TextUtils.isEmpty(ga)) {
+                        channelCfg.setGa(ga);
+                    }
+
+                    if (!TextUtils.isEmpty(pa)) {
+                        channelCfg.setPa(pa);
+                    }
+                    if (!TextUtils.isEmpty(rlm)) {
+                        channelCfg.setRlm(rlm);
+                    }
+                    if (!TextUtils.isEmpty(alt_fcn)) {
+                        channelCfg.setAltFcn(alt_fcn);
+                    }
+
+
                     ProtocolManager.setChannelConfig(CacheManager.channels.get(position).getIdx(),
                             fcn, plmn, pa, ga, rlm, "", alt_fcn);
+
+                    refreshViews();
 
                 }
             }
@@ -387,7 +417,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
             } else {
                 ToastUtils.showMessageLong("功率设置已下发，请等待其生效");
             }
-            showProcess(8000);
+            showProcess(9000);
 
             switch (checkedId) {
                 case R.id.rbPowerHigh:
@@ -479,7 +509,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                 ProtocolManager.openAllRf();
                 ToastUtils.showMessageLong(R.string.rf_open);
                 EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.OPEN_ALL_RF);
-                showProcess(9000);
+                showProcess(10000);
             } else {
                 if (CacheManager.getLocState()) {
                     new MySweetAlertDialog(DeviceParamActivity.this, MySweetAlertDialog.WARNING_TYPE)
@@ -495,7 +525,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                                     sweetAlertDialog.dismiss();
                                     ProtocolManager.closeAllRf();
                                     ToastUtils.showMessage(R.string.rf_close);
-                                    showProcess(9000);
+                                    showProcess(10000);
                                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CLOSE_ALL_RF);
                                 }
                             })
@@ -503,7 +533,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                 } else {
                     ProtocolManager.closeAllRf();
                     ToastUtils.showMessageLong(R.string.rf_close);
-                    showProcess(9000);
+                    showProcess(10000);
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CLOSE_ALL_RF);
                 }
 
@@ -652,7 +682,6 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == UPDATE_VIEW) {
-                LogUtils.log("设备参数页面已更新。");
                 refreshViews();
             } else if (msg.what == SHOW_PROGRESS) {
                 int dialogKeepTime = 5000;
@@ -673,10 +702,8 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
 
     @Override
     public void call(String key, Object val) {
-        switch (key) {
-            case EventAdapter.REFRESH_DEVICE:
-                mHandler.sendEmptyMessage(UPDATE_VIEW);
-                break;
+        if (EventAdapter.REFRESH_DEVICE.equals(key)) {
+            mHandler.sendEmptyMessage(UPDATE_VIEW);
         }
     }
 

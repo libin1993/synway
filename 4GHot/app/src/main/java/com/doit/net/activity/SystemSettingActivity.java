@@ -1,18 +1,20 @@
 package com.doit.net.activity;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.BootstrapEditText;
-import com.doit.net.model.DBChannel;
+import com.doit.net.event.EventAdapter;
+import com.doit.net.protocol.ProtocolManager;
 import com.doit.net.utils.FileUtils;
 import com.doit.net.base.BaseActivity;
 import com.doit.net.model.AccountManage;
 import com.doit.net.bean.LteChannelCfg;
-import com.doit.net.protocol.ProtocolManager;
 import com.doit.net.model.CacheManager;
 import com.doit.net.utils.FTPManager;
 import com.doit.net.model.PrefManage;
@@ -32,7 +34,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 
 import static cn.pedant.SweetAlert.SweetAlertDialog.WARNING_TYPE;
 
-public class SystemSettingActivity extends BaseActivity {
+public class SystemSettingActivity extends BaseActivity implements EventAdapter.EventCall {
     public static String LOC_PREF_KEY = "LOC_PREF_KEY";
     public static String SET_STATIC_IP = "STATIC_IP";
     private LSettingItem tvOnOffLocation;
@@ -48,11 +50,14 @@ public class SystemSettingActivity extends BaseActivity {
     private BootstrapButton btResetFreqScanFcn;
     private BootstrapButton btRefresh;
 
+    private long lastRefreshParamTime = 0; //防止频繁刷新参数
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_system_setting);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         tvOnOffLocation = findViewById(R.id.tvOnOffLocation);
         tvOnOffLocation.setOnLSettingCheckedChange(settingItemLocSwitch);
         tvOnOffLocation.setmOnLSettingItemClick(settingItemLocSwitch);  //点击该行开关以外地方也会切换开关，故覆盖其回调
@@ -79,52 +84,67 @@ public class SystemSettingActivity extends BaseActivity {
         tvOnOffLocation.setChecked(PrefManage.getBoolean(LOC_PREF_KEY, true));
 
         tvStaticIp = findViewById(R.id.tv_static_ip);
-        tvStaticIp.setChecked(PrefManage.getBoolean(SET_STATIC_IP,true));
+        tvStaticIp.setChecked(PrefManage.getBoolean(SET_STATIC_IP, true));
         tvStaticIp.setOnLSettingCheckedChange(setStaticIpSwitch);
         tvStaticIp.setmOnLSettingItemClick(setStaticIpSwitch);
 
-        if (CacheManager.checkDevice(this)){
-            etMaxWindSpeed.setText(CacheManager.getLteEquipConfig().getMaxFanSpeed());
-            etMinWindSpeed.setText(CacheManager.getLteEquipConfig().getMinFanSpeed());
-            etTempThreshold.setText(CacheManager.getLteEquipConfig().getTempThreshold());
 
-            tvIfAutoOpenRF.setChecked(CacheManager.getChannels().get(0).getAutoOpen().equals("1"));
-        }else{
+        if (CacheManager.checkDevice(SystemSettingActivity.this)) {
+            initView();
+        } else {
             ToastUtils.showMessageLong("设备未连接，当前展示的设置都不准确，请等待设备连接后重新进入该界面");
         }
 
+        EventAdapter.register(EventAdapter.REFRESH_SYSTEM, this);
+
     }
 
-    private LSettingItem.OnLSettingItemClick settingItemLocSwitch = new LSettingItem.OnLSettingItemClick(){
+    private void initView() {
+        if (CacheManager.getLteEquipConfig() !=null){
+            etMaxWindSpeed.setText(CacheManager.getLteEquipConfig().getMaxFanSpeed());
+            etMinWindSpeed.setText(CacheManager.getLteEquipConfig().getMinFanSpeed());
+            etTempThreshold.setText(CacheManager.getLteEquipConfig().getTempThreshold());
+        }
+
+        if (CacheManager.getChannels()!=null &CacheManager.getChannels().size() > 0){
+            tvIfAutoOpenRF.setChecked(CacheManager.getChannels().get(0).getAutoOpen().equals("1"));
+        }
+    }
+
+    private LSettingItem.OnLSettingItemClick settingItemLocSwitch = new LSettingItem.OnLSettingItemClick() {
         @Override
         public void click(LSettingItem item) {
-            PrefManage.setBoolean(LOC_PREF_KEY, tvOnOffLocation.isChecked());
+            if (tvOnOffLocation.isChecked()) {
+                PrefManage.setBoolean(LOC_PREF_KEY, true);
+            } else {
+                PrefManage.setBoolean(LOC_PREF_KEY, false);
+            }
 
-            ToastUtils.showMessage( "设置成功，重新登陆生效。");
+            ToastUtils.showMessage("设置成功，重新登陆生效。");
         }
     };
 
-    private LSettingItem.OnLSettingItemClick settingItemAutoRFSwitch = new LSettingItem.OnLSettingItemClick(){
+    private LSettingItem.OnLSettingItemClick settingItemAutoRFSwitch = new LSettingItem.OnLSettingItemClick() {
         @Override
         public void click(LSettingItem item) {
-            if(!CacheManager.checkDevice(SystemSettingActivity.this)){
+            if (!CacheManager.checkDevice(SystemSettingActivity.this)) {
                 tvIfAutoOpenRF.setChecked(!tvIfAutoOpenRF.isChecked());
                 return;
             }
 
             ProtocolManager.setAutoRF(tvIfAutoOpenRF.isChecked());
 
-            ToastUtils.showMessage( "下次开机生效");
+            ToastUtils.showMessage("下次开机生效");
         }
     };
 
-    private LSettingItem.OnLSettingItemClick setStaticIpSwitch = new LSettingItem.OnLSettingItemClick(){
+    private LSettingItem.OnLSettingItemClick setStaticIpSwitch = new LSettingItem.OnLSettingItemClick() {
         @Override
         public void click(LSettingItem item) {
-            if (tvStaticIp.isChecked()){
+            if (tvStaticIp.isChecked()) {
                 PrefManage.setBoolean(SET_STATIC_IP, true);
                 ToastUtils.showMessage("已开启自动连接，无需配置WIFI静态IP，以后将自动连接设备");
-            }else {
+            } else {
                 PrefManage.setBoolean(SET_STATIC_IP, false);
                 ToastUtils.showMessageLong("已关闭自动连接，请配置WIFI静态IP，否则将无法连接设备");
             }
@@ -134,7 +154,7 @@ public class SystemSettingActivity extends BaseActivity {
     };
 
 
-    private LSettingItem.OnLSettingItemClick generalAdminAccount = new LSettingItem.OnLSettingItemClick(){
+    private LSettingItem.OnLSettingItemClick generalAdminAccount = new LSettingItem.OnLSettingItemClick() {
         @Override
         public void click(LSettingItem item) {
             generalAdmin();
@@ -142,27 +162,29 @@ public class SystemSettingActivity extends BaseActivity {
     };
 
     private void generalAdmin() {
-        String accountFullPath = FileUtils.ROOT_PATH+"FtpAccount/";
+        String accountFullPath = FileUtils.ROOT_PATH + "FtpAccount/";
         String accountFileName = "account";
 
 
-        File namelistFile = new File(accountFullPath+accountFileName);
-        if (namelistFile.exists()){
+        File namelistFile = new File(accountFullPath + accountFileName);
+        if (namelistFile.exists()) {
             namelistFile.delete();
         }
 
         BufferedWriter bufferedWriter = null;
         try {
-            bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(accountFullPath+accountFileName,true)));
-            bufferedWriter.write("admin"+","+"admin"+ "," + AccountManage.getAdminRemark()+"\n");
+            bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(accountFullPath + accountFileName, true)));
+            bufferedWriter.write("admin" + "," + "admin" + "," + AccountManage.getAdminRemark() + "\n");
             bufferedWriter.flush();
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if(bufferedWriter != null){
+            if (bufferedWriter != null) {
                 try {
                     bufferedWriter.close();
-                } catch (IOException e) {}
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -170,9 +192,9 @@ public class SystemSettingActivity extends BaseActivity {
             public void run() {
                 try {
                     FTPManager.getInstance().connect();
-                    if (FTPManager.getInstance().uploadFile(false,accountFullPath, accountFileName)){
-                        ToastUtils.showMessage( "生成管理员账号成功");
-                    }else {
+                    if (FTPManager.getInstance().uploadFile(false, accountFullPath, accountFileName)) {
+                        ToastUtils.showMessage("生成管理员账号成功");
+                    } else {
                         ToastUtils.showMessage("生成管理员账号出错");
                     }
                     AccountManage.deleteAccountFile();
@@ -184,22 +206,22 @@ public class SystemSettingActivity extends BaseActivity {
         }.start();
     }
 
-    View.OnClickListener setFanClickListener = new View.OnClickListener(){
+    View.OnClickListener setFanClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if(!CacheManager.checkDevice(SystemSettingActivity.this))
+            if (!CacheManager.checkDevice(SystemSettingActivity.this))
                 return;
 
             ProtocolManager.setFanControl(etMaxWindSpeed.getText().toString(), etMinWindSpeed.getText().toString()
-                    ,etTempThreshold.getText().toString());
+                    , etTempThreshold.getText().toString());
         }
     };
 
 
-    View.OnClickListener resetFreqScanFcnClickListener = new View.OnClickListener(){
+    View.OnClickListener resetFreqScanFcnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if(!CacheManager.checkDevice(SystemSettingActivity.this))
+            if (!CacheManager.checkDevice(SystemSettingActivity.this))
                 return;
 
             new SweetAlertDialog(SystemSettingActivity.this, WARNING_TYPE)
@@ -215,7 +237,6 @@ public class SystemSettingActivity extends BaseActivity {
                             sweetAlertDialog.dismiss();
                         }
                     }).show();
-
 
         }
     };
@@ -233,8 +254,7 @@ public class SystemSettingActivity extends BaseActivity {
                     LteChannelCfg channel = CacheManager.getChannels().get(index);
                     String fcn = ProtocolManager.getCheckedFcn(channel.getBand());
                     if (!TextUtils.isEmpty(fcn)) {
-                        ProtocolManager.setChannelConfig(channel.getIdx(), fcn ,
-                                "", "", "", "", "", "");
+                        ProtocolManager.setChannelConfig(channel.getIdx(), fcn, "", "", "", "", "", "");
                         channel.setFcn(fcn);
                     }
 
@@ -244,23 +264,22 @@ public class SystemSettingActivity extends BaseActivity {
 
     }
 
-    View.OnClickListener refreshClickListener = new View.OnClickListener(){
+    View.OnClickListener refreshClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if(!CacheManager.checkDevice(SystemSettingActivity.this))
+            if (!CacheManager.checkDevice(SystemSettingActivity.this))
                 return;
 
-            etMaxWindSpeed.setText(CacheManager.getLteEquipConfig().getMaxFanSpeed());
-            etMinWindSpeed.setText(CacheManager.getLteEquipConfig().getMinFanSpeed());
-            etTempThreshold.setText(CacheManager.getLteEquipConfig().getTempThreshold());
-
-            tvIfAutoOpenRF.setChecked(CacheManager.getChannels().get(0).getAutoOpen().equals("1"));
-
-            if (PrefManage.getBoolean(LOC_PREF_KEY, true)){
-                tvOnOffLocation.setChecked(true);
-            }else{
-                tvOnOffLocation.setChecked(false);
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - lastRefreshParamTime > 20 * 1000) {
+                ProtocolManager.getEquipAndAllChannelConfig();
+                lastRefreshParamTime = currentTime;
+                ToastUtils.showMessage("下发查询参数成功！");
+            } else {
+                ToastUtils.showMessage("请勿频繁刷新参数！");
             }
+
+
         }
     };
 
@@ -271,6 +290,7 @@ public class SystemSettingActivity extends BaseActivity {
          * 否则会出现在子activity点击返回直接将app切到后台(为防止mainActivity重复加载，已将其设置为singleTop启动) */
         switch (item.getItemId()) {
             case android.R.id.home:
+                // 点击返回按钮，退回上一层Activity
                 finish();
                 return true;
 
@@ -279,5 +299,20 @@ public class SystemSettingActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void call(String key, Object val) {
+        if (EventAdapter.REFRESH_SYSTEM.equals(key)) {
+            mHandler.sendEmptyMessage(0);
+        }
+    }
 
+
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == 0) {
+                initView();
+            }
+        }
+    };
 }

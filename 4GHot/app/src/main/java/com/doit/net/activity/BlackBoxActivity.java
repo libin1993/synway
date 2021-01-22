@@ -276,6 +276,7 @@ public class BlackBoxActivity extends BaseActivity {
 
             if (searchBlackBox == null || searchBlackBox.size() <= 0) {
                 ToastUtils.showMessage(R.string.search_not_found);
+                mHandler.sendEmptyMessage(HIDE_LOADING);
                 return;
             }
 

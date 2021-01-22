@@ -34,6 +34,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Zxc on 2018/10/18.
@@ -87,8 +89,6 @@ public class LTE_PT_PARAM {
     public static final byte PPARAM_SET_LOC_IMSI_ACK = 0x3d;    //设置定位回复
     public static final byte SET_IMSI_TRANS_OPTIONS = 0x45;    //设置定IMSI翻译
 //    public static final byte SET_IMSI_TRANS_OPTIONS_ACK = 0xc5;    //设置IMSI翻译回复
-
-    private static long lastRptSyncErrorTime = 0; //记录每次上报同步状态异常的时间
 
 
     //查询参数
@@ -146,8 +146,9 @@ public class LTE_PT_PARAM {
 
         LogUtils.log(CacheManager.getLteEquipConfig().toString());
         EventAdapter.call(EventAdapter.UPDATE_BATTERY, CacheManager.getLteEquipConfig().getVoltage12V());
-
         EventAdapter.call(EventAdapter.REFRESH_DEVICE);
+        EventAdapter.call(EventAdapter.REFRESH_GA);
+        EventAdapter.call(EventAdapter.REFRESH_SYSTEM);
         EventAdapter.call(EventAdapter.INIT_SUCCESS);
     }
 
@@ -235,18 +236,7 @@ public class LTE_PT_PARAM {
         // IDX:60@STATE:0#IDX:61@STATE:0#IDX:72@STATE:0#IP:192.168.0.1@ID:BL001@TM:55:66:77,45:55:65@G1:12.123456@G2:12.123456
         // @DATANUM:30@RPTSTATUS:1@ENBSTATUS:1@FTPERRCNT:10@SYNCSTATUS:0
         String heartbeat = UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(), 0);
-        LogUtils.log("processRPTHeartbeat:" + heartbeat);
-
-        //同步状态
-        lastRptSyncErrorTime = System.currentTimeMillis();  //第一次不提示
-        if (heartbeat.split("SYNCSTATUS")[1].charAt(1) != '0') {
-            if ((int) (System.currentTimeMillis() - lastRptSyncErrorTime) > 5 * 60 * 1000) {
-                LogUtils.log("同步状态异常");
-                lastRptSyncErrorTime = System.currentTimeMillis();
-                //EventAdapter.call(EventAdapter.SYNC_ERROR_RPT);
-            }
-
-        }
+        LogUtils.log("心跳:" + heartbeat);
 
 
         //更新射频状态
@@ -287,9 +277,6 @@ public class LTE_PT_PARAM {
         EventAdapter.call(EventAdapter.RF_STATUS_RPT);
         EventAdapter.call(EventAdapter.REFRESH_DEVICE);
 
-        //		LTE_PT_ADJUST.sendData(LTE_PT_ADJUST.ADJUST_APP,"");
-
-//        LTE_PT_ADJUST.sendData(LTE_PT_ADJUST.ADJUST_RESP,"");
     }
 
     //处理黑名单中标上报
@@ -458,6 +445,7 @@ public class LTE_PT_PARAM {
 
                 EventAdapter.call(EventAdapter.RF_STATUS_LOC);
                 EventAdapter.call(EventAdapter.RF_STATUS_RPT);
+                LogUtils.log("设备参数页面已更新开射频");
                 EventAdapter.call(EventAdapter.REFRESH_DEVICE);
                 break;
 
@@ -561,6 +549,12 @@ public class LTE_PT_PARAM {
             case LTE_PT_PARAM.PARAM_CHANGE_BAND_ACK:
                 if (respContent.charAt(0) == '0') {
                     LogUtils.log("切换band成功");
+                    new Timer().schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            ProtocolManager.getEquipAndAllChannelConfig();
+                        }
+                    },9000);
                     //ToastUtils.showMessageLong(GameApplication.appContext,"下发切换Band命令成功，请等待设备重启。");
                 } else if (respContent.charAt(0) == '1') {
                     LogUtils.log("切换band失败");

@@ -458,9 +458,24 @@ public class ProtocolManager {
                     if ("CTJ".equals(UtilOperator.getOperatorName(imsi))) {
                         setChannelConfig(idx, "1300,1506,1650", "46000",
                                 "", "", "", "", "");
+
+                        for (LteChannelCfg channel : CacheManager.channels) {
+                            if (channel.getIdx().equals(idx)) {
+                                channel.setFcn("1300,1506,1650");
+                                channel.setPlmn("46000");
+                                break;
+                            }
+                        }
                     } else {
                         setChannelConfig(idx, dbChannel.getFcn(),
                                 "46001,46011", "", "", "", "", "");
+                        for (LteChannelCfg channel : CacheManager.channels) {
+                            if (channel.getIdx().equals(idx)) {
+                                channel.setFcn(dbChannel.getFcn());
+                                channel.setPlmn("46001,46011");
+                                break;
+                            }
+                        }
                     }
                 }
 
@@ -531,6 +546,15 @@ public class ProtocolManager {
             }
 
             setChannelConfig(channel.getIdx(), defaultFcn, "", defaultPower, defaultGa, "", "", "");
+
+            channel.setPa(defaultPower);
+            if (!TextUtils.isEmpty(defaultFcn)) {
+                channel.setFcn(defaultFcn);
+            }
+            if (!TextUtils.isEmpty(defaultGa)) {
+                channel.setGa(defaultGa);
+            }
+
 
             LogUtils.log("默认fcn:" + defaultFcn);
 
@@ -680,6 +704,7 @@ public class ProtocolManager {
 
         for (LteChannelCfg channel : CacheManager.getChannels()) {
             setChannelConfig(channel.getIdx(), "", "", "", "", "", ifAutoOpen, "");
+            channel.setAutoOpen(ifAutoOpen);
         }
     }
 

@@ -281,6 +281,14 @@ public class CacheManager {
                 if (!TextUtils.isEmpty(idx)){
                     ProtocolManager.setChannelConfig(idx, dbChannel.getFcn(),
                             "46001,46011", "", "", "", "", "");
+
+                    for (LteChannelCfg channel : CacheManager.channels) {
+                        if (channel.getIdx().equals(idx)) {
+                            channel.setFcn(dbChannel.getFcn());
+                            channel.setPlmn("46000,46001");
+                            break;
+                        }
+                    }
                 }
             }
 
@@ -409,8 +417,9 @@ public class CacheManager {
     }
 
     public synchronized static void addChannel(LteChannelCfg cfg) {
-        for (LteChannelCfg channel : channels) {
-            if (channel.getIdx().equals(cfg.getIdx())) {
+        for (int i = 0; i < channels.size(); i++) {
+            LteChannelCfg channel = channels.get(i);
+            if (cfg.getIdx().equals(channel.getIdx())) {
                 channel.setFcn(cfg.getFcn());
                 channel.setBand(cfg.getBand());
                 channel.setGa(cfg.getGa());
@@ -420,7 +429,6 @@ public class CacheManager {
                 channel.setAutoOpen(cfg.getAutoOpen());
                 channel.setAltFcn(cfg.getAltFcn());
                 channel.setChangeBand(cfg.getChangeBand());
-                //channel.setState(cfg.getState());
                 return;
             }
         }
@@ -510,12 +518,14 @@ public class CacheManager {
             for (LteChannelCfg channel : channels) {
                 if (Integer.parseInt(channel.getGa()) <= 10) {
                     ProtocolManager.setChannelConfig(channel.getIdx(), "", "", "", String.valueOf(Integer.parseInt(channel.getGa()) * 5), "", "", "");
+                    channel.setGa(String.valueOf(Integer.parseInt(channel.getGa()) * 5));
                 }
             }
         } else {
             for (LteChannelCfg channel : channels) {
                 if (Integer.parseInt(channel.getGa()) > 10) {
                     ProtocolManager.setChannelConfig(channel.getIdx(), "", "", "", String.valueOf(Integer.parseInt(channel.getGa()) / 5), "", "", "");
+                    channel.setGa(String.valueOf(Integer.parseInt(channel.getGa()) / 5));
                 }
             }
         }
@@ -538,20 +548,16 @@ public class CacheManager {
         ProtocolManager.changeBand(idx, changeBand);
 
         //下发切换之后，等待生效，设置默认频点
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                String fcn = ProtocolManager.getCheckedFcn(changeBand);
-                if (TextUtils.isEmpty(fcn)){
-                    return;
+        String fcn = ProtocolManager.getCheckedFcn(changeBand);
+        if (!TextUtils.isEmpty(fcn)){
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    ProtocolManager.setChannelConfig(idx, fcn, "", "", "", "", "", "");
                 }
-                ProtocolManager.setChannelConfig(idx, fcn, "", "", "", "", "", "");
+            }, 7000);
+        }
 
-            }
-        }, 2000);
-
-
-        EventAdapter.call(EventAdapter.SHOW_PROGRESS, 13000);
     }
 
 

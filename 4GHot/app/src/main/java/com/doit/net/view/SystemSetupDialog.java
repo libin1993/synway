@@ -222,6 +222,11 @@ public class SystemSetupDialog extends Dialog {
                     tacPeriod.equals(CacheManager.getCellConfig().getTacTimer())?"":tacPeriod,
                     sync.equals(CacheManager.getCellConfig().getSync())?"":sync);
 
+            CacheManager.getCellConfig().setGpsOffset(gpsOffset);
+            CacheManager.getCellConfig().setPci(tddPci);
+            CacheManager.getCellConfig().setTacTimer(tacPeriod);
+            CacheManager.getCellConfig().setSync(sync);
+
             dismiss();
         } catch (NumberFormatException e) {
             new MySweetAlertDialog(getContext(), MySweetAlertDialog.ERROR_TYPE)
