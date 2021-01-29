@@ -626,13 +626,29 @@ public class WhitelistManagerActivity extends BaseActivity implements EventAdapt
         @Override
 
         public void onClick(View v) {
-            try {
-                dbManager.delete(WhiteListInfo.class);
-            } catch (DbException e) {
-                e.printStackTrace();
-            }
-            updateListFromDB();
-            EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CLEAR_WHITELIST);
+            new MySweetAlertDialog(WhitelistManagerActivity.this, MySweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("清空名单")
+                    .setContentText("确定要清空名单吗？")
+                    .setCancelText(getString(R.string.cancel))
+                    .setConfirmText(getString(R.string.sure))
+                    .showCancelButton(true)
+                    .setConfirmClickListener(new MySweetAlertDialog.OnSweetClickListener() {
+
+                        @Override
+                        public void onClick(MySweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+
+                            try {
+                                dbManager.delete(WhiteListInfo.class);
+                            } catch (DbException e) {
+                                e.printStackTrace();
+                            }
+                            updateListFromDB();
+                            EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CLEAR_WHITELIST);
+
+                        }
+                    })
+                    .show();
         }
     };
 

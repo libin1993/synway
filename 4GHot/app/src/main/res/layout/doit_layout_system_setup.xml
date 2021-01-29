@@ -18,238 +18,240 @@
         android:orientation="vertical"
         android:scrollbars="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="32dp"
-        android:gravity="center"
-        android:layout_marginBottom="3dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:layout_weight="2.2"
-            android:text="GPS偏移：" />
-
-        <EditText
-            android:id="@+id/id_gps"
-            android:background="@drawable/common_edit_text_bkg"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:inputType="number"
-            android:textColor="@color/white"
-            android:singleLine="true"
-            android:textSize="15sp"
-            android:paddingStart="5dp"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="32dp"
-        android:gravity="center"
-        android:layout_marginTop="3dp"
-        android:layout_marginBottom="3dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:layout_weight="2.2"
-            android:text="PCI：" />
-
-        <EditText
-            android:id="@+id/id_pci_tdd"
-            android:background="@drawable/common_edit_text_bkg"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:inputType="number"
-            android:singleLine="true"
-            android:textColor="@color/white"
-            android:textSize="15sp"
-            android:paddingStart="5dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="32dp"
-        android:gravity="center"
-        android:layout_marginTop="3dp"
-        android:layout_marginBottom="3dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:layout_weight="1.5"
-            android:text="TAC更新周期：" />
-
-        <EditText
-            android:id="@+id/etTacUpdatePeriod"
-            android:hint="分钟"
-            android:background="@drawable/common_edit_text_bkg"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1.8"
-            android:inputType="number"
-            android:paddingStart="5dp"
-            android:textColor="@color/white"
-            android:textSize="15sp"
-            android:singleLine="true"
-            android:text="" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:background="@null"/>
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:gravity="center"
-        android:layout_marginTop="1dp"
-        android:orientation="horizontal">
-
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="32dp"
             android:gravity="center"
-            android:textColor="@color/white"
-            android:layout_weight="1.6"
-            android:text="同步方式：" />
-
-        <Spinner
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/spSyncWay"
-            android:layout_weight="1"
-            android:spinnerMode="dropdown"
-            android:dropDownVerticalOffset="0dp"
-            />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="2.2"
-            android:background="@null"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/layoutAirSyncPCI"
-        android:visibility="visible"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_vertical">
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="40dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="32dp"
-                android:textColor="@color/white"
-                android:gravity="center"
-                android:text="通道:"
-                android:layout_weight="1.2" />
-
-            <Spinner
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/spSyncChannel"
-                android:layout_weight="1"
-                android:spinnerMode="dropdown"
-                />
+            android:layout_marginBottom="3dp"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="载波号:"
-                android:textColor="@color/white"
                 android:gravity="center"
-                android:layout_marginStart="8dp"
-                android:layout_weight="1.1" />
+                android:textColor="@color/white"
+                android:layout_weight="2.2"
+                android:text="GPS偏移：" />
 
-            <Spinner
+            <EditText
+                android:id="@+id/id_gps"
+                android:background="@drawable/common_edit_text_bkg"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/spSyncCarrier"
                 android:layout_weight="1"
-                android:spinnerMode="dropdown"
-                />
-
+                android:digits="@string/fcn_rule"
+                android:maxLength="30"
+                android:textColor="@color/white"
+                android:singleLine="true"
+                android:textSize="15sp"
+                android:paddingStart="5dp"/>
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="32dp">
+            android:layout_height="32dp"
+            android:gravity="center"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="锁定PCI:"
-                android:textColor="@color/white"
                 android:gravity="center"
-                android:layout_weight="1" />
+                android:textColor="@color/white"
+                android:layout_weight="2.2"
+                android:text="PCI：" />
 
             <EditText
-                android:id="@+id/etSyncPCI"
-                android:layout_weight="1"
+                android:id="@+id/id_pci_tdd"
+                android:background="@drawable/common_edit_text_bkg"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:digits="@string/fcn_rule"
+                android:maxLength="30"
+                android:singleLine="true"
                 android:textColor="@color/white"
-                android:paddingStart="5dp"
+                android:textSize="15sp"
+                android:paddingStart="5dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:gravity="center"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:layout_weight="1.5"
+                android:text="TAC更新周期：" />
+
+            <EditText
+                android:id="@+id/etTacUpdatePeriod"
+                android:hint="分钟"
                 android:background="@drawable/common_edit_text_bkg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.8"
                 android:inputType="number"
-                android:singleLine="true" />
+                android:paddingStart="5dp"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:singleLine="true"
+                android:text="" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:background="@null"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:layout_marginTop="1dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:layout_weight="1.6"
+                android:text="同步方式：" />
+
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/spSyncWay"
+                android:layout_weight="1"
+                android:spinnerMode="dropdown"
+                android:dropDownVerticalOffset="0dp"
+                />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2.2"
+                android:background="@null"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutAirSyncPCI"
+            android:visibility="visible"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_vertical">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="40dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:textColor="@color/white"
+                    android:gravity="center"
+                    android:text="通道:"
+                    android:layout_weight="1.2" />
+
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/spSyncChannel"
+                    android:layout_weight="1"
+                    android:spinnerMode="dropdown"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="载波号:"
+                    android:textColor="@color/white"
+                    android:gravity="center"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1.1" />
+
+                <Spinner
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/spSyncCarrier"
+                    android:layout_weight="1"
+                    android:spinnerMode="dropdown"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="32dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="锁定PCI:"
+                    android:textColor="@color/white"
+                    android:gravity="center"
+                    android:layout_weight="1" />
+
+                <EditText
+                    android:id="@+id/etSyncPCI"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/white"
+                    android:paddingStart="5dp"
+                    android:background="@drawable/common_edit_text_bkg"
+                    android:inputType="number"
+                    android:singleLine="true" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@null"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button_save"
+                android:textColor="@color/darkorange"
+                android:background="@drawable/common_button_bkg"
+                android:layout_height="34dp"
+                android:layout_marginStart="18dp"
+                android:layout_width="86dp"
+                android:text="@string/set_now" />
+
+            <Button
+                android:id="@+id/button_cancel"
+                android:textColor="@color/darkorange"
+                android:background="@drawable/common_button_bkg"
+                android:layout_height="34dp"
+                android:layout_marginStart="18dp"
+                android:layout_width="80dp"
+                android:text="@string/cancel" />
+        </LinearLayout>
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/button_save"
-            android:textColor="@color/darkorange"
-            android:background="@drawable/common_button_bkg"
-            android:layout_height="34dp"
-            android:layout_marginStart="18dp"
-            android:layout_width="86dp"
-            android:text="@string/set_now" />
-
-        <Button
-            android:id="@+id/button_cancel"
-            android:textColor="@color/darkorange"
-            android:background="@drawable/common_button_bkg"
-            android:layout_height="34dp"
-            android:layout_marginStart="18dp"
-            android:layout_width="80dp"
-            android:text="@string/cancel" />
-    </LinearLayout>
-</LinearLayout>
 </RelativeLayout>

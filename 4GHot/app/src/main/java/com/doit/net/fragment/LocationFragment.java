@@ -289,7 +289,7 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
                 stopLoc();
                 CacheManager.resetMode();
 
-                EventAdapter.call(EventAdapter.SHOW_PROGRESS, 9000);
+                EventAdapter.call(EventAdapter.SHOW_PROGRESS, 8000);
                 if (CacheManager.currentLoction != null && !CacheManager.currentLoction.getImsi().equals("")) {
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.STOP_LOCALTE + CacheManager.currentLoction.getImsi());
                 }
@@ -301,7 +301,7 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
 
                     ProtocolManager.openAllRf();
 
-                    EventAdapter.call(EventAdapter.SHOW_PROGRESS, 9000);
+                    EventAdapter.call(EventAdapter.SHOW_PROGRESS, 8000);
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.START_LOCALTE + CacheManager.currentLoction.getImsi());
                 }
             }

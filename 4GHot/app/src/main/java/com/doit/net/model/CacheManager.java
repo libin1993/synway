@@ -555,7 +555,7 @@ public class CacheManager {
                 public void run() {
                     ProtocolManager.setChannelConfig(idx, fcn, "", "", "", "", "", "");
                 }
-            }, 7000);
+            }, 2000);
         }
 
     }

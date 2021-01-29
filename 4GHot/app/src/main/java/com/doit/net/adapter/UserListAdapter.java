@@ -14,6 +14,7 @@ import com.doit.net.model.AccountManage;
 import com.doit.net.model.UCSIDBManager;
 import com.doit.net.model.UserInfo;
 import com.doit.net.utils.LoadingUtils;
+import com.doit.net.utils.MySweetAlertDialog;
 import com.doit.net.utils.ToastUtils;
 import com.doit.net.view.ModifyUserInfoDialog;
 import com.doit.net.ucsi.R;
@@ -109,23 +110,39 @@ public class UserListAdapter extends BaseSwipeAdapter {
 
         @Override
         public void onClick(View v) {
-            UserInfo resp = listUserInfo.get(position);
-            try {
-                UCSIDBManager.getDbManager().delete(resp);
-                if (AccountManage.UpdateAccountToDevice()){
-                    EventAdapter.call(EventAdapter.REFRESH_USER_LIST);
-                    EventAdapter.call(EventAdapter.ADD_BLACKBOX,BlackBoxManger.DELTE_USER+resp.getAccount());
-                    LoadingUtils.loading(mContext);
-                }else{
-                    UCSIDBManager.getDbManager().save(resp);
-                    ToastUtils.showMessageLong(R.string.del_user_fail_ftp_error);
-                }
+            new MySweetAlertDialog(mContext, MySweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("删除用户")
+                    .setContentText("确定要删除用户吗？")
+                    .setCancelText(mContext.getString(R.string.cancel))
+                    .setConfirmText(mContext.getString(R.string.sure))
+                    .showCancelButton(true)
+                    .setConfirmClickListener(new MySweetAlertDialog.OnSweetClickListener() {
 
-            } catch (DbException e) {
-                new SweetAlertDialog(mContext, SweetAlertDialog.ERROR_TYPE)
-                        .setTitleText(mContext.getString(R.string.del_user_fail))
-                        .show();
-            }
+                        @Override
+                        public void onClick(MySweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+
+                            UserInfo resp = listUserInfo.get(position);
+                            try {
+                                UCSIDBManager.getDbManager().delete(resp);
+                                if (AccountManage.UpdateAccountToDevice()){
+                                    EventAdapter.call(EventAdapter.REFRESH_USER_LIST);
+                                    EventAdapter.call(EventAdapter.ADD_BLACKBOX,BlackBoxManger.DELTE_USER+resp.getAccount());
+                                    LoadingUtils.loading(mContext);
+                                }else{
+                                    UCSIDBManager.getDbManager().save(resp);
+                                    ToastUtils.showMessageLong(R.string.del_user_fail_ftp_error);
+                                }
+
+                            } catch (DbException e) {
+                                new SweetAlertDialog(mContext, SweetAlertDialog.ERROR_TYPE)
+                                        .setTitleText(mContext.getString(R.string.del_user_fail))
+                                        .show();
+                            }
+
+                        }
+                    })
+                    .show();
         }
     }
 

@@ -18,6 +18,7 @@ import com.doit.net.model.CacheManager;
 import com.doit.net.model.DBBlackInfo;
 import com.doit.net.model.UCSIDBManager;
 import com.doit.net.utils.LogUtils;
+import com.doit.net.utils.MySweetAlertDialog;
 import com.doit.net.view.ModifyNamelistInfoDialog;
 import com.doit.net.ucsi.R;
 import com.doit.net.utils.DateUtils;
@@ -70,20 +71,36 @@ public class BlacklistAdapter extends BaseSwipeAdapter {
 
         @Override
         public void onClick(View v) {
-            DBBlackInfo resp = ueidList.get(position);
-            try {
-                ueidList.remove(position);
-                UCSIDBManager.getDbManager().delete(resp);
-                ProtocolManager.setBlackList("3", "#"+resp.getImsi());
-                EventAdapter.call(EventAdapter.REFRESH_BLACKLIST);
-                EventAdapter.call(EventAdapter.ADD_BLACKBOX,BlackBoxManger.DELETE_NAMELIST +resp.getName()+"+"+resp.getImsi());
-            } catch (DbException e) {
-                LogUtils.log("删除名单失败"+e.getMessage());
+            new MySweetAlertDialog(mContext, MySweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("删除名单")
+                    .setContentText("确定要删除名单吗？")
+                    .setCancelText(mContext.getString(R.string.cancel))
+                    .setConfirmText(mContext.getString(R.string.sure))
+                    .showCancelButton(true)
+                    .setConfirmClickListener(new MySweetAlertDialog.OnSweetClickListener() {
 
-                new SweetAlertDialog(mContext, SweetAlertDialog.ERROR_TYPE)
-                        .setTitleText(mContext.getString(R.string.del_namelist_fail))
-                        .show();
-            }
+                        @Override
+                        public void onClick(MySweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+
+                            DBBlackInfo resp = ueidList.get(position);
+                            try {
+                                ueidList.remove(position);
+                                UCSIDBManager.getDbManager().delete(resp);
+                                ProtocolManager.setBlackList("3", "#"+resp.getImsi());
+                                EventAdapter.call(EventAdapter.REFRESH_BLACKLIST);
+                                EventAdapter.call(EventAdapter.ADD_BLACKBOX,BlackBoxManger.DELETE_NAMELIST +resp.getName()+"+"+resp.getImsi());
+                            } catch (DbException e) {
+                                LogUtils.log("删除名单失败"+e.getMessage());
+
+                                new SweetAlertDialog(mContext, SweetAlertDialog.ERROR_TYPE)
+                                        .setTitleText(mContext.getString(R.string.del_namelist_fail))
+                                        .show();
+                            }
+
+                        }
+                    })
+                    .show();
         }
     }
 

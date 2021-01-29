@@ -156,6 +156,11 @@ public class ProtocolManager {
             configContent += sync;
         }
 
+        if (TextUtils.isEmpty(configContent)){
+            return;
+        }
+
+
         //删掉最开始的@
         configContent = configContent.replaceFirst("@", "");
 

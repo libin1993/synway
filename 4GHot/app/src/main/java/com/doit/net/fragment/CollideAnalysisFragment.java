@@ -219,14 +219,12 @@ public class CollideAnalysisFragment extends BaseFragment {
             }
         });
 
-        lvCollideTimePeriod.setOnTouchListener(new View.OnTouchListener() {
+        lvCollideTimePeriod.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                lvCollideTimePeriod.getParent().requestDisallowInterceptTouchEvent(true);
-                return false;
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                lvCollideTimePeriod.smoothOpenMenu(position);
             }
         });
-
     }
 
     private void ExportCollideResult(List<AnalysisResultBean> listCollideResult) {

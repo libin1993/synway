@@ -1,5 +1,7 @@
 package com.doit.net.utils;
 
+import android.text.TextUtils;
+
 import com.doit.net.application.MyApplication;
 
 import java.nio.charset.StandardCharsets;
@@ -72,6 +74,51 @@ public class FormatUtils {
         return (int) (pxValue*scale+0.5);
 
     }
+    public boolean plmnRange(String plmn){
+        if (!TextUtils.isEmpty(plmn) && (plmn.startsWith(",") || plmn.endsWith(","))){
+            return false;
+        }
+        String[] split = plmn.split(",");
+        for (String s : split) {
+            if (TextUtils.isEmpty(s) || s.length() != 5){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean gpsRange(String gps){
+        if (!TextUtils.isEmpty(gps) && (gps.startsWith(",") || gps.endsWith(","))){
+            return false;
+        }
+        String[] split = gps.split(",");
+
+        for (String s : split) {
+            if (TextUtils.isEmpty(s) || s.length() > 3){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean pciRange(String pci){
+        if (!TextUtils.isEmpty(pci) && (pci.startsWith(",") || pci.endsWith(","))){
+            return false;
+        }
+        String[] split = pci.split(",");
+
+        for (String s : split) {
+            if (TextUtils.isEmpty(s) || s.length() > 3){
+                return false;
+            }
+            int pciInt = Integer.parseInt(s);
+            if (pciInt > 503){
+                return false;
+            }
+        }
+        return true;
+    }
+
 
 
     /**

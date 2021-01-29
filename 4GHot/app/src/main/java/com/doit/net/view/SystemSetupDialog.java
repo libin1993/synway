@@ -3,6 +3,7 @@ package com.doit.net.view;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,8 +16,10 @@ import android.widget.Spinner;
 import com.doit.net.bean.LteChannelCfg;
 import com.doit.net.protocol.ProtocolManager;
 import com.doit.net.model.CacheManager;
+import com.doit.net.utils.FormatUtils;
 import com.doit.net.utils.MySweetAlertDialog;
 import com.doit.net.ucsi.R;
+import com.doit.net.utils.ToastUtils;
 
 import org.xutils.view.annotation.Event;
 import org.xutils.view.annotation.ViewInject;
@@ -52,10 +55,12 @@ public class SystemSetupDialog extends Dialog {
     private final int SYNC_GPS_IDX = 1;
     private final int SYNC_AIR_IDX = 2;
     private final int NO_SYNC_IDX = 3;
+    private Context context;
 
 
     public SystemSetupDialog(Context context) {
         super(context,R.style.Theme_dialog);
+        this.context = context;
         initView();
     }
 
@@ -190,7 +195,18 @@ public class SystemSetupDialog extends Dialog {
             String tddPci = pci.getText().toString();
             String gpsOffset = gps.getText().toString();
             String tacPeriod = etTacUpdatePeriod.getText().toString();
-            //int bandwidth_val = bandwidth.getSelectedItemPosition()+1;
+
+
+            if (!TextUtils.isEmpty(gpsOffset) && FormatUtils.getInstance().gpsRange(gpsOffset)){
+                ToastUtils.showMessage("GPS偏移格式有误");
+                return;
+            }
+
+            if (!TextUtils.isEmpty(tddPci) && FormatUtils.getInstance().pciRange(tddPci)){
+                ToastUtils.showMessage("PCI格式有误");
+                return;
+            }
+
 
             String sync = spSyncWay.getSelectedItem().toString();
             if (sync.equals(SYNC_AUTO)){
@@ -221,11 +237,6 @@ public class SystemSetupDialog extends Dialog {
                     tddPci.equals(CacheManager.getCellConfig().getPci())?"":tddPci,
                     tacPeriod.equals(CacheManager.getCellConfig().getTacTimer())?"":tacPeriod,
                     sync.equals(CacheManager.getCellConfig().getSync())?"":sync);
-
-            CacheManager.getCellConfig().setGpsOffset(gpsOffset);
-            CacheManager.getCellConfig().setPci(tddPci);
-            CacheManager.getCellConfig().setTacTimer(tacPeriod);
-            CacheManager.getCellConfig().setSync(sync);
 
             dismiss();
         } catch (NumberFormatException e) {

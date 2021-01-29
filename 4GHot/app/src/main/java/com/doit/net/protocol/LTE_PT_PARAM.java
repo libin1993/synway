@@ -554,7 +554,7 @@ public class LTE_PT_PARAM {
                         public void run() {
                             ProtocolManager.getEquipAndAllChannelConfig();
                         }
-                    },9000);
+                    },5000);
                     //ToastUtils.showMessageLong(GameApplication.appContext,"下发切换Band命令成功，请等待设备重启。");
                 } else if (respContent.charAt(0) == '1') {
                     LogUtils.log("切换band失败");
@@ -766,18 +766,24 @@ public class LTE_PT_PARAM {
 
         String[] splitStr = locRpt.split("#");
         List<UeidBean> ueidList = new ArrayList<>();
+        int locRSSI = 20; //定位目标场强
         for (String s : splitStr) {
             String[] split = s.split(":");
             if (split.length > 1) {
                 String rssi = split[1];
-                if (TextUtils.isEmpty(rssi) || Integer.parseInt(rssi) <= 0) {
+
+                try {
+                    if (TextUtils.isEmpty(rssi) || Integer.parseInt(rssi) < 20) {
+                        continue;
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                    LogUtils.log("数据格式错误："+e.getMessage());
                     continue;
                 }
 
-                if (CacheManager.getLocState()) {
-                    if (split[0].equals(CacheManager.getCurrentLocation().getImsi())) {
-                        EventAdapter.call(EventAdapter.LOCATION_RPT, rssi);
-                    }
+                if (CacheManager.getLocState() && split[0].equals(CacheManager.getCurrentLocation().getImsi())) {
+                    locRSSI = Math.max(locRSSI,Integer.parseInt(rssi)); //取最大值
                 }
 
 
@@ -788,7 +794,10 @@ public class LTE_PT_PARAM {
                 ueidList.add(ueidBean);
 
             }
+        }
 
+        if (locRSSI > 20){
+            EventAdapter.call(EventAdapter.LOCATION_RPT, String.valueOf(locRSSI));
         }
 
         if (ueidList.size() > 0) {

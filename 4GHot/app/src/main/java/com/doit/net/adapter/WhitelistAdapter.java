@@ -16,6 +16,7 @@ import com.doit.net.model.VersionManage;
 import com.doit.net.model.WhiteListInfo;
 import com.doit.net.model.UCSIDBManager;
 import com.doit.net.utils.LogUtils;
+import com.doit.net.utils.MySweetAlertDialog;
 import com.doit.net.view.ModifyWhitelistDialog;
 import com.doit.net.ucsi.R;
 
@@ -114,23 +115,39 @@ public class WhitelistAdapter extends BaseSwipeAdapter {
 
         @Override
         public void onClick(View v) {
-            WhiteListInfo resp = listWhitelistInfo.get(position);
-            try {
-                UCSIDBManager.getDbManager().delete(resp);
-                if (!"".equals(resp.getImsi())) {
-                    CacheManager.updateWhitelistToDev(mContext);
-                }
+            new MySweetAlertDialog(mContext, MySweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("删除名单")
+                    .setContentText("确定要删除名单吗吗？")
+                    .setCancelText(mContext.getString(R.string.cancel))
+                    .setConfirmText(mContext.getString(R.string.sure))
+                    .showCancelButton(true)
+                    .setConfirmClickListener(new MySweetAlertDialog.OnSweetClickListener() {
 
-                EventAdapter.call(EventAdapter.REFRESH_WHITELIST);
+                        @Override
+                        public void onClick(MySweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
 
-                LogUtils.log("删除白名单："+resp.toString());
-                EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.DELETE_WHITE_LIST
-                        + resp.getImsi() + "+" + resp.getMsisdn());
-            } catch (DbException e) {
-                new SweetAlertDialog(mContext, SweetAlertDialog.ERROR_TYPE)
-                        .setTitleText(mContext.getString(R.string.del_white_list_fail))
-                        .show();
-            }
+                            WhiteListInfo resp = listWhitelistInfo.get(position);
+                            try {
+                                UCSIDBManager.getDbManager().delete(resp);
+                                if (!"".equals(resp.getImsi())) {
+                                    CacheManager.updateWhitelistToDev(mContext);
+                                }
+
+                                EventAdapter.call(EventAdapter.REFRESH_WHITELIST);
+
+                                LogUtils.log("删除白名单："+resp.toString());
+                                EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.DELETE_WHITE_LIST
+                                        + resp.getImsi() + "+" + resp.getMsisdn());
+                            } catch (DbException e) {
+                                new SweetAlertDialog(mContext, SweetAlertDialog.ERROR_TYPE)
+                                        .setTitleText(mContext.getString(R.string.del_white_list_fail))
+                                        .show();
+                            }
+
+                        }
+                    })
+                    .show();
         }
     }
 }
