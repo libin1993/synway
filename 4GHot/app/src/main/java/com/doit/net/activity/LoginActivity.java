@@ -12,6 +12,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.doit.net.model.ImsiMsisdnConvert;
 import com.doit.net.utils.FileUtils;
 import com.doit.net.base.BaseActivity;
 import com.doit.net.model.AccountManage;
@@ -57,7 +58,6 @@ public class LoginActivity extends BaseActivity {
         initView();
         checkLocalDir();
         initLog();
-
     }
 
 //    private boolean checkAuthorize() {

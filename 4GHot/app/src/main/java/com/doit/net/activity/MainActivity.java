@@ -32,6 +32,7 @@ import android.widget.ImageView;
 
 import android.widget.TextView;
 
+import com.doit.net.model.ImsiMsisdnConvert;
 import com.doit.net.protocol.GSMSendManager;
 import com.doit.net.sockets.OnSocketChangedListener;
 import com.doit.net.sockets.ServerSocketUtils;
@@ -158,6 +159,8 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
         initView();
         initOtherWork();
+
+
     }
 
     private void initOtherWork() {
@@ -588,6 +591,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
         } else {
             ToastUtils.showMessageLong("网络连接已断开！请检查网络是否正常连接！");
             CacheManager.deviceState.setDeviceState(DeviceState.WIFI_DISCONNECT);
+
             CacheManager.resetState();
         }
 
@@ -616,21 +620,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
         }.start();
     }
 
-    /**
-     * 2G
-     */
-    private void initGSM() {
-
-        UDPSocketUtils.getInstance().init();
-
-
-        GSMSendManager.closeRF();
-        GSMSendManager.getNearbyCell();
-        GSMSendManager.getGSMParams();
-        GSMSendManager.getCDMAParams();
-        LogUtils.log(FormatUtils.getInstance().byteToBit((byte)6));
-
-    }
 
 
     /**
@@ -673,6 +662,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             jsonObject.put("ok", true);
 
             String data = jsonObject.toString();
+            LogUtils.log("发送ip:"+data);
             DatagramSocketUtils.getInstance().sendData(data);
 
         } catch (JSONException e) {
@@ -928,6 +918,8 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             if (!CacheManager.hasPressStartButton()) {
                 mHandler.sendEmptyMessage(HEARTBEAT_RPT);
             }
+
+//            ImsiMsisdnConvert.test();
 
         } else if (EventAdapter.INIT_SUCCESS.equals(key)) {
             if (!CacheManager.hasSetDefaultParam && CacheManager.getChannels().size() > 0) {

@@ -67,19 +67,16 @@ public class ServerSocketUtils {
                         String remoteIP = socket.getInetAddress().getHostAddress();  //远程ip
                         int remotePort = socket.getPort();    //远程端口
 
-                        map.put(remoteIP, socket);   //存储socket
-                        CacheManager.DEVICE_IP = remoteIP;  //当前设备ip
+                        if (remoteIP.equals(CacheManager.DEVICE_IP)) {
+                            map.put(remoteIP, socket);   //存储socket
+                            if (onSocketChangedListener != null) {
+                                onSocketChangedListener.onChange();
+                            }
 
-                        if (onSocketChangedListener != null) {
-                            onSocketChangedListener.onChange();
+                            LogUtils.log("TCP收到设备连接,ip：" + remoteIP + "；端口：" + remotePort);
+
+                            new ReceiveThread(socket,remoteIP).start();
                         }
-
-                        LogUtils.log("TCP收到设备连接,ip：" + remoteIP + "；端口：" + remotePort);
-
-
-                        ReceiveThread receiveThread = new ReceiveThread(socket,remoteIP);
-                        receiveThread.start();
-
 
                     } catch (IOException e) {
                         e.printStackTrace();

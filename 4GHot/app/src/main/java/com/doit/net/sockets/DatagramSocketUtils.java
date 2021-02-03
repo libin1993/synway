@@ -96,7 +96,6 @@ public class DatagramSocketUtils {
     public void sendData(String data) {
         init();
         new SendThread(data).start();
-
     }
 
 

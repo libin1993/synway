@@ -48,7 +48,7 @@ import java.util.TimerTask;
  * @date 2016-4-26 下午3:37:39
  */
 public class CacheManager {
-    public static String DEVICE_IP = "192.168.4.100";
+    public static String DEVICE_IP = "192.168.4.100"; //设备IP
 
     public static List<UeidBean> realtimeUeidList = new ArrayList<>();
     public static final int MAX_REALTIME_LIST_SIZE = 300;
