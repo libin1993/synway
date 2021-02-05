@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
  */
 public class PrefManage {
     public static final String SHIELD_SWITCH_KEY = "SHIELD_SWITCH_KEY";
+    public static final String DEVICE_IP = "DEVICE_IP"; //设备IP
     private static SharedPreferences settings;
     private static SharedPreferences.Editor editor;
     public static void init(Context context){

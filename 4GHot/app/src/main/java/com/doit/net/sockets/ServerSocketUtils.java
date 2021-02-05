@@ -78,7 +78,7 @@ public class ServerSocketUtils {
                             new ReceiveThread(socket,remoteIP).start();
                         }
 
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                         LogUtils.log("tcp错误：" + e.getMessage());
 

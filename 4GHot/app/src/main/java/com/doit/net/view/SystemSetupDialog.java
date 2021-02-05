@@ -197,48 +197,76 @@ public class SystemSetupDialog extends Dialog {
             String tacPeriod = etTacUpdatePeriod.getText().toString();
 
 
-            if (!TextUtils.isEmpty(gpsOffset) && FormatUtils.getInstance().gpsRange(gpsOffset)){
-                ToastUtils.showMessage("GPS偏移格式有误");
-                return;
-            }
-
-            if (!TextUtils.isEmpty(tddPci) && FormatUtils.getInstance().pciRange(tddPci)){
-                ToastUtils.showMessage("PCI格式有误");
-                return;
-            }
-
-
-            String sync = spSyncWay.getSelectedItem().toString();
-            if (sync.equals(SYNC_AUTO)){
-                sync = "air,auto";
-            }else if (sync.equals(SYNC_AIR)){
-                if ("".equals(etSyncPCI.getText().toString())){
-                    new MySweetAlertDialog(getContext(), MySweetAlertDialog.ERROR_TYPE)
-                            .setTitleText("参数错误")
-                            .setContentText("未输入锁定的PCI")
-                            .show();
+            if (!TextUtils.isEmpty(gpsOffset)){
+                if (!FormatUtils.getInstance().gpsRange(gpsOffset)){
+                    ToastUtils.showMessage("GPS偏移格式有误");
                     return;
                 }
 
-                sync = "air";
-                sync += ",";
-                sync += spSyncChannel.getSelectedItem().toString();
-                sync += ",";
-                sync += etSyncPCI.getText().toString();
-                sync += ",";
-                sync += String.valueOf(Integer.parseInt(spSyncCarrier.getSelectedItem().toString())-1);
-            }else if(sync.equals(SYNC_GPS)){
-                sync = "gps";
-            }else if (sync.equals(NO_SYNC)){
-                sync = "no";
             }
 
-            ProtocolManager.setCellConfig(gpsOffset.equals(CacheManager.getCellConfig().getGpsOffset())?"":gpsOffset,
-                    tddPci.equals(CacheManager.getCellConfig().getPci())?"":tddPci,
-                    tacPeriod.equals(CacheManager.getCellConfig().getTacTimer())?"":tacPeriod,
-                    sync.equals(CacheManager.getCellConfig().getSync())?"":sync);
+            if (!TextUtils.isEmpty(tddPci)){
+                if (!FormatUtils.getInstance().pciRange(tddPci)){
+                    ToastUtils.showMessage("PCI格式有误");
+                    return;
+                }
+            }
 
-            dismiss();
+
+
+            new MySweetAlertDialog(getContext(), MySweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("小区配置")
+                    .setContentText("修改后设备将会重启，是否要修改？")
+                    .setCancelText(getContext().getString(R.string.cancel))
+                    .setConfirmText(getContext().getString(R.string.sure))
+                    .showCancelButton(true)
+                    .setConfirmClickListener(new MySweetAlertDialog.OnSweetClickListener() {
+
+                        @Override
+                        public void onClick(MySweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+
+
+                            String sync = spSyncWay.getSelectedItem().toString();
+                            if (sync.equals(SYNC_AUTO)){
+                                sync = "air,auto";
+                            }else if (sync.equals(SYNC_AIR)){
+                                if ("".equals(etSyncPCI.getText().toString())){
+                                    new MySweetAlertDialog(getContext(), MySweetAlertDialog.ERROR_TYPE)
+                                            .setTitleText("参数错误")
+                                            .setContentText("未输入锁定的PCI")
+                                            .show();
+                                    return;
+                                }
+
+                                sync = "air";
+                                sync += ",";
+                                sync += spSyncChannel.getSelectedItem().toString();
+                                sync += ",";
+                                sync += etSyncPCI.getText().toString();
+                                sync += ",";
+                                sync += String.valueOf(Integer.parseInt(spSyncCarrier.getSelectedItem().toString())-1);
+                            }else if(sync.equals(SYNC_GPS)){
+                                sync = "gps";
+                            }else if (sync.equals(NO_SYNC)){
+                                sync = "no";
+                            }
+
+                            ProtocolManager.setCellConfig(gpsOffset.equals(CacheManager.getCellConfig().getGpsOffset())?"":gpsOffset,
+                                    tddPci.equals(CacheManager.getCellConfig().getPci())?"":tddPci,
+                                    tacPeriod.equals(CacheManager.getCellConfig().getTacTimer())?"":tacPeriod,
+                                    sync.equals(CacheManager.getCellConfig().getSync())?"":sync);
+
+                            CacheManager.getCellConfig().setGpsOffset(gpsOffset);
+                            CacheManager.getCellConfig().setPci(tddPci);
+                            CacheManager.getCellConfig().setTacTimer(tacPeriod);
+                            CacheManager.getCellConfig().setSync(sync);
+
+                            dismiss();
+
+                        }
+                    })
+                    .show();
         } catch (NumberFormatException e) {
             new MySweetAlertDialog(getContext(), MySweetAlertDialog.ERROR_TYPE)
                     .setTitleText(getContext().getString(R.string.tip_16))

@@ -6,10 +6,14 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.doit.net.event.EventAdapter;
+import com.doit.net.model.BlackBoxManger;
+import com.doit.net.model.DBBlackInfo;
+import com.doit.net.model.UCSIDBManager;
 import com.doit.net.protocol.ProtocolManager;
 import com.doit.net.utils.FileUtils;
 import com.doit.net.base.BaseActivity;
@@ -19,8 +23,12 @@ import com.doit.net.model.CacheManager;
 import com.doit.net.utils.FTPManager;
 import com.doit.net.model.PrefManage;
 import com.doit.net.utils.LSettingItem;
+import com.doit.net.utils.LogUtils;
+import com.doit.net.utils.MySweetAlertDialog;
 import com.doit.net.utils.ToastUtils;
 import com.doit.net.ucsi.R;
+
+import org.xutils.ex.DbException;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -49,6 +57,8 @@ public class SystemSettingActivity extends BaseActivity implements EventAdapter.
 
     private BootstrapButton btResetFreqScanFcn;
     private BootstrapButton btRefresh;
+    private EditText etDeviceIP;
+    private BootstrapButton btEditDeviceIP;
 
     private long lastRefreshParamTime = 0; //防止频繁刷新参数
 
@@ -88,6 +98,39 @@ public class SystemSettingActivity extends BaseActivity implements EventAdapter.
         tvStaticIp.setOnLSettingCheckedChange(setStaticIpSwitch);
         tvStaticIp.setmOnLSettingItemClick(setStaticIpSwitch);
 
+        etDeviceIP = findViewById(R.id.et_device_ip);
+        btEditDeviceIP = findViewById(R.id.bt_edit_ip);
+
+        etDeviceIP.setText(CacheManager.DEVICE_IP);
+        btEditDeviceIP.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String ip = etDeviceIP.getText().toString().trim();
+                if (TextUtils.isEmpty(ip)) {
+                    ToastUtils.showMessage("请输入设备IP");
+                    return;
+                }
+
+                new MySweetAlertDialog(SystemSettingActivity.this, MySweetAlertDialog.WARNING_TYPE)
+                        .setTitleText("设备IP")
+                        .setContentText("请确认和设备IP保持一致，否则将导致无法连接！")
+                        .setCancelText(SystemSettingActivity.this.getString(R.string.cancel))
+                        .setConfirmText(SystemSettingActivity.this.getString(R.string.sure))
+                        .showCancelButton(true)
+                        .setConfirmClickListener(new MySweetAlertDialog.OnSweetClickListener() {
+
+                            @Override
+                            public void onClick(MySweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismiss();
+                                PrefManage.setString(PrefManage.DEVICE_IP, ip);
+                                CacheManager.DEVICE_IP = ip;
+
+                            }
+                        })
+                        .show();
+            }
+        });
+
 
         if (CacheManager.checkDevice(SystemSettingActivity.this)) {
             initView();
@@ -100,13 +143,13 @@ public class SystemSettingActivity extends BaseActivity implements EventAdapter.
     }
 
     private void initView() {
-        if (CacheManager.getLteEquipConfig() !=null){
+        if (CacheManager.getLteEquipConfig() != null) {
             etMaxWindSpeed.setText(CacheManager.getLteEquipConfig().getMaxFanSpeed());
             etMinWindSpeed.setText(CacheManager.getLteEquipConfig().getMinFanSpeed());
             etTempThreshold.setText(CacheManager.getLteEquipConfig().getTempThreshold());
         }
 
-        if (CacheManager.getChannels()!=null &CacheManager.getChannels().size() > 0){
+        if (CacheManager.getChannels() != null & CacheManager.getChannels().size() > 0) {
             tvIfAutoOpenRF.setChecked(CacheManager.getChannels().get(0).getAutoOpen().equals("1"));
         }
     }
@@ -242,7 +285,7 @@ public class SystemSettingActivity extends BaseActivity implements EventAdapter.
     };
 
     private void resetFreqScanFcn() {
-        if (!CacheManager.checkDevice(this)){
+        if (!CacheManager.checkDevice(this)) {
             return;
         }
         for (int i = 0; i < CacheManager.getChannels().size(); i++) {

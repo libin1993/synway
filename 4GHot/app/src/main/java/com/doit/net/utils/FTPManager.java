@@ -51,6 +51,7 @@ public class FTPManager {
             if (ftpClient.isConnected()) {//判断是否已登陆
                 ftpClient.disconnect();
             }
+
             ftpClient.setDataTimeout(5000);//设置连接超时时间
             ftpClient.setControlEncoding("UTF-8");
             ftpClient.connect(CacheManager.DEVICE_IP, PORT);

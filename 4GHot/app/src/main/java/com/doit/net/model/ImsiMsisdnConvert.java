@@ -12,6 +12,7 @@ import android.support.annotation.RequiresApi;
 
 import com.doit.net.application.MyApplication;
 import com.doit.net.event.EventAdapter;
+import com.doit.net.utils.NetWorkUtils;
 import com.doit.net.utils.ToastUtils;
 import com.doit.net.utils.LogUtils;
 
@@ -190,11 +191,17 @@ public class ImsiMsisdnConvert {
     }
 
     public static void test(){
-       ConnectivityManager connectivityManager = (ConnectivityManager) MyApplication.mContext.getSystemService(CONNECTIVITY_SERVICE);
+
+//        if (!NetWorkUtils.isMobileConnected()){
+//            LogUtils.log("移动网络不可用：");
+//            return;
+//        }
+
+        ConnectivityManager connectivityManager = (ConnectivityManager) MyApplication.mContext.getSystemService(CONNECTIVITY_SERVICE);
         NetworkRequest.Builder builder = new NetworkRequest.Builder();
+        builder.addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
         builder.addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR);
         NetworkRequest networkRequest = builder.build();
-        Object[] objs = new Object[1];  //用于匿名内部类值传出
         ConnectivityManager.NetworkCallback callback = new ConnectivityManager.NetworkCallback() {
             /**
              * Called when the framework connects and has declared a new network ready for use.
@@ -213,7 +220,6 @@ public class ImsiMsisdnConvert {
                     // 23后这个方法舍弃了
                     ConnectivityManager.setProcessDefaultNetwork(network);
                 }
-                connectivityManager.unregisterNetworkCallback(this);
 
                 //这个函数是异步的，所以暂时只能把操作都放在这了。
 
@@ -229,33 +235,52 @@ public class ImsiMsisdnConvert {
                         String body = response.body().string();
                         LogUtils.log("response.code()=="+response.code()+", response.body().string()=="+body);
                     }
+
+                    connectivityManager.unregisterNetworkCallback(this);
+                    disconnect();
+
                 } catch (IOException e) {
                     e.printStackTrace();
                     LogUtils.log("http异常："+e.getMessage());
                 }
-            }
 
+
+            }
         };
 
         connectivityManager.registerNetworkCallback(networkRequest, callback);
         connectivityManager.requestNetwork(networkRequest, callback);
-//        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-//                .build();
-//        Request request = new Request.Builder()
-//                .url("https://api.apiopen.top/getJoke")
-//                .get()
-//                .build();
-//        try {
-//            Response response = okHttpClient.newCall(request).execute();
-//            if (response.isSuccessful()){
-//                String body = response.body().string();
-//                LogUtils.log("response.code()=="+response.code()+", response.body().string()=="+body);
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            LogUtils.log("http异常："+e.getMessage());
-//        }
+    }
 
+    private static  void disconnect(){
+        ConnectivityManager connectivityManager = (ConnectivityManager) MyApplication.mContext.getSystemService(CONNECTIVITY_SERVICE);
+        NetworkRequest.Builder builder = new NetworkRequest.Builder();
+        builder.removeCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+        builder.addTransportType(NetworkCapabilities.TRANSPORT_WIFI);
+        NetworkRequest networkRequest = builder.build();
+        ConnectivityManager.NetworkCallback callback = new ConnectivityManager.NetworkCallback() {
+            /**
+             * Called when the framework connects and has declared a new network ready for use.
+             * This callback may be called more than once if the {@link Network} that is
+             * satisfying the request changes.
+             */
+            @TargetApi(Build.VERSION_CODES.M)
+            @Override
+            public void onAvailable(Network network) {
+                super.onAvailable(network);
+                LogUtils.log("关闭网路类型："+network.toString());
+                if (Build.VERSION.SDK_INT >= 23) {
+                    connectivityManager.bindProcessToNetwork(network);
+                } else {
+                    // 23后这个方法舍弃了
+                    ConnectivityManager.setProcessDefaultNetwork(network);
+                }
+                connectivityManager.unregisterNetworkCallback(this);
+
+            }
+        };
+        connectivityManager.registerNetworkCallback(networkRequest, callback);
+        connectivityManager.requestNetwork(networkRequest, callback);
     }
 
     /**************************** 请求IMSI转手机 *****************************/

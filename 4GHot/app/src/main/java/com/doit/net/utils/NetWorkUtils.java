@@ -50,9 +50,18 @@ public class NetWorkUtils {
         LogUtils.log("WIFI网络状态：" + wifiState);
 
         return ethernetState || wifiState;
-
     }
 
+    public static boolean isMobileConnected() {
+        ConnectivityManager mConnectivityManager = (ConnectivityManager) MyApplication.mContext
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mMobileNetworkInfo = mConnectivityManager
+                .getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        if (mMobileNetworkInfo != null) {
+            return mMobileNetworkInfo.isConnected();
+        }
+        return false;
+    }
 
 
     /* 设置ip地址类型 assign：STATIC/DHCP 静态/动态 */

@@ -58,6 +58,7 @@ public class LoginActivity extends BaseActivity {
         initView();
         checkLocalDir();
         initLog();
+//        ImsiMsisdnConvert.test();
     }
 
 //    private boolean checkAuthorize() {
@@ -152,6 +153,8 @@ public class LoginActivity extends BaseActivity {
         ivdPasswordClear = findViewById(R.id.ivdPasswordClear);
         ckRememberPass = findViewById(R.id.ckRememberPass);
         btLogin = findViewById(R.id.btLogin);
+
+        CacheManager.DEVICE_IP = PrefManage.getString(PrefManage.DEVICE_IP,CacheManager.DEFAULT_DEVICE_IP);
 
         checkLocMode();
 
