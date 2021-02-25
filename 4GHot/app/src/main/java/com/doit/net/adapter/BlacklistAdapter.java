@@ -89,7 +89,7 @@ public class BlacklistAdapter extends BaseSwipeAdapter {
                                 UCSIDBManager.getDbManager().delete(resp);
                                 ProtocolManager.setBlackList("3", "#"+resp.getImsi());
                                 EventAdapter.call(EventAdapter.REFRESH_BLACKLIST);
-                                EventAdapter.call(EventAdapter.ADD_BLACKBOX,BlackBoxManger.DELETE_NAMELIST +resp.getName()+"+"+resp.getImsi());
+                                EventAdapter.call(EventAdapter.ADD_BLACKBOX,BlackBoxManger.DELETE_NAMELIST +resp.getName()+"+"+resp.getImsi()+"+"+resp.getRemark());
                             } catch (DbException e) {
                                 LogUtils.log("删除名单失败"+e.getMessage());
 

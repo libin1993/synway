@@ -33,6 +33,7 @@ public class ServerSocketUtils {
             mServerSocket = new ServerSocket(PORT);
         } catch (IOException e) {
             e.printStackTrace();
+            LogUtils.log("tcp错误1：" + e.getMessage());
         }
     }
 
@@ -64,16 +65,16 @@ public class ServerSocketUtils {
                         socket.setSoTimeout(READ_TIME_OUT);      //设置超时
                         socket.setKeepAlive(true);
                         socket.setTcpNoDelay(true);
+
                         String remoteIP = socket.getInetAddress().getHostAddress();  //远程ip
                         int remotePort = socket.getPort();    //远程端口
 
+                        LogUtils.log("TCP收到设备连接,ip：" + remoteIP + "；端口：" + remotePort);
                         if (remoteIP.equals(CacheManager.DEVICE_IP)) {
                             map.put(remoteIP, socket);   //存储socket
                             if (onSocketChangedListener != null) {
                                 onSocketChangedListener.onChange();
                             }
-
-                            LogUtils.log("TCP收到设备连接,ip：" + remoteIP + "；端口：" + remotePort);
 
                             new ReceiveThread(socket,remoteIP).start();
                         }

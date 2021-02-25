@@ -138,7 +138,7 @@ public class WhitelistAdapter extends BaseSwipeAdapter {
 
                                 LogUtils.log("删除白名单："+resp.toString());
                                 EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.DELETE_WHITE_LIST
-                                        + resp.getImsi() + "+" + resp.getMsisdn());
+                                        + resp.getImsi() + "+" + resp.getMsisdn()+"+"+resp.getRemark());
                             } catch (DbException e) {
                                 new SweetAlertDialog(mContext, SweetAlertDialog.ERROR_TYPE)
                                         .setTitleText(mContext.getString(R.string.del_white_list_fail))

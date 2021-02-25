@@ -131,44 +131,215 @@ public class FormatUtils {
     /**
      * @return FCN校验
      */
-    public boolean fcnRange(String band,String input){
+    public boolean fcnRange(String band, String input) {
         String[] split = input.split(",");
         for (String s : split) {
+            if (TextUtils.isEmpty(s) || s.length() > 5) {
+                return false;
+            }
             int fcn = Integer.parseInt(s);
-            switch (band){
+            switch (band) {
                 case "1":
-                    if (fcn<0 || fcn > 599){
+                    if (fcn < 0 || fcn > 599) {
                         ToastUtils.showMessage("请输入0-599范围内数字");
                         return false;
                     }
                     break;
+                case "2":
+                    if (fcn < 600 || fcn > 1199) {
+                        ToastUtils.showMessage("请输入600-1199范围内数字");
+                        return false;
+                    }
+                    break;
                 case "3":
-                    if (fcn<1200 || fcn > 1949){
+                    if (fcn < 1200 || fcn > 1949) {
                         ToastUtils.showMessage("请输入1200-1949范围内数字");
                         return false;
                     }
                     break;
+                case "4":
+                    if (fcn < 1950 || fcn > 2399) {
+                        ToastUtils.showMessage("请输入1950-2399范围内数字");
+                        return false;
+                    }
+                    break;
+                case "5":
+                    if (fcn < 2400 || fcn > 2649) {
+                        ToastUtils.showMessage("请输入2400-2649范围内数字");
+                        return false;
+                    }
+                    break;
+                case "6":
+                    if (fcn < 2650 || fcn > 2749) {
+                        ToastUtils.showMessage("请输入2650-2749范围内数字");
+                        return false;
+                    }
+                    break;
+                case "7":
+                    if (fcn < 2750 || fcn > 3449) {
+                        ToastUtils.showMessage("请输入2750-3449范围内数字");
+                        return false;
+                    }
+                    break;
+                case "8":
+                    if (fcn < 3450 || fcn > 3799) {
+                        ToastUtils.showMessage("请输入3450-3799范围内数字");
+                        return false;
+                    }
+                    break;
+                case "9":
+                    if (fcn < 3800 || fcn > 4149) {
+                        ToastUtils.showMessage("请输入3800-4149范围内数字");
+                        return false;
+                    }
+                    break;
+                case "10":
+                    if (fcn < 4150 || fcn > 4749) {
+                        ToastUtils.showMessage("请输入4150-4749范围内数字");
+                        return false;
+                    }
+                    break;
+                case "11":
+                    if (fcn < 4750 || fcn > 4949) {
+                        ToastUtils.showMessage("请输入4750-4949范围内数字");
+                        return false;
+                    }
+                    break;
+                case "12":
+                    if (fcn < 5010 || fcn > 5179) {
+                        ToastUtils.showMessage("请输入5010-5179范围内数字");
+                        return false;
+                    }
+                    break;
+                case "13":
+                    if (fcn < 5180 || fcn > 5279) {
+                        ToastUtils.showMessage("请输入5180-5279范围内数字");
+                        return false;
+                    }
+                    break;
+                case "14":
+                    if (fcn < 5280 || fcn > 5379) {
+                        ToastUtils.showMessage("请输入5280-5379范围内数字");
+                        return false;
+                    }
+                    break;
+                case "17":
+                    if (fcn < 5730 || fcn > 5849) {
+                        ToastUtils.showMessage("请输入5730-5849范围内数字");
+                        return false;
+                    }
+                    break;
+                case "18":
+                    if (fcn < 5850 || fcn > 5999) {
+                        ToastUtils.showMessage("请输入5850-5999范围内数字");
+                        return false;
+                    }
+                    break;
+                case "19":
+                    if (fcn < 6000 || fcn > 6149) {
+                        ToastUtils.showMessage("请输入6000-6149范围内数字");
+                        return false;
+                    }
+                    break;
+                case "20":
+                    if (fcn < 6150 || fcn > 6449) {
+                        ToastUtils.showMessage("请输入6150-6449范围内数字");
+                        return false;
+                    }
+                    break;
+                case "21":
+                    if (fcn < 6450 || fcn > 6599) {
+                        ToastUtils.showMessage("请输入6450-6599范围内数字");
+                        return false;
+                    }
+                    break;
+                case "22":
+                    if (fcn < 6600 || fcn > 7399) {
+                        ToastUtils.showMessage("请输入6600-7399范围内数字");
+                        return false;
+                    }
+                    break;
+                case "23":
+                    if (fcn < 7500 || fcn > 7699) {
+                        ToastUtils.showMessage("请输入7500-7699范围内数字");
+                        return false;
+                    }
+                    break;
+                case "24":
+                    if (fcn < 7700 || fcn > 8039) {
+                        ToastUtils.showMessage("请输入7700-8039范围内数字");
+                        return false;
+                    }
+                    break;
+                case "25":
+                    if (fcn < 8040 || fcn > 8689) {
+                        ToastUtils.showMessage("请输入8040-8689范围内数字");
+                        return false;
+                    }
+                    break;
+                case "33":
+                    if (fcn < 36000 || fcn > 36199) {
+                        ToastUtils.showMessage("请输入36000-36199范围内数字");
+                        return false;
+                    }
+                    break;
+                case "34":
+                    if (fcn < 36200 || fcn > 36349) {
+                        ToastUtils.showMessage("请输入36200-36349范围内数字");
+                        return false;
+                    }
+                    break;
+                case "35":
+                    if (fcn < 36350 || fcn > 36949) {
+                        ToastUtils.showMessage("请输入36350-36949范围内数字");
+                        return false;
+                    }
+                    break;
+                case "36":
+                    if (fcn < 36950 || fcn > 37549) {
+                        ToastUtils.showMessage("请输入36950-37549范围内数字");
+                        return false;
+                    }
+                    break;
+                case "37":
+                    if (fcn < 37550 || fcn > 37749) {
+                        ToastUtils.showMessage("请输入37550-37749范围内数字");
+                        return false;
+                    }
+                    break;
                 case "38":
-                    if (fcn<37750 || fcn > 38250){
-                        ToastUtils.showMessage("请输入37750-38250范围内数字");
+                    if (fcn < 37750 || fcn > 38249) {
+                        ToastUtils.showMessage("请输入37750-38249范围内数字");
                         return false;
                     }
                     break;
                 case "39":
-                    if (fcn<38250 || fcn > 38650){
-                        ToastUtils.showMessage("请输入38250-38650范围内数字");
+                    if (fcn < 38250 || fcn > 38649) {
+                        ToastUtils.showMessage("请输入38250-38649范围内数字");
                         return false;
                     }
                     break;
                 case "40":
-                    if (fcn<38650 || fcn > 39650){
-                        ToastUtils.showMessage("请输入38650-39650范围内数字");
+                    if (fcn < 38650 || fcn > 39649) {
+                        ToastUtils.showMessage("请输入38650-39649范围内数字");
                         return false;
                     }
                     break;
                 case "41":
-                    if (fcn<39650 || fcn > 41589){
+                    if (fcn < 39650 || fcn > 41589) {
                         ToastUtils.showMessage("请输入39650-41589范围内数字");
+                        return false;
+                    }
+                    break;
+                case "42":
+                    if (fcn < 41590 || fcn > 43589) {
+                        ToastUtils.showMessage("请输入41590-43589范围内数字");
+                        return false;
+                    }
+                    break;
+                case "43":
+                    if (fcn < 43590 || fcn > 45589) {
+                        ToastUtils.showMessage("请输入43590-45589范围内数字");
                         return false;
                     }
                     break;

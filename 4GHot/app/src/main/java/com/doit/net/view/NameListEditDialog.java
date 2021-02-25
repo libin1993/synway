@@ -57,7 +57,7 @@ public class NameListEditDialog extends Dialog {
                 }
 
 
-                EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.ADD_NAMELIST+name+"+"+imsi);
+                EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.ADD_NAMELIST+name+"+"+imsi+"+"+remake);
                 AddToLocalBlackListener listener = new AddToLocalBlackListener(getContext(),name,imsi,remake);
                 listener.onClick(v);
                 dismiss();

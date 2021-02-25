@@ -48,6 +48,7 @@ public class FTPManager {
         boolean bool = false;
 
         try {
+            LogUtils.log("ftp状态："+ftpClient.isConnected());
             if (ftpClient.isConnected()) {//判断是否已登陆
                 ftpClient.disconnect();
             }

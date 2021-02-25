@@ -133,6 +133,8 @@ public class AppFragment extends BaseFragment implements EventAdapter.EventCall 
     private final int EXPORT_ERROR = -1;
     private final int UPGRADE_STATUS_RPT = 1;
 
+    private static final int REQUEST_CODE = 333;
+
     public AppFragment() {
     }
 

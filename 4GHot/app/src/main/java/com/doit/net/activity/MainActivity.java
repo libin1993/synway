@@ -34,6 +34,7 @@ import android.widget.TextView;
 
 import com.doit.net.model.ImsiMsisdnConvert;
 import com.doit.net.protocol.GSMSendManager;
+import com.doit.net.protocol.LTEReceiveManager;
 import com.doit.net.sockets.OnSocketChangedListener;
 import com.doit.net.sockets.ServerSocketUtils;
 import com.doit.net.sockets.DatagramSocketUtils;
@@ -84,8 +85,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -184,7 +192,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     private void setData() {
         if (NetWorkUtils.getNetworkState()) {
             LogUtils.log("wifi连接成功");
-            if (CacheManager.deviceState.getDeviceState().equals(DeviceState.WIFI_DISCONNECT)){
+            if (CacheManager.deviceState.getDeviceState().equals(DeviceState.WIFI_DISCONNECT)) {
                 //只有从wifi未连接到连接才出现这种状态
                 CacheManager.deviceState.setDeviceState(DeviceState.WAIT_SOCKET);
             }
@@ -196,7 +204,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
     private void initBlackBox() {
 
-        if (VersionManage.isArmyVer()){
+        if (VersionManage.isArmyVer()) {
             return;
         }
         BlackBoxManger.setCurrentAccount(AccountManage.getCurrentLoginAccount());
@@ -216,6 +224,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                 CacheManager.resetState();
             }
         });
+
     }
 
     private void initFTP() {
@@ -621,7 +630,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
     }
 
 
-
     /**
      * 创建DatagramSocket
      */
@@ -662,7 +670,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             jsonObject.put("ok", true);
 
             String data = jsonObject.toString();
-            LogUtils.log("发送ip:"+data);
+            LogUtils.log("发送ip:" + data);
             DatagramSocketUtils.getInstance().sendData(data);
 
         } catch (JSONException e) {
@@ -773,7 +781,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             ivBatteryLevel.setVisibility(View.VISIBLE);
         }
 
-        if (TextUtils.isEmpty(level)){
+        if (TextUtils.isEmpty(level)) {
             return;
         }
 
@@ -891,21 +899,21 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                     public void run() {
                         ProtocolManager.setBlackList("1", "");  //防止上报其他手机设置的黑名单，就查上来删掉
                     }
-                },1000);
+                }, 1000);
 
                 new Timer().schedule(new TimerTask() {
                     @Override
                     public void run() {
                         ProtocolManager.setFTPConfig(); //设置ftp配置
                     }
-                },2000);
+                }, 2000);
 
                 new Timer().schedule(new TimerTask() {
                     @Override
                     public void run() {
                         ProtocolManager.setNowTime();
                     }
-                },3000);
+                }, 3000);
 
 
                 if (CacheManager.checkLicense) {
@@ -918,8 +926,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
             if (!CacheManager.hasPressStartButton()) {
                 mHandler.sendEmptyMessage(HEARTBEAT_RPT);
             }
-
-//            ImsiMsisdnConvert.test();
 
         } else if (EventAdapter.INIT_SUCCESS.equals(key)) {
             if (!CacheManager.hasSetDefaultParam && CacheManager.getChannels().size() > 0) {
@@ -939,7 +945,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                     public void run() {
                         ProtocolManager.setDefaultArfcnsAndPwr();
                     }
-                },1000);
+                }, 1000);
 
                 CacheManager.deviceState.setDeviceState(DeviceState.NORMAL);
 

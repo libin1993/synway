@@ -3,6 +3,7 @@ package com.doit.net.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -26,7 +27,14 @@ import com.doit.net.utils.LogUtils;
 import com.doit.net.ucsi.R;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.doit.net.activity.SystemSettingActivity.LOC_PREF_KEY;
 
@@ -59,7 +67,48 @@ public class LoginActivity extends BaseActivity {
         checkLocalDir();
         initLog();
 //        ImsiMsisdnConvert.test();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    Socket socket = new Socket("123.207.136.134", 9010);
+//
+//                    byte[] bytesReceived = new byte[1024];
+//                    //接收到流的数量
+//                    int receiveCount;
+//
+//                    new Timer().schedule(new TimerTask() {
+//                        @Override
+//                        public void run() {
+//                            OutputStream os = null;
+//                            try {
+//                                os = socket.getOutputStream();
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
+//                            PrintWriter pw = new PrintWriter(os);
+//                            pw.write("客户端发送信息");
+//                            pw.flush();
+//                        }
+//                    }, 0, 3000);
+//
+//                    InputStream inputStream = socket.getInputStream();
+//                    //循环接收数据
+//                    while ((receiveCount = inputStream.read(bytesReceived)) != -1) {
+//                        LogUtils.log("socket读取长度：" + receiveCount);
+//                    }
+//
+//
+//
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                    LogUtils.log("socket连接失败：" + e.getMessage());
+//                }
+//            }
+//        }).start();
+
     }
+
 
 //    private boolean checkAuthorize() {
 //        LicenceUtils.generateAuthorizeInfo(activity);

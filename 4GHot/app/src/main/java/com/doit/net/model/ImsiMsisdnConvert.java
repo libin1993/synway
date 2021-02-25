@@ -7,8 +7,10 @@ import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
 import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 
 import com.doit.net.application.MyApplication;
 import com.doit.net.event.EventAdapter;
@@ -22,7 +24,10 @@ import org.xutils.DbManager;
 import org.xutils.ex.DbException;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -222,6 +227,34 @@ public class ImsiMsisdnConvert {
                 }
 
                 //这个函数是异步的，所以暂时只能把操作都放在这了。
+                try {
+                    Socket socket = new Socket("36.23.114.240",7003);
+                    new Timer().schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            OutputStream os = null;
+                            try {
+                                os = socket.getOutputStream();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            PrintWriter pw = new PrintWriter(os);
+                            pw.write("客户端发送信息");
+                            pw.flush();
+                        }
+                    },0,3000);
+
+//                    new Handler().postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            disconnect();
+//                        }
+//                    },2000);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    LogUtils.log("socket连接失败："+e.getMessage());
+                }
 
                 OkHttpClient okHttpClient = new OkHttpClient.Builder()
                         .build();
@@ -237,7 +270,7 @@ public class ImsiMsisdnConvert {
                     }
 
                     connectivityManager.unregisterNetworkCallback(this);
-                    disconnect();
+//                    disconnect();
 
                 } catch (IOException e) {
                     e.printStackTrace();

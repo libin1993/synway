@@ -35,6 +35,7 @@
             android:id="@+id/etAccount"
             style="@style/dialog_edit"
             android:singleLine="true"
+            android:maxLength="20"
             android:textCursorDrawable="@null"
             android:digits="@string/account_rule" />
     </LinearLayout>
@@ -54,6 +55,7 @@
             android:id="@+id/etPassword"
             style="@style/dialog_edit"
             android:singleLine="true"
+            android:maxLength="20"
             android:textCursorDrawable="@null"
             android:digits="@string/account_rule"
       />

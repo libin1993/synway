@@ -4,14 +4,19 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -78,6 +83,7 @@ import java.io.FileReader;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.URI;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -112,6 +118,8 @@ public class WhitelistManagerActivity extends BaseActivity implements EventAdapt
     private final static  int EXPORT_SUCCESS =  4;  //导出成功
 
     private MySweetAlertDialog mProgressDialog;
+
+    private static final int REQUEST_CODE = 111;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -225,120 +233,178 @@ public class WhitelistManagerActivity extends BaseActivity implements EventAdapt
     View.OnClickListener importWhitelistClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            File file = new File(FileUtils.ROOT_PATH);
-            if (!file.exists()) {
-                ToastUtils.showMessageLong("未找到白名单，请确认已将白名单放在\"手机存储/"+FileUtils.ROOT_DIRECTORY+"\"目录下");
-                return;
-            }
-
-            File[] files = file.listFiles();
-            if (files == null || files.length == 0) {
-                ToastUtils.showMessageLong("未找到白名单，请确认已将白名单放在\"手机存储/"+FileUtils.ROOT_DIRECTORY+"\"目录下");
-                return;
-            }
-
-            List<FileBean> fileList = new ArrayList<>();
-
-            for (int i = 0; i < files.length; i++) {
-                String tmpFileName = files[i].getName();
-                if (tmpFileName.endsWith(".xls") || tmpFileName.endsWith(".xlsx") || tmpFileName.endsWith(".txt")) {
-                    FileBean fileBean = new FileBean();
-                    fileBean.setFileName(tmpFileName);
-                    fileBean.setCheck(false);
-                    fileList.add(fileBean);
-                }
-            }
-
-            if (fileList.size() == 0) {
-                ToastUtils.showMessageLong("未找到白名单，白名单必须是以\".xls\"或\".xlsx\"或\".txt\"为后缀的文件");
-                return;
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("text/plain|application/vnd.ms-excel|application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            //在API>=19之后设置多个类型采用以下方式，setType不再支持多个类型
+            intent.putExtra(Intent.EXTRA_MIME_TYPES,
+                    new String[]{"text/plain","application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            try {
+                startActivityForResult(Intent.createChooser(intent, "选择文件"), REQUEST_CODE);
+            } catch (android.content.ActivityNotFoundException ex) {
+                ToastUtils.showMessage("请安装文件管理器!");
             }
 
 
-            fileList.get(0).setCheck(true);  //默认选中第一个
 
-            View dialogView = LayoutInflater.from(WhitelistManagerActivity.this).inflate(R.layout.layout_import_whitelist, null);
-            PopupWindow mPopupWindow = new PopupWindow(dialogView, FormatUtils.getInstance().dip2px(300),
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
-
-            //设置Popup具体控件
-            RecyclerView rvFile = dialogView.findViewById(R.id.rv_file);
-            Button btnCancel = dialogView.findViewById(R.id.btn_cancel_import);
-            Button btnConfirm = dialogView.findViewById(R.id.btn_confirm_import);
-            TextView tvTitle = dialogView.findViewById(R.id.tv_import_whitelist);
-            tvTitle.setText("请选择白名单文件");
-
-
-            //设置Popup具体参数
-            mPopupWindow.setBackgroundDrawable(new BitmapDrawable(getResources(), (Bitmap) null));
-            mPopupWindow.setFocusable(true);//点击空白，popup不自动消失
-            mPopupWindow.setTouchable(true);//popup区域可触摸
-            mPopupWindow.setOutsideTouchable(true);//非popup区域可触摸
-            mPopupWindow.showAtLocation(getWindow().getDecorView(), Gravity.CENTER, 0, 0);
-
-
-            rvFile.setLayoutManager(new LinearLayoutManager(WhitelistManagerActivity.this));
-            BaseQuickAdapter<FileBean, BaseViewHolder> adapter = new BaseQuickAdapter<FileBean, BaseViewHolder>(R.layout.layout_file_item, fileList) {
-                @Override
-                protected void convert(BaseViewHolder helper, FileBean item) {
-                    helper.setText(R.id.tv_file_name, item.getFileName());
-                    helper.setVisible(R.id.iv_select_whitelist, item.isCheck());
-                }
-            };
-
-            rvFile.setAdapter(adapter);
-
-
-            adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                    for (int i = 0; i < fileList.size(); i++) {
-                        fileList.get(i).setCheck(i == position);
-                    }
-                    adapter.notifyDataSetChanged();
-                }
-            });
-
-            btnCancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mPopupWindow.dismiss();
-                }
-            });
-
-            btnConfirm.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mPopupWindow.dismiss();
-
-                    importWhitelist(fileList);
-
-                }
-            });
+//
+//            File file = new File(FileUtils.ROOT_PATH);
+//            if (!file.exists()) {
+//                ToastUtils.showMessageLong("未找到白名单，请确认已将白名单放在\"手机存储/"+FileUtils.ROOT_DIRECTORY+"\"目录下");
+//                return;
+//            }
+//
+//            File[] files = file.listFiles();
+//            if (files == null || files.length == 0) {
+//                ToastUtils.showMessageLong("未找到白名单，请确认已将白名单放在\"手机存储/"+FileUtils.ROOT_DIRECTORY+"\"目录下");
+//                return;
+//            }
+//
+//            List<FileBean> fileList = new ArrayList<>();
+//
+//            for (int i = 0; i < files.length; i++) {
+//                String tmpFileName = files[i].getName();
+//                if (tmpFileName.endsWith(".xls") || tmpFileName.endsWith(".xlsx") || tmpFileName.endsWith(".txt")) {
+//                    FileBean fileBean = new FileBean();
+//                    fileBean.setFileName(tmpFileName);
+//                    fileBean.setCheck(false);
+//                    fileList.add(fileBean);
+//                }
+//            }
+//
+//            if (fileList.size() == 0) {
+//                ToastUtils.showMessageLong("未找到白名单，白名单必须是以\".xls\"或\".xlsx\"或\".txt\"为后缀的文件");
+//                return;
+//            }
+//
+//
+//            fileList.get(0).setCheck(true);  //默认选中第一个
+//
+//            View dialogView = LayoutInflater.from(WhitelistManagerActivity.this).inflate(R.layout.layout_import_whitelist, null);
+//            PopupWindow mPopupWindow = new PopupWindow(dialogView, FormatUtils.getInstance().dip2px(300),
+//                    ViewGroup.LayoutParams.WRAP_CONTENT);
+//
+//            //设置Popup具体控件
+//            RecyclerView rvFile = dialogView.findViewById(R.id.rv_file);
+//            Button btnCancel = dialogView.findViewById(R.id.btn_cancel_import);
+//            Button btnConfirm = dialogView.findViewById(R.id.btn_confirm_import);
+//            TextView tvTitle = dialogView.findViewById(R.id.tv_import_whitelist);
+//            tvTitle.setText("请选择白名单文件");
+//
+//
+//            //设置Popup具体参数
+//            mPopupWindow.setBackgroundDrawable(new BitmapDrawable(getResources(), (Bitmap) null));
+//            mPopupWindow.setFocusable(true);//点击空白，popup不自动消失
+//            mPopupWindow.setTouchable(true);//popup区域可触摸
+//            mPopupWindow.setOutsideTouchable(true);//非popup区域可触摸
+//            mPopupWindow.showAtLocation(getWindow().getDecorView(), Gravity.CENTER, 0, 0);
+//
+//
+//            rvFile.setLayoutManager(new LinearLayoutManager(WhitelistManagerActivity.this));
+//            BaseQuickAdapter<FileBean, BaseViewHolder> adapter = new BaseQuickAdapter<FileBean, BaseViewHolder>(R.layout.layout_file_item, fileList) {
+//                @Override
+//                protected void convert(BaseViewHolder helper, FileBean item) {
+//                    helper.setText(R.id.tv_file_name, item.getFileName());
+//                    helper.setVisible(R.id.iv_select_whitelist, item.isCheck());
+//                }
+//            };
+//
+//            rvFile.setAdapter(adapter);
+//
+//
+//            adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+//                @Override
+//                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+//                    for (int i = 0; i < fileList.size(); i++) {
+//                        fileList.get(i).setCheck(i == position);
+//                    }
+//                    adapter.notifyDataSetChanged();
+//                }
+//            });
+//
+//            btnCancel.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    mPopupWindow.dismiss();
+//                }
+//            });
+//
+//            btnConfirm.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    mPopupWindow.dismiss();
+//
+//                    importWhitelist(fileList);
+//
+//                }
+//            });
 
         }
     };
 
-    /**
-     * @param fileList
-     * 导入白名单
-     */
-    private void importWhitelist(List<FileBean> fileList) {
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // TODO Auto-generated method stub
+        if (resultCode != Activity.RESULT_OK) {
+            ToastUtils.showMessage("文件选择失败" + resultCode);
+            super.onActivityResult(requestCode, resultCode, data);
+            return;
+        }
+        if (requestCode == REQUEST_CODE) {
+            Uri uri = data.getData();
+            try{
+                File file = new File(uri.getPath());
+                if (file !=null && file.exists()){
+                    importWhitelist(uri.getPath());
+                }else {
+                    String filePath="";
+                    if ("file".equalsIgnoreCase(uri.getScheme())) {//使用第三方应用打开
+                        filePath = uri.getPath();
+                    }else {
+                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {//4.4以后
+                            filePath = FileUtils.getInstance().getPath(uri);
+                        } else {//4.4以下下系统调用方法
+                            filePath = FileUtils.getInstance().getRealPathFromURI(uri);
+                        }
+                    }
+                    importWhitelist(filePath);
+                }
+
+            }catch (Exception e){
+                e.printStackTrace();
+                ToastUtils.showMessage("文件格式有误");
+            }
+
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void importWhitelist(String filePath) {
         if (mProgressDialog !=null && !mProgressDialog.isShowing()){
             mProgressDialog.show();
         }
+        LogUtils.log("文件选择返回：" + filePath);
         new Thread() {
             @Override
             public void run() {
+//                File file = null;
+//                for (FileBean fileBean : fileList) {
+//                    if (fileBean.isCheck()) {
+//                        file = new File(FileUtils.ROOT_PATH + fileBean.getFileName());
+//                        break;
+//                    }
+//                }
+//                if (file == null) {
+//                    return;
+//                }
 
-                File file = null;
-                for (FileBean fileBean : fileList) {
-                    if (fileBean.isCheck()) {
-                        file = new File(FileUtils.ROOT_PATH + fileBean.getFileName());
-                        break;
-                    }
-                }
-                if (file == null) {
+
+                File file = new File(filePath);
+
+                if (file == null || !file.exists()) {
+                    ToastUtils.showMessage("文件格式有误");
                     return;
                 }
                 int validImportNum = 0;
@@ -460,6 +526,7 @@ public class WhitelistManagerActivity extends BaseActivity implements EventAdapt
             }
         }.start();
     }
+
 
     /**
      * @param row

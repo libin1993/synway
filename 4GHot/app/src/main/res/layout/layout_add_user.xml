@@ -29,7 +29,7 @@
             android:singleLine="true"
             android:textCursorDrawable="@null"
             android:digits="@string/account_rule"
-            android:maxLines = "1"  />
+            android:maxLength="20" />
     </LinearLayout>
 
     <LinearLayout
@@ -49,8 +49,7 @@
             style="@style/dialog_edit"
             android:digits="@string/account_rule"
             android:textCursorDrawable="@null"
-            android:textSize="15sp"
-            android:maxLines = "1"  />
+            android:maxLength="20"/>
     </LinearLayout>
 
     <LinearLayout
@@ -67,7 +66,8 @@
             android:id="@+id/etRemark"
             style="@style/dialog_edit"
             android:textCursorDrawable="@null"
-            android:maxLines = "1"  />
+            android:singleLine="true"
+            android:maxLength="20"/>
     </LinearLayout>
 
 

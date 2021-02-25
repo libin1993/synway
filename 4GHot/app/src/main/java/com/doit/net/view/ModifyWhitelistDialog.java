@@ -152,7 +152,7 @@ public class ModifyWhitelistDialog extends Dialog {
                 }
 
                 EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.MODIFY_WHITE_LIST+modifyIMSI+"为:"+ imsi
-                        + "+" + msisdn);
+                        + "+" + msisdn+"+"+remark);
 
                 dismiss();
             }

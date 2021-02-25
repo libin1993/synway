@@ -103,7 +103,7 @@ public class AddWhitelistDialog extends Dialog {
 
                 new AddToWhitelistListner(getContext(), imsi, msisdn, remark).onClick(null);
 
-                EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.ADD_WHITE_LIST+imsi+"+"+msisdn);
+                EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.ADD_WHITE_LIST+imsi+"+"+msisdn+"+"+remark);
                 EventAdapter.call(EventAdapter.REFRESH_WHITELIST);
                 dismiss();
 
