@@ -56,10 +56,10 @@ public class ProtocolManager {
             namelist += "@REDIRECT_CONFIG:" + redirectConfig;
         }
 
-        namelist += "@NAMELIST_REJECT:460021683706233,460110363153426";
         if (!"".equals(nameListReject)) {
-            namelist += nameListReject;
+            namelist += "@NAMELIST_REJECT:"+nameListReject;
         }
+
 
         namelist += "@NAMELIST_REDIRECT:";
         if (!"".equals(nameListRedirect)) {
