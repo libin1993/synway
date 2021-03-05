@@ -288,16 +288,9 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                     String alt_fcn = etAltFcn.getText().toString().trim();
 
                     //不为空校验正则，为空不上传
-                    if (!TextUtils.isEmpty(fcn)) {
-                        if (!FormatUtils.getInstance().matchFCN(fcn)) {
-                            ToastUtils.showMessage("FCN格式输入有误,请检查");
-                            return;
-                        } else {
-                            if (!FormatUtils.getInstance().fcnRange(CacheManager.channels.get(position).getBand(), fcn)) {
-                                ToastUtils.showMessage("FCN格式输入范围有误,请检查");
-                                return;
-                            }
-                        }
+                    if (!TextUtils.isEmpty(fcn) && !FormatUtils.getInstance().
+                            fcnRange(CacheManager.channels.get(position).getBand(), fcn)) {
+                        return;
                     }
 
                     if (!TextUtils.isEmpty(plmn)){
