@@ -197,6 +197,7 @@ public class BlackBoxManger {
 
 
         Thread uploadCurrentThread = new Thread() {
+
             public void run() {
                 try {
                     FTPManager.getInstance().connect();
