@@ -2,7 +2,6 @@ package com.doit.net.utils;
 
 import android.content.Context;
 //
-import com.doit.net.model.CacheManager;
 import com.doit.net.protocol.LTE_PT_PARAM;
 
 import org.apache.ftpserver.FtpServer;
@@ -198,7 +197,8 @@ public class FTPServerUtils extends DefaultFtplet {
     @Override
     public FtpletResult onRenameEnd(FtpSession session, FtpRequest request) throws FtpException, IOException {
         LogUtils.log("一个文件名更改:" + request.getArgument());
-        if (!CacheManager.currentWorkMode.equals("2")) {  //管控模式忽略ftp的上报
+        LogUtils.log(VersionManage.isArmyVer()+"");
+        if (!VersionManage.isArmyVer()) {  //管控模式忽略ftp的上报
             String uploadFileName = request.getArgument().replaceAll("./", "");
             LTE_PT_PARAM.processUeidRpt(FileUtils.ROOT_PATH + uploadFileName);
         }

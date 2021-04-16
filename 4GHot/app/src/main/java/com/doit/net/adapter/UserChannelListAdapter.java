@@ -7,8 +7,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.doit.net.bean.LteChannelCfg;
-import com.doit.net.model.CacheManager;
 import com.doit.net.ucsi.R;
 
 import java.util.List;

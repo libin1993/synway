@@ -1,7 +1,7 @@
 package com.doit.net.sockets;
 
 import com.doit.net.protocol.LTEReceiveManager;
-import com.doit.net.model.CacheManager;
+import com.doit.net.utils.CacheManager;
 import com.doit.net.utils.LogUtils;
 
 import java.io.IOException;

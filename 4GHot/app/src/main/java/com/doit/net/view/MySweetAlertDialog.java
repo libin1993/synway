@@ -1,4 +1,4 @@
-package com.doit.net.utils;
+package com.doit.net.view;
 
 
 import android.app.Dialog;

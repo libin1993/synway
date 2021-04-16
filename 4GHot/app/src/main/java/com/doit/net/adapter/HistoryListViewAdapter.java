@@ -12,11 +12,11 @@ import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
 import com.doit.net.event.AddToLocalBlackListener;
 import com.doit.net.event.AddToLocationListener;
-import com.doit.net.model.CacheManager;
-import com.doit.net.model.DBUeidInfo;
-import com.doit.net.model.UCSIDBManager;
-import com.doit.net.model.VersionManage;
-import com.doit.net.model.WhiteListInfo;
+import com.doit.net.utils.CacheManager;
+import com.doit.net.bean.DBUeidInfo;
+import com.doit.net.utils.UCSIDBManager;
+import com.doit.net.utils.VersionManage;
+import com.doit.net.bean.WhiteListInfo;
 import com.doit.net.view.AddWhitelistDialog;
 import com.doit.net.view.ModifyWhitelistDialog;
 import com.doit.net.ucsi.R;
@@ -89,9 +89,7 @@ public class HistoryListViewAdapter extends BaseSwipeAdapter {
         text_data.setText("IMSI:"+resp.getImsi()+"\n"+mContext.getString(R.string.lab_rpt_time)+ DateUtils.convert2String(resp.getCreateDate(), DateUtils.LOCAL_DATE));
         text_data.setTag(position);
 
-        if (VersionManage.isPoliceVer()){
-            convertView.findViewById(R.id.add_to_black).setOnClickListener(new AddToLocalBlackListener(mContext,resp.getImsi()));
-        }else if(VersionManage.isArmyVer()){
+        if(VersionManage.isArmyVer()){
             convertView.findViewById(R.id.add_to_black).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -131,6 +129,8 @@ public class HistoryListViewAdapter extends BaseSwipeAdapter {
                     }
                 }
             });
+        }else {
+            convertView.findViewById(R.id.add_to_black).setOnClickListener(new AddToLocalBlackListener(mContext,resp.getImsi()));
         }
 
         //if(BuildConfig.LOC_MODEL){

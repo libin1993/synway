@@ -3,15 +3,15 @@ package com.doit.net.protocol;
 import android.text.TextUtils;
 
 import com.doit.net.event.EventAdapter;
-import com.doit.net.model.DBChannel;
-import com.doit.net.model.UCSIDBManager;
+import com.doit.net.bean.DBChannel;
+import com.doit.net.utils.UCSIDBManager;
 import com.doit.net.utils.NetWorkUtils;
 import com.doit.net.utils.UtilOperator;
 import com.doit.net.application.MyApplication;
 import com.doit.net.bean.FtpConfig;
 import com.doit.net.bean.LteChannelCfg;
-import com.doit.net.model.BlackBoxManger;
-import com.doit.net.model.CacheManager;
+import com.doit.net.utils.BlackBoxManger;
+import com.doit.net.utils.CacheManager;
 import com.doit.net.utils.LogUtils;
 
 import org.xutils.DbManager;
@@ -26,7 +26,7 @@ import java.util.TimerTask;
  * Created by wiker on 2017-06-25.
  */
 
-public class ProtocolManager {
+public class LTESendManager {
     private static final String band1Fcns = "100,375,400";
     private static final String band3Fcns = "1825,1650,1506";
     private static final String band5Fcns = "2452,2500,2600";
@@ -52,14 +52,14 @@ public class ProtocolManager {
 
         String namelist = "MODE:" + mode;
 
-        if (!TextUtils.isEmpty(redirectConfig)) {
+        if (!"".equals(redirectConfig)) {
             namelist += "@REDIRECT_CONFIG:" + redirectConfig;
         }
 
+        namelist += "@NAMELIST_REJECT:";
         if (!"".equals(nameListReject)) {
-            namelist += "@NAMELIST_REJECT:"+nameListReject;
+            namelist += nameListReject;
         }
-
 
         namelist += "@NAMELIST_REDIRECT:";
         if (!"".equals(nameListRedirect)) {
@@ -92,6 +92,13 @@ public class ProtocolManager {
         LTE_PT_PARAM.queryCommonParam(LTE_PT_PARAM.PARAM_GET_ENB_CONFIG);
     }
 
+    /**
+     * 获取白名单
+     */
+    public static void getActiveMode() {
+        LogUtils.log("查询工作模式");
+        LTE_PT_PARAM.queryCommonParam(LTE_PT_PARAM.PARAM_GET_ACTIVE_MODE);
+    }
     /**
      * 获取白名单
      */
@@ -407,6 +414,10 @@ public class ProtocolManager {
     }
 
 
+    /**
+     * @param mode
+     * 0表示侦码模式，1表示定位模式，2表示管控模式
+     */
     public static void setActiveMode(String mode) {
         if (!CacheManager.isDeviceOk()) {
             return;

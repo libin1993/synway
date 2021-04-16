@@ -1,7 +1,5 @@
 package com.doit.net.activity;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
@@ -17,14 +15,13 @@ import com.doit.net.utils.FTPManager;
 import com.doit.net.utils.FileUtils;
 import com.doit.net.utils.LogUtils;
 import com.doit.net.base.BaseActivity;
-import com.doit.net.model.BlackBoxManger;
+import com.doit.net.utils.BlackBoxManger;
 import com.doit.net.event.EventAdapter;
-import com.doit.net.model.BlackBoxBean;
-import com.doit.net.model.CacheManager;
-import com.doit.net.model.UCSIDBManager;
+import com.doit.net.bean.BlackBoxBean;
+import com.doit.net.utils.CacheManager;
+import com.doit.net.utils.UCSIDBManager;
 import com.doit.net.utils.DateUtils;
-import com.doit.net.utils.MySweetAlertDialog;
-import com.doit.net.utils.NetWorkUtils;
+import com.doit.net.view.MySweetAlertDialog;
 import com.doit.net.utils.ToastUtils;
 import com.doit.net.adapter.BlackBoxListAdapter;
 import com.doit.net.view.MyTimePickDialog;

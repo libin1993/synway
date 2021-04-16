@@ -1,9 +1,7 @@
 package com.doit.net.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -13,28 +11,20 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.doit.net.model.ImsiMsisdnConvert;
 import com.doit.net.utils.FileUtils;
 import com.doit.net.base.BaseActivity;
-import com.doit.net.model.AccountManage;
-import com.doit.net.model.BlackBoxManger;
-import com.doit.net.model.CacheManager;
+import com.doit.net.utils.AccountManage;
+import com.doit.net.utils.BlackBoxManger;
+import com.doit.net.utils.CacheManager;
 import com.doit.net.utils.FTPManager;
-import com.doit.net.model.PrefManage;
-import com.doit.net.utils.MySweetAlertDialog;
+import com.doit.net.utils.SPUtils;
+import com.doit.net.view.MySweetAlertDialog;
 import com.doit.net.utils.ToastUtils;
 import com.doit.net.utils.LogUtils;
 import com.doit.net.ucsi.R;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.net.Socket;
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import static com.doit.net.activity.SystemSettingActivity.LOC_PREF_KEY;
 
@@ -158,10 +148,10 @@ public class LoginActivity extends BaseActivity {
     }
 
     private boolean checkTimeDatum() {
-        long timeDatum = PrefManage.getLong(TIME_DATUM, Long.valueOf("0"));
+        long timeDatum = SPUtils.getLong(TIME_DATUM, Long.valueOf("0"));
         long nowTime = new Date().getTime();
         if (timeDatum == 0) {
-            PrefManage.setLong(TIME_DATUM, nowTime);
+            SPUtils.setLong(TIME_DATUM, nowTime);
             return true;
         }
 
@@ -180,7 +170,7 @@ public class LoginActivity extends BaseActivity {
 
             return false;
         } else {
-            PrefManage.setLong(TIME_DATUM, nowTime);
+            SPUtils.setLong(TIME_DATUM, nowTime);
             return true;
         }
     }
@@ -189,10 +179,10 @@ public class LoginActivity extends BaseActivity {
      * 是否开启搜寻功能
      */
     private void checkLocMode() {
-        boolean ifOpenLocMode = PrefManage.getBoolean(LOC_PREF_KEY, true);
+        boolean ifOpenLocMode = SPUtils.getBoolean(LOC_PREF_KEY, true);
 
         CacheManager.setLocMode(ifOpenLocMode);
-        PrefManage.setBoolean(LOC_PREF_KEY, ifOpenLocMode);
+        SPUtils.setBoolean(LOC_PREF_KEY, ifOpenLocMode);
     }
 
     private void initView() {
@@ -203,14 +193,14 @@ public class LoginActivity extends BaseActivity {
         ckRememberPass = findViewById(R.id.ckRememberPass);
         btLogin = findViewById(R.id.btLogin);
 
-        CacheManager.DEVICE_IP = PrefManage.getString(PrefManage.DEVICE_IP,CacheManager.DEFAULT_DEVICE_IP);
+        CacheManager.DEVICE_IP = SPUtils.getString(SPUtils.DEVICE_IP,CacheManager.DEFAULT_DEVICE_IP);
 
         checkLocMode();
 
-        isRemember = PrefManage.getBoolean("remember_password", false);
+        isRemember = SPUtils.getBoolean("remember_password", false);
         if (isRemember) {
-            String userName = PrefManage.getString("username", "");
-            String Password = PrefManage.getString("password", "");
+            String userName = SPUtils.getString("username", "");
+            String Password = SPUtils.getString("password", "");
             etUserName.setText(userName);
             etPassword.setText(Password);
             ckRememberPass.setChecked(true);
@@ -278,13 +268,13 @@ public class LoginActivity extends BaseActivity {
 
         if (AccountManage.checkAccount(userName, password)) {
             if (ckRememberPass.isChecked()) { // 检查复选框是否被选中
-                PrefManage.setBoolean("remember_password", true);
-                PrefManage.setString("username", userName);
-                PrefManage.setString("password", password);
+                SPUtils.setBoolean("remember_password", true);
+                SPUtils.setString("username", userName);
+                SPUtils.setString("password", password);
             } else {
-                PrefManage.setBoolean("remember_password", false);
-                PrefManage.setString("username", "");
-                PrefManage.setString("password", "");
+                SPUtils.setBoolean("remember_password", false);
+                SPUtils.setString("username", "");
+                SPUtils.setString("password", "");
             }
 
             AccountManage.setCurrentLoginAccount(userName);

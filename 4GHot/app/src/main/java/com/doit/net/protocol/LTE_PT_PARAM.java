@@ -3,19 +3,19 @@ package com.doit.net.protocol;
 
 import android.text.TextUtils;
 
-import com.doit.net.model.DBBlackInfo;
-import com.doit.net.model.UCSIDBManager;
+import com.doit.net.bean.DBBlackInfo;
+import com.doit.net.utils.UCSIDBManager;
+import com.doit.net.utils.VersionManage;
 import com.doit.net.sockets.ServerSocketUtils;
 import com.doit.net.bean.BatteryBean;
 import com.doit.net.bean.LteCellConfig;
-import com.doit.net.bean.Namelist;
 import com.doit.net.bean.UeidBean;
 import com.doit.net.bean.BlackNameBean;
 import com.doit.net.bean.LteChannelCfg;
 import com.doit.net.bean.LteEquipConfig;
 import com.doit.net.event.EventAdapter;
-import com.doit.net.model.CacheManager;
-import com.doit.net.model.ScanFreqManager;
+import com.doit.net.utils.CacheManager;
+import com.doit.net.utils.ScanFreqManager;
 import com.doit.net.utils.ToastUtils;
 import com.doit.net.utils.LogUtils;
 import com.doit.net.utils.UtilDataFormatChange;
@@ -162,45 +162,9 @@ public class LTE_PT_PARAM {
         // @NAMELIST_RELEASE:460001234512345
         // @NAMELIST_REST_ACTION:block
         String namelistAck = UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(), 0);
-        LogUtils.log("获取白名单回复:" + namelistAck);
-        String[] splitStr = namelistAck.split("@");
+        LogUtils.log("获取名单回复:" + namelistAck);
 
-        Namelist namelist = new Namelist();
-
-
-        for (String s : splitStr) {
-            String[] split = s.split(":");
-            String value = split.length > 1 ? split[1] : "";
-            switch (split[0]) {
-                case "MODE":
-                    namelist.setMode(value);
-                    break;
-                case "REDIRECT_CONFIG":
-                    namelist.setRedirectConfig(value);
-                    break;
-                case "NAMELIST_REJECT":
-                    namelist.setNamelistReject(value);
-                    break;
-                case "NAMELIST_REDIRECT":
-                    namelist.setNamelistRedirect(value);
-                    break;
-                case "NAMELIST_BLOCK":
-                    namelist.setNamelistBlock(value);
-                    break;
-                case "NAMELIST_REST_ACTION":
-                    namelist.setNamelistRestAciton(value);
-                    break;
-                case "NAMELIST_RELEASE":
-                    namelist.setNamelistRelease(value);
-                    break;
-                case "NAMELIST_FILE":
-                    namelist.setNamelistFile(value);
-                    break;
-            }
-        }
-
-        CacheManager.setNamelist(namelist);
-        EventAdapter.call(EventAdapter.GET_NAME_LIST);
+        EventAdapter.call(EventAdapter.GET_NAME_LIST, namelistAck);
     }
 
 
@@ -306,11 +270,11 @@ public class LTE_PT_PARAM {
 
     //处理Ftp上传的UEID文件
     public static void processUeidRpt(String filePath) {
-        if (filePath.contains("19700101")) {
-            LogUtils.log("上报采集文件时间无效文件——忽略");
-            deleteFile(filePath);
-            return;
-        }
+//        if (filePath.contains("19700101")) {
+//            LogUtils.log("上报采集文件时间无效文件——忽略");
+//            deleteFile(filePath);
+//            return;
+//        }
 
 
         File file = new File(filePath);
@@ -332,7 +296,6 @@ public class LTE_PT_PARAM {
                     if (splitUeid.length < 1 || splitUeid[0].length() < 15) {
                         continue;
                     }
-
                     UeidBean ueidBean = new UeidBean();
                     ueidBean.setImsi(splitUeid[0]);
                     ueidBean.setSrsp("0");
@@ -520,7 +483,7 @@ public class LTE_PT_PARAM {
                                 }
                             }
                             if (sb.length() > 0) {
-                                ProtocolManager.setBlackList("3", sb.toString());
+                                LTESendManager.setBlackList("3", sb.toString());
                             }
 
                         } catch (DbException e) {
@@ -552,7 +515,7 @@ public class LTE_PT_PARAM {
                     new Timer().schedule(new TimerTask() {
                         @Override
                         public void run() {
-                            ProtocolManager.getEquipAndAllChannelConfig();
+                            LTESendManager.getEquipAndAllChannelConfig();
                         }
                     },5000);
                     //ToastUtils.showMessageLong(GameApplication.appContext,"下发切换Band命令成功，请等待设备重启。");
@@ -753,16 +716,14 @@ public class LTE_PT_PARAM {
         /* 1.定位过程中app异常重启的后，会有持续定位上报，其中包括了大量的设置的黑名单imsi,此代码块为解决此问题而加
            2.管控模式的号码强度也是从这里上报，要加以区分 */
         String locRpt = UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(), 0);
-        LogUtils.log("上报:" + locRpt);
-        if (CacheManager.currentWorkMode.equals("0") && !CacheManager.getLocState()) {
-
+        if (TextUtils.isEmpty(locRpt)){
+            return;
+        }
+        LogUtils.log("定位上报:" + locRpt);
+        if (!VersionManage.isArmyVer() && !CacheManager.getLocState()) {
             LogUtils.log("忽略此次srsp上报:" + locRpt);
             return;
         }
-
-
-        if ("".equals(locRpt))
-            return;
 
         String[] splitStr = locRpt.split("#");
         List<UeidBean> ueidList = new ArrayList<>();
@@ -801,10 +762,10 @@ public class LTE_PT_PARAM {
         }
 
         if (ueidList.size() > 0) {
-            if (CacheManager.currentWorkMode.equals("0")) {
-                EventAdapter.call(EventAdapter.UEID_RPT, ueidList);
-            } else {
+            if (VersionManage.isArmyVer()) {
                 EventAdapter.call(EventAdapter.SHIELD_RPT, ueidList);
+            } else {
+                EventAdapter.call(EventAdapter.UEID_RPT, ueidList);
             }
         }
 

@@ -18,9 +18,9 @@ import com.doit.net.adapter.RealtimeNamelistRptAdapter;
 import com.doit.net.base.BaseFragment;
 import com.doit.net.bean.BlackNameBean;
 import com.doit.net.event.EventAdapter;
-import com.doit.net.model.CacheManager;
-import com.doit.net.model.DBBlackInfo;
-import com.doit.net.model.UCSIDBManager;
+import com.doit.net.utils.CacheManager;
+import com.doit.net.bean.DBBlackInfo;
+import com.doit.net.utils.UCSIDBManager;
 import com.doit.net.ucsi.R;
 
 import org.xutils.ex.DbException;

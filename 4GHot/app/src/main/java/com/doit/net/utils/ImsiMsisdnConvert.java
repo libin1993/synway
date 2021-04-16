@@ -1,4 +1,4 @@
-package com.doit.net.model;
+package com.doit.net.utils;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -7,16 +7,13 @@ import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
 import android.os.Build;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
-import android.util.Log;
 
 import com.doit.net.application.MyApplication;
 import com.doit.net.event.EventAdapter;
-import com.doit.net.utils.NetWorkUtils;
-import com.doit.net.utils.ToastUtils;
-import com.doit.net.utils.LogUtils;
+import com.doit.net.bean.DBUeidInfo;
+import com.doit.net.bean.WhiteListInfo;
 
 import org.json.JSONException;
 import org.json.JSONObject;

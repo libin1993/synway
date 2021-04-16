@@ -17,11 +17,11 @@ import com.doit.net.application.MyApplication;
 import com.doit.net.bean.UeidBean;
 import com.doit.net.event.AddToLocalBlackListener;
 import com.doit.net.event.AddToLocationListener;
-import com.doit.net.model.CacheManager;
-import com.doit.net.model.DBBlackInfo;
-import com.doit.net.model.UCSIDBManager;
-import com.doit.net.model.VersionManage;
-import com.doit.net.model.WhiteListInfo;
+import com.doit.net.utils.CacheManager;
+import com.doit.net.bean.DBBlackInfo;
+import com.doit.net.utils.UCSIDBManager;
+import com.doit.net.utils.VersionManage;
+import com.doit.net.bean.WhiteListInfo;
 import com.doit.net.utils.LogUtils;
 import com.doit.net.utils.UtilOperator;
 import com.doit.net.ucsi.R;
@@ -70,9 +70,7 @@ public class UeidListViewAdapter extends BaseSwipeAdapter {
 
         SwipeLayout swipeLayout = convertView.findViewById(R.id.swipe);
 
-        if (VersionManage.isPoliceVer()) {
-            convertView.findViewById(R.id.add_to_black).setOnClickListener(new AddToLocalBlackListener(mContext, resp.getImsi()));
-        } else if (VersionManage.isArmyVer()) {
+       if (VersionManage.isArmyVer()) {
             convertView.findViewById(R.id.add_to_black).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -112,6 +110,8 @@ public class UeidListViewAdapter extends BaseSwipeAdapter {
                     }
                 }
             });
+        } else {
+            convertView.findViewById(R.id.add_to_black).setOnClickListener(new AddToLocalBlackListener(mContext, resp.getImsi()));
         }
 
         if (CacheManager.getLocMode()) {
@@ -129,41 +129,8 @@ public class UeidListViewAdapter extends BaseSwipeAdapter {
 
         String content = "IMSI：" + resp.getImsi() + "          " + "制式: " + UtilOperator.getOperatorNameCH(resp.getImsi()) + "\n";
 
-        //优先先检查是否为黑名单
-        if (VersionManage.isPoliceVer()) {
-            DBBlackInfo dbBlackInfo = null;
-            try {
-                dbBlackInfo = dbManager.selector(DBBlackInfo.class).where("imsi", "=", resp.getImsi()).findFirst();
-            } catch (DbException e) {
-                LogUtils.log("查询黑名单异常" + e.getMessage());
-            }
-
-            content += mContext.getString(R.string.ueid_last_rpt_time) + resp.getRptTime();
-            if (dbBlackInfo != null) {
-                String name = dbBlackInfo.getName();
-                String remark = dbBlackInfo.getRemark();
-
-                if (!TextUtils.isEmpty(name)) {
-                    content += "\n" + mContext.getString(R.string.lab_name) + name + "         ";
-                }
-
-                if (!TextUtils.isEmpty(remark)) {
-                    if (!TextUtils.isEmpty(name)) {
-                        content += remark;
-                    } else {
-                        content += "\n" + remark;
-                    }
-                }
-
-                tvContent.setTextColor(MyApplication.mContext.getResources().getColor(R.color.red));
-            } else {
-                tvContent.setTextColor(MyApplication.mContext.getResources().getColor(R.color.white));
-            }
-            tvContent.setText(content);
-        }
-
         //如果是管控模式，其次检查白名单
-        if (CacheManager.currentWorkMode.equals("2")) {
+        if (VersionManage.isArmyVer()) {
 
             try {
                 if (!"".equals(resp.getImsi())) {
@@ -197,6 +164,36 @@ public class UeidListViewAdapter extends BaseSwipeAdapter {
             } catch (DbException e) {
                 LogUtils.log("查询白名单异常" + e.getMessage());
             }
+        }else {
+            DBBlackInfo dbBlackInfo = null;
+            try {
+                dbBlackInfo = dbManager.selector(DBBlackInfo.class).where("imsi", "=", resp.getImsi()).findFirst();
+            } catch (DbException e) {
+                LogUtils.log("查询黑名单异常" + e.getMessage());
+            }
+
+            content += mContext.getString(R.string.ueid_last_rpt_time) + resp.getRptTime();
+            if (dbBlackInfo != null) {
+                String name = dbBlackInfo.getName();
+                String remark = dbBlackInfo.getRemark();
+
+                if (!TextUtils.isEmpty(name)) {
+                    content += "\n" + mContext.getString(R.string.lab_name) + name + "         ";
+                }
+
+                if (!TextUtils.isEmpty(remark)) {
+                    if (!TextUtils.isEmpty(name)) {
+                        content += remark;
+                    } else {
+                        content += "\n" + remark;
+                    }
+                }
+
+                tvContent.setTextColor(MyApplication.mContext.getResources().getColor(R.color.red));
+            } else {
+                tvContent.setTextColor(MyApplication.mContext.getResources().getColor(R.color.white));
+            }
+            tvContent.setText(content);
         }
 
 

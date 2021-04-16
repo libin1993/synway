@@ -50,7 +50,7 @@
             android:layout_marginLeft="100dp"
             android:background="@color/dimgrey" />
 
-        <com.doit.net.utils.LSettingItem
+        <com.doit.net.view.LSettingItem
             android:id="@+id/rl_user_manage"
             android:layout_width="match_parent"
             android:layout_height="42dp"
@@ -69,7 +69,7 @@
             android:visibility="gone"/>
 
 
-        <com.doit.net.utils.LSettingItem
+        <com.doit.net.view.LSettingItem
             android:id="@+id/rl_black_box"
             android:layout_width="match_parent"
             android:layout_height="42dp"
@@ -78,7 +78,7 @@
             app:leftText="@string/user_black_box"
             android:visibility="gone"/>
 
-        <com.doit.net.utils.LSettingItem
+        <com.doit.net.view.LSettingItem
             android:id="@+id/rl_white_list"
             android:layout_width="match_parent"
             android:layout_height="42dp"
@@ -103,7 +103,7 @@
             android:background="@color/dimgrey" />
 
 
-        <com.doit.net.utils.LSettingItem
+        <com.doit.net.view.LSettingItem
             android:id="@+id/rl_history_data"
             android:layout_width="match_parent"
             android:layout_height="42dp"
@@ -118,7 +118,7 @@
             android:background="@color/dimgrey"
             android:visibility="gone"/>
 
-        <com.doit.net.utils.LSettingItem
+        <com.doit.net.view.LSettingItem
             android:id="@+id/rl_clear_data"
             android:layout_width="match_parent"
             android:layout_height="42dp"
@@ -142,7 +142,7 @@
             android:background="@color/dimgrey" />
 
 
-        <com.doit.net.utils.LSettingItem
+        <com.doit.net.view.LSettingItem
             android:id="@+id/rl_wifi_setting"
             android:layout_width="match_parent"
             android:layout_height="42dp"
@@ -155,7 +155,7 @@
             android:layout_marginLeft="48dp"
             android:background="@color/dimgrey" />
 
-        <com.doit.net.utils.LSettingItem
+        <com.doit.net.view.LSettingItem
             android:id="@+id/rl_device_param"
             android:layout_width="match_parent"
             android:layout_height="42dp"
@@ -168,7 +168,7 @@
             android:layout_marginLeft="48dp"
             android:background="@color/dimgrey" />
 
-        <com.doit.net.utils.LSettingItem
+        <com.doit.net.view.LSettingItem
             android:id="@+id/rl_custom_fcn"
             android:layout_width="match_parent"
             android:layout_height="42dp"
@@ -191,7 +191,7 @@
             android:layout_height="0.6dp"
             android:background="@color/dimgrey" />
 
-        <com.doit.net.utils.LSettingItem
+        <com.doit.net.view.LSettingItem
             android:id="@+id/rl_device_upgrade"
             android:layout_width="match_parent"
             android:layout_height="42dp"
@@ -204,7 +204,7 @@
             android:layout_height="0.6dp"
             android:background="@color/dimgrey" />
 
-        <com.doit.net.utils.LSettingItem
+        <com.doit.net.view.LSettingItem
             android:id="@+id/rl_authorize_code"
             android:layout_width="match_parent"
             android:layout_height="42dp"
@@ -217,7 +217,7 @@
             android:layout_height="0.6dp"
             android:background="@color/dimgrey" />
 
-        <com.doit.net.utils.LSettingItem
+        <com.doit.net.view.LSettingItem
             android:id="@+id/rl_local_imsi"
             android:layout_width="match_parent"
             android:layout_height="42dp"
@@ -231,7 +231,7 @@
             android:layout_height="0.6dp"
             android:background="@color/dimgrey" />
 
-        <com.doit.net.utils.LSettingItem
+        <com.doit.net.view.LSettingItem
             android:id="@+id/rl_version"
             android:layout_width="match_parent"
             android:layout_height="42dp"
@@ -248,7 +248,7 @@
             android:background="@color/dimgrey" />
 
 
-        <com.doit.net.utils.LSettingItem
+        <com.doit.net.view.LSettingItem
             android:id="@+id/rl_system_setting"
             android:layout_width="match_parent"
             android:layout_height="42dp"
@@ -264,7 +264,7 @@
             android:background="@color/dimgrey"
             android:visibility="gone"/>
 
-        <com.doit.net.utils.LSettingItem
+        <com.doit.net.view.LSettingItem
             android:id="@+id/rlTest"
             android:layout_width="match_parent"
             android:layout_height="42dp"

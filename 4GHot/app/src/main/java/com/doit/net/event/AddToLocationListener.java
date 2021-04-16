@@ -5,9 +5,10 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
 
-import com.doit.net.model.BlackBoxManger;
-import com.doit.net.model.CacheManager;
-import com.doit.net.protocol.ProtocolManager;
+import com.doit.net.utils.BlackBoxManger;
+import com.doit.net.utils.CacheManager;
+import com.doit.net.utils.VersionManage;
+import com.doit.net.protocol.LTESendManager;
 import com.doit.net.utils.LogUtils;
 import com.doit.net.utils.ToastUtils;
 import com.doit.net.activity.MainActivity;
@@ -44,20 +45,23 @@ public class AddToLocationListener implements View.OnClickListener {
                 }else{
                     EventAdapter.call(EventAdapter.SHOW_PROGRESS,8000);  //防止快速频繁更换定位目标
 
-                    ProtocolManager.exchangeFcn(imsi);
+                    LTESendManager.exchangeFcn(imsi);
 
                     CacheManager.updateLoc(imsi);
-                    CacheManager.changeLocTarget(imsi);
+
+                    if (!VersionManage.isArmyVer()){
+                        LTESendManager.setLocImsi(imsi);
+                    }
                     ToastUtils.showMessage( "开始新的搜寻");
                 }
             }else{
-                EventAdapter.call(EventAdapter.SHOW_PROGRESS,5000);  //防止快速频繁更换定位目标
-                ProtocolManager.exchangeFcn(imsi);
+                EventAdapter.call(EventAdapter.SHOW_PROGRESS,8000);  //防止快速频繁更换定位目标
+                LTESendManager.exchangeFcn(imsi);
 
                 CacheManager.updateLoc(imsi);
                 CacheManager.startLoc(imsi);
 
-                ProtocolManager.openAllRf();
+                LTESendManager.openAllRf();
 
                 ToastUtils.showMessage("搜寻开始");
             }

@@ -3,7 +3,7 @@
  * All rights reserved.
  * ShangHai Dshine - http://www.dshine.com.cn
  */
-package com.doit.net.model;
+package com.doit.net.utils;
 
 import android.content.Context;
 import android.os.Build;
@@ -18,13 +18,13 @@ import com.doit.net.bean.LocationRptBean;
 import com.doit.net.bean.LteCellConfig;
 import com.doit.net.bean.LteChannelCfg;
 import com.doit.net.bean.LteEquipConfig;
-import com.doit.net.bean.Namelist;
 import com.doit.net.bean.ScanFreqRstBean;
 import com.doit.net.bean.UeidBean;
-import com.doit.net.event.EventAdapter;
-import com.doit.net.protocol.ProtocolManager;
-import com.doit.net.utils.MySweetAlertDialog;
+import com.doit.net.bean.DBBlackInfo;
+import com.doit.net.bean.DBChannel;
+import com.doit.net.protocol.LTESendManager;
 import com.doit.net.udp.g4.bean.G4MsgChannelCfg;
+import com.doit.net.view.MySweetAlertDialog;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.xutils.DbManager;
@@ -55,21 +55,16 @@ public class CacheManager {
 
 
     public static List<LocationBean> locations = new ArrayList<>();
-    public static LocationBean currentLoction = null;
+    public static LocationBean currentLocation = null;
     public static List<LocationRptBean> locationRpts = new ArrayList<>();
 
-    public static Namelist namelist = new Namelist();
-
-    public static long last_heart_time;
-
-    public static String currentWorkMode = "2";   //0公安侦码  2军队管控
     public static boolean isReportBattery = false;  //是否上报电量
 
     public static DeviceState deviceState = new DeviceState();
 
     public static List<ScanFreqRstBean> listLastScanFreqRst = new ArrayList<>();
 
-    public static boolean loc_mode = false;  //是否开启搜寻功能
+    public static boolean loc_mode = true;  //是否开启搜寻功能
 
     public  static boolean hasSetDefaultParam = false;   //开始全部打开射频标志
 
@@ -113,11 +108,11 @@ public class CacheManager {
     }
 
     public static void updateLoc(String imsi) {
-        if (currentLoction == null) {
-            currentLoction = new LocationBean();
+        if (currentLocation == null) {
+            currentLocation = new LocationBean();
         }
-        PrefManage.setImsi(imsi);
-        currentLoction.setImsi(imsi);
+        SPUtils.setImsi(imsi);
+        currentLocation.setImsi(imsi);
     }
 
     public static void setCurrentBlackList() {
@@ -137,7 +132,7 @@ public class CacheManager {
             content.append("#").append(dbBlackInfo.getImsi());
         }
 
-        ProtocolManager.setBlackList("2", content.toString());
+//        ProtocolManager.setBlackList("2", content.toString());
     }
 
 
@@ -145,35 +140,18 @@ public class CacheManager {
      * @param imsi 开始定位
      */
     public static void startLoc(String imsi) {
-        if (VersionManage.isPoliceVer()){
-            ProtocolManager.setActiveMode("1");
-        }
-
-
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (VersionManage.isArmyVer()) {
-                    setLocalWhiteList("on");
-                } else {
-                    setLocalWhiteList("off");
+        if (!VersionManage.isArmyVer()){
+            LTESendManager.setActiveMode("1");
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    LTESendManager.setLocImsi(imsi);
                 }
-            }
-        },1000);
+            },1000);
 
-
-        if (VersionManage.isPoliceVer()){
-            ProtocolManager.setLocImsi(imsi);
         }
-
 
         CacheManager.getCurrentLocation().setLocateStart(true);
-    }
-
-    public static void changeLocTarget(String imsi) {
-        if (VersionManage.isPoliceVer()){
-            ProtocolManager.setLocImsi(imsi);
-        }
     }
 
     /**
@@ -181,7 +159,7 @@ public class CacheManager {
      */
     public static void setLocalWhiteList(String mode) {
 
-        ProtocolManager.setNameList(mode, "", "",
+        LTESendManager.setNameList(mode, "", "",
                 "", "", "block", "");
 
     }
@@ -193,9 +171,7 @@ public class CacheManager {
             return "";
 
         int[] subId = null;//SubscriptionManager.getSubId(simid);
-        Class<?> threadClazz = null;
-        threadClazz = SubscriptionManager.class;
-
+        Class<?>  threadClazz = SubscriptionManager.class;
         try {
             Method method = threadClazz.getDeclaredMethod("getSubId", int.class);
             method.setAccessible(true);
@@ -212,11 +188,7 @@ public class CacheManager {
                 Method method = threadClazz.getDeclaredMethod("getDefaultSubId");
                 method.setAccessible(true);
                 sub = (subId != null) ? subId[0] : (Integer) method.invoke(null, (Object[]) null);
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
@@ -227,11 +199,7 @@ public class CacheManager {
                 Method method = clazz.getDeclaredMethod("getSubscriberId", int.class);
                 method.setAccessible(true);
                 IMSI = (String) method.invoke(telephonyManager, sub);
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
@@ -257,11 +225,11 @@ public class CacheManager {
             content += dbBlackInfo.getImsi();
         }
 
-        ProtocolManager.setBlackList("3", content);
+        LTESendManager.setBlackList("3", content);
     }
 
     public static void stopCurrentLoc() {
-        ProtocolManager.setLocImsi("0000");
+        LTESendManager.setLocImsi("0000");
 
         try {
             DbManager dbManager = UCSIDBManager.getDbManager();
@@ -279,7 +247,7 @@ public class CacheManager {
                 }
 
                 if (!TextUtils.isEmpty(idx)){
-                    ProtocolManager.setChannelConfig(idx, dbChannel.getFcn(),
+                    LTESendManager.setChannelConfig(idx, dbChannel.getFcn(),
                             "46001,46011", "", "", "", "", "");
 
                     for (LteChannelCfg channel : CacheManager.channels) {
@@ -296,47 +264,28 @@ public class CacheManager {
             e.printStackTrace();
         }
 
-
-        if (CacheManager.getCurrentLocation() != null)
+        if (CacheManager.getCurrentLocation() != null){
             CacheManager.getCurrentLocation().setLocateStart(false);
-    }
-
-    /**
-     * 重置模式
-     */
-    public static void resetMode(){
-        ProtocolManager.setActiveMode(CacheManager.currentWorkMode);
-
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (VersionManage.isArmyVer()) {
-                    setLocalWhiteList("on");
-                } else {
-                    setLocalWhiteList("off");
-                }
-
-            }
-        },1000);
+        }
 
     }
 
     public static boolean getLocState() {
-        if (currentLoction == null)
+        if (currentLocation == null)
             return false;
 
-        return currentLoction.isLocateStart();
+        return currentLocation.isLocateStart();
     }
 
     public static LocationBean getCurrentLocation() {
-        return currentLoction;
+        return currentLocation;
     }
 
     public static LocationRptBean getCurrentLocRptBean() {
         if (locationRpts == null) {
             return null;
         }
-        if (locationRpts.size() - 1 < 0) {
+        if (locationRpts.size() < 1) {
             return null;
         }
         return locationRpts.get(locationRpts.size() - 1);
@@ -412,10 +361,6 @@ public class CacheManager {
         CacheManager.equipConfig = equipConfig;
     }
 
-    public static void setNamelist(Namelist list) {
-        namelist = list;
-    }
-
     public synchronized static void addChannel(LteChannelCfg cfg) {
         for (int i = 0; i < channels.size(); i++) {
             LteChannelCfg channel = channels.get(i);
@@ -462,17 +407,6 @@ public class CacheManager {
         return null;
     }
 
-    private static Map<String, List<G4MsgChannelCfg>> userChannels = new HashMap<>();
-
-    public static void addUserChannel(G4MsgChannelCfg cfg) {
-        if (userChannels.containsKey(cfg.getIdx())) {
-            userChannels.get(cfg.getIdx()).add(cfg);
-        } else {
-            List<G4MsgChannelCfg> list = new ArrayList<>();
-            list.add(cfg);
-            userChannels.put(cfg.getIdx(), list);
-        }
-    }
 
     public static void updateWhitelistToDev(Context context) {
         /*
@@ -517,14 +451,16 @@ public class CacheManager {
         if (on_off) {
             for (LteChannelCfg channel : channels) {
                 if (Integer.parseInt(channel.getGa()) <= 10) {
-                    ProtocolManager.setChannelConfig(channel.getIdx(), "", "", "", String.valueOf(Integer.parseInt(channel.getGa()) * 5), "", "", "");
+                    LTESendManager.setChannelConfig(channel.getIdx(), "", "", "",
+                            String.valueOf(Integer.parseInt(channel.getGa()) * 5), "", "", "");
                     channel.setGa(String.valueOf(Integer.parseInt(channel.getGa()) * 5));
                 }
             }
         } else {
             for (LteChannelCfg channel : channels) {
                 if (Integer.parseInt(channel.getGa()) > 10) {
-                    ProtocolManager.setChannelConfig(channel.getIdx(), "", "", "", String.valueOf(Integer.parseInt(channel.getGa()) / 5), "", "", "");
+                    LTESendManager.setChannelConfig(channel.getIdx(), "", "", "",
+                            String.valueOf(Integer.parseInt(channel.getGa()) / 5), "", "", "");
                     channel.setGa(String.valueOf(Integer.parseInt(channel.getGa()) / 5));
                 }
             }
@@ -545,15 +481,15 @@ public class CacheManager {
 
     public static void changeBand( String idx,  String changeBand) {
 
-        ProtocolManager.changeBand(idx, changeBand);
+        LTESendManager.changeBand(idx, changeBand);
 
         //下发切换之后，等待生效，设置默认频点
-        String fcn = ProtocolManager.getCheckedFcn(changeBand);
+        String fcn = LTESendManager.getCheckedFcn(changeBand);
         if (!TextUtils.isEmpty(fcn)){
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    ProtocolManager.setChannelConfig(idx, fcn, "", "", "", "", "", "");
+                    LTESendManager.setChannelConfig(idx, fcn, "", "", "", "", "", "");
                 }
             }, 2000);
         }

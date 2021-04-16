@@ -1,9 +1,6 @@
-package com.doit.net.data;
+package com.doit.net.utils;
 
-import com.doit.net.model.DBUeidInfo;
-import com.doit.net.model.UCSIDBManager;
-import com.doit.net.utils.DateUtils;
-import com.doit.net.utils.LogUtils;
+import com.doit.net.bean.DBUeidInfo;
 
 import org.xutils.DbManager;
 import org.xutils.ex.DbException;

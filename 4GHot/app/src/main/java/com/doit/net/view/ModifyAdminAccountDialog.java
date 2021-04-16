@@ -8,8 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.doit.net.model.AccountManage;
-import com.doit.net.model.BlackBoxManger;
+import com.doit.net.utils.AccountManage;
+import com.doit.net.utils.BlackBoxManger;
 import com.doit.net.event.EventAdapter;
 import com.doit.net.utils.ToastUtils;
 import com.doit.net.ucsi.R;

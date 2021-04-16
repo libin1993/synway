@@ -145,7 +145,6 @@ public class ToastUtils {
         new Thread(new Runnable() {
             public void run() {
                 handler.post(new Runnable() {
-
                     @Override
                     public void run() {
                         synchronized (synObj) {

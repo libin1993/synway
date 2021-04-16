@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
-import com.doit.net.model.CacheManager;
+import com.doit.net.utils.CacheManager;
 import com.doit.net.ucsi.R;
 
 /**

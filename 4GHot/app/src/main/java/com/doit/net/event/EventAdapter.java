@@ -36,6 +36,7 @@ public class EventAdapter {
     public final static String POWER_START = "POWER_START";
     public final static String SCAN_CODE = "SCAN_CODE"; //扫码结果
     public final static String GET_NAME_LIST = "GET_NAME_LIST"; //获取白名单
+    public final static String GET_ACTIVE_MODE = "GET_ACTIVE_MODE"; //获取工作模式
     public final static String REFRESH_DEVICE = "REFRESH_DEVICE";  //通道设置
     public final static String REFRESH_SYSTEM = "REFRESH_SYSTEM";  //系统设置
     public final static String REFRESH_GA = "REFRESH_GA";  //增益

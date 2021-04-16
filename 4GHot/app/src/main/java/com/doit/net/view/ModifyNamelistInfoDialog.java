@@ -10,11 +10,10 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.doit.net.event.AddToLocalBlackListener;
-import com.doit.net.protocol.ProtocolManager;
-import com.doit.net.model.BlackBoxManger;
+import com.doit.net.utils.BlackBoxManger;
 import com.doit.net.event.EventAdapter;
-import com.doit.net.model.DBBlackInfo;
-import com.doit.net.model.UCSIDBManager;
+import com.doit.net.bean.DBBlackInfo;
+import com.doit.net.utils.UCSIDBManager;
 import com.doit.net.utils.ToastUtils;
 import com.doit.net.ucsi.R;
 
@@ -91,7 +90,7 @@ public class ModifyNamelistInfoDialog extends Dialog {
 
                     //如果IMSI发生了变动就比较麻烦了
                     if (!imsi.equals(modifyIMSI)){
-                        ProtocolManager.setBlackList("3", "#"+modifyIMSI);
+//                        ProtocolManager.setBlackList("3", "#"+modifyIMSI);
                         db.delete(tmpNamelist);
                         new AddToLocalBlackListener(getContext(),name,imsi,remark).onClick(v);
                     }else{

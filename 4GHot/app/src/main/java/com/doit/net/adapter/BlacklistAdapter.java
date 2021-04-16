@@ -11,14 +11,13 @@ import android.widget.TextView;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
 import com.doit.net.event.AddToLocationListener;
-import com.doit.net.model.BlackBoxManger;
+import com.doit.net.utils.BlackBoxManger;
 import com.doit.net.event.EventAdapter;
-import com.doit.net.protocol.ProtocolManager;
-import com.doit.net.model.CacheManager;
-import com.doit.net.model.DBBlackInfo;
-import com.doit.net.model.UCSIDBManager;
+import com.doit.net.utils.CacheManager;
+import com.doit.net.bean.DBBlackInfo;
+import com.doit.net.utils.UCSIDBManager;
 import com.doit.net.utils.LogUtils;
-import com.doit.net.utils.MySweetAlertDialog;
+import com.doit.net.view.MySweetAlertDialog;
 import com.doit.net.view.ModifyNamelistInfoDialog;
 import com.doit.net.ucsi.R;
 import com.doit.net.utils.DateUtils;
@@ -87,7 +86,7 @@ public class BlacklistAdapter extends BaseSwipeAdapter {
                             try {
                                 ueidList.remove(position);
                                 UCSIDBManager.getDbManager().delete(resp);
-                                ProtocolManager.setBlackList("3", "#"+resp.getImsi());
+//                                ProtocolManager.setBlackList("3", "#"+resp.getImsi());
                                 EventAdapter.call(EventAdapter.REFRESH_BLACKLIST);
                                 EventAdapter.call(EventAdapter.ADD_BLACKBOX,BlackBoxManger.DELETE_NAMELIST +resp.getName()+"+"+resp.getImsi()+"+"+resp.getRemark());
                             } catch (DbException e) {

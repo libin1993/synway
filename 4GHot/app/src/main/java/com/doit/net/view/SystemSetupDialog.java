@@ -14,10 +14,9 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 
 import com.doit.net.bean.LteChannelCfg;
-import com.doit.net.protocol.ProtocolManager;
-import com.doit.net.model.CacheManager;
+import com.doit.net.protocol.LTESendManager;
+import com.doit.net.utils.CacheManager;
 import com.doit.net.utils.FormatUtils;
-import com.doit.net.utils.MySweetAlertDialog;
 import com.doit.net.ucsi.R;
 import com.doit.net.utils.ToastUtils;
 
@@ -252,7 +251,7 @@ public class SystemSetupDialog extends Dialog {
                                 sync = "no";
                             }
 
-                            ProtocolManager.setCellConfig(gpsOffset.equals(CacheManager.getCellConfig().getGpsOffset())?"":gpsOffset,
+                            LTESendManager.setCellConfig(gpsOffset.equals(CacheManager.getCellConfig().getGpsOffset())?"":gpsOffset,
                                     tddPci.equals(CacheManager.getCellConfig().getPci())?"":tddPci,
                                     tacPeriod.equals(CacheManager.getCellConfig().getTacTimer())?"":tacPeriod,
                                     sync.equals(CacheManager.getCellConfig().getSync())?"":sync);

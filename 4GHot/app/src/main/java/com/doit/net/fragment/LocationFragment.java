@@ -16,10 +16,10 @@ import com.doit.net.view.LocateCircle;
 import com.doit.net.base.BaseFragment;
 import com.doit.net.bean.LteChannelCfg;
 import com.doit.net.event.EventAdapter;
-import com.doit.net.protocol.ProtocolManager;
-import com.doit.net.model.BlackBoxManger;
-import com.doit.net.model.CacheManager;
-import com.doit.net.model.VersionManage;
+import com.doit.net.protocol.LTESendManager;
+import com.doit.net.utils.BlackBoxManger;
+import com.doit.net.utils.CacheManager;
+import com.doit.net.utils.VersionManage;
 import com.doit.net.utils.Cellular;
 import com.doit.net.utils.LogUtils;
 import com.doit.net.utils.UtilOperator;
@@ -49,7 +49,7 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
 
     private int currentSRSP = 0;
     private int lastRptSRSP = 60;//初始平滑地开始
-    private static boolean isOpenVoice = true;
+    private boolean isOpenVoice = true;
     private Timer speechTimer = null;
     private final int BROADCAST_PERIOD = 1900;
     private long lastLocRptTime = 0;
@@ -70,11 +70,8 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
     public LocationFragment() {
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-
         View rootView = inflater.inflate(R.layout.doit_layout_location, container, false);
         tvLocatingImsi = rootView.findViewById(R.id.tvLocatingImsi);
         vLocateChart = rootView.findViewById(R.id.vLocateChart);
@@ -194,9 +191,9 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
     void startLoc() {
         if (!CacheManager.getLocState()) {
             startSpeechBroadcastLoop();
-            ProtocolManager.exchangeFcn(CacheManager.getCurrentLocation().getImsi());
+            LTESendManager.exchangeFcn(CacheManager.getCurrentLocation().getImsi());
             CacheManager.startLoc(CacheManager.getCurrentLocation().getImsi());
-            textContent = "正在搜寻："+CacheManager.currentLoction.getImsi();
+            textContent = "正在搜寻："+CacheManager.currentLocation.getImsi();
             refreshPage();
         }
     }
@@ -204,7 +201,7 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
     void addLocation(String imsi) {
         LogUtils.log("开始定位,IMSI:"+imsi);
         if ("".equals(lastLocateIMSI)) {
-            if (VersionManage.isPoliceVer()) {
+            if (!VersionManage.isArmyVer()) {
                 startUpdateArfcn();
             }
         }
@@ -219,7 +216,7 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
             restartLoc();
         }
 
-        if (VersionManage.isPoliceVer()) {
+        if (!VersionManage.isArmyVer()) {
             Cellular.adjustArfcnPwrForLocTarget(CacheManager.getCurrentLocation().getImsi());
         }
         startSpeechBroadcastLoop();
@@ -285,24 +282,28 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
             }
 
             if (!isChecked) {
-                ProtocolManager.closeAllRf();
+                LTESendManager.closeAllRf();
                 stopLoc();
-                CacheManager.resetMode();
+
+                if (!VersionManage.isArmyVer()){
+                    LTESendManager.setActiveMode("0");
+                }
+
 
                 EventAdapter.call(EventAdapter.SHOW_PROGRESS, 8000);
-                if (CacheManager.currentLoction != null && !CacheManager.currentLoction.getImsi().equals("")) {
-                    EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.STOP_LOCALTE + CacheManager.currentLoction.getImsi());
+                if (CacheManager.currentLocation != null && !CacheManager.currentLocation.getImsi().equals("")) {
+                    EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.STOP_LOCALTE + CacheManager.currentLocation.getImsi());
                 }
             } else {
-                if (CacheManager.currentLoction == null || CacheManager.currentLoction.getImsi().equals("")) {
+                if (CacheManager.currentLocation == null || CacheManager.currentLocation.getImsi().equals("")) {
                     ToastUtils.showMessage(R.string.button_loc_unstart);
                 } else {
                     startLoc();
 
-                    ProtocolManager.openAllRf();
+                    LTESendManager.openAllRf();
 
                     EventAdapter.call(EventAdapter.SHOW_PROGRESS, 8000);
-                    EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.START_LOCALTE + CacheManager.currentLoction.getImsi());
+                    EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.START_LOCALTE + CacheManager.currentLocation.getImsi());
                 }
             }
         }
@@ -361,10 +362,10 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
         for (LteChannelCfg channel : CacheManager.getChannels()) {
             if (listBandInOpr.contains(Integer.valueOf(channel.getBand()))) {
                 if (!channel.getRFState())
-                    ProtocolManager.openRf(channel.getIdx());
+                    LTESendManager.openRf(channel.getIdx());
             } else {
                 if (channel.getRFState())
-                    ProtocolManager.closeRf(channel.getIdx());
+                    LTESendManager.closeRf(channel.getIdx());
             }
         }
     }
@@ -401,7 +402,10 @@ public class LocationFragment extends BaseFragment implements EventAdapter.Event
             if (!rfState){
                 LogUtils.log("射频全关了，停止定位");
                 stopLoc();
-                CacheManager.resetMode();
+                if (!VersionManage.isArmyVer()){
+                    LTESendManager.setActiveMode("0");
+                }
+
             }
 
         }

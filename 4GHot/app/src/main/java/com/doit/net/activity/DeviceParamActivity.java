@@ -1,6 +1,5 @@
 package com.doit.net.activity;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.Nullable;
@@ -11,14 +10,9 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.doit.net.utils.FormatUtils;
 import com.doit.net.utils.ScreenUtils;
 import com.doit.net.view.SystemSetupDialog;
-import com.doit.net.adapter.UserChannelListAdapter;
 import com.doit.net.base.BaseActivity;
-import com.doit.net.utils.MySweetAlertDialog;
-import com.doit.net.utils.LogUtils;
+import com.doit.net.view.MySweetAlertDialog;
 import com.doit.net.ucsi.R;
-
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 
 import android.os.Handler;
 import android.os.Message;
@@ -36,24 +30,19 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.doit.net.bean.LteChannelCfg;
-import com.doit.net.model.BlackBoxManger;
+import com.doit.net.utils.BlackBoxManger;
 import com.doit.net.event.EventAdapter;
-import com.doit.net.protocol.ProtocolManager;
-import com.doit.net.model.CacheManager;
+import com.doit.net.protocol.LTESendManager;
+import com.doit.net.utils.CacheManager;
 
 import com.doit.net.utils.ToastUtils;
-import com.orhanobut.dialogplus.DialogPlus;
-import com.orhanobut.dialogplus.ListHolder;
-import com.orhanobut.dialogplus.OnItemClickListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -185,9 +174,9 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
 
                     showProcess(6000);
                     if (lteChannelCfg.getRFState()) {
-                        ProtocolManager.closeRf(lteChannelCfg.getIdx());
+                        LTESendManager.closeRf(lteChannelCfg.getIdx());
                     } else {
-                        ProtocolManager.openRf(lteChannelCfg.getIdx());
+                        LTESendManager.openRf(lteChannelCfg.getIdx());
                     }
 
                 }
@@ -200,7 +189,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
         mProgressDialog.setCancelable(false);
 
 
-        ProtocolManager.getEquipAndAllChannelConfig();
+        LTESendManager.getEquipAndAllChannelConfig();
     }
 
     View.OnClickListener setCellParamClick = new View.OnClickListener() {
@@ -334,7 +323,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                     }
 
 
-                    ProtocolManager.setChannelConfig(CacheManager.channels.get(position).getIdx(),
+                    LTESendManager.setChannelConfig(CacheManager.channels.get(position).getIdx(),
                             fcn, plmn, pa, ga, rlm, "", alt_fcn);
 
                     refreshViews();
@@ -359,7 +348,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                 return;
             }
 
-            ProtocolManager.changeTac();
+            LTESendManager.changeTac();
             EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CHANNEL_TAG);
         }
     };
@@ -382,7 +371,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                         @Override
                         public void onClick(MySweetAlertDialog sweetAlertDialog) {
                             sweetAlertDialog.dismiss();
-                            ProtocolManager.reboot();
+                            LTESendManager.reboot();
                         }
                     })
                     .show();
@@ -398,7 +387,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
 
             long currentTime = System.currentTimeMillis();
             if (currentTime - lastRefreshParamTime > 20 * 1000) {
-                ProtocolManager.getEquipAndAllChannelConfig();
+                LTESendManager.getEquipAndAllChannelConfig();
                 lastRefreshParamTime = currentTime;
                 ToastUtils.showMessage("下发查询参数成功！");
             } else {
@@ -469,25 +458,25 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
             showProcess(6000);
             switch (checkedId) {
                 case R.id.rbDetectAll:
-                    ProtocolManager.setDetectCarrierOperation("detect_all");
+                    LTESendManager.setDetectCarrierOperation("detect_all");
                     lastDetectCarrierOperatePress = rbDetectAll;
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CHANGE_DETTECT_OPERATE + "所有");
                     break;
 
                 case R.id.rbCTJ:
-                    ProtocolManager.setDetectCarrierOperation("detect_ctj");
+                    LTESendManager.setDetectCarrierOperation("detect_ctj");
                     lastDetectCarrierOperatePress = rbCTJ;
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CHANGE_DETTECT_OPERATE + "移动");
                     break;
 
                 case R.id.rbCTU:
-                    ProtocolManager.setDetectCarrierOperation("detect_ctu");
+                    LTESendManager.setDetectCarrierOperation("detect_ctu");
                     lastDetectCarrierOperatePress = rbCTU;
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CHANGE_DETTECT_OPERATE + "联通");
                     break;
 
                 case R.id.rbCTC:
-                    ProtocolManager.setDetectCarrierOperation("detect_ctc");
+                    LTESendManager.setDetectCarrierOperation("detect_ctc");
                     lastDetectCarrierOperatePress = rbCTC;
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CHANGE_DETTECT_OPERATE + "电信");
                     break;
@@ -518,7 +507,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
 
 
             if (isChecked) {
-                ProtocolManager.openAllRf();
+                LTESendManager.openAllRf();
                 ToastUtils.showMessageLong(R.string.rf_open);
                 EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.OPEN_ALL_RF);
                 showProcess(6000);
@@ -535,7 +524,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                                 @Override
                                 public void onClick(MySweetAlertDialog sweetAlertDialog) {
                                     sweetAlertDialog.dismiss();
-                                    ProtocolManager.closeAllRf();
+                                    LTESendManager.closeAllRf();
                                     ToastUtils.showMessage(R.string.rf_close);
                                     showProcess(6000);
                                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CLOSE_ALL_RF);
@@ -543,7 +532,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                             })
                             .show();
                 } else {
-                    ProtocolManager.closeAllRf();
+                    LTESendManager.closeAllRf();
                     ToastUtils.showMessageLong(R.string.rf_close);
                     showProcess(6000);
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CLOSE_ALL_RF);
@@ -567,7 +556,7 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
                     LteChannelCfg channel = CacheManager.getChannels().get(index);
                     int pa = powerLevel + Integer.parseInt(channel.getPMax());
 
-                    ProtocolManager.setChannelConfig(channel.getIdx(), "", "", pa + "," + pa + "," + pa,
+                    LTESendManager.setChannelConfig(channel.getIdx(), "", "", pa + "," + pa + "," + pa,
                             "", "", "", "");
                     channel.setPa(pa + "," + pa + "," + pa);
                 }

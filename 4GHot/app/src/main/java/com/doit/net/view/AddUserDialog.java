@@ -9,12 +9,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.doit.net.model.BlackBoxManger;
+import com.doit.net.utils.BlackBoxManger;
 import com.doit.net.event.EventAdapter;
-import com.doit.net.model.AccountManage;
-import com.doit.net.model.CacheManager;
-import com.doit.net.model.UCSIDBManager;
-import com.doit.net.model.UserInfo;
+import com.doit.net.utils.AccountManage;
+import com.doit.net.utils.CacheManager;
+import com.doit.net.utils.UCSIDBManager;
+import com.doit.net.bean.UserInfo;
 import com.doit.net.utils.FormatUtils;
 import com.doit.net.utils.LoadingUtils;
 import com.doit.net.utils.ToastUtils;

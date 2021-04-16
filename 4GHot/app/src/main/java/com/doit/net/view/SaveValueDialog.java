@@ -9,8 +9,8 @@ import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.BootstrapEditText;
-import com.doit.net.model.PrefManage;
-import com.doit.net.model.UCSIDBManager;
+import com.doit.net.utils.SPUtils;
+import com.doit.net.utils.UCSIDBManager;
 import com.doit.net.ucsi.R;
 import com.doit.net.utils.ToastUtils;
 
@@ -81,7 +81,7 @@ public class SaveValueDialog extends Dialog {
     @Event(value = R.id.button_save)
     private void saveClick(View v){
         String url = uploadUrl.getText().toString();
-        PrefManage.setString(key,url);
+        SPUtils.setString(key,url);
         ToastUtils.showMessageLong("设置成功！");
         dismiss();
     }

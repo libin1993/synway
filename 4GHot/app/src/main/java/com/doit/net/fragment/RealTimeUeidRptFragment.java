@@ -21,12 +21,13 @@ import com.doit.net.base.BaseFragment;
 import com.doit.net.bean.LteChannelCfg;
 import com.doit.net.bean.UeidBean;
 import com.doit.net.event.EventAdapter;
-import com.doit.net.protocol.ProtocolManager;
-import com.doit.net.model.BlackBoxManger;
-import com.doit.net.model.CacheManager;
-import com.doit.net.model.UCSIDBManager;
+import com.doit.net.utils.VersionManage;
+import com.doit.net.protocol.LTESendManager;
+import com.doit.net.utils.BlackBoxManger;
+import com.doit.net.utils.CacheManager;
+import com.doit.net.utils.UCSIDBManager;
 import com.doit.net.utils.DateUtils;
-import com.doit.net.utils.MySweetAlertDialog;
+import com.doit.net.view.MySweetAlertDialog;
 import com.doit.net.utils.ToastUtils;
 import com.doit.net.utils.LogUtils;
 import com.doit.net.utils.UtilOperator;
@@ -117,7 +118,7 @@ public class RealTimeUeidRptFragment extends BaseFragment implements EventAdapte
             }
 
             if (isChecked) {
-                ProtocolManager.openAllRf();
+                LTESendManager.openAllRf();
                 ToastUtils.showMessageLong(R.string.all_rf_open);
                 EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.OPEN_ALL_RF);
                 EventAdapter.call(EventAdapter.SHOW_PROGRESS, 8000);
@@ -133,7 +134,7 @@ public class RealTimeUeidRptFragment extends BaseFragment implements EventAdapte
                                 @Override
                                 public void onClick(MySweetAlertDialog sweetAlertDialog) {
                                     sweetAlertDialog.dismiss();
-                                    ProtocolManager.closeAllRf();
+                                    LTESendManager.closeAllRf();
                                     ToastUtils.showMessage(R.string.all_rf_close);
                                     EventAdapter.call(EventAdapter.SHOW_PROGRESS, 8000);
                                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CLOSE_ALL_RF);
@@ -150,7 +151,7 @@ public class RealTimeUeidRptFragment extends BaseFragment implements EventAdapte
                             })
                             .show();
                 } else {
-                    ProtocolManager.closeAllRf();
+                    LTESendManager.closeAllRf();
                     ToastUtils.showMessageLong(R.string.all_rf_close);
                     EventAdapter.call(EventAdapter.SHOW_PROGRESS, 8000);
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.CLOSE_ALL_RF);
@@ -237,8 +238,10 @@ public class RealTimeUeidRptFragment extends BaseFragment implements EventAdapte
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case UEID_RPT:
-                    if (CacheManager.currentWorkMode.equals("2"))  //管控模式忽略ftp上报的
+                    if (VersionManage.isArmyVer()){   //管控模式忽略ftp上报的
                         return;
+                    }
+
                     //确保到达这里的采集数据已经去过重，并存到数据库了
                     List<UeidBean> listUeid = (List<UeidBean>) msg.obj;
 
@@ -276,7 +279,7 @@ public class RealTimeUeidRptFragment extends BaseFragment implements EventAdapte
 
     //根据强度排序
     private void sortRealtimeRpt() {
-        if (!CacheManager.currentWorkMode.equals("2"))
+        if (!VersionManage.isArmyVer())
             return;
 
         if (new Date().getTime() - lastSortTime >= 3000) {

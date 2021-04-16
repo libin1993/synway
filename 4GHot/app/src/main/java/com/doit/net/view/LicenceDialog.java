@@ -18,7 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.doit.net.event.EventAdapter;
-import com.doit.net.protocol.ProtocolManager;
+import com.doit.net.protocol.LTESendManager;
 import com.doit.net.utils.FTPManager;
 import com.doit.net.utils.FileUtils;
 import com.doit.net.utils.LicenceUtils;
@@ -128,7 +128,7 @@ public class LicenceDialog extends Dialog implements EventAdapter.EventCall{
                                                 + LicenceUtils.LICENCE_FILE_NAME);
                                     }
 
-                                    ProtocolManager.reboot();
+                                    LTESendManager.reboot();
 
                                 }
                             } catch (Exception e) {

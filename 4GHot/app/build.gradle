@@ -119,7 +119,6 @@ android {
             manifestPlaceholders = [app_icon: "@drawable/app_icon"]
         }
 
-
     }
     compileOptions {
         sourceCompatibility = 1.8

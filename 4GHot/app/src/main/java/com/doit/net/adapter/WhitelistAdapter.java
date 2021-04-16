@@ -10,13 +10,12 @@ import android.widget.TextView;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
 import com.doit.net.event.EventAdapter;
-import com.doit.net.model.BlackBoxManger;
-import com.doit.net.model.CacheManager;
-import com.doit.net.model.VersionManage;
-import com.doit.net.model.WhiteListInfo;
-import com.doit.net.model.UCSIDBManager;
+import com.doit.net.utils.BlackBoxManger;
+import com.doit.net.utils.CacheManager;
+import com.doit.net.bean.WhiteListInfo;
+import com.doit.net.utils.UCSIDBManager;
 import com.doit.net.utils.LogUtils;
-import com.doit.net.utils.MySweetAlertDialog;
+import com.doit.net.view.MySweetAlertDialog;
 import com.doit.net.view.ModifyWhitelistDialog;
 import com.doit.net.ucsi.R;
 

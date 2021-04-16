@@ -1,4 +1,4 @@
-package com.doit.net.model;
+package com.doit.net.bean;
 
 import org.xutils.db.annotation.Column;
 import org.xutils.db.annotation.Table;

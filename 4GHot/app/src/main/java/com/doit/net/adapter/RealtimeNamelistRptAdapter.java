@@ -9,7 +9,7 @@ import android.widget.TextView;
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
 import com.doit.net.event.AddToLocationListener;
 import com.doit.net.event.EventAdapter;
-import com.doit.net.model.CacheManager;
+import com.doit.net.utils.CacheManager;
 import com.doit.net.ucsi.R;
 
 import java.util.ArrayList;

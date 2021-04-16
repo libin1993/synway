@@ -1,4 +1,4 @@
-package com.doit.net.model;
+package com.doit.net.utils;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -11,9 +11,7 @@ import com.doit.net.ucsi.BuildConfig;
  */
 
 public class VersionManage {
-    public static boolean isPoliceVer(){
-        return BuildConfig.FLAVOR.equals("police");
-    }
+    //军队版：管控    公安版：侦码、定位
     public static boolean isArmyVer(){
         return BuildConfig.FLAVOR.equals("army");
     }

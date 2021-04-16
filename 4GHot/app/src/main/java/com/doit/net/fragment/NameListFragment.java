@@ -10,8 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -24,25 +22,20 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.util.Attributes;
 import com.doit.net.utils.FileUtils;
-import com.doit.net.utils.FormatUtils;
 import com.doit.net.utils.LogUtils;
 import com.doit.net.utils.StringUtils;
 import com.doit.net.adapter.BlacklistAdapter;
 import com.doit.net.view.NameListEditDialog;
 import com.doit.net.base.BaseFragment;
-import com.doit.net.model.BlackBoxManger;
+import com.doit.net.utils.BlackBoxManger;
 import com.doit.net.event.EventAdapter;
-import com.doit.net.model.CacheManager;
-import com.doit.net.model.DBBlackInfo;
-import com.doit.net.model.UCSIDBManager;
+import com.doit.net.bean.DBBlackInfo;
+import com.doit.net.utils.UCSIDBManager;
 import com.doit.net.utils.DateUtils;
-import com.doit.net.utils.MySweetAlertDialog;
-import com.doit.net.bean.FileBean;
+import com.doit.net.view.MySweetAlertDialog;
 import com.doit.net.ucsi.R;
 import com.doit.net.utils.ToastUtils;
 
@@ -642,10 +635,10 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
                             repeatNum + "个重复的名单，忽略" + errorFormatNum + "行格式或号码错误";
                     mHandler.sendMessage(message);
 
-                    if (CacheManager.isDeviceOk() && !CacheManager.getLocState()) {
-                        //当导入量相当大时，数据下发是相当慢的，所以放在子线程里发
-                        CacheManager.setCurrentBlackList();
-                    }
+//                    if (CacheManager.isDeviceOk() && !CacheManager.getLocState()) {
+//                        //当导入量相当大时，数据下发是相当慢的，所以放在子线程里发
+//                        CacheManager.setCurrentBlackList();
+//                    }
 
                     EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.IMPORT_NAMELIST + file.getName());
                 } catch (Exception e) {
@@ -726,7 +719,7 @@ public class NameListFragment extends BaseFragment implements EventAdapter.Event
                     .setConfirmClickListener(new MySweetAlertDialog.OnSweetClickListener() {
                         @Override
                         public void onClick(MySweetAlertDialog sweetAlertDialog) {
-                            CacheManager.clearCurrentBlackList();
+//                            CacheManager.clearCurrentBlackList();
                             try {
                                 dbManager.delete(DBBlackInfo.class);
                             } catch (DbException e) {

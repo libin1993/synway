@@ -2,7 +2,7 @@ package com.doit.net.protocol;
 
 import android.text.TextUtils;
 
-import com.doit.net.model.CacheManager;
+import com.doit.net.utils.CacheManager;
 import com.doit.net.sockets.ServerSocketUtils;
 import com.doit.net.utils.LicenceUtils;
 import com.doit.net.utils.LogUtils;

@@ -9,9 +9,9 @@ import android.widget.ImageButton;
 
 import com.doit.net.base.BaseFragment;
 import com.doit.net.event.EventAdapter;
-import com.doit.net.protocol.ProtocolManager;
-import com.doit.net.model.CacheManager;
-import com.doit.net.utils.MySweetAlertDialog;
+import com.doit.net.protocol.LTESendManager;
+import com.doit.net.utils.CacheManager;
+import com.doit.net.view.MySweetAlertDialog;
 import com.doit.net.ucsi.R;
 
 /**
@@ -49,7 +49,7 @@ public class StartPageFragment extends BaseFragment {
                     if (CacheManager.isDeviceOk()){
                         CacheManager.setPressStartButtonFlag(true);
                         turnToDetectPage();
-                        ProtocolManager.openAllRf();
+                        LTESendManager.openAllRf();
                     }else{
                         new MySweetAlertDialog(getContext(), MySweetAlertDialog.WARNING_TYPE)
                                 .setTitleText("提示")

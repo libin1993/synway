@@ -1,4 +1,4 @@
-package com.doit.net.model;
+package com.doit.net.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 /**
  * Created by wiker on 2016/4/28.
  */
-public class PrefManage {
+public class SPUtils {
     public static final String SHIELD_SWITCH_KEY = "SHIELD_SWITCH_KEY";
     public static final String DEVICE_IP = "DEVICE_IP"; //设备IP
     private static SharedPreferences settings;

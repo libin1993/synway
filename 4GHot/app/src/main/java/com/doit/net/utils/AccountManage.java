@@ -1,10 +1,8 @@
-package com.doit.net.model;
+package com.doit.net.utils;
 
 import android.text.TextUtils;
 
-import com.doit.net.utils.FTPManager;
-import com.doit.net.utils.FileUtils;
-import com.doit.net.utils.LogUtils;
+import com.doit.net.bean.UserInfo;
 
 import org.xutils.DbManager;
 import org.xutils.ex.DbException;
@@ -77,25 +75,25 @@ public class AccountManage {
     public static void saveAccoutToPref(String account, String password) {
         adminAccount = account;
         adminPassword = password;
-        PrefManage.setString("admin_account", account);
-        PrefManage.setString("admin_password", password);
+        SPUtils.setString("admin_account", account);
+        SPUtils.setString("admin_password", password);
     }
 
     public static void getAdminAccoutFromPref() {
-        adminAccount = PrefManage.getString("admin_account", "");
-        adminPassword = PrefManage.getString("admin_password", "");
+        adminAccount = SPUtils.getString("admin_account", "");
+        adminPassword = SPUtils.getString("admin_password", "");
 
         if ("".equals(adminAccount) || "".equals(adminPassword)) {
             adminAccount = "admin";
             adminPassword = "admin";
-            PrefManage.setString("admin_account", "admin");
-            PrefManage.setString("admin_password", "admin");
+            SPUtils.setString("admin_account", "admin");
+            SPUtils.setString("admin_password", "admin");
         }
     }
 
     public static void updateAdminAccoutToPref(String account, String password) {
-        PrefManage.setString("admin_account", account);
-        PrefManage.setString("admin_password", password);
+        SPUtils.setString("admin_account", account);
+        SPUtils.setString("admin_password", password);
     }
 
     public static void clearCurrentAccountDB() {

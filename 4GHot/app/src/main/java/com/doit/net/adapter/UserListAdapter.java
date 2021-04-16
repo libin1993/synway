@@ -8,13 +8,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
-import com.doit.net.model.BlackBoxManger;
+import com.doit.net.utils.BlackBoxManger;
 import com.doit.net.event.EventAdapter;
-import com.doit.net.model.AccountManage;
-import com.doit.net.model.UCSIDBManager;
-import com.doit.net.model.UserInfo;
+import com.doit.net.utils.AccountManage;
+import com.doit.net.utils.UCSIDBManager;
+import com.doit.net.bean.UserInfo;
 import com.doit.net.utils.LoadingUtils;
-import com.doit.net.utils.MySweetAlertDialog;
+import com.doit.net.view.MySweetAlertDialog;
 import com.doit.net.utils.ToastUtils;
 import com.doit.net.view.ModifyUserInfoDialog;
 import com.doit.net.ucsi.R;

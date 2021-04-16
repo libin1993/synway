@@ -8,8 +8,7 @@ import android.telephony.TelephonyManager;
 import com.doit.net.application.MyApplication;
 import com.doit.net.bean.LteChannelCfg;
 import com.doit.net.bean.ScanCellInfo;
-import com.doit.net.protocol.ProtocolManager;
-import com.doit.net.model.CacheManager;
+import com.doit.net.protocol.LTESendManager;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -240,7 +239,7 @@ public class Cellular {
 //                    }
 
                     //改为直接写死，并只打开1300,直接设置不做策略
-                    ProtocolManager.setChannelConfig(channel.getIdx(), "1300,1506,1650", "",
+                    LTESendManager.setChannelConfig(channel.getIdx(), "1300,1506,1650", "",
                             getMaxPwr(channel, 1)+",-89,-89", "", "","","");
                     generalCfgAndSet(locTargetOpr,band3FromFile, band3CommonFcns, channel);
                 }else if (channel.getBand().equals("38")){  //配套手机插的是联通电信卡，理论上不会走到以下分支，但为保持扩展性先写上
@@ -293,7 +292,7 @@ public class Cellular {
         String[] arfcns = bandInfo.split(",");
         if (arfcns == null || arfcns.length == 0){
             if (!bandCommonFcns.equals("") && bandCommonFcns.split(",").length == 3){
-                ProtocolManager.setChannelConfig(channel.getIdx(), bandCommonFcns, "",
+                LTESendManager.setChannelConfig(channel.getIdx(), bandCommonFcns, "",
                         channel.getPMax()+","+channel.getPMax()+","+channel.getPMax(), "", "","","");
             }
         }else{
@@ -331,15 +330,15 @@ public class Cellular {
 
             switch (effectArfcnNum){
                 case 1:
-                    ProtocolManager.setChannelConfig(channel.getIdx(), arfcnCfgContent.substring(0, arfcnCfgContent.length()-1), "",
+                    LTESendManager.setChannelConfig(channel.getIdx(), arfcnCfgContent.substring(0, arfcnCfgContent.length()-1), "",
                             getMaxPwr(channel, 1)+",-89,-89", "", "","","");
                     break;
                 case 2:
-                    ProtocolManager.setChannelConfig(channel.getIdx(), arfcnCfgContent.substring(0, arfcnCfgContent.length()-1), "",
+                    LTESendManager.setChannelConfig(channel.getIdx(), arfcnCfgContent.substring(0, arfcnCfgContent.length()-1), "",
                             getMaxPwr(channel, 2)+","+getMaxPwr(channel, 2)+",-89", "", "","","");
                     break;
                 case 3:
-                    ProtocolManager.setChannelConfig(channel.getIdx(), arfcnCfgContent.substring(0, arfcnCfgContent.length()-1), "",
+                    LTESendManager.setChannelConfig(channel.getIdx(), arfcnCfgContent.substring(0, arfcnCfgContent.length()-1), "",
                             channel.getPMax()+","+channel.getPMax()+","+channel.getPMax(), "", "","","");
                     break;
                 default:

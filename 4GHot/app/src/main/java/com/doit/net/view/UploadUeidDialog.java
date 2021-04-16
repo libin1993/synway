@@ -8,8 +8,8 @@ import android.view.View;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.BootstrapEditText;
-import com.doit.net.model.DBUeidInfo;
-import com.doit.net.model.UCSIDBManager;
+import com.doit.net.bean.DBUeidInfo;
+import com.doit.net.utils.UCSIDBManager;
 import com.doit.net.ucsi.R;
 import com.doit.net.utils.StringUtils;
 import com.doit.net.utils.ToastUtils;

@@ -4,7 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDex;
 
-import com.doit.net.model.PrefManage;
+import com.doit.net.utils.SPUtils;
 import com.doit.net.utils.CipherUtils;
 import com.doit.net.utils.MyExceptionHandler;
 
@@ -30,7 +30,7 @@ public class MyApplication extends Application {
         // 注册App异常崩溃处理器
         x.Ext.init(this);
 
-        PrefManage.init(this);
+        SPUtils.init(this);
         CipherUtils.init("");
 
         //异常捕获

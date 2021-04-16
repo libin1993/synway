@@ -6,20 +6,18 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.speech.tts.TextToSpeech;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.doit.net.model.BlackBoxManger;
-import com.doit.net.model.CacheManager;
-import com.doit.net.model.VersionManage;
-import com.doit.net.protocol.ProtocolManager;
+import com.doit.net.utils.BlackBoxManger;
+import com.doit.net.utils.CacheManager;
+import com.doit.net.utils.VersionManage;
+import com.doit.net.protocol.LTESendManager;
 import com.doit.net.utils.LogUtils;
 import com.doit.net.base.BaseActivity;
 import com.doit.net.event.EventAdapter;
@@ -28,10 +26,10 @@ import com.doit.net.utils.Cellular;
 import com.doit.net.utils.ToastUtils;
 import com.doit.net.ucsi.R;
 
-import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.doit.net.event.EventAdapter.GET_ACTIVE_MODE;
 import static com.doit.net.event.EventAdapter.GET_NAME_LIST;
 import static com.doit.net.event.EventAdapter.UPDATE_TMEPRATURE;
 
@@ -39,8 +37,6 @@ public class TestActivity extends BaseActivity implements EventAdapter.EventCall
     private Button test1;
     private Button test2;
     private Button test3;
-    private Button test4;
-    private Button test5;
     private Button test6;
     private Button test7;
     private Button test8;
@@ -50,13 +46,6 @@ public class TestActivity extends BaseActivity implements EventAdapter.EventCall
     private TextView tvNameList;
     private EditText etImsi;
     private Button btnLoc;
-    private Button btnSpeak;
-    private SeekBar sbPitch;
-    private SeekBar sbSpeed;
-    private TextView tvPitch;
-    private TextView tvSpeed;
-
-    private TextToSpeech textToSpeech;
 
 
     @Override
@@ -67,8 +56,6 @@ public class TestActivity extends BaseActivity implements EventAdapter.EventCall
         test1 = findViewById(R.id.test1);
         test2 = findViewById(R.id.test2);
         test3 = findViewById(R.id.test3);
-        test4 = findViewById(R.id.test4);
-        test5 = findViewById(R.id.test5);
         test6 = findViewById(R.id.test6);
         test7 = findViewById(R.id.test7);
         test8 = findViewById(R.id.test8);
@@ -78,17 +65,13 @@ public class TestActivity extends BaseActivity implements EventAdapter.EventCall
         tvTemperature = findViewById(R.id.tvTemperature);
         tvArfcns = findViewById(R.id.tvArfcns);
         tvNameList = findViewById(R.id.tv_name_list);
-        btnSpeak = findViewById(R.id.btn_speak);
-        sbPitch = findViewById(R.id.sb_pitch);
-        sbSpeed = findViewById(R.id.sb_speed);
-        tvPitch = findViewById(R.id.tv_pitch);
-        tvSpeed = findViewById(R.id.tv_speed);
+
 
         initView();
 
         EventAdapter.register(UPDATE_TMEPRATURE, this);
         EventAdapter.register(EventAdapter.GET_NAME_LIST, this);
-        //EventAdapter.setEvent(EventAdapter.SPEAK,this);
+        EventAdapter.register(EventAdapter.GET_ACTIVE_MODE, this);
     }
 
     private void initView() {
@@ -125,131 +108,17 @@ public class TestActivity extends BaseActivity implements EventAdapter.EventCall
             }
         });
 
-        test4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ProtocolManager.setActiveMode("0");
-
-                new Timer().schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        CacheManager.setLocalWhiteList("off");
-
-                    }
-                }, 1000);
-
-            }
-        });
-
-        test5.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (VersionManage.isPoliceVer()){
-                    ProtocolManager.setActiveMode("1");
-                }
-
-
-                new Timer().schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        if (VersionManage.isArmyVer()) {
-                            CacheManager.setLocalWhiteList("on");
-                        } else {
-                            CacheManager.setLocalWhiteList("off");
-                        }
-
-                    }
-                },1000);
-            }
-        });
-
         test6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ProtocolManager.setActiveMode("2");
-                new Timer().schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        CacheManager.setLocalWhiteList("on");
-
-                    }
-                }, 1000);
-            }
-        });
-
-        textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status == TextToSpeech.SUCCESS) {
-                    textToSpeech.setPitch(1f);// 设置音调，值越大声音越尖（女生），值越小则变成男声,1.0是常规
-                    textToSpeech.setSpeechRate(1f);
-                    int result = textToSpeech.setLanguage(Locale.CHINESE);
-                    LogUtils.log("语音播报中文：" + result);
-                    if (result == TextToSpeech.LANG_MISSING_DATA
-                            || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                        ToastUtils.showMessage(R.string.tip_08);
-                    }
-                }
-            }
-        });
-
-        btnSpeak.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new Timer().schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        textToSpeech.speak((int) (Math.random() * 100)+"", TextToSpeech.QUEUE_ADD, null);
-                    }
-                },0,2000);
-            }
-        });
-
-        sbPitch.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                double v = (Math.round(progress * 10) / 10.0);
-                float v1 = (float) (v / sbPitch.getMax());
-                textToSpeech.setPitch(v1);
-                tvPitch.setText("音调:"+v1);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-        sbSpeed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                double v = (Math.round(progress * 10) / 10.0);
-                float v1 = (float) (v / sbSpeed.getMax());
-                textToSpeech.setSpeechRate(v1);
-                tvSpeed.setText("语速:"+v1);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
+                LTESendManager.getActiveMode();
             }
         });
 
         test7.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ProtocolManager.getNameList();
-
+                LTESendManager.getNameList();
             }
         });
 
@@ -281,14 +150,14 @@ public class TestActivity extends BaseActivity implements EventAdapter.EventCall
                                 ToastUtils.showMessage("已下发指派");
 
                                 EventAdapter.call(EventAdapter.STOP_LOC);
-                                ProtocolManager.openAllRf();
+                                LTESendManager.openAllRf();
 
-                                ProtocolManager.setActiveMode("2");
+                                LTESendManager.setActiveMode("2");
 
                                 new Timer().schedule(new TimerTask() {
                                     @Override
                                     public void run() {
-                                        ProtocolManager.setNameList("on",
+                                        LTESendManager.setNameList("on",
                                                 "46000,2," + mobileFcn + "#46002,2," + mobileFcn + "#46007,2," + mobileFcn + "#46001,2," + unicomFcn, "",
                                                 "", "", "redirect",  "");
 
@@ -325,19 +194,21 @@ public class TestActivity extends BaseActivity implements EventAdapter.EventCall
                         }else{
                             EventAdapter.call(EventAdapter.SHOW_PROGRESS,8000);  //防止快速频繁更换定位目标
 
-                            ProtocolManager.exchangeFcn(imsi);
+                            LTESendManager.exchangeFcn(imsi);
 
                             CacheManager.updateLoc(imsi);
-                            CacheManager.changeLocTarget(imsi);
+                            if (!VersionManage.isArmyVer()){
+                                LTESendManager.setLocImsi(imsi);
+                            }
                             ToastUtils.showMessage( "开始新的搜寻");
                         }
                     }else{
                         EventAdapter.call(EventAdapter.SHOW_PROGRESS,5000);  //防止快速频繁更换定位目标
-                        ProtocolManager.exchangeFcn(imsi);
+                        LTESendManager.exchangeFcn(imsi);
 
                         CacheManager.updateLoc(imsi);
                         CacheManager.startLoc(imsi);
-                        ProtocolManager.openAllRf();
+                        LTESendManager.openAllRf();
                         ToastUtils.showMessage("搜寻开始");
                     }
 
@@ -363,7 +234,10 @@ public class TestActivity extends BaseActivity implements EventAdapter.EventCall
                     tvTemperature.setText("温度：" + msg.obj);
                     break;
                 case 1:
-                    tvNameList.setText("白名单：" + CacheManager.namelist.toString());
+                    tvNameList.setText("名单：" + msg.obj);
+                    break;
+                case 2:
+                    test6.setText("查询工作模式：" + msg.obj);
                     break;
             }
 
@@ -382,7 +256,14 @@ public class TestActivity extends BaseActivity implements EventAdapter.EventCall
             case GET_NAME_LIST:
                 Message msg1 = new Message();
                 msg1.what = 1;
+                msg1.obj = val;
                 mHandler.sendMessage(msg1);
+                break;
+            case GET_ACTIVE_MODE:
+                Message msg2 = new Message();
+                msg2.what = 2;
+                msg2.obj = val;
+                mHandler.sendMessage(msg2);
                 break;
         }
 

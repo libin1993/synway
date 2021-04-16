@@ -1,4 +1,6 @@
-package com.doit.net.model;
+package com.doit.net.utils;
+
+import com.doit.net.bean.DBUeidInfo;
 
 import org.xutils.DbManager;
 import org.xutils.ex.DbException;

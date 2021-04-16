@@ -11,9 +11,9 @@ import android.widget.EditText;
 
 import com.doit.net.event.AddToWhitelistListner;
 import com.doit.net.event.EventAdapter;
-import com.doit.net.model.BlackBoxManger;
-import com.doit.net.model.UCSIDBManager;
-import com.doit.net.model.WhiteListInfo;
+import com.doit.net.utils.BlackBoxManger;
+import com.doit.net.utils.UCSIDBManager;
+import com.doit.net.bean.WhiteListInfo;
 import com.doit.net.utils.ToastUtils;
 import com.doit.net.ucsi.R;
 

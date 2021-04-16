@@ -3,10 +3,8 @@ package com.doit.net.event;
 import android.content.Context;
 import android.view.View;
 
-import com.doit.net.model.CacheManager;
-import com.doit.net.model.DBBlackInfo;
-import com.doit.net.model.UCSIDBManager;
-import com.doit.net.protocol.ProtocolManager;
+import com.doit.net.bean.DBBlackInfo;
+import com.doit.net.utils.UCSIDBManager;
 import com.doit.net.ucsi.R;
 import com.doit.net.utils.ToastUtils;
 
@@ -55,9 +53,9 @@ public class AddToLocalBlackListener implements View.OnClickListener {
             info.setName(name);
             dbManager.save(info);
 
-            if (CacheManager.isDeviceOk() && !CacheManager.getLocState()){
-                ProtocolManager.setBlackList("2", "#"+imsi);
-            }
+//            if (CacheManager.isDeviceOk() && !CacheManager.getLocState()){
+//                ProtocolManager.setBlackList("2", "#"+imsi);
+//            }
 
             ToastUtils.showMessage(R.string.add_success);
         } catch (DbException e) {

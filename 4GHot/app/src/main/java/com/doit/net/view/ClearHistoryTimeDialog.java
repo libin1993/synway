@@ -10,12 +10,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.doit.net.model.BlackBoxManger;
+import com.doit.net.utils.BlackBoxManger;
 import com.doit.net.event.EventAdapter;
-import com.doit.net.model.DBUeidInfo;
-import com.doit.net.model.UCSIDBManager;
+import com.doit.net.bean.DBUeidInfo;
+import com.doit.net.utils.UCSIDBManager;
 import com.doit.net.utils.DateUtils;
-import com.doit.net.utils.MySweetAlertDialog;
 import com.doit.net.utils.ToastUtils;
 import com.doit.net.ucsi.R;
 

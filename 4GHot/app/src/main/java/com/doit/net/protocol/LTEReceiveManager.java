@@ -1,5 +1,6 @@
 package com.doit.net.protocol;
 
+import com.doit.net.event.EventAdapter;
 import com.doit.net.utils.LogUtils;
 import com.doit.net.utils.UtilDataFormatChange;
 
@@ -175,7 +176,9 @@ public class LTEReceiveManager {
                         break;
 
                     case LTE_PT_PARAM.PARAM_GET_ACTIVE_MODE_ASK:
-                        LogUtils.log("工作模式查询:" + UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(), 0));
+                        String activeMode = UtilDataFormatChange.bytesToString(receivePackage.getByteSubContent(), 0);
+                        LogUtils.log("查询工作模式:" + activeMode);
+                        EventAdapter.call(EventAdapter.GET_ACTIVE_MODE, activeMode);
                         break;
 
                     case LTE_PT_PARAM.PARAM_RPT_HEATBEAT:
@@ -188,11 +191,6 @@ public class LTEReceiveManager {
                     case LTE_PT_PARAM.PARAM_RPT_BLACK_NAME:
                         LTE_PT_PARAM.processRptBlackName(receivePackage);
                         break;
-
-                    case LTE_PT_PARAM.PARAM_SET_SCAN_FREQ:
-                        LTE_PT_PARAM.processRPTHeartbeat(receivePackage);
-                        break;
-
                     case LTE_PT_PARAM.PARAM_RPT_SCAN_FREQ:
                         LTE_PT_PARAM.processRPTFreqScan(receivePackage);
                         break;

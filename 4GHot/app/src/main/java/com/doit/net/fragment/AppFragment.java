@@ -12,7 +12,7 @@ import com.doit.net.activity.SystemSettingActivity;
 import com.doit.net.activity.UserManageActivity;
 import com.doit.net.activity.WhitelistManagerActivity;
 import com.doit.net.activity.BlackBoxActivity;
-import com.doit.net.model.VersionManage;
+import com.doit.net.utils.VersionManage;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -36,15 +36,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.doit.net.base.BaseFragment;
-import com.doit.net.protocol.ProtocolManager;
-import com.doit.net.model.AccountManage;
-import com.doit.net.model.CacheManager;
+import com.doit.net.protocol.LTESendManager;
+import com.doit.net.utils.AccountManage;
+import com.doit.net.utils.CacheManager;
 import com.doit.net.utils.LicenceUtils;
-import com.doit.net.utils.MySweetAlertDialog;
+import com.doit.net.view.MySweetAlertDialog;
 import com.doit.net.utils.LogUtils;
 import com.doit.net.utils.StringUtils;
 import com.doit.net.utils.ToastUtils;
-import com.doit.net.utils.LSettingItem;
+import com.doit.net.view.LSettingItem;
 import com.doit.net.ucsi.R;
 
 import org.xutils.view.annotation.ViewInject;
@@ -180,7 +180,7 @@ public class AppFragment extends BaseFragment implements EventAdapter.EventCall 
             rlClearData.setVisibility(View.VISIBLE);
             viewHistoryData.setVisibility(View.VISIBLE);
         }else {
-           if (VersionManage.isPoliceVer()){
+           if (!VersionManage.isArmyVer()){
                viewHeader.setVisibility(View.GONE);
            }
        }
@@ -432,7 +432,7 @@ public class AppFragment extends BaseFragment implements EventAdapter.EventCall 
                                         sweetAlertDialog.dismiss();
                                     } else {
                                         String command = UPGRADE_PACKAGE_PATH + choosePackage + "#" + md5;
-                                        ProtocolManager.systemUpgrade(command);
+                                        LTESendManager.systemUpgrade(command);
                                         mProgressDialog.show();
                                         sweetAlertDialog.dismiss();
                                     }

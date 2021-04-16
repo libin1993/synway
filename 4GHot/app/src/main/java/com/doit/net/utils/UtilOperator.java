@@ -1,8 +1,7 @@
 package com.doit.net.utils;
 
 import com.doit.net.bean.LteChannelCfg;
-import com.doit.net.protocol.ProtocolManager;
-import com.doit.net.model.CacheManager;
+import com.doit.net.protocol.LTESendManager;
 
 import java.util.Arrays;
 import java.util.List;
@@ -97,7 +96,7 @@ public class UtilOperator {
                     tmpPa += "-80,";
                 }
             }
-            ProtocolManager.setChannelConfig(tmpCfg.getIdx(), "", "", tmpPa.substring(0, tmpPa.length()-1),"", "","", "");
+            LTESendManager.setChannelConfig(tmpCfg.getIdx(), "", "", tmpPa.substring(0, tmpPa.length()-1),"", "","", "");
             tmpPa = "";
         }
     }

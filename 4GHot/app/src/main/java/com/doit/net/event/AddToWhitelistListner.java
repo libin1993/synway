@@ -3,8 +3,8 @@ package com.doit.net.event;
 import android.content.Context;
 import android.view.View;
 
-import com.doit.net.model.UCSIDBManager;
-import com.doit.net.model.WhiteListInfo;
+import com.doit.net.utils.UCSIDBManager;
+import com.doit.net.bean.WhiteListInfo;
 import com.doit.net.utils.ToastUtils;
 import com.doit.net.ucsi.R;
 

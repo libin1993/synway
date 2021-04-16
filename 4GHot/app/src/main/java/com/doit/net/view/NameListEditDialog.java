@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.doit.net.event.AddToLocalBlackListener;
-import com.doit.net.model.BlackBoxManger;
+import com.doit.net.utils.BlackBoxManger;
 import com.doit.net.event.EventAdapter;
 import com.doit.net.ucsi.R;
 import com.doit.net.utils.ToastUtils;

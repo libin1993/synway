@@ -1,8 +1,5 @@
 package com.doit.net.utils;
 
-import com.doit.net.model.CacheManager;
-import com.doit.net.sockets.ServerSocketUtils;
-
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
@@ -99,7 +96,6 @@ public class FTPManager {
 
         return false;
     }
-
 
     // 实现上传文件的功能
     public synchronized boolean uploadFile(boolean isAppend,String path, String updateFileName)

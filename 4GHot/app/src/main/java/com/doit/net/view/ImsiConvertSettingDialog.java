@@ -12,8 +12,8 @@ import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.BootstrapEditText;
-import com.doit.net.model.ImsiMsisdnConvert;
-import com.doit.net.model.PrefManage;
+import com.doit.net.utils.ImsiMsisdnConvert;
+import com.doit.net.utils.SPUtils;
 import com.doit.net.utils.ToastUtils;
 import com.doit.net.ucsi.R;
 import org.xutils.x;
@@ -75,9 +75,9 @@ public class ImsiConvertSettingDialog extends Dialog {
 //            etPassword.setText(ImsiMsisdnConvert.getCurrentpassword());
 //        }
 
-        if (PrefManage.getBoolean(PRF_KEY_IS_REMEMBER, false)) {
-            etAccount.setText(PrefManage.getString(PRF_KEY_USERNAME, ""));
-            etPassword.setText(PrefManage.getString(PRF_KEY_PASSWORD, ""));
+        if (SPUtils.getBoolean(PRF_KEY_IS_REMEMBER, false)) {
+            etAccount.setText(SPUtils.getString(PRF_KEY_USERNAME, ""));
+            etPassword.setText(SPUtils.getString(PRF_KEY_PASSWORD, ""));
             cbRememberAccout.setChecked(true);
         }
 
@@ -112,14 +112,14 @@ public class ImsiConvertSettingDialog extends Dialog {
                         boolean res = ImsiMsisdnConvert.authenticate(activity, serverAddress, username, password);
                         if (res){
                             if (cbRememberAccout.isChecked()) {
-                                PrefManage.setBoolean(PRF_KEY_IS_REMEMBER, true);
-                                PrefManage.setString(PRF_KEY_USERNAME, username);
-                                PrefManage.setString(PRF_KEY_PASSWORD, password);
+                                SPUtils.setBoolean(PRF_KEY_IS_REMEMBER, true);
+                                SPUtils.setString(PRF_KEY_USERNAME, username);
+                                SPUtils.setString(PRF_KEY_PASSWORD, password);
                             } else {
                                 // editor.clear();
-                                PrefManage.setBoolean(PRF_KEY_IS_REMEMBER, false);
-                                PrefManage.setString(PRF_KEY_USERNAME, "");
-                                PrefManage.setString(PRF_KEY_PASSWORD, "");
+                                SPUtils.setBoolean(PRF_KEY_IS_REMEMBER, false);
+                                SPUtils.setString(PRF_KEY_USERNAME, "");
+                                SPUtils.setString(PRF_KEY_PASSWORD, "");
                             }
                         }
                     }

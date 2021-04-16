@@ -1,4 +1,4 @@
-package com.doit.net.model;
+package com.doit.net.utils;
 
 import android.Manifest;
 import android.app.Activity;
@@ -10,9 +10,8 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 
 import com.doit.net.bean.LteChannelCfg;
-import com.doit.net.protocol.ProtocolManager;
-import com.doit.net.utils.ToastUtils;
-import com.doit.net.utils.LogUtils;
+import com.doit.net.bean.ScanFreqInfo;
+import com.doit.net.protocol.LTESendManager;
 
 import org.xutils.DbManager;
 import org.xutils.ex.DbException;
@@ -68,7 +67,7 @@ public class ScanFreqManager {
             public void run() {
                 while(true){
                     if (CacheManager.isDeviceOk()){
-                        ProtocolManager.scanFreq();
+                        LTESendManager.scanFreq();
                         break;
                     }else{
                         try {sleep(60000);} catch (InterruptedException e) {e.printStackTrace();}
@@ -89,29 +88,29 @@ public class ScanFreqManager {
                             switch (channel.getBand()){
                                 case "1":
                                     if (!channel.getAltFcn().equals(scanFreqInfo.getBand1FcnList()))
-                                        ProtocolManager.setChannelConfig(channel.getIdx(),"","","","",
+                                        LTESendManager.setChannelConfig(channel.getIdx(),"","","","",
                                                 "","", scanFreqInfo.getBand1FcnList());
                                     break;
                                 case "3":
                                     if (!channel.getAltFcn().equals(scanFreqInfo.getBand3FcnList()))
-                                        ProtocolManager.setChannelConfig(channel.getIdx(),"","","","",
+                                        LTESendManager.setChannelConfig(channel.getIdx(),"","","","",
                                                 "","", scanFreqInfo.getBand3FcnList());
                                     break;
                                 case "38":
                                     if (!channel.getAltFcn().equals(scanFreqInfo.getBand38FcnList()))
-                                        ProtocolManager.setChannelConfig(channel.getIdx(),"","","","",
+                                        LTESendManager.setChannelConfig(channel.getIdx(),"","","","",
                                                 "","", scanFreqInfo.getBand38FcnList());
                                     break;
 
                                 case "39":
                                     if (!channel.getAltFcn().equals(scanFreqInfo.getBand39FcnList()))
-                                        ProtocolManager.setChannelConfig(channel.getIdx(),"","","","",
+                                        LTESendManager.setChannelConfig(channel.getIdx(),"","","","",
                                                 "","", scanFreqInfo.getBand39FcnList());
                                     break;
 
                                 case "40":
                                     if (!channel.getAltFcn().equals(scanFreqInfo.getBand40FcnList()))
-                                        ProtocolManager.setChannelConfig(channel.getIdx(),"","","","",
+                                        LTESendManager.setChannelConfig(channel.getIdx(),"","","","",
                                                 "","", scanFreqInfo.getBand40FcnList());
                                     break;
                                 default:
@@ -161,29 +160,29 @@ public class ScanFreqManager {
             switch (channel.getBand()){
                 case "1":
                     if (!channel.getAltFcn().equals(band1FcnList))
-                        ProtocolManager.setChannelConfig(channel.getIdx(),"","","","",
+                        LTESendManager.setChannelConfig(channel.getIdx(),"","","","",
                                 "","", band1FcnList);
                     break;
                 case "3":
                     if (!channel.getAltFcn().equals(band3FcnList))
-                        ProtocolManager.setChannelConfig(channel.getIdx(),"","","","",
+                        LTESendManager.setChannelConfig(channel.getIdx(),"","","","",
                                 "","", band3FcnList);
                     break;
                 case "38":
                     if (!channel.getAltFcn().equals(band38FcnList))
-                        ProtocolManager.setChannelConfig(channel.getIdx(),"","","","",
+                        LTESendManager.setChannelConfig(channel.getIdx(),"","","","",
                                 "","", band38FcnList);
                     break;
 
                 case "39":
                     if (!channel.getAltFcn().equals(band39FcnList))
-                        ProtocolManager.setChannelConfig(channel.getIdx(),"","","","",
+                        LTESendManager.setChannelConfig(channel.getIdx(),"","","","",
                                 "","", band39FcnList);
                     break;
 
                 case "40":
                     if (!channel.getAltFcn().equals(band40FcnList))
-                        ProtocolManager.setChannelConfig(channel.getIdx(),"","","","",
+                        LTESendManager.setChannelConfig(channel.getIdx(),"","","","",
                                 "","", band40FcnList);
                     break;
                 default:

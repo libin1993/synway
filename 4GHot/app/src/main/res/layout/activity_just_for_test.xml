@@ -46,68 +46,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
-
-        <TextView
-            android:id="@+id/tv_pitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="音调:1.0"/>
-        <SeekBar
-            android:id="@+id/sb_pitch"
-            android:layout_width="100dp"
-            android:layout_height="10dp"
-            android:max="100"
-            android:progress="100" />
-        <TextView
-            android:id="@+id/tv_speed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="语速:1.0"/>
-        <SeekBar
-            android:id="@+id/sb_speed"
-            android:layout_width="100dp"
-            android:layout_height="10dp"
-            android:max="200"
-            android:progress="100"/>
-
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/btn_speak"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_marginStart="5dp"
-        android:text="语音播报" />
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
         android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/test4"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_marginStart="5dp"
-            android:text="侦码模式" />
-
-        <Button
-            android:id="@+id/test5"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_marginStart="5dp"
-            android:text="定位模式" />
 
         <Button
             android:id="@+id/test6"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_marginStart="5dp"
-            android:text="管控模式" />
+            android:text="查询工作模式" />
 
         <Button
             android:id="@+id/test7"
@@ -115,6 +61,8 @@
             android:layout_height="40dp"
             android:layout_marginStart="5dp"
             android:text="获取名单" />
+
+
 
     </LinearLayout>
     <LinearLayout
