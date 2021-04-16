@@ -76,7 +76,7 @@ public class AddToLocationListener implements View.OnClickListener {
             EventAdapter.call(EventAdapter.ADD_LOCATION,imsi);
             EventAdapter.call(EventAdapter.ADD_BLACKBOX, BlackBoxManger.START_LOCALTE_FROM_NAMELIST+imsi);
         } catch (Exception e) {
-            LogUtils.log("开启搜寻失败"+e);
+            LogUtils.log("开启搜寻失败:"+e);
         }
 
     }
