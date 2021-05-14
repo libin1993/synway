@@ -28,6 +28,6 @@
         android:layout_weight="1"
         android:layout_gravity="center"
         android:scaleType="fitCenter"
-        android:src="@drawable/device_picture" />
+        android:src="@drawable/device_picture"/>
 
 </LinearLayout>

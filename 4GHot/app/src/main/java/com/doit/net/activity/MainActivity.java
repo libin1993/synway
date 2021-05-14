@@ -1,6 +1,7 @@
 package com.doit.net.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
@@ -697,7 +698,6 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
                     viewAnim.setRepeatCount(-1);   //无限
                     ivDeviceState.startAnimation(viewAnim);
                 }
-
                 break;
 
             case DeviceState.NORMAL:
@@ -1025,6 +1025,7 @@ public class MainActivity extends BaseActivity implements TextToSpeech.OnInitLis
 
     }
 
+    @SuppressLint("HandlerLeak")
     Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {

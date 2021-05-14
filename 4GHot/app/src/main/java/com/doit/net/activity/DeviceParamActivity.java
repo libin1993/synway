@@ -7,8 +7,11 @@ import android.os.Bundle;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.doit.net.ucsi.BuildConfig;
+import com.doit.net.utils.AccountManage;
 import com.doit.net.utils.FormatUtils;
 import com.doit.net.utils.ScreenUtils;
+import com.doit.net.utils.VersionManage;
 import com.doit.net.view.SystemSetupDialog;
 import com.doit.net.base.BaseActivity;
 import com.doit.net.view.MySweetAlertDialog;
@@ -142,18 +145,21 @@ public class DeviceParamActivity extends BaseActivity implements EventAdapter.Ev
             }
         };
         rvBand.setAdapter(adapter);
-        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                if (!CacheManager.checkDevice(DeviceParamActivity.this)) {
-                    return;
+        if (AccountManage.getCurrentPerLevel() >= AccountManage.PERMISSION_LEVEL3){
+            adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                    if (!CacheManager.checkDevice(DeviceParamActivity.this)) {
+                        return;
+                    }
+                    LteChannelCfg lteChannelCfg = CacheManager.channels.get(position);
+                    if (lteChannelCfg != null && !TextUtils.isEmpty(lteChannelCfg.getChangeBand())) {
+                        changeChannelBandDialog(lteChannelCfg.getIdx(), lteChannelCfg.getBand(),lteChannelCfg.getChangeBand());
+                    }
                 }
-                LteChannelCfg lteChannelCfg = CacheManager.channels.get(position);
-                if (lteChannelCfg != null && !TextUtils.isEmpty(lteChannelCfg.getChangeBand())) {
-                    changeChannelBandDialog(lteChannelCfg.getIdx(), lteChannelCfg.getBand(),lteChannelCfg.getChangeBand());
-                }
-            }
-        });
+            });
+        }
+
         adapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {

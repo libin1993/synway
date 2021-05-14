@@ -106,8 +106,6 @@ public class ServerSocketUtils {
         @Override
         public void run() {
             super.run();
-            //数据缓存
-            byte[] bytesReceived = new byte[1024];
             //接收到流的数量
             int receiveCount;
             LTEReceiveManager lteReceiveManager = new LTEReceiveManager();
@@ -117,6 +115,7 @@ public class ServerSocketUtils {
                 //获取输入流
                 try {
                     InputStream inputStream = socket.getInputStream();
+                    byte[] bytesReceived = new byte[1024];
                     //循环接收数据
                     while ((receiveCount = inputStream.read(bytesReceived)) != -1) {
                         lteReceiveManager.parseData(bytesReceived, receiveCount);

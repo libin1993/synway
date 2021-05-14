@@ -1,5 +1,6 @@
 package com.doit.net.fragment;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -35,6 +36,7 @@ public class StartPageFragment extends BaseFragment {
         return rootView;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initWidget() {
 
         ivPowerStart.setOnTouchListener(new View.OnTouchListener() {
