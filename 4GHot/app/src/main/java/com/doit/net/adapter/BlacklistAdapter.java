@@ -50,7 +50,7 @@ public class BlacklistAdapter extends BaseSwipeAdapter {
 
     @Override
     public int getSwipeLayoutResourceId(int position) {
-        return R.id.swipe;
+        return R.id.sl_black_list;
     }
 
     @Override

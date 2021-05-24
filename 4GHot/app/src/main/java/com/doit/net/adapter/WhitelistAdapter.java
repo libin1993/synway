@@ -45,7 +45,7 @@ public class WhitelistAdapter extends BaseSwipeAdapter {
 
     @Override
     public int getSwipeLayoutResourceId(int position) {
-        return R.id.layout_user_info;
+        return R.id.sl_white_list;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class WhitelistAdapter extends BaseSwipeAdapter {
     public void fillValues(int position, View convertView) {
         TextView tvIndex = convertView.findViewById(R.id.tvIndex);
         TextView tvWhitelistInfo = convertView.findViewById(R.id.tvWhitelistInfo);
-        SwipeLayout swipeLayout = convertView.findViewById(R.id.swipe);
+        SwipeLayout swipeLayout = convertView.findViewById(R.id.sl_white_list);
         final WhiteListInfo whitelistInfo = listWhitelistInfo.get(position);
         tvIndex.setText(" " + (position + 1) + ".");
         tvWhitelistInfo.setText("IMSI：" + whitelistInfo.getImsi() + "\n手机号：" + whitelistInfo.getMsisdn() +

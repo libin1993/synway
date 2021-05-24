@@ -1,6 +1,7 @@
 package com.doit.net.activity;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -39,7 +40,7 @@ public class StartActivity extends BaseActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        requestPermissions();
+        checkPermissions();
     }
 
 	private void startApp(){
@@ -87,24 +88,23 @@ public class StartActivity extends BaseActivity {
         if (PermissionUtils.getInstance().hasPermission(this, permissions)) {
             startApp();
         } else {
-            new android.support.v7.app.AlertDialog.Builder(this)
+            new AlertDialog.Builder(this,AlertDialog.THEME_DEVICE_DEFAULT_LIGHT)
                     .setTitle("检测到存在未授权的权限")
                     .setMessage("请务必同意授权这些权限，否则程序将无法打开！")
-                    .setPositiveButton("确 定", new DialogInterface.OnClickListener() {
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             ActivityCompat.requestPermissions(StartActivity.this, permissions,
                                     PERMISSION_REQUEST_CODE);
                         }
                     })
-                    .setNegativeButton("取 消", new DialogInterface.OnClickListener() {
+                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             finish();
                         }
                     }).setCancelable(false)
                     .show();
-
         }
     }
 

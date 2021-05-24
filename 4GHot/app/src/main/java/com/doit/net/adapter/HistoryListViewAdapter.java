@@ -84,7 +84,7 @@ public class HistoryListViewAdapter extends BaseSwipeAdapter {
         index.setText((position + 1) + ".");
 
         TextView text_data = convertView.findViewById(R.id.tvUeidItemText);
-        SwipeLayout swipeLayout = convertView.findViewById(R.id.layout_user_info);
+        SwipeLayout swipeLayout = convertView.findViewById(R.id.swipe);
         DBUeidInfo resp = ueidList.get(position);
         text_data.setText("IMSI:"+resp.getImsi()+"\n"+mContext.getString(R.string.lab_rpt_time)+ DateUtils.convert2String(resp.getCreateDate(), DateUtils.LOCAL_DATE));
         text_data.setTag(position);
