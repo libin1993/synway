@@ -43,6 +43,10 @@ public class LTEReceiveManager {
             if (listReceiveBuffer.size() < contentLen) {
                 LogUtils.log("LTE没有达到整包数:");
                 break;
+            }else if (listReceiveBuffer.size() > contentLen){
+                LogUtils.log("解析出错:");
+                listReceiveBuffer.clear();
+                break;
             }
 
             byte[] tempPackage = new byte[contentLen];
